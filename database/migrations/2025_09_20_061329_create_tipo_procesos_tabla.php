@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tipos_procesos', function (Blueprint $table) {
+        Schema::create('tipo_procesos', function (Blueprint $table) {
             $table->id();
             $table->foreign('usuario_creador_id')->references('id')->on('users');
             $table->unsignedBigInteger('usuario_creador_id')->nullable();
