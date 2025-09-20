@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Tipo_tela extends Model
+class Caracteristica extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'tipo_telas';
+    protected $table = 'caracteristicas';
 
     protected $fillable = [
         'usuario_creador_id',
