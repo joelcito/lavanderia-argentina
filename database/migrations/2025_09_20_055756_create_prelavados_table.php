@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nombre_telas', function (Blueprint $table) {
+        Schema::create('prelavados', function (Blueprint $table) {
             $table->id();
             $table->foreign('usuario_creador_id')->references('id')->on('users');
             $table->unsignedBigInteger('usuario_creador_id')->nullable();
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('usuario_eliminador_id')->nullable();
 
             $table->string('nombre')->nullable();
-            
+
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();
             $table->timestamps();
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nombre_telas');
+        Schema::dropIfExists('prelavados');
     }
 };
