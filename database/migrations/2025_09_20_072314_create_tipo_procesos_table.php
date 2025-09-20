@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tipos_procesos');
+        Schema::dropIfExists('tipo_procesos');
     }
 };
