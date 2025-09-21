@@ -6,11 +6,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    use HasFactory, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +24,21 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        //se aumentan los siguientes atributos a la tabla users
+        'usuario_creador_id',
+        'usuario_modificador_id',
+        'usuario_eliminador_id',
+
+        'rol_id',
+        'nombres',
+        'ap_paterno',
+        'ap_materno',
+        'cedula',
+        'direccion',
+        'celular',
+
+        'estado',
+        'deleted_at',
     ];
 
     /**
