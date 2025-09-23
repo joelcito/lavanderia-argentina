@@ -1,0 +1,163 @@
+[33mcommit 06b59aa0dc50ccbf643a3a725181f9fdeedfe776[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop[m[33m)[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Mon Sep 22 21:23:23 2025 -0400
+
+    MIGRACION DE LA TABLA PROCESOS CON FK Y MODELO PROCESO
+
+[33mcommit 6a8555965d6e61eb84cd851393d1b61ee9020cd2[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Mon Sep 22 21:03:13 2025 -0400
+
+    MIGRACION DE LA TABLA DE ORDER_TRABAJOS CON SU LLAVES FORANEAS, Y SU MODELO ORDER_TRABAJOS
+
+[33mcommit 89ac2b58fb783b3ab8825e50f2f9739efe37e658[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Mon Sep 22 20:47:33 2025 -0400
+
+    MIGRACION DE LA TABLA DE FACTURAS CON SU LLAVES FORANEAS, Y SU MODELO FACTURA
+
+[33mcommit f4a2115cde75fad48587105eda57b91964348a7e[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sun Sep 21 01:36:08 2025 -0400
+
+    SE REALIZO LA MIGRACION DE ADICION DE ATRIBUTOS A LA TABLA USERS Y LA MODIFICACION AL MODELO USER
+
+[33mcommit 2452ffe86987c86f7b28b1f4062608105a817f84[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 03:56:25 2025 -0400
+
+    SE AGREGO LA MIGRACION DE PRODUCTOS Y EL MODELO DE PRODUCTO CON LLAVE FORANEA DE PROVEEDORES
+
+[33mcommit 077f3078e4a5b2e1caaae4adde20a1db90b4cdd0[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 03:27:18 2025 -0400
+
+    SE AGREGO LA MIGRACION DE tipo_procesos Y EL MODELO DE Tipo_proceso
+
+[33mcommit 73965002a64cdca2d3719e5119abf58d9f73b4a2[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 03:16:37 2025 -0400
+
+    SE AGREGO LA MIGRACION DE
+
+[33mcommit 70987d78c086448e1d67bdd0a032f10d1e5c2071[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 02:58:54 2025 -0400
+
+    SE ELIMINO LA MIGRACION DE tipos_procesos Y EL MODELO DE Tipo_proceso,porque estaba mal el nombre
+
+[33mcommit 43961f3308cec6f78fe80bd9bed1ad519cd3e7a9[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 02:42:51 2025 -0400
+
+    SE AGREGO LA MIGRACION DE clientes Y EL MODELO DE cliente
+
+[33mcommit c1303c0fa1271ed6607816ebca6282367f7bf866[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 02:22:43 2025 -0400
+
+    SE AGREGO LA MIGRACION DE tipo_procesos Y EL MODELO DE tipo_proceso modificado
+
+[33mcommit 9aa2cb20a448402e49c266271e3e824d2c2b9098[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 02:17:54 2025 -0400
+
+    SE AGREGO LA MIGRACION DE tipo_procesos Y EL MODELO DE tipo_proceso
+
+[33mcommit c9f4338313c2e74cfc84d5f6956144deb5453a86[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 02:10:25 2025 -0400
+
+    SE AGREGO LA MIGRACION DE focalizados Y EL MODELO DE focalizado
+
+[33mcommit 7644556c1d5c4fb1be385d4e156c69c3e3c6ac67[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 02:04:21 2025 -0400
+
+    SE AGREGO LA MIGRACION DE prelavados Y EL MODELO DE prelavado
+
+[33mcommit 11f16e0ebc7ba7fb57655e85eb9b61e952ade504[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 01:51:24 2025 -0400
+
+    SE AGREGO LA MIGRACION DE nombre_telas Y EL MODELO DE nombre_tela
+
+[33mcommit af5deac1540d2081ed87bdcee56330498fca378e[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 01:43:57 2025 -0400
+
+    SE AGREGO LA MIGRACION DE caracteristicas Y EL MODELO DE caracteristicas
+
+[33mcommit a379024de83b99c042d6d3f1d7c9fe18ae8a4446[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 01:25:01 2025 -0400
+
+    SE AGREGO LA MIGRACION DE color_telas Y EL MODELO DE color_tela
+
+[33mcommit ca3fcc1eeb87c87e974343310855c897c906dfd2[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 00:16:16 2025 -0400
+
+    SE AGREGO LA MIGRACION DE tipos_telas Y EL MODELO DE tipo_tela
+
+[33mcommit 4ff97d3b92e22c5b50aaa65c9dd8b2e1514f5991[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Sat Sep 20 00:00:37 2025 -0400
+
+    SE AGREGO LA MIGRACION DE prendas Y EL MODELO DE prenda
+
+[33mcommit 5a1555bfefdb8e9e648b45aee6fda91cd11bd4c7[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Fri Sep 19 23:14:55 2025 -0400
+
+    SE AGREGO LA MIGRACION DE proveedores Y EL MODELO DE proveedor
+
+[33mcommit 0dd20f59ffd107eb4544fd74f20646afe69ce182[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Fri Sep 19 22:49:34 2025 -0400
+
+    CREACION DE TABLA maquinarias y MODELO Maquinaria
+
+[33mcommit 6bf7d3b0d4d112311f8eb4e90c7bb87d9a7f74a1[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Thu Sep 18 23:11:38 2025 -0400
+
+    se agrego cleintes
+
+[33mcommit 42c045462b11ca365eab04d231168f0c7a968816[m
+Author: Abigail <arcanivanessa38@gmail.com>
+Date:   Thu Sep 18 23:00:57 2025 -0400
+
+    SE AGREGO LA MIGRACION DE SUCURSALES Y EL MODELO DE SUCURSAL
+
+[33mcommit bbe575d84b58dba7c5decb1f77319484e446d512[m
+Author: joelcito <jjjoelcito123@gmail.com>
+Date:   Thu Sep 18 03:20:40 2025 -0400
+
+    se agrego los cambis
+
+[33mcommit 9e5f8c7ee1fcd65550b0318d5360c2eea225af8e[m
+Merge: ee19cc4 815a9fe
+Author: joelcito <jjjoelcito123@gmail.com>
+Date:   Thu Sep 18 00:40:31 2025 -0400
+
+    Merge branch 'develop' of
+    https://github.com/joelcito/lavanderia-argentina into develop
+
+[33mcommit ee19cc4ebd5fd8d4f74a1a7c26b13c57f90373b5[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: arcanivanessa38-commits <arcanivanessa38@gmail.com>
+Date:   Wed Sep 17 23:44:05 2025 -0400
+
+    Create COPIA LAVANDERIA
+
+[33mcommit 815a9fe3724db35f3b52066268ca263d9312842a[m
+Author: joelcito <jjjoelcito123@gmail.com>
+Date:   Tue Sep 16 23:43:47 2025 -0400
+
+    base del proyecxto
+
+[33mcommit a7aa747e08a903363a0358386046419193b976ea[m
+Author: joelcito <jjjoelcito123@gmail.com>
+Date:   Tue Sep 16 23:42:10 2025 -0400
+
+    first commit

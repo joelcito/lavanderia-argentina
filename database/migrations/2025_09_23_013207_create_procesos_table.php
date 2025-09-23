@@ -50,6 +50,7 @@ return new class extends Migration
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();
             $table->timestamps();
+            
         });
     }
 
