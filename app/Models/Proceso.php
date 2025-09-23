@@ -35,7 +35,6 @@ class Proceso extends Model
         'descripcion',
 
         'estado',
-        'deleted_at',
-        
+        'deleted_at',        
     ];
 }
