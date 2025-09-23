@@ -41,7 +41,7 @@
                         </div>
                         <div class="menu-item">
                             <a class="menu-link {{ Route::currentRouteName() == 'rol.listado' ? 'active' : '' }}"
-                                href="#">
+                                href="{{ route('rol.listado') }}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>

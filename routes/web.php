@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RolController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -20,10 +21,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->middleware(['auth', 'verified'])->name('home');
 
     // ROL
-    // Route::prefix('/rol')->group(function(){
-    //     Route::get('/listado', [RolController::class, 'listado'])->name('rol.listado');
-    //     Route::post('/ajaxListado', [RolController::class, 'ajaxListado'])->name('rol.ajaxListado');
-    //     Route::post('/guardarRol', [RolController::class, 'guardarRol'])->name('rol.guardarRol');
-    //     Route::post('/eliminarRol', [RolController::class, 'eliminarRol'])->name('rol.eliminarRol');
-    // });
+    Route::prefix('/rol')->group(function(){
+        Route::get('/listado', [RolController::class, 'listado'])->name('rol.listado');
+        Route::post('/ajaxListado', [RolController::class, 'ajaxListado'])->name('rol.ajaxListado');
+        Route::post('/guardarRol', [RolController::class, 'guardarRol'])->name('rol.guardarRol');
+        Route::post('/eliminarRol', [RolController::class, 'eliminarRol'])->name('rol.eliminarRol');
+    });
 });
