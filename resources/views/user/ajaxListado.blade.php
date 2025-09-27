@@ -4,6 +4,11 @@
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                 <th>Nombre</th>
+                <th>Apellido Paterno</th>
+                <th>Apellido Materno</th>
+                <th>C.I.</th>
+                <th>Celular</th>
+                <th>Email</th>               
                 <th>Actions</th>
             </tr>
         </thead>
@@ -11,6 +16,11 @@
             @forelse ($usuarios as $user)
                 <tr>
                     <td>{{ $user->nombre }}</td>
+                    <td>{{ $user->ap_paterno }}</td>
+                    <td>{{ $user->ap_materno }}</td>
+                    <td>{{ $user->cedula }}</td>
+                    <td>{{ $user->celular }}</td>
+                    <td>{{ $user->email }}</td>
                     <td>
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar user" onclick="editaruser({{ json_encode($user) }})"><i class="fa fa-edit"></i></button>
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar user" onclick="eliminaruser('{{ $user->id }}',  '{{ $user->nombre }}')"><i class="fa fa-trash"></i></button>

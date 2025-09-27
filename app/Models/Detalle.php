@@ -31,7 +31,7 @@ class Detalle extends Model
         'descuento',
         'importe',
         'peso',
-        'numero_ojales'
+        'numero_ojales',
 
         'estado',
         'deleted_at',

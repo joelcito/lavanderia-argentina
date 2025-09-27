@@ -17,7 +17,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header" id="kt_modal_add_user_header">
-                    <h3 class="fw-bold">FORMULARIO DE Usuario <span class="text-info" id="nombre_busqueda"></span></h3>
+                    <h3 class="fw-bold">FORMULARIO DE USUARIO <span class="text-info" id="nombre_busqueda"></span></h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body scroll-y">
@@ -29,6 +29,16 @@
                                     <label class="required fw-semibold fs-6 mb-2">Nombre</label>
                                     <input type="text" class="form-control form-control-sm" id="nombre"
                                         name="nombre">
+                                </div>
+                               
+                                  
+                                <div class="col-md-12">
+                              
+                                     <div class="fv-row mb-7">
+                                        <label class="required fw-semibold fs-6 mb-2">Apellido materno</label>
+                                        <input type="text" class="form-control form-control-sm" id="ap_materno"
+                                            name="ap_materno">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -110,11 +120,12 @@
             })
         }
 
-        function modalNuevoUser(){
+        /*function modalNuevoUser(){
             $('#nombre').val('')
+            $('#ap_materno').val('')
             $('#id').val(0)
             $('#modalUsuario').modal('show')
-        }
+        }*/
 
        
        
