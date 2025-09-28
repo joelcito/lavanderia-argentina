@@ -1,33 +1,19 @@
 <div style="overflow-x: auto;">
     <!--begin::Table-->
-    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_usuarios">
+    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_prendas">
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-                <th>Rol</th>
                 <th>Nombre</th>
-                <th>Apellido Paterno</th>
-                <th>Apellido Materno</th>
-                <th>C.I.</th>
-                <th>Celular</th>
-                <th>Nombre Usuario</th>
-                <th>Email</th>               
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
-            @forelse ($usuarios as $user)
+            @forelse ($prendas as $prenda)
                 <tr>
-                    <td>{{ $user->rol_id }}</td>
-                    <td>{{ $user->nombres }}</td>
-                    <td>{{ $user->ap_paterno }}</td>
-                    <td>{{ $user->ap_materno }}</td>
-                    <td>{{ $user->cedula }}</td>
-                    <td>{{ $user->celular }}</td>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
+                    <td>{{ $prenda->nombre }}</td>
                     <td>
-                        <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar user" onclick="editarUser({{ json_encode($user) }})"><i class="fa fa-edit"></i></button>
-                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar user" onclick="eliminarUser('{{ $user->id }}',  '{{ $user->name }}')"><i class="fa fa-trash"></i></button>
+                        <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar prenda" onclick="editarPrenda({{ json_encode($prenda) }})"><i class="fa fa-edit"></i></button>
+                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar prenda" onclick="eliminarPrenda('{{ $prenda->id }}',  '{{ $prenda->nombre }}')"><i class="fa fa-trash"></i></button>
                     </td>
                 </tr>
             @empty
@@ -40,7 +26,7 @@
 
 <script>
     $(document).ready(function() {
-        $('#kt_table_usuarios').DataTable({
+        $('#kt_table_prendas').DataTable({
             lengthMenu: [10, 25, 50, 100], // Opciones de longitud de página
             dom: '<"dt-head row"<"col-md-6"l><"col-md-6"f>><"clear">t<"dt-footer row"<"col-md-5"i><"col-md-7"p>>', // Use dom for basic layout
             language: {
