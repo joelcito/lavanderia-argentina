@@ -26,7 +26,7 @@
                         <div class="row">
                             <div class="col-md-12">                            
                                 <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Nombre</label>
+                                    <label class="required fw-semibold fs-6 mb-2">Nombres</label>
                                     <input type="text" class="form-control form-control-sm" id="nombre"
                                         name="nombre">
                                 </div>                     
@@ -140,17 +140,128 @@
             })
         }
 
-        function modalNuevoCliente(){
-            $('#nombre').val('')
+        function modalNuevoCliente(){            
+            $('#razon_social').val('')
+            $('#nit').val('')
+            $('#cedula').val('')
+            $('#celular').val('')
             $('#ap_materno').val('')
+            $('#ap_paterno').val('')
+            $('#nombre').val('')
             $('#id').val(0)
             $('#modalCliente').modal('show')
         }
 
-       
-       
+        function guardarCliente(){
+            let datos = $('#formularioCliente').serializeArray();
 
+             $.ajax({
+                url: "{{ route('cliente.guardarCliente') }}",
+                method: "POST",
+                data: datos,
+                success: function(resultado) {
+                    if (resultado.estado) {
+                        Swal.fire({
+                            title: "EL REGISTRO FUE EXITOSO.",
+                            icon: "success",
+                            timer: 3000, // Se cierra en 3 segundos
+                            showConfirmButton: false
+                        });
+                        ajaxListado();
+                        $('#modalCliente').modal('hide');
+                    } else {
+
+                    }
+                },
+                error: function(xhr) {
+                    limpiarErorres();
+
+                    if (xhr.status === 422) {
+                        let errores = xhr.responseJSON.errors;
+
+                        for (let campo in errores) {
+                            let mensaje = errores[campo][0];
+
+                            let input = $(`[name="${campo}"]`);
+                            input.addClass("is-invalid");
+                            input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ocurrió un error inesperado.',
+                        });
+                    }
+                }
+            });
+        }
+       
+        function editarCliente(cliente){            
+            $('#razon_social').val(cliente.razon_social)
+            $('#nit').val(cliente.nit)
+            $('#cedula').val(cliente.cedula)
+            $('#celular').val(cliente.celular)            
+            $('#ap_materno').val(cliente.ap_materno)
+            $('#ap_paterno').val(cliente.ap_paterno)
+            $('#nombre').val(cliente.nombres)
+            $('#rol_id').val(cliente.rol_id)
+            $('#id').val(cliente.id)
+            $('#modalCliente').modal('show')
+        }
       
+        function eliminarCliente(cliente, razon_social) {
+            Swal.fire({
+                title: "¿Quieres eliminar " + razon_social + "?",
+                text: "¡No podrás recuperarlo!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: "Sí, borrar",
+                cancelButtonText: "No, cancelar",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('cliente.eliminarCliente') }}",
+                        method: "POST",
+                        data: { cliente: cliente },
+                        success: function(resultado) {
+                            if (resultado.estado) {
+                                ajaxListado(); // recarga el listado
+                                Swal.fire(
+                                    'Eliminado!',
+                                    'El usuario ha sido eliminado correctamente.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'Error',
+                                    resultado.message || 'No se pudo eliminar el usuario.',
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error inesperado.'
+                            });
+                        }
+                    });
+                    
+                    
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire(
+                        'Cancelado',
+                        'La operación fue cancelada',
+                        'info'
+                    );
+                }
+            });
+        }
         
     </script>
 @endsection

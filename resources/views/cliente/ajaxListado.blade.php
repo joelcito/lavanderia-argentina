@@ -10,12 +10,13 @@
                 <th>C.I.</th>
                 <th>NIT</th>               
                 <th>Razon Social</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($clientes as $cliente)
                 <tr>
-                    <td>{{ $cliente->nombre }}</td>
+                    <td>{{ $cliente->nombres }}</td>
                     <td>{{ $cliente->ap_paterno }}</td>
                     <td>{{ $cliente->ap_materno }}</td>
                     <td>{{ $cliente->celular }}</td>
@@ -23,8 +24,8 @@
                     <td>{{ $cliente->nit }}</td>
                     <td>{{ $cliente->razon_social }}</td>
                     <td>
-                        <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar cliente" onclick="editarcliente({{ json_encode($cliente) }})"><i class="fa fa-edit"></i></button>
-                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar cliente" onclick="eliminarcliente('{{ $cliente->id }}',  '{{ $cliente->nombre }}')"><i class="fa fa-trash"></i></button>
+                        <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar cliente" onclick="editarCliente({{ json_encode($cliente) }})"><i class="fa fa-edit"></i></button>
+                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar cliente" onclick="eliminarCliente('{{ $cliente->id }}',  '{{ $cliente->razon_social }}')"><i class="fa fa-trash"></i></button>
                     </td>
                 </tr>
             @empty
