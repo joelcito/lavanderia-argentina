@@ -4,6 +4,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PrendaController;
 use App\Http\Controllers\RolController;
+use App\Http\Controllers\TipoTelaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Auth;
@@ -51,5 +52,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [PrendaController::class, 'ajaxListado'])->name('prenda.ajaxListado');
         Route::post('/guardarPrenda', [PrendaController::class, 'guardarPrenda'])->name('prenda.guardarPrenda');
         Route::post('/eliminarPrenda', [PrendaController::class, 'eliminarPrenda'])->name('prenda.eliminarPrenda');
+   });
+   // TIPO TELA
+    Route::prefix('/tipo_tela')->group(function(){
+        Route::get('/listado', [TipoTelaController::class, 'listado'])->name('tipo_tela.listado');
+        Route::post('/ajaxListado', [TipoTelaController::class, 'ajaxListado'])->name('tipo_tela.ajaxListado');
+        Route::post('/guardarTipoTela', [TipoTelaController::class, 'guardarTipoTela'])->name('tipo_tela.guardarTipoTela');
+        Route::post('/eliminarTipoTela', [TipoTelaController::class, 'eliminarTipoTela'])->name('tipo_tela.eliminarTipoTela');
    });
 });

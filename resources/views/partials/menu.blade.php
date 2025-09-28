@@ -75,6 +75,15 @@
                                 <span class="menu-title text-white">Prendas</span>
                             </a>
                         </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ Route::currentRouteName() == 'tipo_tela.listado' ? 'active' : '' }}"
+                                href="{{ route('tipo_tela.listado') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">Tipos de Telas</span>
+                            </a>
+                        </div>
                         {{-- <div class="menu-item">
                         <a class="menu-link {{ Route::currentRouteName() == 'unidadMedida.listado' ? 'active' : '' }}"
                             href="{{ route('unidadMedida.listado') }}">
