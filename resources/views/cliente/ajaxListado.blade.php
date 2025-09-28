@@ -6,26 +6,25 @@
                 <th>Nombre</th>
                 <th>Apellido Paterno</th>
                 <th>Apellido Materno</th>
-                <th>C.I.</th>
                 <th>Celular</th>
-                <th>Nombre Usuario</th>
-                <th>Email</th>               
-                <th>Actions</th>
+                <th>C.I.</th>
+                <th>NIT</th>               
+                <th>Razon Social</th>
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
-            @forelse ($usuarios as $user)
+            @forelse ($clientes as $cliente)
                 <tr>
-                    <td>{{ $user->nombre }}</td>
-                    <td>{{ $user->ap_paterno }}</td>
-                    <td>{{ $user->ap_materno }}</td>
-                    <td>{{ $user->cedula }}</td>
-                    <td>{{ $user->celular }}</td>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
+                    <td>{{ $cliente->nombre }}</td>
+                    <td>{{ $cliente->ap_paterno }}</td>
+                    <td>{{ $cliente->ap_materno }}</td>
+                    <td>{{ $cliente->celular }}</td>
+                    <td>{{ $cliente->cedula }}</td>
+                    <td>{{ $cliente->nit }}</td>
+                    <td>{{ $cliente->razon_social }}</td>
                     <td>
-                        <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar user" onclick="editarUser({{ json_encode($user) }})"><i class="fa fa-edit"></i></button>
-                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar user" onclick="eliminarUser('{{ $user->id }}',  '{{ $user->name }}')"><i class="fa fa-trash"></i></button>
+                        <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar cliente" onclick="editarcliente({{ json_encode($cliente) }})"><i class="fa fa-edit"></i></button>
+                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar cliente" onclick="eliminarcliente('{{ $cliente->id }}',  '{{ $cliente->nombre }}')"><i class="fa fa-trash"></i></button>
                     </td>
                 </tr>
             @empty

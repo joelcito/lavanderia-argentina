@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\UserController;
@@ -35,5 +36,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [UserController::class, 'ajaxListado'])->name('user.ajaxListado');
         Route::post('/guardarUser', [UserController::class, 'guardarUser'])->name('user.guardarUser');
         Route::post('/eliminarUser', [UserController::class, 'eliminarUser'])->name('user.eliminarUser');    
+    });
+     // CLIENTE
+    Route::prefix('/Cliente')->group(function(){
+        Route::get('/listado', [ClienteController::class, 'listado'])->name('cliente.listado');
+        Route::post('/ajaxListado', [ClienteController::class, 'ajaxListado'])->name('cliente.ajaxListado');
+        Route::post('/guardarCliente', [ClienteController::class, 'guardarCliente'])->name('cliente.guardarCliente');
+        Route::post('/eliminarCliente', [ClienteController::class, 'eliminarCliente'])->name('cliente.eliminarCliente');    
     });
 });
