@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CaracteristicaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PrendaController;
@@ -31,7 +32,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [RolController::class, 'ajaxListado'])->name('rol.ajaxListado');
         Route::post('/guardarRol', [RolController::class, 'guardarRol'])->name('rol.guardarRol');
         Route::post('/eliminarRol', [RolController::class, 'eliminarRol'])->name('rol.eliminarRol');
-   });
+    });
      // USUARIO
     Route::prefix('/user')->group(function(){
         Route::get('/listado', [UserController::class, 'listado'])->name('user.listado');
@@ -52,12 +53,19 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [PrendaController::class, 'ajaxListado'])->name('prenda.ajaxListado');
         Route::post('/guardarPrenda', [PrendaController::class, 'guardarPrenda'])->name('prenda.guardarPrenda');
         Route::post('/eliminarPrenda', [PrendaController::class, 'eliminarPrenda'])->name('prenda.eliminarPrenda');
-   });
-   // TIPO TELA
+    });
+    // TIPO TELA
     Route::prefix('/tipo_tela')->group(function(){
         Route::get('/listado', [TipoTelaController::class, 'listado'])->name('tipo_tela.listado');
         Route::post('/ajaxListado', [TipoTelaController::class, 'ajaxListado'])->name('tipo_tela.ajaxListado');
         Route::post('/guardarTipoTela', [TipoTelaController::class, 'guardarTipoTela'])->name('tipo_tela.guardarTipoTela');
         Route::post('/eliminarTipoTela', [TipoTelaController::class, 'eliminarTipoTela'])->name('tipo_tela.eliminarTipoTela');
-   });
+    });
+    // CARACTERISTICA
+    Route::prefix('/caracteristica')->group(function(){
+        Route::get('/listado', [CaracteristicaController::class, 'listado'])->name('caracteristica.listado');
+        Route::post('/ajaxListado', [CaracteristicaController::class, 'ajaxListado'])->name('caracteristica.ajaxListado');
+        Route::post('/guardarCaracteristica', [CaracteristicaController::class, 'guardarCaracteristica'])->name('caracteristica.guardarCaracteristica');
+        Route::post('/eliminarCaracteristica', [CaracteristicaController::class, 'eliminarCaracteristica'])->name('caracteristica.eliminarCaracteristica');
+    });
 });

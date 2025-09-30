@@ -84,6 +84,15 @@
                                 <span class="menu-title text-white">Tipos de Telas</span>
                             </a>
                         </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ Route::currentRouteName() == 'caracteristica.listado' ? 'active' : '' }}"
+                                href="{{ route('caracteristica.listado') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">Caracteristicas</span>
+                            </a>
+                        </div>
                         {{-- <div class="menu-item">
                         <a class="menu-link {{ Route::currentRouteName() == 'unidadMedida.listado' ? 'active' : '' }}"
                             href="{{ route('unidadMedida.listado') }}">
