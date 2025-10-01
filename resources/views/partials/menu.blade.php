@@ -111,6 +111,15 @@
                                 <span class="menu-title text-white">Sucursales</span>
                             </a>
                         </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ Route::currentRouteName() == 'maquinaria.listado' ? 'active' : '' }}"
+                                href="{{ route('maquinaria.listado') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">Maquinarias</span>
+                            </a>
+                        </div>
                         {{-- <div class="menu-item">
                         <a class="menu-link {{ Route::currentRouteName() == 'puntoVenta.listado' ? 'active' : '' }}"
                             href="{{ route('puntoVenta.listado') }}">

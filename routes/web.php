@@ -3,6 +3,7 @@
 use App\Http\Controllers\CaracteristicaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MaquinariaController;
 use App\Http\Controllers\PrendaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
@@ -91,5 +92,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [ProductoController::class, 'ajaxListado'])->name('producto.ajaxListado');
         Route::post('/guardarProducto', [ProductoController::class, 'guardarProducto'])->name('producto.guardarProducto');
         Route::post('/eliminarProducto', [ProductoController::class, 'eliminarProducto'])->name('producto.eliminarProducto');
+    });
+    // MAQUINARIAS
+    Route::prefix('/maquinaria')->group(function(){
+        Route::get('/listado', [MaquinariaController::class, 'listado'])->name('maquinaria.listado');
+        Route::post('/ajaxListado', [MaquinariaController::class, 'ajaxListado'])->name('maquinaria.ajaxListado');
+        Route::post('/guardarMaquinaria', [MaquinariaController::class, 'guardarMaquinaria'])->name('maquinaria.guardarMaquinaria');
+        Route::post('/eliminarMaquinaria', [MaquinariaController::class, 'eliminarMaquinaria'])->name('maquinaria.eliminarMaquinaria');
     });
 });
