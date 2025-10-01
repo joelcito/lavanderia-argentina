@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CaracteristicaController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ColorTelaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaquinariaController;
 use App\Http\Controllers\PrendaController;
@@ -99,5 +100,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [MaquinariaController::class, 'ajaxListado'])->name('maquinaria.ajaxListado');
         Route::post('/guardarMaquinaria', [MaquinariaController::class, 'guardarMaquinaria'])->name('maquinaria.guardarMaquinaria');
         Route::post('/eliminarMaquinaria', [MaquinariaController::class, 'eliminarMaquinaria'])->name('maquinaria.eliminarMaquinaria');
+    });
+    // color TELA
+    Route::prefix('/color_tela')->group(function(){
+        Route::get('/listado', [ColorTelaController::class, 'listado'])->name('color_tela.listado');
+        Route::post('/ajaxListado', [ColorTelaController::class, 'ajaxListado'])->name('color_tela.ajaxListado');
+        Route::post('/guardarColorTela', [ColorTelaController::class, 'guardarColorTela'])->name('color_tela.guardarColorTela');
+        Route::post('/eliminarColorTela', [ColorTelaController::class, 'eliminarColorTela'])->name('color_tela.eliminarColorTela');
     });
 });
