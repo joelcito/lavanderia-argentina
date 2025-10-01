@@ -103,6 +103,15 @@
                             </a>
                         </div>
                         <div class="menu-item">
+                            <a class="menu-link {{ Route::currentRouteName() == 'tipo_proceso.listado' ? 'active' : '' }}"
+                                href="{{ route('tipo_proceso.listado') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">Tipos de Proceso</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
                             <a class="menu-link {{ Route::currentRouteName() == 'caracteristica.listado' ? 'active' : '' }}"
                                 href="{{ route('caracteristica.listado') }}">
                                 <span class="menu-bullet">

@@ -11,6 +11,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\SucursalController;
+use App\Http\Controllers\TipoProcesoController;
 use App\Http\Controllers\TipoTelaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -115,5 +116,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [NombreTelaController::class, 'ajaxListado'])->name('nombre_tela.ajaxListado');
         Route::post('/guardarNombreTela', [NombreTelaController::class, 'guardarNombreTela'])->name('nombre_tela.guardarNombreTela');
         Route::post('/eliminarNombreTela', [NombreTelaController::class, 'eliminarNombreTela'])->name('nombre_tela.eliminarNombreTela');
+    });
+    // TIPO PROCESO
+    Route::prefix('/tipo_proceso')->group(function(){
+        Route::get('/listado', [TipoProcesoController::class, 'listado'])->name('tipo_proceso.listado');
+        Route::post('/ajaxListado', [TipoProcesoController::class, 'ajaxListado'])->name('tipo_proceso.ajaxListado');
+        Route::post('/guardarTipoProceso', [TipoProcesoController::class, 'guardarTipoProceso'])->name('tipo_proceso.guardarTipoProceso');
+        Route::post('/eliminarTipoProceso', [TipoProcesoController::class, 'eliminarTipoProceso'])->name('tipo_proceso.eliminarTipoProceso');
     });
 });
