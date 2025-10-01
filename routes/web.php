@@ -6,6 +6,7 @@ use App\Http\Controllers\ColorTelaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaquinariaController;
 use App\Http\Controllers\NombreTelaController;
+use App\Http\Controllers\PrelavadoController;
 use App\Http\Controllers\PrendaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
@@ -123,5 +124,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [TipoProcesoController::class, 'ajaxListado'])->name('tipo_proceso.ajaxListado');
         Route::post('/guardarTipoProceso', [TipoProcesoController::class, 'guardarTipoProceso'])->name('tipo_proceso.guardarTipoProceso');
         Route::post('/eliminarTipoProceso', [TipoProcesoController::class, 'eliminarTipoProceso'])->name('tipo_proceso.eliminarTipoProceso');
+    });
+    // PRELAVADO
+    Route::prefix('/prelavado')->group(function(){
+        Route::get('/listado', [PrelavadoController::class, 'listado'])->name('prelavado.listado');
+        Route::post('/ajaxListado', [PrelavadoController::class, 'ajaxListado'])->name('prelavado.ajaxListado');
+        Route::post('/guardarPrelavado', [PrelavadoController::class, 'guardarPrelavado'])->name('prelavado.guardarPrelavado');
+        Route::post('/eliminarPrelavado', [PrelavadoController::class, 'eliminarPrelavado'])->name('prelavado.eliminarPrelavado');
     });
 });
