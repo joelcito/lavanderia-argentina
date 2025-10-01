@@ -103,7 +103,8 @@
                         </a>
                     </div> --}}
                         <div class="menu-item">
-                            <a class="menu-link" href="{{ url('sucursal/listado') }}">
+                            <a class="menu-link {{ Route::currentRouteName() == 'sucursal.listado' ? 'active' : '' }}"
+                                href="{{ route('sucursal.listado') }}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>

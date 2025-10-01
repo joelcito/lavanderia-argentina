@@ -5,6 +5,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PrendaController;
 use App\Http\Controllers\RolController;
+use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\TipoTelaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -67,5 +68,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [CaracteristicaController::class, 'ajaxListado'])->name('caracteristica.ajaxListado');
         Route::post('/guardarCaracteristica', [CaracteristicaController::class, 'guardarCaracteristica'])->name('caracteristica.guardarCaracteristica');
         Route::post('/eliminarCaracteristica', [CaracteristicaController::class, 'eliminarCaracteristica'])->name('caracteristica.eliminarCaracteristica');
+    });
+    // SUCURSAL
+    Route::prefix('/sucursal')->group(function(){
+        Route::get('/listado', [SucursalController::class, 'listado'])->name('sucursal.listado');
+        Route::post('/ajaxListado', [SucursalController::class, 'ajaxListado'])->name('sucursal.ajaxListado');
+        Route::post('/guardarSucursal', [SucursalController::class, 'guardarSucursal'])->name('sucursal.guardarSucursal');
+        Route::post('/eliminarSucursal', [SucursalController::class, 'eliminarSucursal'])->name('sucursal.eliminarSucursal');
     });
 });
