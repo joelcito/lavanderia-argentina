@@ -5,6 +5,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ColorTelaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaquinariaController;
+use App\Http\Controllers\NombreTelaController;
 use App\Http\Controllers\PrendaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
@@ -107,5 +108,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [ColorTelaController::class, 'ajaxListado'])->name('color_tela.ajaxListado');
         Route::post('/guardarColorTela', [ColorTelaController::class, 'guardarColorTela'])->name('color_tela.guardarColorTela');
         Route::post('/eliminarColorTela', [ColorTelaController::class, 'eliminarColorTela'])->name('color_tela.eliminarColorTela');
+    });
+    // NOMBRE TELA
+    Route::prefix('/nombre_tela')->group(function(){
+        Route::get('/listado', [NombreTelaController::class, 'listado'])->name('nombre_tela.listado');
+        Route::post('/ajaxListado', [NombreTelaController::class, 'ajaxListado'])->name('nombre_tela.ajaxListado');
+        Route::post('/guardarNombreTela', [NombreTelaController::class, 'guardarNombreTela'])->name('nombre_tela.guardarNombreTela');
+        Route::post('/eliminarNombreTela', [NombreTelaController::class, 'eliminarNombreTela'])->name('nombre_tela.eliminarNombreTela');
     });
 });
