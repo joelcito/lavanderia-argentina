@@ -3,6 +3,7 @@
 use App\Http\Controllers\CaracteristicaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ColorTelaController;
+use App\Http\Controllers\FocalizadoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaquinariaController;
 use App\Http\Controllers\NombreTelaController;
@@ -131,5 +132,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [PrelavadoController::class, 'ajaxListado'])->name('prelavado.ajaxListado');
         Route::post('/guardarPrelavado', [PrelavadoController::class, 'guardarPrelavado'])->name('prelavado.guardarPrelavado');
         Route::post('/eliminarPrelavado', [PrelavadoController::class, 'eliminarPrelavado'])->name('prelavado.eliminarPrelavado');
+    });
+    // FOCALIZADO
+    Route::prefix('/focalizado')->group(function(){
+        Route::get('/listado', [FocalizadoController::class, 'listado'])->name('focalizado.listado');
+        Route::post('/ajaxListado', [FocalizadoController::class, 'ajaxListado'])->name('focalizado.ajaxListado');
+        Route::post('/guardarFocalizado', [FocalizadoController::class, 'guardarFocalizado'])->name('focalizado.guardarFocalizado');
+        Route::post('/eliminarFocalizado', [FocalizadoController::class, 'eliminarFocalizado'])->name('focalizado.eliminarFocalizado');
     });
 });

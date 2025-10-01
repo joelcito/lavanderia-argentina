@@ -121,6 +121,15 @@
                             </a>
                         </div>
                         <div class="menu-item">
+                            <a class="menu-link {{ Route::currentRouteName() == 'focalizado.listado' ? 'active' : '' }}"
+                                href="{{ route('focalizado.listado') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">Focalizados</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
                             <a class="menu-link {{ Route::currentRouteName() == 'caracteristica.listado' ? 'active' : '' }}"
                                 href="{{ route('caracteristica.listado') }}">
                                 <span class="menu-bullet">
