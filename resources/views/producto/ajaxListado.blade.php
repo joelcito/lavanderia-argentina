@@ -21,7 +21,7 @@
                     <td>{{ $producto->minimo_stock }}</td>
                     <td>
                         <!-- Nuevo botón Stock -->
-                        <button class="btn btn-icon btn-sm btn-info btn-circle" title="Ver Stock" onclick="abrirStock({{ $producto->id }})"><i class="fa fa-boxes"></i></button>
+                        <button class="btn btn-icon btn-sm btn-info btn-circle" title="Ver Stock" onclick="abrirStock({{ $producto->id }}, '{{ $producto->nombre }}')"><i class="fa fa-boxes"></i></button>
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar producto" onclick="editarProducto({{ json_encode($producto) }})"><i class="fa fa-edit"></i></button>
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar producto" onclick="eliminarProducto('{{ $producto->id }}',  '{{ $producto->nombre }}')"><i class="fa fa-trash"></i></button>
                     </td>

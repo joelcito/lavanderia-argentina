@@ -143,11 +143,11 @@ Route::middleware('auth')->group(function () {
     });
     // MOVIMIENTO
     Route::prefix('/movimiento')->group(function(){
-        Route::get('movimiento/{producto}/stock', [MovimientoController::class, 'listarStock'])->name('movimiento.listarStock');
+        Route::get('/listado', [MovimientoController::class, 'listado'])->name('movimiento.listado');
+        Route::get('/ajaxListado', [MovimientoController::class, 'ajaxListado'])->name('movimiento.ajaxListado');
         Route::post('movimiento/ingreso', [MovimientoController::class, 'agregarIngreso'])->name('movimiento.agregarIngreso');
         Route::post('movimiento/egreso', [MovimientoController::class, 'agregarEgreso'])->name('movimiento.agregarEgreso');
-        //Route::get('/listado', [MovimientoController::class, 'listado'])->name('movimiento.listado');
-        Route::post('/ajaxListado', [MovimientoController::class, 'ajaxListado'])->name('movimiento.ajaxListado');
+        
         //Route::post('/guardarMovimiento', [MovimientoController::class, 'guardarMovimiento'])->name('movimiento.guardarMovimiento');
     });
 });

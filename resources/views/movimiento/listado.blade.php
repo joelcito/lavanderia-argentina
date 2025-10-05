@@ -3,7 +3,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header" id="kt_modal_add_user_header">
-                    <h3 class="fw-bold">CANTIDAD STOCK POR SUCURSAL DEL PRODUCTO  <span class="text-info" id="nombre_busqueda"></span></h3>
+                    <h3 class="fw-bold">CANTIDAD STOCK POR SUCURSAL DEL PRODUCTO  <span class="text-info" id="producto_nombre_modal"></span></span></h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body scroll-y">
@@ -22,9 +22,28 @@
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
 
-        $(document).ready(function() {
-            ajaxListado();
-        });
+
+        // 📦 Abre el modal de stock
+        function abrirStock(productoId, nombreProducto) {
+            $('#producto_nombre_modal').text(nombreProducto);
+            $('#modalStock').modal('show');
+
+            $.ajax({
+                url: "{{ route('movimiento.ajaxListado') }}",
+                method: 'GET',
+                data: { producto_id: productoId }, // se envía el ID al controlador
+                success: function(res) {
+                    if (res.estado) {
+                        $('#table_listado').html(res.data.ajaxListado);
+                    } else {
+                        $('#table_listado').html('<p class="text-danger text-center">Error al cargar el stock</p>');
+                    }
+                },
+                error: function() {
+                    $('#table_listado').html('<p class="text-danger text-center">Ocurrió un error en el servidor</p>');
+                }
+            });
+        }
 
         function ajaxListado(){
             let datos = {};
@@ -45,26 +64,7 @@
             })
         }
 
-        // 📦 Abre el modal de stock
-        function abrirStock(productoId, nombreProducto) {
-            $('#producto_nombre_modal').text(nombreProducto);
-            $('#modalStock').modal('show');
-
-            $.ajax({
-                url: `/movimiento/${productoId}/stock`,
-                method: 'GET',
-                success: function(res) {
-                    if (res.estado) {
-                        $('#contenido_stock').html(res.data.stock);
-                    } else {
-                        $('#contenido_stock').html('<p class="text-danger text-center">Error al cargar el stock</p>');
-                    }
-                },
-                error: function() {
-                    $('#contenido_stock').html('<p class="text-danger text-center">Ocurrió un error en el servidor</p>');
-                }
-            });
-        }
+        
 
         function abrirIngreso(productoId, sucursalId) {
             Swal.fire({
@@ -123,57 +123,6 @@
                 }
             });
         }
-
-        /*function modalNuevoNombreTela(){
-            $('#nombre').val('')
-            $('#id').val(0)
-            $('#modalListStock').modal('show')
-        }
-
-        function guardarMovimiento(){
-            let datos = $('#formularioNombreTela').serializeArray();
-
-             $.ajax({
-                url: "{{ route('movimiento.guardarMovimiento') }}",
-                method: "POST",
-                data: datos,
-                success: function(resultado) {
-                    if (resultado.estado) {
-                        Swal.fire({
-                            title: "EL REGISTRO FUE EXITOSO.",
-                            icon: "success",
-                            timer: 3000, // Se cierra en 3 segundos
-                            showConfirmButton: false
-                        });
-                        ajaxListado();
-                        $('#modalListStock').modal('hide');
-                    } else {
-
-                    }
-                },
-                error: function(xhr) {
-                    limpiarErorres();
-
-                    if (xhr.status === 422) {
-                        let errores = xhr.responseJSON.errors;
-
-                        for (let campo in errores) {
-                            let mensaje = errores[campo][0];
-
-                            let input = $(`[name="${campo}"]`);
-                            input.addClass("is-invalid");
-                            input.after(`<div class="invalid-feedback">${mensaje}</div>`);
-                        }
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Ocurrió un error inesperado.',
-                        });
-                    }
-                }
-            });
-        }*/
         
     </script>
 @endsection

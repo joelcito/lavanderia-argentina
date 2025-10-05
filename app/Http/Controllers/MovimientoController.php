@@ -13,14 +13,16 @@ class MovimientoController extends Controller
         return view ('movimiento.listado');
     }
 
-    public function ajaxListado(Request $request, $productoId){
+    public function ajaxListado(Request $request){
+
+        $productoId = $request->input('producto_id');
 
         if($request->ajax()){
 
             //SACAMOS EL LISTADO
             $stocks = Movimiento::where('producto_id', $productoId)
                 ->select('sucursal_id')
-                ->selectRaw('SUM(ingreso) - SUM(salida) as stock_sucursal')
+                ->selectRaw('SUM(ingreso) as stock_sucursal')
                 ->groupBy('sucursal_id')
                 ->get();
 
