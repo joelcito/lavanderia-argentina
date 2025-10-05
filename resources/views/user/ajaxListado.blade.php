@@ -17,7 +17,7 @@
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($usuarios as $user)
                 <tr>
-                    <td>{{ $user->rol_id }}</td>
+                    <td>{{ $user->rol?->nombre }}</td>
                     <td>{{ $user->nombres }}</td>
                     <td>{{ $user->ap_paterno }}</td>
                     <td>{{ $user->ap_materno }}</td>

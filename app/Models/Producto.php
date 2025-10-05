@@ -26,4 +26,8 @@ class Producto extends Model
         'estado',
         'deleted_at',
     ];
+
+    public function proveedor(){
+        return $this->belongsTo('App\Models\Proveedor', 'proveedor_id');
+    }
 }

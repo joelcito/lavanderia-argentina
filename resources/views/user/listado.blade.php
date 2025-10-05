@@ -69,7 +69,7 @@
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Email</label>
                                     <input type="email" class="form-control form-control-sm" id="email"
-                                        name="email">
+                                        name="email" required>
                                 </div>                                                    
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">password</label>
@@ -171,48 +171,54 @@
         }
 
         function guardarUser(){
-            let datos = $('#formularioUser').serializeArray();
 
-             $.ajax({
-                url: "{{ route('user.guardarUser') }}",
-                method: "POST",
-                data: datos,
-                success: function(resultado) {
-                    if (resultado.estado) {
-                        Swal.fire({
-                            title: "EL REGISTRO FUE EXITOSO.",
-                            icon: "success",
-                            timer: 3000, // Se cierra en 3 segundos
-                            showConfirmButton: false
-                        });
-                        ajaxListado();
-                        $('#modalUsuario').modal('hide');
-                    } else {
-
-                    }
-                },
-                error: function(xhr) {
-                    limpiarErorres();
-
-                    if (xhr.status === 422) {
-                        let errores = xhr.responseJSON.errors;
-
-                        for (let campo in errores) {
-                            let mensaje = errores[campo][0];
-
-                            let input = $(`[name="${campo}"]`);
-                            input.addClass("is-invalid");
-                            input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+            if($('#formularioUser')[0].checkValidity()){
+                let datos = $('#formularioUser').serializeArray();
+    
+                 $.ajax({
+                    url: "{{ route('user.guardarUser') }}",
+                    method: "POST",
+                    data: datos,
+                    success: function(resultado) {
+                        if (resultado.estado) {
+                            Swal.fire({
+                                title: "EL REGISTRO FUE EXITOSO.",
+                                icon: "success",
+                                timer: 3000, // Se cierra en 3 segundos
+                                showConfirmButton: false
+                            });
+                            ajaxListado();
+                            $('#modalUsuario').modal('hide');
+                        } else {
+    
                         }
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Ocurrió un error inesperado.',
-                        });
+                    },
+                    error: function(xhr) {
+                        limpiarErorres();
+    
+                        if (xhr.status === 422) {
+                            let errores = xhr.responseJSON.errors;
+    
+                            for (let campo in errores) {
+                                let mensaje = errores[campo][0];
+    
+                                let input = $(`[name="${campo}"]`);
+                                input.addClass("is-invalid");
+                                input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                            }
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error inesperado.',
+                            });
+                        }
                     }
-                }
-            });
+                });
+            }else{
+                $("#formularioUser")[0].reportValidity();
+            }
+
         }
        
         function editarUser(user){

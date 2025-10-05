@@ -6,6 +6,7 @@ use App\Http\Controllers\ColorTelaController;
 use App\Http\Controllers\FocalizadoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaquinariaController;
+use App\Http\Controllers\MovimientoController;
 use App\Http\Controllers\NombreTelaController;
 use App\Http\Controllers\PrelavadoController;
 use App\Http\Controllers\PrendaController;
@@ -139,5 +140,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [FocalizadoController::class, 'ajaxListado'])->name('focalizado.ajaxListado');
         Route::post('/guardarFocalizado', [FocalizadoController::class, 'guardarFocalizado'])->name('focalizado.guardarFocalizado');
         Route::post('/eliminarFocalizado', [FocalizadoController::class, 'eliminarFocalizado'])->name('focalizado.eliminarFocalizado');
+    });
+    // MOVIMIENTO
+    Route::prefix('/movimiento')->group(function(){
+        Route::get('movimiento/{producto}/stock', [MovimientoController::class, 'listarStock'])->name('movimiento.listarStock');
+        Route::post('movimiento/ingreso', [MovimientoController::class, 'agregarIngreso'])->name('movimiento.agregarIngreso');
+        Route::post('movimiento/egreso', [MovimientoController::class, 'agregarEgreso'])->name('movimiento.agregarEgreso');
+        //Route::get('/listado', [MovimientoController::class, 'listado'])->name('movimiento.listado');
+        Route::post('/ajaxListado', [MovimientoController::class, 'ajaxListado'])->name('movimiento.ajaxListado');
+        //Route::post('/guardarMovimiento', [MovimientoController::class, 'guardarMovimiento'])->name('movimiento.guardarMovimiento');
     });
 });

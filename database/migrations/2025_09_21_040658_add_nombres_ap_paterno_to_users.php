@@ -26,8 +26,8 @@ return new class extends Migration
             $table->string('ap_paterno')->nullable()->after('nombres');
             $table->string('ap_materno')->nullable()->after('ap_paterno');
             $table->string('cedula')->nullable()->after('ap_materno');
-            $table->string('direccion')->nullable()->after('cedula');
-            $table->string('celular')->nullable()->after('direccion');
+            //$table->string('direccion')->nullable()->after('cedula');
+            $table->string('celular')->nullable()->after('cedula');
 
             $table->string('estado')->nullable()->after('celular');
             $table->datetime('deleted_at')->nullable()->after('estado');

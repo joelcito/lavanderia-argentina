@@ -28,5 +28,14 @@ class Movimiento extends Model
 
         'estado',
         'deleted_at',
+        
     ];
+
+    public function producto(){
+        return $this->belongsTo('App\Models\Producto', 'producto_id');
+    }
+
+    public function sucursal(){
+        return $this->belongsTo('App\Models\Sucursal', 'sucursal_id');
+    }
 }

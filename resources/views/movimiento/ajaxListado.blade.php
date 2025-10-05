@@ -1,29 +1,21 @@
 <div style="overflow-x: auto;">
     <!--begin::Table-->
-    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_productos">
+    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_stock">
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-                <th>Proveedor</th>
                 <th>Nombre</th>
-                <th>Tipo</th>
-                <th>Codigo</th>
-                <th>Minimo Stock</th>
+                <th>Stock</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
-            @forelse ($productos as $producto)
+            @forelse ($movimientos as $movimiento)
                 <tr>
-                    <td>{{ $producto->proveedor?->razon_social }}</td>
-                    <td>{{ $producto->nombre }}</td>
-                    <td>{{ $producto->tipo }}</td>
-                    <td>{{ $producto->codigo }}</td>
-                    <td>{{ $producto->minimo_stock }}</td>
-                    <td>
-                        <!-- Nuevo botón Stock -->
-                        <button class="btn btn-icon btn-sm btn-info btn-circle" title="Ver Stock" onclick="abrirStock({{ $producto->id }})"><i class="fa fa-boxes"></i></button>
-                        <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar producto" onclick="editarProducto({{ json_encode($producto) }})"><i class="fa fa-edit"></i></button>
-                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar producto" onclick="eliminarProducto('{{ $producto->id }}',  '{{ $producto->nombre }}')"><i class="fa fa-trash"></i></button>
+                    <td>{{ $movimiento->sucursal?->nombre }}</td>
+                    <td>{{ $movimiento->stock_sucursal }}</td>
+                    <td>                    
+                        <button class="btn btn-icon btn-sm btn-primary btn-circle" title="ingreso producto" onclick="abrirIngreso({{ $productoId }}, {{ $stock->sucursal_id }})">"Añadir Ingreso</button>
+                        <button class="btn btn-icon btn-sm btn-warning btn-circle" title="egreso producto" onclick="abrirEgreso({{ $productoId }}, {{ $stock->sucursal_id }})">Añadir Egreso</button>
                     </td>
                 </tr>
             @empty
@@ -36,7 +28,7 @@
 
 <script>
     $(document).ready(function() {
-        $('#kt_table_productos').DataTable({
+        $('#kt_table_stock').DataTable({
             lengthMenu: [10, 25, 50, 100], // Opciones de longitud de página
             dom: '<"dt-head row"<"col-md-6"l><"col-md-6"f>><"clear">t<"dt-footer row"<"col-md-5"i><"col-md-7"p>>', // Use dom for basic layout
             language: {
