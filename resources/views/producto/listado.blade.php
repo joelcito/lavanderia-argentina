@@ -203,6 +203,24 @@
             
         }
 
+        function abrirStock(productoId) {
+            $.ajax({
+                url: '/producto/' + productoId + '/stock', // Ruta que veremos después
+                type: 'GET',
+                success: function(res) {
+                    if(res.estado) {
+                        $('#modalStockBody').html(res.data.stock); // Donde 'stock' es el HTML renderizado por AJAX
+                        $('#modalStock').modal('show'); // Abrir modal
+                    } else {
+                        Swal.fire('Error', 'No se pudo obtener el stock', 'error');
+                    }
+                },
+                error: function() {
+                    Swal.fire('Error', 'Ocurrió un error al obtener el stock', 'error');
+                }
+            });
+        }
+
         function eliminarProducto(producto, nombre) {
             Swal.fire({
                 title: "¿Quieres eliminar " + nombre + "?",
