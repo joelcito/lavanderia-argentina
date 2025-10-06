@@ -11,7 +11,7 @@
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($stocks as $movimiento)
                 <tr>
-                    <td>{{ $movimiento->sucursal_id }}</td>
+                    <td>{{ $movimiento->sucursal?->nombre }}</td>
                     <td>{{ $movimiento->stock_sucursal }}</td>
                     <td>                    
                         <button class="btn btn-icon btn-sm btn-primary btn-circle" title="ingreso producto" onclick="abrirIngreso({{ $productoId }}, {{ $movimiento->sucursal_id }})">"Añadir Ingreso</button>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Movimiento;
+use App\Models\Sucursal;
 use App\Utils\Respuesta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,12 +11,13 @@ use Illuminate\Support\Facades\Auth;
 class MovimientoController extends Controller
 {
     public function listado(){
-        return view ('movimiento.listado');
+        $sucursales = Sucursal::all();
+        return view ('movimiento.listado')->with(compact('sucursales'));
     }
 
     public function ajaxListado(Request $request){
 
-        $productoId = $request->input('producto_id');
+        $productoId = $request->input('productoId');
 
         if($request->ajax()){
 
@@ -45,7 +47,7 @@ class MovimientoController extends Controller
     {
         if ($request->ajax()) {
             $request->validate([
-                'producto_id' => 'required|integer|exists:productos,id',
+                'productoId' => 'required|integer|exists:productos,id',
                 'sucursal_id' => 'required|integer|exists:sucursales,id',
                 'cantidad' => 'required|numeric|min:0.01',
             ]);
@@ -53,7 +55,7 @@ class MovimientoController extends Controller
             $usuario = Auth::user();
 
             Movimiento::create([
-                'producto_id' => $request->producto_id,
+                'productoId' => $request->producto_id,
                 'sucursal_id' => $request->sucursal_id,
                 'ingreso' => $request->cantidad,
                 'egreso' => 0,
@@ -73,7 +75,7 @@ class MovimientoController extends Controller
     {
         if ($request->ajax()) {
             $request->validate([
-                'producto_id' => 'required|integer|exists:productos,id',
+                'productoId' => 'required|integer|exists:productos,id',
                 'sucursal_id' => 'required|integer|exists:sucursales,id',
                 'cantidad' => 'required|numeric|min:0.01',
             ]);
@@ -81,7 +83,7 @@ class MovimientoController extends Controller
             $usuario = Auth::user();
 
             Movimiento::create([
-                'producto_id' => $request->producto_id,
+                'productoId' => $request->producto_id,
                 'sucursal_id' => $request->sucursal_id,
                 'ingreso' => 0,
                 'egreso' => $request->cantidad,

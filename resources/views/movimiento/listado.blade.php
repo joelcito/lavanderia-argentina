@@ -17,7 +17,7 @@
         <!--end::Modal dialog-->
     </div>
     <!--end::Modal - Add task-->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
@@ -31,10 +31,10 @@
             $.ajax({
                 url: "{{ route('movimiento.ajaxListado') }}",
                 method: 'GET',
-                data: { producto_id: productoId }, // se envía el ID al controlador
+                data: { productoId: productoId }, // se envía el ID al controlador
                 success: function(res) {
                     if (res.estado) {
-                        $('#table_listado').html(res.data.ajaxListado);
+                        $('#table_listado').html(res.data.stock);
                     } else {
                         $('#table_listado').html('<p class="text-danger text-center">Error al cargar el stock</p>');
                     }
@@ -125,4 +125,4 @@
         }
         
     </script>
-@endsection
+

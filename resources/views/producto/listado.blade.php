@@ -10,7 +10,6 @@
 @section('metadatos')
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 @endsection
-@include('movimiento.listado')
 @section('content')
 
     <!--begin::Modal - Add task-->
@@ -204,11 +203,11 @@
             
         }
 
-        function abrirStock(productoId) {
+        function abrirStock(productoId, nombre) {
             $.ajax({
                 url: "{{ route('movimiento.ajaxListado') }}", // Ruta que veremos después
                 type: 'GET',
-                data: { productoId: productoId },
+                data: { productoId: productoId},
                 success: function(res) {
                     if(res.estado) {
                         $('#modalStockBody').html(res.data.stock); // Donde 'stock' es el HTML renderizado por AJAX
