@@ -10,6 +10,7 @@
 @section('metadatos')
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 @endsection
+{{-- @include('movimiento.listado') --}}
 @section('content')
 
     <!--begin::Modal - Add task-->
@@ -27,13 +28,14 @@
                             <div class="col-md-12">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Proveedor</label>
-                                    <select class="form-control form-control-sm" id="proveedor_id" name="proveedor_id" required>
+                                    <select class="form-control form-control-sm" id="proveedor_id" name="proveedor_id"
+                                        required>
                                         <option value="">Seleccione un proveedor</option>
-                                            @forelse($proveedores as $proveedor)
-                                                <option value="{{ $proveedor->id }}">{{ $proveedor->razon_social }}</option>
-                                            @empty
-                                                <h4 class="text-danger">No hay proveedores registrado</h4>
-                                            @endforelse
+                                        @forelse($proveedores as $proveedor)
+                                            <option value="{{ $proveedor->id }}">{{ $proveedor->razon_social }}</option>
+                                        @empty
+                                            <h4 class="text-danger">No hay proveedores registrado</h4>
+                                        @endforelse
                                     </select>
                                 </div>
                                 <div class="fv-row mb-7">
@@ -43,8 +45,8 @@
                                 </div>
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Tipo</label>
-                                    <input type="text" class="form-control form-control-sm" id="tipo"
-                                        name="tipo" maxlength="13">
+                                    <input type="text" class="form-control form-control-sm" id="tipo" name="tipo"
+                                        maxlength="13">
                                 </div>
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Codigo</label>
@@ -74,37 +76,61 @@
     </div>
     <!--end::Modal - Add task-->
 
-
-    <div class="d-flex flex-column flex-column-fluid">
-    <div id="kt_app_content" class="app-content flex-column-fluid">
-        <div id="kt_app_content_container" class="app-container container-xxlg">
-            <div class="card shadow-sm">
-                <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
-                    <h3 class="card-title fw-bold">Listado de Producto</h3>
-                    <div class="card-toolbar">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoProducto()">
-                            <i class="fa fa-plus"></i> Nuevo  Producto
-                        </button>
+    <!--begin::Modal - Add task-->
+    <div class="modal fade" id="modalStockSucursal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="kt_modal_add_user_header">
+                    <h3 class="fw-bold">STOCK POR SUCUASALES</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body scroll-y">
+                    <div id="tabla_stock"></div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{-- <button class="btn btn-sm w-100 btn-success" onclick="guardarProducto()">Guardar</button> --}}
+                        </div>
                     </div>
                 </div>
+                <!--end::Modal body-->
+            </div>
+        </div>
+        <!--end::Modal dialog-->
+    </div>
+    <!--end::Modal - Add task-->
 
-                <div class="card-body py-4" id="table_listado">
-                    <!-- El listado se carga por AJAX -->
+
+    <div class="d-flex flex-column flex-column-fluid">
+        <div id="kt_app_content" class="app-content flex-column-fluid">
+            <div id="kt_app_content_container" class="app-container container-xxlg">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
+                        <h3 class="card-title fw-bold">Listado de Producto</h3>
+                        <div class="card-toolbar">
+                            <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoProducto()">
+                                <i class="fa fa-plus"></i> Nuevo Producto
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-body py-4" id="table_listado">
+                        <!-- El listado se carga por AJAX -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
 @stop()
 
 @section('js')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-<script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
+    <script>
         $.ajaxSetup({
             // definimos cabecera donde estarra el token y poder hacer nuestras operaciones de put,post...
             headers: {
@@ -117,7 +143,7 @@
         });
 
 
-        function ajaxListado(){
+        function ajaxListado() {
             let datos = {};
             $.ajax({
                 url: "{{ route('producto.ajaxListado') }}",
@@ -136,8 +162,8 @@
             })
         }
 
-        function modalNuevoProducto(){
-            $('#minimo_stock').val('')           
+        function modalNuevoProducto() {
+            $('#minimo_stock').val('')
             $('#codigo').val('')
             $('#tipo').val('')
             $('#nombre').val('')
@@ -146,10 +172,10 @@
             $('#modalProducto').modal('show')
         }
 
-        function guardarProducto(){
+        function guardarProducto() {
             let datos = $('#formularioProducto').serializeArray();
 
-             $.ajax({
+            $.ajax({
                 url: "{{ route('producto.guardarProducto') }}",
                 method: "POST",
                 data: datos,
@@ -191,16 +217,16 @@
             });
         }
 
-        function editarProducto(producto){
+        function editarProducto(producto) {
 
-            $('#minimo_stock').val(producto.minimo_stock)          
+            $('#minimo_stock').val(producto.minimo_stock)
             $('#codigo').val(producto.codigo)
             $('#tipo').val(producto.tipo)
             $('#nombre').val(producto.nombre)
             $('#proveedor_id').val(producto.proveedor_id)
             $('#id').val(producto.id)
             $('#modalProducto').modal('show')
-            
+
         }
 
         function abrirStock(productoId, nombre) {
@@ -208,10 +234,17 @@
                 url: "{{ route('movimiento.ajaxListado') }}", // Ruta que veremos después
                 type: 'GET',
                 data: { productoId: productoId},
+                data: {
+                    productoId: productoId
+                },
                 success: function(res) {
-                    if(res.estado) {
-                        $('#modalStockBody').html(res.data.stock); // Donde 'stock' es el HTML renderizado por AJAX
-                        $('#modalStock').modal('show'); // Abrir modal
+
+                    console.log();
+
+                    if (res.estado) {
+                        $('#tabla_stock').html(res.data
+                            .stock); // Donde 'stock' es el HTML renderizado por AJAX
+                        $('#modalStockSucursal').modal('show'); // Abrir modal
                     } else {
                         Swal.fire('Error', 'No se pudo obtener el stock', 'error');
                     }
@@ -239,7 +272,9 @@
                     $.ajax({
                         url: "{{ route('producto.eliminarProducto') }}",
                         method: "POST",
-                        data: { producto: producto },
+                        data: {
+                            producto: producto
+                        },
                         success: function(resultado) {
                             if (resultado.estado) {
                                 ajaxListado(); // resga el listado
@@ -264,8 +299,8 @@
                             });
                         }
                     });
-                    
-                    
+
+
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire(
                         'Cancelado',
@@ -275,6 +310,5 @@
                 }
             });
         }
-        
     </script>
 @endsection
