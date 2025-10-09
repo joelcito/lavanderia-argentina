@@ -10,7 +10,7 @@
 @section('metadatos')
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 @endsection
-{{-- @include('movimiento.listado') --}}
+
 @section('content')
 
     <!--begin::Modal - Add task-->
@@ -81,7 +81,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header" id="kt_modal_add_user_header">
-                    <h3 class="fw-bold">STOCK POR SUCUASALES</h3>
+                    <h3 class="fw-bold">STOCK POR SUCUASALES <span id="nombreProductoModal"></span></h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body scroll-y">
@@ -90,7 +90,113 @@
                 <div class="modal-footer">
                     <div class="row">
                         <div class="col-md-12">
-                            {{-- <button class="btn btn-sm w-100 btn-success" onclick="guardarProducto()">Guardar</button> --}}
+                            
+                        </div>
+                    </div>
+                </div>
+                <!--end::Modal body-->
+            </div>
+        </div>
+        <!--end::Modal dialog-->
+    </div>
+    <!--end::Modal - Add task-->
+
+    <!--begin::Modal - Add task-->
+    <div class="modal fade" id="modalIngreso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="kt_modal_add_user_header">
+                    <h3 class="fw-bold">INGRESO DE STOCK:  <span class="text-info" id="nombreProductoModal"></span></h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body scroll-y">
+                    <form id="formularioIngreso">
+                        <input type="hidden" name="id" id="id" value="0">
+                        <input type="hidden" name="idProd" id="idProd" >
+                        <input type="hidden" name="idSuc" id="idSuc" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Sucursal</label>
+                                    <input type="text" class="form-control form-control-sm" id="sucursal"
+                                        name="sucursal" readonly>
+                                </div>
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Ingrese la Cantidad</label>
+                                    <input type="number" class="form-control form-control-sm" id="cantidad_ingreso"
+                                        name="cantidad_ingreso">
+                                </div>
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Fecha de Ingreso</label>
+                                    <input type="text" class="form-control form-control-sm" id="fecha_ingreso"
+                                        name="fecha_ingreso" value="{{ date('Y-m-d') }}" readonly>
+                                </div>
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Descripcion</label>
+                                    <textarea class="form-control form-control-sm" id="descripcion"
+                                        name="descripcion"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-sm w-100 btn-success" onclick="guardarIngreso()">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Modal body-->
+            </div>
+        </div>
+        <!--end::Modal dialog-->
+    </div>
+    <!--end::Modal - Add task-->
+
+    <!--begin::Modal - Add task-->
+    <div class="modal fade" id="modalSalida" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="kt_modal_add_user_header">
+                    <h3 class="fw-bold">SALIDA DE STOCK:  <span class="text-info" id="nombreProductoModal"></span></h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body scroll-y">
+                    <form id="formularioSalida">
+                        <input type="hidden" name="id" id="id" value="0">
+                        <input type="hidden" name="idProds" id="idProds" >
+                        <input type="hidden" name="idSucs" id="idSucs" >
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Sucursal</label>
+                                    <input type="text" class="form-control form-control-sm" id="sucursales"
+                                        name="sucursales" readonly>
+                                </div>
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Salida la Cantidad</label>
+                                    <input type="number" class="form-control form-control-sm" id="cantidad_salida"
+                                        name="cantidad_salida">
+                                </div>
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Fecha de Salida</label>
+                                    <input type="text" class="form-control form-control-sm" id="fecha_salida"
+                                        name="fecha_salida" value="{{ date('Y-m-d') }}" readonly>
+                                </div>
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Descripcion</label>
+                                    <textarea class="form-control form-control-sm" id="descripcion"
+                                        name="descripcion"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-sm w-100 btn-success" onclick="guardarSalida()">Guardar</button>
                         </div>
                     </div>
                 </div>
@@ -230,16 +336,16 @@
         }
 
         function abrirStock(productoId, nombre) {
+
+            document.getElementById('nombreProductoModal').textContent = nombre;
+
             $.ajax({
                 url: "{{ route('movimiento.ajaxListado') }}", // Ruta que veremos después
                 type: 'GET',
-                data: { productoId: productoId},
-                data: {
-                    productoId: productoId
+                data: { productoId: productoId, 
+                    nombre: nombre
                 },
                 success: function(res) {
-
-                    console.log();
 
                     if (res.estado) {
                         $('#tabla_stock').html(res.data
@@ -251,6 +357,120 @@
                 },
                 error: function() {
                     Swal.fire('Error', 'Ocurrió un error al obtener el stock', 'error');
+                }
+            });
+        }
+
+        function modalIngreso(productoId, sucursalId, nombreSuc) {
+            
+            document.getElementById('sucursal').value = nombreSuc;
+            document.getElementById('idSuc').value = sucursalId;
+            document.getElementById('idProd').value = productoId;
+
+            $('#descripcion').val('')            
+            $('#cantidad_ingreso').val('')            
+            $('#id').val(0)
+            $('#modalIngreso').modal('show')
+        }
+
+        function guardarIngreso() {
+            let datos = $('#formularioIngreso').serializeArray();
+
+            $.ajax({
+                url: "{{ route('movimiento.guardarIngreso') }}",
+                method: "POST",
+                data: datos,
+                success: function(resultado) {
+                    if (resultado.estado) {
+                        Swal.fire({
+                            title: "EL REGISTRO FUE EXITOSO.",
+                            icon: "success",
+                            timer: 3000, // Se cierra en 3 segundos
+                            showConfirmButton: false
+                        });
+                        ajaxListado();
+                        $('#modalIngreso').modal('hide');
+                    } else {
+
+                    }
+                },
+                error: function(xhr) {
+                    limpiarErorres();
+
+                    if (xhr.status === 422) {
+                        let errores = xhr.responseJSON.errors;
+
+                        for (let campo in errores) {
+                            let mensaje = errores[campo][0];
+
+                            let input = $(`[name="${campo}"]`);
+                            input.addClass("is-invalid");
+                            input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ocurrió un error inesperado.',
+                        });
+                    }
+                }
+            });
+        }
+
+        function modalSalida(productoId, sucursalId, nombreSuc) {
+            
+            document.getElementById('sucursales').value = nombreSuc;
+            document.getElementById('idSucs').value = sucursalId;
+            document.getElementById('idProds').value = productoId;
+
+            $('#descripcion').val('')            
+            $('#cantidad_salida').val('')            
+            $('#id').val(0)
+            $('#modalSalida').modal('show')
+        }
+
+        function guardarSalida() {
+            let datos = $('#formularioSalida').serializeArray();
+
+            $.ajax({
+                url: "{{ route('movimiento.guardarSalida') }}",
+                method: "POST",
+                data: datos,
+                success: function(resultado) {
+                    if (resultado.estado) {
+                        Swal.fire({
+                            title: "EL REGISTRO FUE EXITOSO.",
+                            icon: "success",
+                            timer: 3000, // Se cierra en 3 segundos
+                            showConfirmButton: false
+                        });
+                        ajaxListado();
+                        $('#modalSalida').modal('hide');
+                    } else {
+
+                    }
+                },
+                error: function(xhr) {
+                    limpiarErorres();
+
+                    if (xhr.status === 422) {
+                        let errores = xhr.responseJSON.errors;
+
+                        for (let campo in errores) {
+                            let mensaje = errores[campo][0];
+
+                            let input = $(`[name="${campo}"]`);
+                            input.addClass("is-invalid");
+                            input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ocurrió un error inesperado.',
+                        });
+                    }
                 }
             });
         }

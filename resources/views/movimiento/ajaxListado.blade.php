@@ -14,8 +14,8 @@
                     <td>{{ $movimiento->sucursal?->nombre }}</td>
                     <td>{{ $movimiento->stock_sucursal }}</td>
                     <td>                    
-                        <button class="btn btn-icon btn-sm btn-primary btn-circle" title="ingreso producto" onclick="abrirIngreso({{ $productoId }}, {{ $movimiento->sucursal_id }})">"Añadir Ingreso</button>
-                        <button class="btn btn-icon btn-sm btn-warning btn-circle" title="egreso producto" onclick="abrirEgreso({{ $productoId }}, {{ $movimiento->sucursal_id }})">Añadir Egreso</button>
+                        <button class="btn btn-icon btn-sm btn-success btn-circle" title="Ingreso producto" onclick="modalIngreso({{ $productoId }}, {{ $movimiento->sucursal_id }},{{ json_encode($movimiento->sucursal->nombre) }})">+</button>
+                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Salida producto" onclick="modalSalida({{ $productoId }}, {{ $movimiento->sucursal_id }},{{ json_encode($movimiento->sucursal->nombre) }})">-</button>
                     </td>
                 </tr>
             @empty

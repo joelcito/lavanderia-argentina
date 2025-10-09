@@ -24,7 +24,7 @@ class MovimientoController extends Controller
             //SACAMOS EL LISTADO
             $stocks = Movimiento::where('producto_id', $productoId)
                 ->select('sucursal_id')
-                ->selectRaw('SUM(ingreso) as stock_sucursal')
+                ->selectRaw('SUM(ingreso) - SUM(salida) as stock_sucursal')
                 ->groupBy('sucursal_id')
                 ->get();
 
@@ -43,56 +43,79 @@ class MovimientoController extends Controller
     /**
      * Añadir ingreso de producto a una sucursal
      */
-    public function agregarIngreso(Request $request)
-    {
-        if ($request->ajax()) {
-            $request->validate([
-                'productoId' => 'required|integer|exists:productos,id',
-                'sucursal_id' => 'required|integer|exists:sucursales,id',
-                'cantidad' => 'required|numeric|min:0.01',
-            ]);
+    public function guardarIngreso(Request $request){
 
+        if($request->ajax()){
+
+            //AL INICIO DECLARACION DE VARIABLES
+            $movimiento_id = $request->input('id');
+            $producto_id = $request->input('idProd');
+            $sucursal_id = $request->input('idSuc');
+            $ingreso = $request->input('cantidad_ingreso');
+            $fecha = $request->input('fecha_ingreso');
+            $descripcion = $request->input('descripcion');
+            
             $usuario = Auth::user();
+            
+            //LA CREACION DE UN NUEVa movimiento
+            $movimiento = new Movimiento();
+            $movimiento->usuario_creador_id = $usuario->id;
 
-            Movimiento::create([
-                'productoId' => $request->producto_id,
-                'sucursal_id' => $request->sucursal_id,
-                'ingreso' => $request->cantidad,
-                'egreso' => 0,
-                'usuario_id' => $usuario->id,
-            ]);
+            $movimiento->producto_id = $producto_id;
+            $movimiento->sucursal_id = $sucursal_id;
+            $movimiento->ingreso = $ingreso;
+            $movimiento->fecha = $fecha;
+            $movimiento->descripcion = $descripcion;
+            
+            $movimiento->save();
 
-            return Respuesta::success(null, "Ingreso registrado correctamente");
+            $data = Respuesta::success(null, "Datos Obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
         }
 
-        return Respuesta::error(null, "Error al registrar ingreso");
+        return $data;
+        
     }
 
     /**
-     * Añadir egreso de producto de una sucursal
+     * Añadir salida de producto a una sucursal
      */
-    public function agregarEgreso(Request $request)
-    {
-        if ($request->ajax()) {
-            $request->validate([
-                'productoId' => 'required|integer|exists:productos,id',
-                'sucursal_id' => 'required|integer|exists:sucursales,id',
-                'cantidad' => 'required|numeric|min:0.01',
-            ]);
+    public function guardarSalida(Request $request){
 
+        if($request->ajax()){
+
+            //AL INICIO DECLARACION DE VARIABLES
+            $movimiento_id = $request->input('id');
+            $producto_id = $request->input('idProds');
+            $sucursal_id = $request->input('idSucs');
+            $salida = $request->input('cantidad_salida');
+            $fecha = $request->input('fecha_salida');
+            $descripcion = $request->input('descripcion');
+            
             $usuario = Auth::user();
+                       
+            //LA CREACION DE UN NUEVa movimiento
+            $movimiento = new Movimiento();
+            $movimiento->usuario_creador_id = $usuario->id;
 
-            Movimiento::create([
-                'productoId' => $request->producto_id,
-                'sucursal_id' => $request->sucursal_id,
-                'ingreso' => 0,
-                'egreso' => $request->cantidad,
-                'usuario_id' => $usuario->id,
-            ]);
 
-            return Respuesta::success(null, "Egreso registrado correctamente");
+            $movimiento->producto_id = $producto_id;
+            $movimiento->sucursal_id = $sucursal_id;
+            $movimiento->salida = $salida;
+            $movimiento->fecha = $fecha;
+            $movimiento->descripcion = $descripcion;
+            
+            $movimiento->save();
+
+            $data = Respuesta::success(null, "Datos Obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
         }
 
-        return Respuesta::error(null, "Error al registrar egreso");
+        return $data;
+        
     }
 }
