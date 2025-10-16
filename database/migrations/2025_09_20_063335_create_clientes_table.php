@@ -27,7 +27,9 @@ return new class extends Migration
             $table->string('cedula')->nullable();
             $table->string('nit')->nullable();
             $table->string('razon_social')->nullable();
-            
+            $table->text('direccion')->nullable();
+            $table->text('imagen')->nullable();
+
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();
             $table->timestamps();

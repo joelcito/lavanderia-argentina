@@ -3,6 +3,7 @@
 use App\Http\Controllers\CaracteristicaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ColorTelaController;
+use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\FocalizadoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaquinariaController;
@@ -48,14 +49,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/listado', [UserController::class, 'listado'])->name('user.listado');
         Route::post('/ajaxListado', [UserController::class, 'ajaxListado'])->name('user.ajaxListado');
         Route::post('/guardarUser', [UserController::class, 'guardarUser'])->name('user.guardarUser');
-        Route::post('/eliminarUser', [UserController::class, 'eliminarUser'])->name('user.eliminarUser');    
+        Route::post('/eliminarUser', [UserController::class, 'eliminarUser'])->name('user.eliminarUser');
     });
      // CLIENTE
     Route::prefix('/cliente')->group(function(){
         Route::get('/listado', [ClienteController::class, 'listado'])->name('cliente.listado');
         Route::post('/ajaxListado', [ClienteController::class, 'ajaxListado'])->name('cliente.ajaxListado');
         Route::post('/guardarCliente', [ClienteController::class, 'guardarCliente'])->name('cliente.guardarCliente');
-        Route::post('/eliminarCliente', [ClienteController::class, 'eliminarCliente'])->name('cliente.eliminarCliente');    
+        Route::post('/eliminarCliente', [ClienteController::class, 'eliminarCliente'])->name('cliente.eliminarCliente');
     });
     // PRENDA
     Route::prefix('/prenda')->group(function(){
@@ -147,7 +148,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/ajaxListado', [MovimientoController::class, 'ajaxListado'])->name('movimiento.ajaxListado');
         Route::post('/guardarIngreso', [MovimientoController::class, 'guardarIngreso'])->name('movimiento.guardarIngreso');
         Route::post('/guardarSalida', [MovimientoController::class, 'guardarSalida'])->name('movimiento.guardarSalida');
-        
+
         //Route::post('/guardarMovimiento', [MovimientoController::class, 'guardarMovimiento'])->name('movimiento.guardarMovimiento');
+    });
+
+    // FACTURA
+    Route::prefix('/factura')->group(function(){
+        Route::get('/formulario', [FacturaController::class, 'formulario'])->name('factura.formulario');
+        // Route::post('/ajaxListado', [FocalizadoController::class, 'ajaxListado'])->name('focalizado.ajaxListado');
+        // Route::post('/guardarFocalizado', [FocalizadoController::class, 'guardarFocalizado'])->name('focalizado.guardarFocalizado');
+        // Route::post('/eliminarFocalizado', [FocalizadoController::class, 'eliminarFocalizado'])->name('focalizado.eliminarFocalizado');
     });
 });

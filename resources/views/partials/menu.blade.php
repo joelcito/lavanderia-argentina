@@ -192,7 +192,7 @@
                                 <span class="menu-title text-white">Productos</span>
                             </a>
                         </div>
-                       {{-- <div class="menu-item">
+                        {{-- <div class="menu-item">
                             <a class="menu-link {{ Route::currentRouteName() == 'cliente.listado' ? 'active' : '' }}"
                                 href="#">
                                 <span class="menu-bullet">
@@ -251,16 +251,30 @@
                     </div>
                 </div>
 
-                <div class="menu-item">
-                    <a class="menu-link" href="#">
+                <div data-kt-menu-trigger="click"
+                    class="menu-item menu-accordion {{ Request::is('sincronizacion/*', 'eventoSignificativo/*') ? 'show' : '' }}">
+                    <!--begin:Menu link-->
+                    <span class="menu-link">
                         <span class="menu-icon">
-                            <i class="fa fa-book"></i>
+                            <i class="fa fa-university"></i>
                         </span>
                         <span class="menu-title text-white">VENTAS</span>
-                    </a>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    <!--end:Menu link-->
+                    <div class="menu-sub menu-sub-accordion">
+                        <div class="menu-item">
+                            <a class="menu-link " href="{{ route('factura.formulario') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">Recepcion</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
 
-                <div data-kt-menu-trigger="click"
+                {{-- <div data-kt-menu-trigger="click"
                     class="menu-item menu-accordion {{ Request::is('factura/*', 'caja/*') ? 'show' : '' }}">
                     <!--begin:Menu link-->
                     <span class="menu-link">
@@ -282,9 +296,9 @@
                         </div>
 
                     </div>
-                </div>
+                </div> --}}
 
-                <div data-kt-menu-trigger="click"
+                {{-- <div data-kt-menu-trigger="click"
                     class="menu-item menu-accordion {{ Request::is('sincronizacion/*', 'eventoSignificativo/*') ? 'show' : '' }}">
                     <!--begin:Menu link-->
                     <span class="menu-link">
@@ -305,7 +319,7 @@
                             </a>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <!--end:Menu item-->
             </div>
