@@ -155,8 +155,6 @@ Route::middleware('auth')->group(function () {
     // FACTURA
     Route::prefix('/factura')->group(function(){
         Route::get('/formulario', [FacturaController::class, 'formulario'])->name('factura.formulario');
-        // Route::post('/ajaxListado', [FocalizadoController::class, 'ajaxListado'])->name('focalizado.ajaxListado');
-        // Route::post('/guardarFocalizado', [FocalizadoController::class, 'guardarFocalizado'])->name('focalizado.guardarFocalizado');
-        // Route::post('/eliminarFocalizado', [FocalizadoController::class, 'eliminarFocalizado'])->name('focalizado.eliminarFocalizado');
+        Route::post('/recepcionar', [FacturaController::class, 'recepcionar'])->name('factura.recepcionar');
     });
 });

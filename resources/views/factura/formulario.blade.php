@@ -187,7 +187,7 @@
                             </div> --}}
                         </div>
                         <hr>
-                        <form action="formulario_recepcion">
+                        <form id="formulario_recepcion">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="row">
@@ -242,7 +242,7 @@
                                             <label class="fs-6 fw-semibold form-label mb-2 required">Fecha de
                                                 Recepcion</label>
                                             <input type="date" class="form-control fw-bold form-control-solid"
-                                                name="telefono_cliente" id="telefono_cliente">
+                                                name="fecha_recepcion_cliente" id="fecha_recepcion_cliente">
                                         </div>
                                         <div class="col-md-12">
                                             <label class="fs-6 fw-semibold form-label mb-2">Entregado Por</label>
@@ -261,8 +261,7 @@
                                         <div class="col-md-12">
                                             <label class="fs-6 fw-semibold form-label mb-2">Fecha Registro</label>
                                             <input type="date" class="form-control fw-bold form-control-solid"
-                                                name="fecha_recepcion" id="fecha_recepcion" value="{{ date('Y-m-d') }}"
-                                                readonly>
+                                                value="{{ date('Y-m-d') }}" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -409,11 +408,13 @@
                                     <div class="col-md-1">
                                         <label class="required fw-semibold fs-6 mb-2">Cantidad</label>
                                         <input type="number" class="form-control form-control-sm" id="cantidad_venta"
-                                            name="cantidad_venta" required>
+                                            name="cantidad_venta" required min="1">
                                     </div>
                                     <div class="col-md-2">
                                         <label class="required fw-semibold fs-6 mb-2">Prenda</label>
-                                        <select class="form-select form-select-sm" name="prenda_id" id="prenda_id">
+                                        <select class="form-select form-select-sm" name="prenda_id" id="prenda_id"
+                                            data-placeholder="SELECIONE" required>
+                                            <option></option>
                                             @foreach ($prendas as $prenda)
                                                 <option value="{{ $prenda->id }}">{{ $prenda->nombre }}</option>
                                             @endforeach
@@ -422,11 +423,13 @@
                                     <div class="col-md-1">
                                         <label class="required fw-semibold fs-6 mb-2">Ojales</label>
                                         <input type="number" class="form-control form-control-sm" id="numero_ojales"
-                                            name="numero_ojales" required readonly>
+                                            name="numero_ojales" required min="1">
                                     </div>
                                     <div class="col-md-2">
                                         <label class="required fw-semibold fs-6 mb-2">Tela</label>
-                                        <select class="form-select form-select-sm" name="tela_id" id="tela_id">
+                                        <select class="form-select form-select-sm" name="tela_id" id="tela_id"
+                                            data-placeholder="SELECIONE" required>
+                                            <option></option>
                                             @foreach ($telas as $tela)
                                                 <option value="{{ $tela->id }}">{{ $tela->nombre }}</option>
                                             @endforeach
@@ -434,7 +437,9 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="required fw-semibold fs-6 mb-2">Pre Lavado</label>
-                                        <select class="form-select form-select-sm" name="tela_id" id="tela_id">
+                                        <select class="form-select form-select-sm" name="prelavado_id" id="prelavado_id"
+                                            data-placeholder="SELECIONE" required>
+                                            <option></option>
                                             @foreach ($prelavados as $prelavado)
                                                 <option value="{{ $prelavado->id }}">{{ $prelavado->nombre }}</option>
                                             @endforeach
@@ -442,7 +447,9 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="required fw-semibold fs-6 mb-2">Nevado</label>
-                                        <select class="form-select form-select-sm" name="tela_id" id="tela_id">
+                                        <select class="form-select form-select-sm" name="nevado_id" id="nevado_id"
+                                            data-placeholder="SELECIONE" required>
+                                            <option></option>
                                             @foreach ($nevados as $nevado)
                                                 <option value="{{ $nevado->id }}">{{ $nevado->nombre }}</option>
                                             @endforeach
@@ -450,7 +457,9 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="required fw-semibold fs-6 mb-2">Focalizado</label>
-                                        <select class="form-select form-select-sm" name="tela_id" id="tela_id">
+                                        <select class="form-select form-select-sm" name="focalizado_id"
+                                            id="focalizado_id" data-placeholder="SELECIONE" required>
+                                            <option></option>
                                             @foreach ($focalizados as $focalizado)
                                                 <option value="{{ $focalizado->id }}">{{ $focalizado->nombre }}</option>
                                             @endforeach
@@ -462,7 +471,9 @@
                                         <div class="row">
                                             <div class="col-md">
                                                 <label class="required fw-semibold fs-6 mb-2">T. Tela</label>
-                                                <select class="form-select form-select-sm" name="tela_id" id="tela_id">
+                                                <select class="form-select form-select-sm" name="tipo_tela_id"
+                                                    id="tipo_tela_id" data-placeholder="SELECIONE" required>
+                                                    <option></option>
                                                     @foreach ($tipoTelas as $tipoTela)
                                                         <option value="{{ $tipoTela->id }}">{{ $tipoTela->nombre }}
                                                         </option>
@@ -472,7 +483,9 @@
 
                                             <div class="col-md">
                                                 <label class="required fw-semibold fs-6 mb-2">Co. Tela</label>
-                                                <select class="form-select form-select-sm" name="tela_id" id="tela_id">
+                                                <select class="form-select form-select-sm" name="color_tela_id"
+                                                    id="color_tela_id" data-placeholder="SELECIONE" required>
+                                                    <option></option>
                                                     @foreach ($colorTelas as $colorTela)
                                                         <option value="{{ $colorTela->id }}">{{ $colorTela->nombre }}
                                                         </option>
@@ -482,7 +495,9 @@
 
                                             <div class="col-md">
                                                 <label class="required fw-semibold fs-6 mb-2">Ca. Tela</label>
-                                                <select class="form-select form-select-sm" name="tela_id" id="tela_id">
+                                                <select class="form-select form-select-sm" name="caracteristica_tela_id"
+                                                    id="caracteristica_tela_id" data-placeholder="SELECIONE" required>
+                                                    <option></option>
                                                     @foreach ($caracteristicaTelas as $caracteristicaTela)
                                                         <option value="{{ $caracteristicaTela->id }}">
                                                             {{ $caracteristicaTela->nombre }}
@@ -493,45 +508,37 @@
 
                                             <div class="col-md">
                                                 <label class="required fw-semibold fs-6 mb-2">Peso</label>
-                                                <input type="number" class="form-control form-control-sm"
-                                                    id="precio_venta" name="precio_venta" required>
+                                                <input type="number" class="form-control form-control-sm" id="peso"
+                                                    name="peso" required min="1">
                                             </div>
 
                                             <div class="col-md">
                                                 <label class="required fw-semibold fs-6 mb-2">Precio</label>
                                                 <input type="number" class="form-control form-control-sm"
-                                                    id="precio_venta" name="precio_venta" required>
+                                                    id="precio_venta" name="precio_venta" required min="1">
                                             </div>
 
                                             <div class="col-md">
                                                 <label class="required fw-semibold fs-6 mb-2">Sub Total</label>
-                                                <input type="number" class="form-control form-control-sm"
-                                                    id="precio_venta" name="precio_venta" required>
+                                                <input type="number" class="form-control form-control-sm" id="sub_total"
+                                                    name="sub_total" required min="1">
                                             </div>
 
                                             <div class="col-md">
                                                 <label class="required fw-semibold fs-6 mb-2">Obs</label>
                                                 <input type="text" class="form-control form-control-sm"
-                                                    id="precio_venta" name="precio_venta" required>
+                                                    id="observacion" name="observacion" required>
                                             </div>
 
                                             <div class="col-md">
                                                 <label class="required fw-semibold fs-6 mb-2">N° OT</label>
-                                                <input type="number" class="form-control form-control-sm"
-                                                    id="precio_venta" name="precio_venta" required>
+                                                <input type="number" class="form-control form-control-sm" id="nro_ot"
+                                                    name="nro_ot" required min="1">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-1 d-flex align-items-end">
                                         <div class="d-flex justify-content-center gap-2 w-100">
-                                            {{-- <button class="btn btn-info btn-circle btn-sm btn-icon"
-                                                type="button" onclick="modalAgregarProducto()" title="Agregar Producto">
-                                                <i class="fa fa-cubes"></i> +
-                                            </button> --}}
-                                            {{-- <button class="btn btn-primary btn-circle btn-sm btn-icon" type="button"
-                                                onclick="mostraBloqueMasDatosProdcuto()" title="Mostrar más opción">
-                                                <i class="fa fa-note-sticky"></i> +
-                                            </button> --}}
                                             <button class="btn btn-success btn-circle btn-sm btn-icon" type="button"
                                                 onclick="agregarProducto()" title="Agregar al Carro de compras"
                                                 id="boton-agrega-producto">
@@ -540,46 +547,36 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row" style="display: none;" id="bloque_mas_datos_productos">
-                                    <div class="col-md-6">
-                                        <label class="fw-semibold fs-6 mb-2">Descripcion Adicional</label>
-                                        <textarea class="form-control form-control-sm" name="descripcion_adicional" id="descripcion_adicional"
-                                            cols="30" rows="1"></textarea>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class=" fw-semibold fs-6 mb-2">Numero Serie</label>
-                                        <input type="number" class="form-control form-control-sm" id="numero_serie"
-                                            name="numero_serie" min="1">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class=" fw-semibold fs-6 mb-2">Codigo Imei</label>
-                                        <input type="number" class="form-control form-control-sm" id="codigo_imei"
-                                            name="codigo_imei" min="1">
-                                    </div>
-                                </div>
                             </form>
-                            {{-- <hr>
+                            <hr>
                             <div id="tabla_detalles" style="display: none;">
                                 <h2 class="text-center">CARRITO DE COMPRAS</h2>
                                 <div class="table-responsive" style="max-width: 100%; overflow-x: auto;">
                                     <table id="carrito" class="table align-middle table-row-dashed fs-6 gy-5">
                                         <thead>
                                             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-                                                <th>Producto</th>
-                                                <th>Nro Serie</th>
+                                                <th>Cantidad</th>
+                                                <th>Prenda</th>
+                                                <th>Ojales</th>
+                                                <th>Tela</th>
+                                                <th>Pre Lavado</th>
+                                                <th>Nevado</th>
+                                                <th>Focalizado</th>
+                                                <th>T. Tela</th>
+                                                <th>Co. Tela</th>
+                                                <th>Ca. Tela</th>
+                                                <th>Peso</th>
                                                 <th>Precio</th>
-                                                <th>Cantidad </th>
-                                                <th>Total</th>
-                                                <th>Descuento</th>
                                                 <th>Sub Total</th>
-                                                <th>Accesorios</th>
+                                                <th>Obs</th>
+                                                <th>OT</th>
                                                 <th>Acción</th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-gray-600 fw-semibold">
                                             <!-- Aquí se agregarán las filas del carrito -->
                                         </tbody>
-                                        <tfoot>
+                                        {{-- <tfoot>
                                             <tr>
                                                 <th colspan="6">Descuento Adicional</th>
                                                 <th colspan="3">Monto Total</th>
@@ -595,356 +592,17 @@
                                                         id="monto_total" type="number" readonly value="0">
                                                 </td>
                                             </tr>
-                                        </tfoot>
+                                        </tfoot> --}}
                                     </table>
                                 </div>
-                            </div>
-                            <hr>
-                            <div class="row" id="bloque_seleccionar_cliente" style="display: none">
-                                <div class="col-md-11">
-                                    <button class="btn btn-info btn-sm w-100" onclick="mostrarFormularioClientes()"><span
-                                            id="nombre_cliente"></span> <i class="fa fa-user-alt"></i></button>
-                                    <input type="hidden" name="cliente_id_escogido" id="cliente_id_escogido">
-                                </div>
-                                <div class="col-md-1">
-                                    <button title="Mostrar carro de compras"
-                                        class="btn btn-dark btn-sm btn-circle btn-icon"
-                                        onclick="mostrarCarritoVentas()"><i class="fa fa-shopping-basket"></i></button>
-                                    <button title="Agregar cliente" class="btn btn-primary btn-sm btn-circle btn-icon"
-                                        onclick="modalAgregarCliente()"><i class="fa fa-user-plus"></i></button>
-                                </div>
-                            </div>
-                            <form id="formulario_cliente_escogido" style="display: none">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label class="fs-6 fw-semibold form-label mb-2">Cedula / Nit</label>
-                                        <input type="number" class="form-control form-control-sm buscar-persona"
-                                            name="nit_escogido" id="nit_escogido">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="fs-6 fw-semibold form-label mb-2">Nombre</label>
-                                        <input type="text" class="form-control form-control-sm buscar-persona"
-                                            name="nombre_escogido" id="nombre_escogido">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="fs-6 fw-semibold form-label mb-2">Ap Paterno</label>
-                                        <input type="text" class="form-control form-control-sm buscar-persona"
-                                            name="ap_paterno_escogido" id="ap_paterno_escogido">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="fs-6 fw-semibold form-label mb-2">Ap Materno</label>
-                                        <input type="text" class="form-control form-control-sm buscar-persona"
-                                            name="ap_materno_escogido" id="ap_materno_escogido">
-                                    </div>
-                                </div>
-                            </form>
-                            <div id="tabla-clientes-buscados">
-
-                            </div> --}}
-                        </div>
-                        <hr>
-                        <div class="row" id="bloque-botones-emisiones" style="display: none">
-                            <div class="col-md-12">
-                                <button class="btn btn-dark w-100 btn-sm" onclick="escogerVentaTipo('RECIBO')">TICKED
-                                    RECEPCION</button>
-                            </div>
-                            {{-- <div class="col-md-6">
-                                <button class="btn btn-success w-100 btn-sm"
-                                    onclick="escogerVentaTipo('FACTURA')">FACTURA</button>
-                            </div> --}}
-                        </div>
-                        <hr>
-                        {{-- <div class="row" id="bloque_facturacion" style="display: none;">
-                            <div class="col-md-12">
-                                <form id="formularioGeneraFactura">
-                                    <div class="row">
-                                        <div class="col-md-8 bg-light-info">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <h2 class="text-center text-info">DATOS DE LA FACTURA</h2>
-                                                </div>
-                                            </div>
-                                            <div id="bloqueDatosFactura" style="display: none">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <label for="">M. Pago</label>
-                                                        <select name="facturacion_datos_tipo_metodo_pago"
-                                                            id="facturacion_datos_tipo_metodo_pago"
-                                                            class="form-control form-control-sm" required
-                                                            onchange="verificaTipoPago(this)">
-                                                            @foreach ($tipoMetodoPago as $key => $value)
-                                                                <option value="{{ $value->tipo_clasificador }}"
-                                                                    {{ $value->tipo_clasificador == '1' ? 'selected' : '' }}>
-                                                                    {{ $value->descripcion }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <label for="">Tipo Moneda</label>
-                                                        <select name="facturacion_datos_tipo_moneda"
-                                                            id="facturacion_datos_tipo_moneda"
-                                                            class="form-control form-control-sm" required>
-                                                            @foreach ($tipoMonedas as $key => $value)
-                                                                <option value="{{ $value->tipo_clasificador }}"
-                                                                    {{ $value->tipo_clasificador == '1' ? 'selected' : '' }}>
-                                                                    {{ $value->descripcion }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <label for="">Tipo Documento</label>
-                                                        <select name="tipo_documento" id="tipo_documento"
-                                                            class="form-control form-control-sm"
-                                                            onchange="verificaNit()" required>
-                                                            <option value="">SELECCIONE</option>
-                                                            @foreach ($tipoDocumento as $te)
-                                                                <option value="{{ $te->codigo_clasificador }}">
-                                                                    {{ $te->descripcion }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mt-3" id="bloque-tipo-pago" style="display: none">
-                                                    <div class="col-md-12">
-                                                        <label for="">Numero de Tarjeta:</label>
-                                                        <input type="number" class="form-control form-control-sm"
-                                                            id="numero_tarjeta" name="numero_tarjeta"
-                                                            oninput="verificarNumeroTarjeta()"
-                                                            placeholder="Ingrese el número de la tarjeta" />
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mt-3" id="bloque-gifr-card" style="display: none">
-                                                    <div class="col-md-12">
-                                                        <label for="">Monto del Gift Card:</label>
-                                                        <input type="number" class="form-control form-control-sm"
-                                                            id="monto_gift_card" name="monto_gift_card"
-                                                            placeholder="Ingrese el monto del gift card"
-                                                            step="0.01" />
-                                                    </div>
-                                                </div>
-
-                                                <div class="row mt-3">
-                                                    <div class="col-md-2">
-                                                        <label for="">Nit/Cedula</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            id="nit_factura" name="nit_factura"
-                                                            onchange="verificaNit()" autocomplete="off" required>
-                                                        <small style="display: none;" class="text-danger"
-                                                            id="nitnoexiste">** NIT INVALIDO **</small>
-                                                        <small style="display: none;" class="text-success"
-                                                            id="nitsiexiste">** NIT VALIDO **</small>
-                                                        <small style="display: none;" class="text-danger"
-                                                            id="errorValidar">ERROR LA VALIDAR</small>
-                                                    </div>
-                                                    <div class="col-md-1" style="display: none"
-                                                        id="bloque_complemento">
-                                                        <label for="">Compl.</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            name="complemento" id="complemento">
-                                                    </div>
-
-                                                    <div class="col-md-3">
-                                                        <label for="">Razon Social</label>
-                                                        <input type="text" class="form-control form-control-sm"
-                                                            id="razon_factura" name="razon_factura"
-                                                            autocomplete="off" required>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <label for="">Tipo Factura</label>
-                                                        <select name="tipo_facturacion" id="tipo_facturacion"
-                                                            class="form-control form-control-sm"
-                                                            onchange="bloqueCAFC()">
-                                                            <option value="online">En Linea</option>
-                                                            <option value="offline">Fuera de Linea</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-2" style="display: none;" id="bloque_cafc">
-                                                        <label for="">Uso del CAFC?</label>
-                                                        <div class="row mt-5">
-                                                            <div class="col-md-6">
-                                                                <label for="radioNo">No</label>
-                                                                <input type="radio" name="uso_cafc" id="radioNo"
-                                                                    value="No" checked>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <label for="radioSi">Si</label>
-                                                                <input type="radio" name="uso_cafc" id="radioSi"
-                                                                    value="Si">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2" id="numero_fac_cafc"
-                                                        style="display: none;">
-                                                        <label for="">Numero de CAFC:</label>
-                                                        <input type="number" class="form-control form-control-sm"
-                                                            id="numero_factura_cafc" name="numero_factura_cafc">
-                                                    </div>
-                                                </div>
-                                                <div class="row" id="bloque_exepcion" style="display: none">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label class="control-label">Enviar con execpcion?</label>
-                                                            <input type="checkbox" name="execpcion" id="execpcion"
-                                                                readonly>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row mt-3" id="bloque_cufd_offline" style="display: none">
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label class="control-label">Fecha de Emision Fuera de
-                                                                Linea</label>
-                                                            <input type="date" class="form-control"
-                                                                id="fecha_emision_offLine"
-                                                                name="fecha_emision_offLine">
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label class="control-label">Hora de Emision Fuera de
-                                                                Linea</label>
-                                                            <input type="time" class="form-control form-control-sm"
-                                                                name="hora_emision_offLine" id="hora_emision_offLine">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="control-label">Seleccionar los CUFD
-                                                                Vigentes</label>
-                                                            <div id="select_cufd_vigentes">
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 bg-light-success">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <h2 class="text-center text-success">DATOS DE PAGO</h2>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <label class="required">Tipo Pago</label>
-                                                    <select name="tipo_pago_pagado" id="tipo_pago_pagado"
-                                                        class="form-control form-control-sm"
-                                                        onchange="validarCampos()">
-                                                        <option value="">Seleccione</option>
-                                                        <option value="EFECTIVO">EFECTIVO</option>
-                                                        <option value="TRANSFERENCIA">TRANSFERENCIA</option>
-                                                        <option value="QR">QR</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="required">Realizara algun Pago?</label>
-                                                    <div class="d-flex align-items-center mt-3">
-                                                        <label
-                                                            class="form-check form-check-custom form-check-solid me-3">
-                                                            <input class="form-check-input h-20px w-20px"
-                                                                type="checkbox" name="realizo_pago" value="pago"
-                                                                id="realizo_pago" />
-                                                            <span class="form-check-label fw-semibold">Realizo un
-                                                                pago</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row mt-3">
-                                                <div class="col-md-4">
-                                                    <label class="required">Monto Venta</label>
-                                                    <input type="number" class="form-control form-control-sm"
-                                                        readonly id="monto_total_pagado" name="monto_total_pagado">
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label class="required">Monto Pagado</label>
-                                                    <input type="number" class="form-control form-control-sm"
-                                                        id="monto_pagado" name="monto_pagado" value="0"
-                                                        onkeyup="caluclarCambio(this)">
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <label class="required">Cambio</label>
-                                                    <input type="number" class="form-control form-control-sm"
-                                                        readonly id="cambio_pagado" name="cambio_pagado"
-                                                        value="0">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-
-                                <div class="row mt-3">
-                                    <div class="col-md-12">
-                                        <button class="btn btn-sm w-100 btn-success" onclick="emitirFactura()"
-                                            id="boton_enviar_factura"> <i class="fa fa-spinner fa-spin"
-                                                style="display:none;"></i>Enviar</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
-                        {{-- <div class="row" id="bloque_recibo" style="display: none">
-                            <div class="col-md-12 bg-light-success">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h2 class="text-center text-success">DATOS DE PAGO</h2>
-                                    </div>
-                                </div>
-                                <form id="formularioGeneraRecibo">
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <label class="required">Tipo Pago</label>
-                                            <select name="tipo_pago_pagado_recibo" id="tipo_pago_pagado_recibo"
-                                                class="form-control form-control-sm" onchange="validarCamposRecibo()">
-                                                <option value="">Seleccione</option>
-                                                <option value="EFECTIVO">EFECTIVO</option>
-                                                <option value="TRANSFERENCIA">TRANSFERENCIA</option>
-                                                <option value="QR">QR</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="required">Realizara algun Pago?</label>
-                                            <div class="d-flex align-items-center mt-3">
-                                                <label class="form-check form-check-custom form-check-solid me-3">
-                                                    <input class="form-check-input h-20px w-20px" type="checkbox"
-                                                        name="realizo_pago_recibo" value="pago"
-                                                        id="realizo_pago_recibo" />
-                                                    <span class="form-check-label fw-semibold">Realizo un
-                                                        pago</span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="required">Monto Venta</label>
-                                            <input type="number" class="form-control form-control-sm" readonly
-                                                id="monto_total_pagado_recibo" name="monto_total_pagado_recibo"
-                                                value="0">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="required">Monto Pagado</label>
-                                            <input type="number" class="form-control form-control-sm"
-                                                id="monto_pagado_recibo" name="monto_pagado_recibo" value="0"
-                                                onkeyup="caluclarCambioRecibo(this)">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="required">Cambio</label>
-                                            <input type="number" class="form-control form-control-sm" readonly
-                                                id="cambio_pagado_recibo" name="cambio_pagado_recibo" value="0">
-                                        </div>
-                                    </div>
-                                </form>
-                                <div class="row mt-3">
-                                    <div class="col-md-12">
-                                        <button class="btn btn-sm w-100 btn-success" onclick="emitirRecibo()"
-                                            id="boton_enviar_recibo"> <i class="fa fa-spinner fa-spin"
-                                                style="display:none;"></i>Enviar</button>
+                                        <button class="btn btn-success btn-sm w-100"
+                                            onclick="recepcionar()">RECEPCIONAR</button>
                                     </div>
                                 </div>
                             </div>
-                        </div> --}}
+                        </div>
                     </div>
                     <!--end::Card body-->
                 </div>
@@ -1019,57 +677,59 @@
             }
         });
 
-        // var arrayProductos = [];
+        var arrayProductos = [];
         // var arrayProductosAccesorios = {};
         // var arrayPagos = [];
         // var table;
         // var arrayProductoCar = [];
 
-        // $(document).ready(function() {
+        var contadorTable = 0;
 
-        //     $("#serivicio_id_venta, #documento_sector_siat_id_new_servicio, #actividad_economica_siat_id_new_servicio, #producto_servicio_siat_id_new_servicio, #unidad_medida_siat_id_new_servicio, #facturacion_datos_tipo_metodo_pago, #facturacion_datos_tipo_moneda, #tipo_documento")
-        //         .select2();
+        $(document).ready(function() {
 
-        //     // Inicializa el DataTable
-        //     table = $('#carrito').DataTable({
-        //         lengthMenu: [10, 25, 50, 100], // Opciones de longitud de página
-        //         // dom: '<"dt-head row"<"col-md-6"l><"col-md-6"f>><"clear">t<"dt-footer row"<"col-md-5"i><"col-md-7"p>>', // Use dom for basic layout
-        //         dom: '<"dt-head row"><"clear">t', // Use dom for basic layout
-        //         language: {
-        //             paginate: {
-        //                 first: 'Primero',
-        //                 last: 'Último',
-        //                 next: 'Siguiente',
-        //                 previous: 'Anterior'
-        //             },
-        //             search: 'Buscar:',
-        //             lengthMenu: 'Mostrar _MENU_ registros por página',
-        //             info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
-        //             emptyTable: 'No hay datos disponibles'
-        //         },
-        //         order: [],
-        //         responsive: true
-        //     });
+            $("#prenda_id, #tela_id, #prelavado_id, #nevado_id, #focalizado_id, #tipo_tela_id, #color_tela_id, #caracteristica_tela_id")
+                .select2();
 
-
-        //     let debounceTimer;
-        //     $('.buscar-persona').on('keyup', function() {
-
-        //         //ajaxListadoClientes();
-        //         clearTimeout(debounceTimer);
-        //         debounceTimer = setTimeout(function() {
-        //             ajaxListadoClientes();
-        //         }, 300); // Espera 300 ms antes de ejecutar la función
-        //     });
+            // Inicializa el DataTable
+            table = $('#carrito').DataTable({
+                lengthMenu: [10, 25, 50, 100], // Opciones de longitud de página
+                // dom: '<"dt-head row"<"col-md-6"l><"col-md-6"f>><"clear">t<"dt-footer row"<"col-md-5"i><"col-md-7"p>>', // Use dom for basic layout
+                dom: '<"dt-head row"><"clear">t', // Use dom for basic layout
+                language: {
+                    paginate: {
+                        first: 'Primero',
+                        last: 'Último',
+                        next: 'Siguiente',
+                        previous: 'Anterior'
+                    },
+                    search: 'Buscar:',
+                    lengthMenu: 'Mostrar _MENU_ registros por página',
+                    info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+                    emptyTable: 'No hay datos disponibles'
+                },
+                order: [],
+                responsive: true
+            });
 
 
-        //     $('input[name="uso_cafc"]').on('change', function() {
-        //         verificarRadioSeleccionado();
-        //     });
+            let debounceTimer;
+            $('.buscar-persona').on('keyup', function() {
 
-        //     $('#nombre_cliente').text('SELECCIONAR CLIENTE')
+                //ajaxListadoClientes();
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(function() {
+                    ajaxListadoClientes();
+                }, 300); // Espera 300 ms antes de ejecutar la función
+            });
 
-        // });
+
+            $('input[name="uso_cafc"]').on('change', function() {
+                verificarRadioSeleccionado();
+            });
+
+            $('#nombre_cliente').text('SELECCIONAR CLIENTE')
+
+        });
 
         // function ajaxListadoServicios() {
         //     let datos = {}
@@ -1171,167 +831,125 @@
         //     }
         // }
 
-        // function agregarProducto() {
+        function agregarProducto() {
 
-        //     if ($("#formulario_venta")[0].checkValidity()) {
+            if ($("#formulario_venta")[0].checkValidity()) {
 
-        //         var servicioDatos = JSON.parse($("#serivicio_id_venta").val());
+                $('#tabla_detalles').show('toggle');
 
-        //         console.log(servicioDatos);
+                let cantidad_venta = $('#cantidad_venta').val();
+                let prenda_id = $('#prenda_id').val();
+                let numero_ojales = $('#numero_ojales').val();
+                let tela_id = $('#tela_id').val();
+                let prelavado_id = $('#prelavado_id').val();
+                let nevado_id = $('#nevado_id').val();
+                let focalizado_id = $('#focalizado_id').val();
+                let tipo_tela_id = $('#tipo_tela_id').val();
+                let color_tela_id = $('#color_tela_id').val();
+                let caracteristica_tela_id = $('#caracteristica_tela_id').val();
+                let peso = $('#peso').val();
+                let precio_venta = $('#precio_venta').val();
+                let sub_total = $('#sub_total').val();
+                let observacion = $('#observacion').val();
+                let nro_ot = $('#nro_ot').val();
 
-        //         let id = servicioDatos.id;
-        //         var filaExistente = table.row("#producto-" + id);
-        //         var precio = parseFloat($('#precio_venta').val()).toFixed(2);
-        //         var cantidad = parseFloat($('#cantidad_venta').val());
-        //         var total = parseFloat(precio * cantidad).toFixed(2);
-        //         var subTotal = (precio * cantidad) - 0;
-        //         var descripcion_adicional = $('#descripcion_adicional').val();
-        //         var monto_total = $('#monto_total').val();
-        //         var numero_serie = $("#numero_serie").val();
-        //         var codigo_imei = $("#codigo_imei").val();
+                let servicio = {
+                    cantidad_venta: cantidad_venta,
+                    prenda_id: prenda_id,
+                    numero_ojales: numero_ojales,
+                    tela_id: tela_id,
+                    prelavado_id: prelavado_id,
+                    nevado_id: nevado_id,
+                    focalizado_id: focalizado_id,
+                    tipo_tela_id: tipo_tela_id,
+                    color_tela_id: color_tela_id,
+                    caracteristica_tela_id: caracteristica_tela_id,
+                    peso: peso,
+                    precio_venta: precio_venta,
+                    sub_total: sub_total,
+                    observacion: observacion,
+                    nro_ot: nro_ot
+                }
 
-        //         let servicio = {
-        //             servicio_id: servicioDatos.id,
-        //             descripcion: servicioDatos.nombre,
-        //             precio: parseFloat(precio).toFixed(2),
-        //             numero_serie: numero_serie,
-        //             numero_imei: codigo_imei,
-        //             empresa_id: servicioDatos.empresa_id,
-        //             cantidad: parseFloat(cantidad),
-        //             total: parseFloat(total).toFixed(2),
-        //             descuento: parseFloat(0).toFixed(2),
-        //             subTotal: parseFloat(subTotal.toFixed(2)),
-        //             descripcion_adicional: descripcion_adicional
-        //         }
+                contadorTable++;
 
-        //         if (filaExistente.node()) {
+                let btnEliminar = `<button class='eliminar btn btn-icon btn-danger btn-circle btn-sm'
+                                    title='Eliminar del carro'
+                                    onclick='eliminarItem(${contadorTable})'>
+                                        <i class='fa fa-trash'></i>
+                                </button>`;
 
-        //             // // Si el producto ya está en el carrito, aumenta la cantidad en 2
-        //             // var cantidadCell = $(filaExistente.node()).find('.cantidad');
-        //             // var cantidadActual = parseFloat(cantidadCell.text());
-        //             // var nuevaCantidad = cantidadActual + parseFloat(cantidad);
-        //             // cantidadCell.text(nuevaCantidad);
+                table.row.add([
+                    cantidad_venta,
+                    $('#prenda_id option:selected').text(),
+                    numero_ojales,
+                    $('#tela_id option:selected').text(),
+                    $('#prelavado_id option:selected').text(),
+                    $('#nevado_id option:selected').text(),
+                    $('#focalizado_id option:selected').text(),
+                    $('#tipo_tela_id option:selected').text(),
+                    $('#color_tela_id option:selected').text(),
+                    $('#caracteristica_tela_id option:selected').text(),
+                    peso,
+                    precio_venta,
+                    sub_total,
+                    observacion,
+                    nro_ot,
+                    btnEliminar
+                ]).node().id = 'producto-' + contadorTable;
+                table.draw(false);
 
-        //             // // Actualiza el total
-        //             // nuevoTotal = nuevaCantidad * precio
-        //             // var totalCell = $(filaExistente.node()).find('.total');
-        //             // totalCell.text((nuevoTotal).toFixed(2));
+                arrayProductos.push(servicio);
 
-        //             // var subTotalCell = $(filaExistente.node()).find('.subTotal');
-        //             // var valorSubTotal = parseFloat(subTotalCell.text())
-        //             // var nuevoSubTotal = nuevoTotal - parseFloat($('#descuento_' + id).val())
-        //             // subTotalCell.text((nuevoSubTotal).toFixed(2));
+                // LIMPIAMOS TODOS LOS SELECT
+                $('#cantidad_venta').val(0);
+                $('#prenda_id').val("").trigger('change');
+                $('#numero_ojales').val(0);
+                $('#tela_id').val("").trigger('change');
+                $('#prelavado_id').val("").trigger('change');
+                $('#nevado_id').val("").trigger('change');
+                $('#focalizado_id').val("").trigger('change');
+                $('#tipo_tela_id').val("").trigger('change');
+                $('#color_tela_id').val("").trigger('change');
+                $('#caracteristica_tela_id').val("").trigger('change');
+                $('#peso').val(0);
+                $('#precio_venta').val(0);
+                $('#sub_total').val(0);
+                $('#observacion').val("");
+                $('#nro_ot').val(0);
 
-        //             // let servicio = arrayProductoCar.find(s => s.servicio_id === servicioDatos.id);
-        //             // if (servicio) {
+            } else {
+                $("#formulario_venta")[0].reportValidity();
+            }
 
-        //             //     servicio.cantidad = parseFloat(servicio.cantidad) + parseFloat(cantidad);
-        //             //     servicio.total = parseFloat(nuevoTotal);
-        //             //     servicio.subTotal = parseFloat(nuevoSubTotal);
-        //             //     servicio.descripcion_adicional = $('#descripcion_adicional').val();
+        }
 
-        //             //     let sumaTotal = arrayProductoCar.reduce((sum, current) => sum + current.subTotal, 0);
-        //             //     let descuentoAdicional = $('#descuento_adicional').val()
+        function recepcionar() {
 
-        //             //     $('#monto_total, #monto_total_pagado, #monto_total_pagado_recibo').val(parseFloat(sumaTotal) -
-        //             //         parseFloat(descuentoAdicional))
-        //             //     $('#monto_gift_card').attr('max', parseFloat(sumaTotal) - parseFloat(descuentoAdicional));
+            $.ajax({
+                url: "{{ url('factura/recepcionar') }}",
+                method: "POST",
+                data: {
+                    carro: arrayProductos,
+                    cliente: $('#cliente_seleccionado_id').val(),
+                    prioridad_cliente: $('#prioridad_cliente').val(),
+                    fecha_recepcion: $('#fecha_recepcion_cliente').val(),
+                    entregado_por: $('#entregado_por').val(),
+                    usuario_recepciono: $('#usuario_recepciono_id').val()
+                },
+                // data: datos,
+                success: function(data) {
+                    if (data.estado) {
+                        if (data.data.cantidad > 0)
+                            $('#tabla-clientes-buscados').show('toogle')
 
-        //             // } else {
-        //             //     Swal.fire({
-        //             //         icon: 'error',
-        //             //         title: "ERROR!",
-        //             //         text: "Error al actualizar el descuento.",
-        //             //         timer: 4000
-        //             //     })
-        //             // }
+                        $('#tabla-clientes-buscados').html(data.data.listado)
+                    } else {
 
-        //         } else {
-        //             var subTotal = (precio * cantidad).toFixed(2);
-
-        //             // let cant_piezaz_vender = '';
-        //             // let cant_piezaz_sobrantes = '';
-
-        //             // if(servicioDatos.unidad_medida_id == "{{ config('siat.metro_cuadrado') }}"){
-        //             //     // PARA EL CALCULO DE LAS CAJAS Y PIEZAS
-        //             //     let cantidadSolicitada = parseFloat(cantidad);
-        //             //     let equivalenteUnidadM2 = parseFloat(servicioDatos.equivalente_unidad);
-        //             //     let cantidadCaja = parseFloat(servicioDatos.cantidad_por_caja);
-
-        //             //     let cantidadTotalPiezas = cantidadSolicitada / equivalenteUnidadM2;
-        //             //     let cantidadTotalCajas = cantidadTotalPiezas / cantidadCaja;
-        //             //     let cantidadTotalPiezasSueltas = cantidadTotalPiezas % cantidadCaja;
-
-        //             //     if (Math.round(cantidadTotalPiezasSueltas) == cantidadCaja) {
-        //             //         cant_piezaz_vender = Math.floor((cantidadTotalCajas)) + 1;
-        //             //         cant_piezaz_sobrantes = 0;
-        //             //     } else {
-        //             //         cant_piezaz_vender = Math.floor((cantidadTotalCajas));
-        //             //         cant_piezaz_sobrantes = Math.round(cantidadTotalPiezasSueltas);
-        //             //     }
-        //             // }
-
-        //             let btnAccesorios = `<button class="btn btn-icon btn-info btn-circle btn-sm"
-    //                                     data-id="${id}"
-    //                                     data-nombre="${servicioDatos.nombre}"
-    //                                     onclick="modalAgregarAccesorios(this)"
-    //                                     title="Agregar Accesorios">
-    //                                         <i class="fa fa-plus"></i>
-    //                                 </button>`;
-
-        //             let btnEliminar = `<button class='eliminar btn btn-icon btn-danger btn-circle btn-sm'
-    //                                     title='Eliminar del carro'
-    //                                     onclick='eliminarItem(${id})'>
-    //                                         <i class='fa fa-trash'></i>
-    //                                 </button>`;
-
-
-        //             table.row.add([
-        //                 servicioDatos.nombre + " " + descripcion_adicional,
-        //                 numero_serie,
-        //                 precio,
-        //                 "<span class='cantidad'>" + cantidad + "</span>",
-        //                 "<span class='total'>" + total + "</span>",
-        //                 '<input class="form-control form-control-sm" type="text" name="descuento_' + id +
-        //                 '" id="descuento_' + id + '" value="0" onchange="ejecutarDescuento(this)">',
-        //                 "<span class='subTotal'>" + subTotal + "</span>",
-        //                 "<div id='contenedor_accesorio_" + id + "'></div>",
-        //                 btnAccesorios + btnEliminar
-        //             ]).node().id = 'producto-' + id;
-        //             table.draw(false);
-
-        //             // AGREGAMOS AL CARRO LOS PRODUSTOS
-        //             arrayProductoCar.push(servicio);
-        //             // AGREGAMOS AL CARRO LOS PRODUSTOS
-
-        //             var monto_total_r = parseFloat(monto_total) + parseFloat(servicio.subTotal);
-
-        //             $('#monto_total, #monto_total_pagado, #monto_total_pagado_recibo').val(monto_total_r.toFixed(2));
-
-        //             //VALIDAMOS QUE EL MONTO DE GITCAD NO SOBREPASE EL MONTO DEL PRODUCTO
-        //             $('#monto_gift_card').attr('max', monto_total_r);
-
-        //             $('#cantidad_venta').val(0)
-        //             $('#precio_venta').val(0)
-        //             $('#total_venta').val(0)
-        //             $('#numero_serie').val('')
-        //             $('#stock_sucursal').val(0)
-
-        //             $("#stock_sucursal").removeClass("is-invalid is-valid");
-
-        //         }
-
-        //         // BORRAMOS LOS ITEM QUE AGREGAMOS
-        //         $('#serivicio_id_venta').val(null).trigger('change');
-        //         $('#tabla_detalles').show('toggle')
-        //         $('#bloque_seleccionar_cliente').show('toggle')
-        //         $("#cantidad_stock").val(0)
-
-        //     } else {
-        //         $("#formulario_venta")[0].reportValidity();
-        //     }
-
-        // }
+                    }
+                }
+            })
+        }
 
         // function ejecutarDescuento(valor) {
 
