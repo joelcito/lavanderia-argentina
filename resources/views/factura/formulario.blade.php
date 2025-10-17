@@ -209,7 +209,7 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
-                                                    <input type="text" name="cliente_seleccionado_id"
+                                                    <input type="hidden" name="cliente_seleccionado_id"
                                                         id="cliente_seleccionado_id">
                                                 </div>
                                                 <div class="col-md-12">
@@ -255,7 +255,7 @@
                                                 name="recibido_por" id="recibido_por"
                                                 value="{{ $usuario->nombres . ' ' . $usuario->ap_paterno . ' ' . $usuario->ap_materno }}"
                                                 readonly>
-                                            <input type="text" name="usuario_recepciono_id" id="usuario_recepciono_id"
+                                            <input type="hidden" name="usuario_recepciono_id" id="usuario_recepciono_id"
                                                 value="{{ $usuario->id }}">
                                         </div>
                                         <div class="col-md-12">
@@ -550,7 +550,7 @@
                             </form>
                             <hr>
                             <div id="tabla_detalles" style="display: none;">
-                                <h2 class="text-center">CARRITO DE COMPRAS</h2>
+                                <h3 class="text-center">CARGAR DE ORDEN DE TRABAJOS</h2>
                                 <div class="table-responsive" style="max-width: 100%; overflow-x: auto;">
                                     <table id="carrito" class="table align-middle table-row-dashed fs-6 gy-5">
                                         <thead>
@@ -595,10 +595,64 @@
                                         </tfoot> --}}
                                     </table>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <button class="btn btn-success btn-sm w-100"
-                                            onclick="recepcionar()">RECEPCIONAR</button>
+
+                                <div class="row" id="bloque_recibo">
+                                    <div class="col-md-12 bg-light-success">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h2 class="text-center text-success">DATOS DE PAGO</h2>
+                                            </div>
+                                        </div>
+                                        <form id="formularioGeneraRecibo">
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <label class="required">Tipo Pago</label>
+                                                    <select name="tipo_pago_pagado_recibo" id="tipo_pago_pagado_recibo"
+                                                        class="form-control form-control-sm" onchange="validarCamposRecibo()">
+                                                        <option value="">Seleccione</option>
+                                                        <option value="EFECTIVO">EFECTIVO</option>
+                                                        <option value="TRANSFERENCIA">TRANSFERENCIA</option>
+                                                        <option value="QR">QR</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="required">Realizara algun Pago?</label>
+                                                    <div class="d-flex align-items-center mt-3">
+                                                        <label class="form-check form-check-custom form-check-solid me-3">
+                                                            <input class="form-check-input h-20px w-20px" type="checkbox"
+                                                                name="realizo_pago_recibo" value="pago"
+                                                                id="realizo_pago_recibo" />
+                                                            <span class="form-check-label fw-semibold">Realizo un
+                                                                pago</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="required">Monto Venta</label>
+                                                    <input type="number" class="form-control form-control-sm" readonly
+                                                        id="monto_total_pagado_recibo" name="monto_total_pagado_recibo"
+                                                        value="0">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="required">Monto Pagado</label>
+                                                    <input type="number" class="form-control form-control-sm"
+                                                        id="monto_pagado_recibo" name="monto_pagado_recibo" value="0"
+                                                        onkeyup="caluclarCambioRecibo(this)">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="required">Cambio</label>
+                                                    <input type="number" class="form-control form-control-sm" readonly
+                                                        id="cambio_pagado_recibo" name="cambio_pagado_recibo" value="0">
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div class="row mt-3">
+                                            <div class="col-md-12">
+                                                <button class="btn btn-sm w-100 btn-success" onclick="recepcionar()"
+                                                    id="boton_enviar_recibo"> <i class="fa fa-spinner fa-spin"
+                                                        style="display:none;"></i>RECEPCIONAR</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -837,38 +891,38 @@
 
                 $('#tabla_detalles').show('toggle');
 
-                let cantidad_venta = $('#cantidad_venta').val();
-                let prenda_id = $('#prenda_id').val();
-                let numero_ojales = $('#numero_ojales').val();
-                let tela_id = $('#tela_id').val();
-                let prelavado_id = $('#prelavado_id').val();
-                let nevado_id = $('#nevado_id').val();
-                let focalizado_id = $('#focalizado_id').val();
-                let tipo_tela_id = $('#tipo_tela_id').val();
-                let color_tela_id = $('#color_tela_id').val();
+                let cantidad_venta         = $('#cantidad_venta').val();
+                let prenda_id              = $('#prenda_id').val();
+                let numero_ojales          = $('#numero_ojales').val();
+                let tela_id                = $('#tela_id').val();
+                let prelavado_id           = $('#prelavado_id').val();
+                let nevado_id              = $('#nevado_id').val();
+                let focalizado_id          = $('#focalizado_id').val();
+                let tipo_tela_id           = $('#tipo_tela_id').val();
+                let color_tela_id          = $('#color_tela_id').val();
                 let caracteristica_tela_id = $('#caracteristica_tela_id').val();
-                let peso = $('#peso').val();
-                let precio_venta = $('#precio_venta').val();
-                let sub_total = $('#sub_total').val();
-                let observacion = $('#observacion').val();
-                let nro_ot = $('#nro_ot').val();
+                let peso                   = $('#peso').val();
+                let precio_venta           = $('#precio_venta').val();
+                let sub_total              = $('#sub_total').val();
+                let observacion            = $('#observacion').val();
+                let nro_ot                 = $('#nro_ot').val();
 
                 let servicio = {
-                    cantidad_venta: cantidad_venta,
-                    prenda_id: prenda_id,
-                    numero_ojales: numero_ojales,
-                    tela_id: tela_id,
-                    prelavado_id: prelavado_id,
-                    nevado_id: nevado_id,
-                    focalizado_id: focalizado_id,
-                    tipo_tela_id: tipo_tela_id,
-                    color_tela_id: color_tela_id,
+                    cantidad_venta        : cantidad_venta,
+                    prenda_id             : prenda_id,
+                    numero_ojales         : numero_ojales,
+                    tela_id               : tela_id,
+                    prelavado_id          : prelavado_id,
+                    nevado_id             : nevado_id,
+                    focalizado_id         : focalizado_id,
+                    tipo_tela_id          : tipo_tela_id,
+                    color_tela_id         : color_tela_id,
                     caracteristica_tela_id: caracteristica_tela_id,
-                    peso: peso,
-                    precio_venta: precio_venta,
-                    sub_total: sub_total,
-                    observacion: observacion,
-                    nro_ot: nro_ot
+                    peso                  : peso,
+                    precio_venta          : precio_venta,
+                    sub_total             : sub_total,
+                    observacion           : observacion,
+                    nro_ot                : nro_ot
                 }
 
                 contadorTable++;
@@ -901,6 +955,11 @@
 
                 arrayProductos.push(servicio);
 
+                // SETEAMOS EL VALOR PARA EL PAGO
+                let montoPagado = parseFloat($('#monto_total_pagado_recibo').val());
+                let s = parseFloat(sub_total);
+                $('#monto_total_pagado_recibo').val(montoPagado + s);
+
                 // LIMPIAMOS TODOS LOS SELECT
                 $('#cantidad_venta').val(0);
                 $('#prenda_id').val("").trigger('change');
@@ -925,30 +984,86 @@
         }
 
         function recepcionar() {
+            if($('#formularioGeneraRecibo')[0].checkValidity()){
+                $.ajax({
+                    url: "{{ url('factura/recepcionar') }}",
+                    method: "POST",
+                    data: {
+                        carro             : arrayProductos,
+                        cliente           : $('#cliente_seleccionado_id').val(),
+                        prioridad_cliente : $('#prioridad_cliente').val(),
+                        fecha_recepcion   : $('#fecha_recepcion_cliente').val(),
+                        entregado_por     : $('#entregado_por').val(),
+                        usuario_recepciono: $('#usuario_recepciono_id').val(),
 
-            $.ajax({
-                url: "{{ url('factura/recepcionar') }}",
-                method: "POST",
-                data: {
-                    carro: arrayProductos,
-                    cliente: $('#cliente_seleccionado_id').val(),
-                    prioridad_cliente: $('#prioridad_cliente').val(),
-                    fecha_recepcion: $('#fecha_recepcion_cliente').val(),
-                    entregado_por: $('#entregado_por').val(),
-                    usuario_recepciono: $('#usuario_recepciono_id').val()
-                },
-                // data: datos,
-                success: function(data) {
-                    if (data.estado) {
-                        if (data.data.cantidad > 0)
-                            $('#tabla-clientes-buscados').show('toogle')
-
-                        $('#tabla-clientes-buscados').html(data.data.listado)
-                    } else {
-
+                        tipo_pago_pagado_recibo: $('#tipo_pago_pagado_recibo').val(),
+                        realizo_pago_recibo: $('#realizo_pago_recibo').is(':checked'),
+                        monto_total_pagado_recibo: $('#monto_total_pagado_recibo').val(),
+                        monto_pagado_recibo: $('#monto_pagado_recibo').val(),
+                        cambio_pagado_recibo: $('#cambio_pagado_recibo').val(),
+                    },
+                    // data: datos,
+                    success: function(data) {
+                        if (data.estado) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: "Exito!",
+                                text: "Se genero con exito la venta",
+                                timer: 4000
+                            })
+                            location.reload();
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: "Error!",
+                                text: "Ocurrio un error!",
+                                timer: 4000
+                            })
+                        }
                     }
-                }
-            })
+                })
+            }else{
+                $('#formularioGeneraRecibo')[0].reportValidity()
+            }
+
+        }
+
+        function validarCamposRecibo() {
+            let tipo_pago = $('#tipo_pago_pagado_recibo').val()
+
+            if (tipo_pago === 'EFECTIVO' || tipo_pago === 'TRANSFERENCIA' || tipo_pago === 'QR') {
+                $('#realizo_pago_recibo').prop('required', true);
+                $('#monto_pagado_recibo').prop('required', true);
+                $('#cambio_pagado_recibo').prop('required', true);
+                $('#realizo_pago_recibo').prop('checked', true);
+                $('#monto_pagado_recibo').attr('min', 1);
+            } else {
+                $('#realizo_pago_recibo').prop('required', false);
+                $('#monto_pagado_recibo').prop('required', false);
+                $('#cambio_pagado_recibo').prop('required', false);
+                $('#realizo_pago_recibo').prop('checked', false);
+                $('#monto_pagado_recibo').attr('min', 0);
+            }
+        }
+
+        function caluclarCambioRecibo(select) {
+
+            let monto_total_pagado = parseFloat($('#monto_total_pagado_recibo').val())
+            let monto_pagado = parseFloat(select.value)
+
+            if (monto_pagado > monto_total_pagado) {
+                $('#cambio_pagado_recibo').val(monto_pagado - monto_total_pagado)
+            } else if (monto_pagado <= monto_total_pagado) {
+                $('#cambio_pagado_recibo').val(0)
+            }
+
+            if (monto_pagado === 0) {
+                $('#tipo_pago_pagado_recibo').prop('required', false)
+                $('#realizo_pago_recibo').prop('required', false)
+            } else {
+                $('#tipo_pago_pagado_recibo').prop('required', true)
+                $('#realizo_pago_recibo').prop('required', true)
+            }
         }
 
         // function ejecutarDescuento(valor) {

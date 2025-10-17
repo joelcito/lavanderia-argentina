@@ -20,11 +20,11 @@ return new class extends Migration
             $table->foreign('usuario_eliminador_id')->references('id')->on('users');
             $table->unsignedBigInteger('usuario_eliminador_id')->nullable();
             //foranea detalle
-            $table->foreign('detalle_id')->references('id')->on('detalles');
-            $table->unsignedBigInteger('detalle_id')->nullable();
+            // $table->foreign('detalle_id')->references('id')->on('detalles');
+            // $table->unsignedBigInteger('detalle_id')->nullable();
 
             $table->string('nombre')->nullable();
-          
+
 
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();

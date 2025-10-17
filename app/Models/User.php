@@ -67,4 +67,9 @@ class User extends Authenticatable
     public function rol(){
         return $this->belongsTo('App\Models\Rol', 'rol_id');
     }
+
+    public function sucursal(){
+        return $this->belongsTo(Sucursal::class, 'sucursal_id');
+    }
+
 }
