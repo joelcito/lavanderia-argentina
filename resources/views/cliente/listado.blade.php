@@ -24,42 +24,41 @@
                     <form id="formularioCliente">
                         <input type="hidden" name="id" id="id" value="0">
                         <div class="row">
-                            <div class="col-md-12">                            
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Nombres</label>
-                                    <input type="text" class="form-control form-control-sm" id="nombre"
-                                        name="nombre">
-                                </div>                     
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Apellido paterno</label>
-                                    <input type="text" class="form-control form-control-sm" id="ap_paterno"
-                                        name="ap_paterno">
-                                </div>                     
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Apellido materno</label>
-                                    <input type="text" class="form-control form-control-sm" id="ap_materno"
-                                        name="ap_materno">
-                                </div>                                                                   
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Celular</label>
-                                    <input type="text" class="form-control form-control-sm" id="celular"
-                                        name="celular" maxlength="8">
-                                </div>
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Cedula Identidad</label>
-                                    <input type="text" class="form-control form-control-sm" id="cedula"
-                                        name="cedula" maxlength="10">
-                                </div>                                                  
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">NIT</label>
-                                    <input type="text" class="form-control form-control-sm" id="nit"
-                                        name="nit">
-                                </div>                                                      
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Razon Social</label>
-                                    <input type="text" class="form-control form-control-sm" id="razon_social"
-                                        name="razon_social">
-                                </div>                                  
+                            <div class="col-md-4">
+                                <label class="required fw-semibold fs-6 mb-2">Nombres</label>
+                                <input type="text" class="form-control form-control-sm" id="nombre" name="nombre">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="required fw-semibold fs-6 mb-2">Apellido paterno</label>
+                                <input type="text" class="form-control form-control-sm" id="ap_paterno"
+                                    name="ap_paterno">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="required fw-semibold fs-6 mb-2">Apellido materno</label>
+                                <input type="text" class="form-control form-control-sm" id="ap_materno"
+                                    name="ap_materno">
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-md-3">
+                                <label class="required fw-semibold fs-6 mb-2">Celular</label>
+                                <input type="text" class="form-control form-control-sm" id="celular" name="celular"
+                                    maxlength="8">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="required fw-semibold fs-6 mb-2">Cedula Identidad</label>
+                                <input type="text" class="form-control form-control-sm" id="cedula" name="cedula"
+                                    maxlength="10">
+                            </div>
+                            <div class="col-md-3">
+
+                                <label class="required fw-semibold fs-6 mb-2">NIT</label>
+                                <input type="text" class="form-control form-control-sm" id="nit" name="nit">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="required fw-semibold fs-6 mb-2">Razon Social</label>
+                                <input type="text" class="form-control form-control-sm" id="razon_social"
+                                    name="razon_social">
                             </div>
                         </div>
                     </form>
@@ -80,35 +79,34 @@
 
 
     <div class="d-flex flex-column flex-column-fluid">
-    <div id="kt_app_content" class="app-content flex-column-fluid">
-        <div id="kt_app_content_container" class="app-container container-xxlg">
-            <div class="card shadow-sm">
-                <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
-                    <h3 class="card-title fw-bold">Listado de Cliente</h3>
-                    <div class="card-toolbar">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoCliente()">
-                            <i class="fa fa-plus"></i> Nuevo Cliente
-                        </button>
+        <div id="kt_app_content" class="app-content flex-column-fluid">
+            <div id="kt_app_content_container" class="app-container container-xxlg">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
+                        <h3 class="card-title fw-bold">Listado de Cliente</h3>
+                        <div class="card-toolbar">
+                            <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoCliente()">
+                                <i class="fa fa-plus"></i> Nuevo Cliente
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="card-body py-4" id="table_listado">
-                    <!-- El listado se carga por AJAX -->
+                    <div class="card-body py-4" id="table_listado">
+                        <!-- El listado se carga por AJAX -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
 @stop()
 
 @section('js')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-<script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
+    <script>
         $.ajaxSetup({
             // definimos cabecera donde estarra el token y poder hacer nuestras operaciones de put,post...
             headers: {
@@ -121,7 +119,7 @@
         });
 
 
-        function ajaxListado(){
+        function ajaxListado() {
             let datos = {};
             $.ajax({
                 url: "{{ route('cliente.ajaxListado') }}",
@@ -140,7 +138,7 @@
             })
         }
 
-        function modalNuevoCliente(){            
+        function modalNuevoCliente() {
             $('#razon_social').val('')
             $('#nit').val('')
             $('#cedula').val('')
@@ -152,10 +150,10 @@
             $('#modalCliente').modal('show')
         }
 
-        function guardarCliente(){
+        function guardarCliente() {
             let datos = $('#formularioCliente').serializeArray();
 
-             $.ajax({
+            $.ajax({
                 url: "{{ route('cliente.guardarCliente') }}",
                 method: "POST",
                 data: datos,
@@ -196,12 +194,12 @@
                 }
             });
         }
-       
-        function editarCliente(cliente){            
+
+        function editarCliente(cliente) {
             $('#razon_social').val(cliente.razon_social)
             $('#nit').val(cliente.nit)
             $('#cedula').val(cliente.cedula)
-            $('#celular').val(cliente.celular)            
+            $('#celular').val(cliente.celular)
             $('#ap_materno').val(cliente.ap_materno)
             $('#ap_paterno').val(cliente.ap_paterno)
             $('#nombre').val(cliente.nombres)
@@ -209,7 +207,7 @@
             $('#id').val(cliente.id)
             $('#modalCliente').modal('show')
         }
-      
+
         function eliminarCliente(cliente, razon_social) {
             Swal.fire({
                 title: "¿Quieres eliminar " + razon_social + "?",
@@ -226,7 +224,9 @@
                     $.ajax({
                         url: "{{ route('cliente.eliminarCliente') }}",
                         method: "POST",
-                        data: { cliente: cliente },
+                        data: {
+                            cliente: cliente
+                        },
                         success: function(resultado) {
                             if (resultado.estado) {
                                 ajaxListado(); // recarga el listado
@@ -251,8 +251,8 @@
                             });
                         }
                     });
-                    
-                    
+
+
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire(
                         'Cancelado',
@@ -262,6 +262,5 @@
                 }
             });
         }
-        
     </script>
 @endsection

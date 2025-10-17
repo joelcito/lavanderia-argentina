@@ -28,6 +28,8 @@ class MovimientoController extends Controller
                 ->groupBy('sucursal_id')
                 ->get();
 
+                // dd($stocks);
+
             $valores = [
                 'stock' => view('movimiento.ajaxListado')->with(compact('stocks', 'productoId'))->render()
             ];
@@ -54,9 +56,9 @@ class MovimientoController extends Controller
             $ingreso = $request->input('cantidad_ingreso');
             $fecha = $request->input('fecha_ingreso');
             $descripcion = $request->input('descripcion');
-            
+
             $usuario = Auth::user();
-            
+
             //LA CREACION DE UN NUEVa movimiento
             $movimiento = new Movimiento();
             $movimiento->usuario_creador_id = $usuario->id;
@@ -66,7 +68,7 @@ class MovimientoController extends Controller
             $movimiento->ingreso = $ingreso;
             $movimiento->fecha = $fecha;
             $movimiento->descripcion = $descripcion;
-            
+
             $movimiento->save();
 
             $data = Respuesta::success(null, "Datos Obtenidos correctamente");
@@ -76,7 +78,7 @@ class MovimientoController extends Controller
         }
 
         return $data;
-        
+
     }
 
     /**
@@ -93,9 +95,9 @@ class MovimientoController extends Controller
             $salida = $request->input('cantidad_salida');
             $fecha = $request->input('fecha_salida');
             $descripcion = $request->input('descripcion');
-            
+
             $usuario = Auth::user();
-                       
+
             //LA CREACION DE UN NUEVa movimiento
             $movimiento = new Movimiento();
             $movimiento->usuario_creador_id = $usuario->id;
@@ -106,7 +108,7 @@ class MovimientoController extends Controller
             $movimiento->salida = $salida;
             $movimiento->fecha = $fecha;
             $movimiento->descripcion = $descripcion;
-            
+
             $movimiento->save();
 
             $data = Respuesta::success(null, "Datos Obtenidos correctamente");
@@ -116,6 +118,6 @@ class MovimientoController extends Controller
         }
 
         return $data;
-        
+
     }
 }
