@@ -26,6 +26,17 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Sucursal</label>
+                                    <select class="form-control form-control-sm" id="sucursal_id" name="sucursal_id" required>
+                                        <option value="">Seleccione una Sucursal</option>
+                                            @forelse($sucursales as $sucursal)
+                                                <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
+                                            @empty
+                                                <h4 class="text-danger">No hay sucursales registrados</h4>
+                                           @endforelse
+                                    </select>
+                                </div>
+                                <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Rol</label>
                                     <select class="form-control form-control-sm" id="rol_id" name="rol_id" required>
                                         <option value="">Seleccione un rol</option>
@@ -166,6 +177,7 @@
             $('#ap_paterno').val('')
             $('#nombre').val('')
             $('#rol_id').val('')
+            $('#sucursal_id').val('')
             $('#id').val(0)
             $('#modalUsuario').modal('show')
         }
@@ -231,6 +243,7 @@
             $('#ap_paterno').val(user.ap_paterno)
             $('#nombre').val(user.nombres)
             $('#rol_id').val(user.rol_id)
+            $('#sucursal_id').val(user.sucursal_id)
             $('#id').val(user.id)
             $('#modalUsuario').modal('show')
         }

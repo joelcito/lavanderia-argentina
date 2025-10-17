@@ -30,6 +30,7 @@ class User extends Authenticatable
         'usuario_eliminador_id',
 
         'rol_id',
+        'sucursal_id',
         'nombres',
         'ap_paterno',
         'ap_materno',

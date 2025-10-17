@@ -7,6 +7,7 @@ use App\Models\Sucursal;
 use App\Utils\Respuesta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class MovimientoController extends Controller
 {
@@ -22,13 +23,24 @@ class MovimientoController extends Controller
         if($request->ajax()){
 
             //SACAMOS EL LISTADO
-            $stocks = Movimiento::where('producto_id', $productoId)
+            /*$stocks = Movimiento::where('producto_id', $productoId)
                 ->select('sucursal_id')
                 ->selectRaw('SUM(ingreso) - SUM(salida) as stock_sucursal')
                 ->groupBy('sucursal_id')
                 ->get();
 
-                // dd($stocks);
+                // dd($stocks);*/
+            $stocks = Sucursal::leftJoin('movimientos', function($join) use ($productoId) {
+                    $join->on('sucursales.id', '=', 'movimientos.sucursal_id')
+                        ->where('movimientos.producto_id', '=', $productoId);
+                })
+                ->select(
+                    'sucursales.id as sucursal_id',
+                    'sucursales.nombre as sucursal_nombre',
+                    DB::raw('COALESCE(SUM(movimientos.ingreso) - SUM(movimientos.salida), 0) as stock_sucursal')
+                )
+                ->groupBy('sucursales.id', 'sucursales.nombre')
+                ->get();
 
             $valores = [
                 'stock' => view('movimiento.ajaxListado')->with(compact('stocks', 'productoId'))->render()
@@ -97,6 +109,16 @@ class MovimientoController extends Controller
             $descripcion = $request->input('descripcion');
 
             $usuario = Auth::user();
+
+            $stockActual = Movimiento::where('producto_id', $producto_id)
+            ->where('sucursal_id', $sucursal_id)
+            ->selectRaw('COALESCE(SUM(ingreso) - SUM(salida), 0) as stock')
+            ->value('stock');
+
+            // ✅ 2. Verificar si hay suficiente stock
+            if ($salida > $stockActual) {
+                return Respuesta::error(null, "No hay suficiente stock. Disponible: {$stockActual}");
+            }
 
             //LA CREACION DE UN NUEVa movimiento
             $movimiento = new Movimiento();

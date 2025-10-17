@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Rol;
+use App\Models\Sucursal;
 use App\Models\User;
 use App\Utils\Respuesta;
 use Illuminate\Http\Request;
@@ -14,8 +15,9 @@ class UserController extends Controller
     public function listado (){
 
         $roles = Rol::all();
+        $sucursales = Sucursal::all();
 
-        return view ('user.listado')->with(compact('roles'));
+        return view ('user.listado')->with(compact('roles', 'sucursales'));
     }
 
     public function ajaxListado (Request $request){
@@ -36,6 +38,7 @@ class UserController extends Controller
     public function guardarUser(Request $request){
         if ($request->ajax()) {
             $user_id = $request->input('id');
+            $sucursal_id = $request->input('sucursal_id');
             $rol_id = $request->input('rol_id');
             $nombre = $request->input('nombre');
             $ap_paterno = $request->input('ap_paterno');
@@ -56,6 +59,7 @@ class UserController extends Controller
             }
 
             $user->rol_id = $rol_id;
+            $user->sucursal_id = $sucursal_id;
             $user->nombres = $nombre;
             $user->ap_paterno = $ap_paterno;
             $user->ap_materno = $ap_materno;

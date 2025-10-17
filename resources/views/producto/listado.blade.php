@@ -448,7 +448,14 @@
                         ajaxListado();
                         $('#modalSalida').modal('hide');
                     } else {
-
+                        Swal.fire({
+                            title: "LA SALIDA ES MAYOR AL STOCK",
+                            icon: "error",
+                            timer: 3000, // Se cierra en 3 segundos
+                            showConfirmButton: false
+                        });
+                        ajaxListado();
+                        $('#modalSalida').modal('hide');
                     }
                 },
                 error: function(xhr) {

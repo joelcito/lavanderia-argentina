@@ -11,11 +11,11 @@
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($stocks as $movimiento)
                 <tr>
-                    <td>{{ $movimiento->sucursal?->nombre }}</td>
+                    <td>{{ $movimiento->sucursal_nombre }}</td>
                     <td>{{ $movimiento->stock_sucursal }}</td>
                     <td>                    
-                        <button class="btn btn-icon btn-sm btn-success btn-circle" title="Ingreso producto" onclick="modalIngreso({{ $productoId }}, {{ $movimiento->sucursal_id }},{{ json_encode($movimiento->sucursal->nombre) }})">+</button>
-                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Salida producto" onclick="modalSalida({{ $productoId }}, {{ $movimiento->sucursal_id }},{{ json_encode($movimiento->sucursal->nombre) }})">-</button>
+                        <button class="btn btn-icon btn-sm btn-success btn-circle" title="Ingreso producto" onclick="modalIngreso({{ $productoId }}, {{ $movimiento->sucursal_id }},{{ json_encode($movimiento->sucursal_nombre) }})">+</button>
+                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Salida producto" onclick="modalSalida({{ $productoId }}, {{ $movimiento->sucursal_id }},{{ json_encode($movimiento->sucursal_nombre) }})">-</button>
                     </td>
                 </tr>
             @empty
