@@ -29,6 +29,14 @@ return new class extends Migration
             $table->string('razon_social')->nullable();
             $table->text('direccion')->nullable();
             $table->text('imagen')->nullable();
+            $table->text('imagen_CI_anverso')->nullable();
+            $table->text('imagen_CI_reverso')->nullable();
+            $table->text('nombre_referencia_1')->nullable();
+            $table->text('celular_referencia_1')->nullable();
+            $table->text('nombre_referencia_2')->nullable();
+            $table->text('celular_referencia_2')->nullable();
+            $table->text('nombre_referencia_3')->nullable();
+            $table->text('celular_referencia_3')->nullable();
 
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();

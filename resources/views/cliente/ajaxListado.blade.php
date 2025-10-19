@@ -1,4 +1,5 @@
 <div style="overflow-x: auto;">
+
     <!--begin::Table-->
     <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_usuarios">
         <thead>
@@ -10,7 +11,9 @@
                 <th>C.I.</th>
                 <th>NIT</th>               
                 <th>Razon Social</th>
+                <th>Direccion</th>
                 <th>Actions</th>
+                <th>Referencias</th>
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -23,9 +26,34 @@
                     <td>{{ $cliente->cedula }}</td>
                     <td>{{ $cliente->nit }}</td>
                     <td>{{ $cliente->razon_social }}</td>
+                    <td>{{ $cliente->direccion}}</td>
                     <td>
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar cliente" onclick="editarCliente({{ json_encode($cliente) }})"><i class="fa fa-edit"></i></button>
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar cliente" onclick="eliminarCliente('{{ $cliente->id }}',  '{{ $cliente->razon_social }}')"><i class="fa fa-trash"></i></button>
+                    </td>
+                    <td>
+                        <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_usuarios">
+                            <thead>
+                                <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                                    <th>Nombre Completo</th>
+                                    <th>Celular</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 fw-semibold">
+                                    <tr>
+                                        <td>{{ $cliente->nombre_referencia_1 }}</td>
+                                        <td>{{ $cliente->celular_referencia_1 }}</td>        
+                                    </tr>
+                                    <tr>
+                                        <td>{{ $cliente->nombre_referencia_2 }}</td>
+                                        <td>{{ $cliente->celular_referencia_2 }}</td>        
+                                    </tr>
+                                    <tr>
+                                        <td>{{ $cliente->nombre_referencia_3 }}</td>
+                                        <td>{{ $cliente->celular_referencia_3 }}</td>        
+                                    </tr>
+                            </tbody>
+                        </table>
                     </td>
                 </tr>
             @empty

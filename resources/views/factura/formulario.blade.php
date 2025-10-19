@@ -688,8 +688,8 @@
             $('#telefono_cliente').val(cliente.celular);
             $('#direccion_cliente').val(cliente.direccion);
 
-            if (cliente.foto && cliente.foto !== '')
-                $('#imagen_cliente').attr('src', window.location.origin + '/' + cliente.foto);
+            if (cliente.imagen && cliente.imagen !== '')
+                $('#imagen_cliente').attr('src', window.location.origin + '/storage/imagenesClientes/' + cliente.imagen);
             // else
             //     $('#imagen_cliente').attr('src', '/images/sin-foto.png');
 

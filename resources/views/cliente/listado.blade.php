@@ -21,7 +21,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body scroll-y">
-                    <form id="formularioCliente">
+                    <form id="formularioCliente" enctype="multipart/form-data">
                         <input type="hidden" name="id" id="id" value="0">
                         <div class="row">
                             <div class="col-md-4">
@@ -60,6 +60,58 @@
                                 <input type="text" class="form-control form-control-sm" id="razon_social"
                                     name="razon_social">
                             </div>
+                        </div>
+                        <div class="row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Direccion</label>
+                                    <textarea class="form-control form-control-sm" id="direccion"
+                                        name="direccion"></textarea>
+                        </div>
+                        <div class="fv-row mb-7">
+                            <label class="required fw-semibold fs-6 mb-2">Imagen Cliente</label>
+                            <input type="file" accept="image/*" class="form-control form-control-sm" id="imagen"
+                                    name="imagen">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="required fw-semibold fs-6 mb-2">Imagen Cedula Identidad Anverso</label>
+                                <input type="file" accept="image/*" class="form-control form-control-sm" id="imagen_CI_anverso"
+                                    name="imagen_CI_anverso">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="required fw-semibold fs-6 mb-2">Imagen Cedula Identidad Reverso</label>
+                                <input type="file" accept="image/*" class="form-control form-control-sm" id="imagen_CI_reverso"
+                                    name="imagen_CI_reverso">
+                            </div>
+                        </div>
+                        <div class="row mb-7 mt-7">
+                            <label class="fw-semibold fs-6 mb-2">REFERENCIAS:</label>
+                            <div class="col-md-4">     
+                                <label class="fw-semibold fs-6 mb-2">Nombre Completo</label>                           
+                                <input type="text" class="form-control form-control-sm"  
+                                id="nombre_referencia_1" name="nombre_referencia_1">
+
+                                <label class="fw-semibold fs-6 mb-2">Celular</label>                           
+                                <input type="text" class="form-control form-control-sm"  
+                                id="celular_referencia_1" name="celular_referencia_1" maxlength="8">
+                            </div>
+                            <div class="col-md-4">     
+                                <label class="fw-semibold fs-6 mb-2">Nombre Completo</label>                           
+                                <input type="text" class="form-control form-control-sm"  
+                                id="nombre_referencia_2" name="nombre_referencia_2">
+
+                                <label class="fw-semibold fs-6 mb-2">Celular</label>                           
+                                <input type="text" class="form-control form-control-sm"  
+                                id="celular_referencia_2" name="celular_referencia_2" maxlength="8">
+                            </div>
+                            <div class="col-md-4">     
+                                <label class="fw-semibold fs-6 mb-2">Nombre Completo</label>                           
+                                <input type="text" class="form-control form-control-sm"  
+                                id="nombre_referencia_3" name="nombre_referencia_3">
+
+                                <label class="fw-semibold fs-6 mb-2">Celular</label>                           
+                                <input type="text" class="form-control form-control-sm"  
+                                id="celular_referencia_3" name="celular_referencia_3" maxlength="8">
+                            </div>                            
                         </div>
                     </form>
                 </div>
@@ -139,6 +191,13 @@
         }
 
         function modalNuevoCliente() {
+            $('#celular_referencia_3').val('')
+            $('#nombre_referencia_3').val('')
+            $('#celular_referencia_2').val('')
+            $('#nombre_referencia_2').val('')
+            $('#celular_referencia_1').val('')
+            $('#nombre_referencia_1').val('')
+            $('#direccion').val('')
             $('#razon_social').val('')
             $('#nit').val('')
             $('#cedula').val('')
@@ -151,12 +210,15 @@
         }
 
         function guardarCliente() {
-            let datos = $('#formularioCliente').serializeArray();
+            let form = document.getElementById('formularioCliente');
+            let datos = new FormData(form);  // <-- Importante
 
             $.ajax({
                 url: "{{ route('cliente.guardarCliente') }}",
                 method: "POST",
                 data: datos,
+                processData: false, // <-- Obligatorio para FormData
+                contentType: false, // <-- Obligatorio para FormData
                 success: function(resultado) {
                     if (resultado.estado) {
                         Swal.fire({
@@ -196,6 +258,13 @@
         }
 
         function editarCliente(cliente) {
+            $('#celular_referencia_3').val(cliente.celular_referencia_3)
+            $('#nombre_referencia_3').val(cliente.nombre_referencia_3)
+            $('#celular_referencia_2').val(cliente.celular_referencia_2)
+            $('#nombre_referencia_2').val(cliente.nombre_referencia_2)
+            $('#celular_referencia_1').val(cliente.celular_referencia_1)
+            $('#nombre_referencia_1').val(cliente.nombre_referencia_1)
+            $('#direccion').val(cliente.direccion)
             $('#razon_social').val(cliente.razon_social)
             $('#nit').val(cliente.nit)
             $('#cedula').val(cliente.cedula)
