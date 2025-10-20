@@ -156,5 +156,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/factura')->group(function(){
         Route::get('/formulario', [FacturaController::class, 'formulario'])->name('factura.formulario');
         Route::post('/recepcionar', [FacturaController::class, 'recepcionar'])->name('factura.recepcionar');
+        Route::get('/listado', [FacturaController::class, 'listado'])->name('factura.listado');
+        Route::get('/imprimeTicked/{factura_id}', [FacturaController::class, 'imprimeTicked'])->name('factura.imprimeTicked');
+        Route::post('/ajaxListadoFacturas', [FacturaController::class, 'ajaxListadoFacturas'])->name('factura.ajaxListadoFacturas');
     });
 });

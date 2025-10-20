@@ -199,7 +199,7 @@
                                         <div class="col-md-8">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <label class="fs-6 fw-semibold form-label mb-2 required">Nombres</label>
+                                                    <label class="fs-6 fw-semibold form-label mb-2 required">Seleccionar Cliente</label>
                                                     <select name="cliente_seleccionado" id="cliente_seleccionado"
                                                         class="form-select form-select-sm" onchange="seleccionarCliente()">
                                                         <option value="">SELECCIONE EL CLIENTE</option>
@@ -683,15 +683,21 @@
         function seleccionarCliente() {
             let cliente = JSON.parse($('#cliente_seleccionado').val());
 
+            console.log(cliente);
+
             $('#cliente_id_escogido').val(cliente.id);
             $('#cliente_seleccionado_id').val(cliente.id);
             $('#telefono_cliente').val(cliente.celular);
             $('#direccion_cliente').val(cliente.direccion);
 
-            if (cliente.imagen && cliente.imagen !== '')
-                $('#imagen_cliente').attr('src', window.location.origin + '/storage/imagenesClientes/' + cliente.imagen);
-            // else
-            //     $('#imagen_cliente').attr('src', '/images/sin-foto.png');
+            // Verifica si hay imagen
+            if (cliente.imagen && cliente.imagen !== '') {
+                let rutaBase = "{{ asset('storage/imagenesClientes') }}/";
+                $('#imagen_cliente').attr('src', rutaBase + cliente.imagen);
+            } else {
+                // Imagen por defecto si no tiene
+                $('#imagen_cliente').attr('src', "{{ asset('assets/img/default.jpg') }}");
+            }
 
         }
 

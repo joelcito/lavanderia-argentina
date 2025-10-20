@@ -36,4 +36,24 @@ class Factura extends Model
         'estado',
         'deleted_at',
     ];
+
+    public function sucursal()
+    {
+        return $this->belongsTo('App\Models\Sucursal', 'sucursal_id');
+    }
+
+    public function usuarioCreador()
+    {
+        return $this->belongsTo('App\Models\User', 'usuario_creador_id');
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo('App\Models\Cliente', 'cliente_id');
+    }
+
+    public function ordenTrabajos()
+    {
+        return $this->hasMany(Order_trabajo::class);
+    }
 }

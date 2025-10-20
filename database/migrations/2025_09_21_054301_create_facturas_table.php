@@ -25,6 +25,8 @@ return new class extends Migration
             //foranea usuario recepciono
             $table->foreign('usuario_recepciono_id')->references('id')->on('users');
             $table->unsignedBigInteger('usuario_recepciono_id')->nullable();
+            $table->foreign('sucursal_id')->references('id')->on('sucursales');
+            $table->unsignedBigInteger('sucursal_id')->nullable();
 
             $table->dateTime('fecha')->nullable();
             $table->string('nit')->nullable();
