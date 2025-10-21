@@ -7,6 +7,7 @@ use App\Utils\Respuesta;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ClienteController extends Controller
 {
@@ -104,13 +105,21 @@ class ClienteController extends Controller
         return $data;
     }
 
-    public function eliminarCliente(Request $request){
+    public function eliminarCliente(Request $request, Cliente $clientes){
 
         if($request->ajax()){
 
             //INICIALIZAMOS LAS VARIABLES
             $cliente_id = $request->input('cliente');
             $usuario = Auth::user();
+
+            if ($clientes->imagen && $clientes->imagen_CI_anverso && $clientes->imagen_CI_reverso ) {
+                Storage::disk('public')->delete($clientes->imagen);
+                Storage::disk('public')->delete($clientes->imagen_CI_anverso);
+                Storage::disk('public')->delete($clientes->imagen_CI_reverso);
+            }else{
+                $data = Respuesta::error(null, "Error al obtener los datos");
+            }
 
             //BUSCAMOS AL CLIENTE
             $cliente = Cliente::find($cliente_id);
