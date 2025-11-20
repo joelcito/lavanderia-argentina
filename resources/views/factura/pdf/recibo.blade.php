@@ -54,7 +54,11 @@
                 $ordenesTrabajo = $factura->ordenTrabajos;
             @endphp
             <table>
-                <tr></tr>
+                <thead>
+                    <tr>
+
+                    </tr>
+                </thead>
             </table>
         </div>
     </div>
