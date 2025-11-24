@@ -710,7 +710,7 @@
         }
 
         function imprimeREcibo(recibo) {
-            href = "{{ url('factura/imprimeTicked') }}/" + recibo;
+            href = "{{ url('factura/recibo') }}/" + recibo;
             // window.location.href = href;
             window.open(href, '_blank');
         }

@@ -138,15 +138,6 @@
                                 <span class="menu-title text-white">Caracteristicas</span>
                             </a>
                         </div>
-                        {{-- <div class="menu-item">
-                        <a class="menu-link {{ Route::currentRouteName() == 'unidadMedida.listado' ? 'active' : '' }}"
-                            href="{{ route('unidadMedida.listado') }}">
-                            <span class="menu-bullet">
-                                <span class="bullet bullet-dot"></span>
-                            </span>
-                            <span class="menu-title text-white">Unidad de Medidas</span>
-                        </a>
-                    </div> --}}
                         <div class="menu-item">
                             <a class="menu-link {{ Route::currentRouteName() == 'sucursal.listado' ? 'active' : '' }}"
                                 href="{{ route('sucursal.listado') }}">
@@ -165,24 +156,6 @@
                                 <span class="menu-title text-white">Maquinarias</span>
                             </a>
                         </div>
-                        {{-- <div class="menu-item">
-                        <a class="menu-link {{ Route::currentRouteName() == 'puntoVenta.listado' ? 'active' : '' }}"
-                            href="{{ route('puntoVenta.listado') }}">
-                            <span class="menu-bullet">
-                                <span class="bullet bullet-dot"></span>
-                            </span>
-                            <span class="menu-title text-white">Punto de ventas</span>
-                        </a>
-                    </div> --}}
-                        {{-- <div class="menu-item">
-                        <a class="menu-link {{ Route::currentRouteName() == 'productoServicio.listado' ? 'active' : '' }}"
-                            href="{{ route('productoServicio.listado') }}">
-                            <span class="menu-bullet">
-                                <span class="bullet bullet-dot"></span>
-                            </span>
-                            <span class="menu-title text-white">Productos Servicios</span>
-                        </a>
-                    </div> --}}
                         <div class="menu-item">
                             <a class="menu-link {{ Route::currentRouteName() == 'producto.listado' ? 'active' : '' }}"
                                 href="{{ route('producto.listado') }}">
@@ -192,62 +165,14 @@
                                 <span class="menu-title text-white">Productos</span>
                             </a>
                         </div>
-                        {{-- <div class="menu-item">
-                            <a class="menu-link {{ Route::currentRouteName() == 'cliente.listado' ? 'active' : '' }}"
-                                href="#">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title text-white">Clientes</span>
-                            </a>
-                        </div>
                         <div class="menu-item">
-                            <a class="menu-link {{ Route::currentRouteName() == 'urlApiServicio.listado' ? 'active' : '' }}"
-                                href="#">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title text-white">Url Api Servicios</span>
-                            </a>
-                        </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ Route::currentRouteName() == 'factura.listadoRecibo' ? 'active' : '' }}"
-                                href="#">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title text-white">Listado Recibos</span>
-                            </a>
-                        </div>
-                        <div class="menu-item">
-                            <a class="menu-link {{ Route::currentRouteName() == 'pago.listado' ? 'active' : '' }}"
-                                href="#">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title text-white">Ventas del Dia</span>
-                            </a>
-                        </div>
-
-                        <div class="menu-item">
-                            <a class="menu-link {{ Route::currentRouteName() == 'pago.listadoDeuda' ? 'active' : '' }}"
-                                href="#">
+                            <a class="menu-link" href="{{ url('pago/listadoDeuda') }}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
                                 <span class="menu-title text-white">Cuentas por Cobrar</span>
                             </a>
                         </div>
-
-                        <div class="menu-item">
-                            <a class="menu-link {{ Route::currentRouteName() == 'cotizacion.consulta' ? 'active' : '' }}"
-                                href="#">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title text-white">Cotizaciones</span>
-                            </a>
-                        </div> --}}
                     </div>
                 </div>
 
@@ -283,54 +208,63 @@
                             </a>
                         </div>
                     </div>
-                </div>
 
-                {{-- <div data-kt-menu-trigger="click"
-                    class="menu-item menu-accordion {{ Request::is('factura/*', 'caja/*') ? 'show' : '' }}">
-                    <!--begin:Menu link-->
-                    <span class="menu-link">
-                        <span class="menu-icon">
-                            <i class="fa fa-university"></i>
-                        </span>
-                        <span class="menu-title text-white">FACTURACION</span>
-                        <span class="menu-arrow"></span>
-                    </span>
-                    <!--end:Menu link-->
                     <div class="menu-sub menu-sub-accordion">
                         <div class="menu-item">
-                            <a class="menu-link" href="#">
+                            <a class="menu-link {{ Route::currentRouteName() == 'pago.listado' ? 'active' : '' }}" href="{{ route('pago.listado') }}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
-                                <span class="menu-title text-white">Listado Facturas</span>
+                                <span class="menu-title text-white">Ventas del Dia</span>
                             </a>
                         </div>
-
                     </div>
-                </div> --}}
+                </div>
 
-                {{-- <div data-kt-menu-trigger="click"
+                <div data-kt-menu-trigger="click"
                     class="menu-item menu-accordion {{ Request::is('sincronizacion/*', 'eventoSignificativo/*') ? 'show' : '' }}">
                     <!--begin:Menu link-->
                     <span class="menu-link">
                         <span class="menu-icon">
                             <i class="fa fa-university"></i>
                         </span>
-                        <span class="menu-title text-white">SIAT</span>
+                        <span class="menu-title text-white">REPORTES</span>
                         <span class="menu-arrow"></span>
                     </span>
                     <!--end:Menu link-->
                     <div class="menu-sub menu-sub-accordion">
                         <div class="menu-item">
-                            <a class="menu-link " href="#">
+                            <a class="menu-link " href="{{ route('reporte.formulario') }}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
-                                <span class="menu-title text-white">Sincronizacion de Catalogos</span>
+                                <span class="menu-title text-white">Reportes</span>
                             </a>
                         </div>
                     </div>
-                </div> --}}
+                    <!--end:Menu link-->
+                    {{-- <div class="menu-sub menu-sub-accordion">
+                        <div class="menu-item">
+                            <a class="menu-link " href="{{ route('factura.listado') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">Listado Venta</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="menu-sub menu-sub-accordion">
+                        <div class="menu-item">
+                            <a class="menu-link {{ Route::currentRouteName() == 'pago.listado' ? 'active' : '' }}" href="{{ route('pago.listado') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">Ventas del Dia</span>
+                            </a>
+                        </div>
+                    </div> --}}
+                </div>
 
                 <!--end:Menu item-->
             </div>
