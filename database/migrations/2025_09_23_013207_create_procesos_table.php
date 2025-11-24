@@ -34,11 +34,11 @@ return new class extends Migration
             //foranea tipo proceso
             $table->foreign('tipo_proceso_id')->references('id')->on('tipo_procesos');
             $table->unsignedBigInteger('tipo_proceso_id')->nullable();
-            
+
             $table->dateTime('fecha_ingreso')->nullable();
             $table->dateTime('fecha_salida')->nullable();
             $table->decimal('cantida',12,2)->nullable();
-            $table->string('procesoscol')->nullable();
+            // $table->string('procesoscol')->nullable();
             $table->decimal('porcentaje',12,2)->nullable();
             $table->decimal('gr_litro',12,2)->nullable();
             $table->decimal('tiempo',3)->nullable();
@@ -46,10 +46,10 @@ return new class extends Migration
             $table->string('ph')->nullable();
             $table->string('rb')->nullable();
             $table->text('descripcion')->nullable();
-            
+
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();
-            $table->timestamps();            
+            $table->timestamps();
         });
     }
 
