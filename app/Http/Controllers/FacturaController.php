@@ -120,6 +120,7 @@ class FacturaController extends Controller
                 $pago->cambio             = $cambio_pagado_recibo;
                 $pago->descripcion        = 'VENTA';
                 $pago->tipo_pago          = $tipo_pago_pagado_recibo;
+                $pago->estado             = "INGRESO";
                 $pago->save();
 
             }
@@ -239,7 +240,7 @@ class FacturaController extends Controller
         return $numeroFactura;
     }
 
-    public function  imprimeTicked(Request $request, $factura_id)
+    public function  recibo(Request $request, $factura_id)
     {
         $usuario = Auth::user();
         $factura = Factura::find($factura_id);

@@ -56,4 +56,9 @@ class Factura extends Model
     {
         return $this->hasMany(Order_trabajo::class);
     }
+
+    public function pagos()
+    {
+        return $this->hasMany(pago::class);
+    }
 }

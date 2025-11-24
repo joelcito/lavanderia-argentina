@@ -29,4 +29,29 @@ class Order_trabajo extends Model
         'estado',
         'deleted_at',
     ];
+
+    public function prenda()
+    {
+        return $this->belongsTo('App\Models\Prenda', 'prenda_id');
+    }
+
+    public function tela()
+    {
+        return $this->belongsTo('App\Models\Nombre_tela', 'tela_id');
+    }
+
+    public function prelavado()
+    {
+        return $this->belongsTo('App\Models\Prelavado', 'prelavado_id');
+    }
+
+    public function nevado()
+    {
+        return $this->belongsTo('App\Models\Nevado', 'nevado_id');
+    }
+
+    public function focalizado()
+    {
+        return $this->belongsTo('App\Models\Focalizado', 'focalizado_id');
+    }
 }
