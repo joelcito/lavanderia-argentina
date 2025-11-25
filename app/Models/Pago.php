@@ -24,9 +24,19 @@ class Pago extends Model
         'fecha',
         'descripcion',
         'tipo_pago',
-       
+
 
         'estado',
         'deleted_at',
     ];
+
+    public function usuario()
+    {
+        return $this->belongsTo('App\Models\User', 'usuario_creador_id');
+    }
+
+    public function sucursal()
+    {
+        return $this->belongsTo('App\Models\Sucursal', 'sucursal_id');
+    }
 }

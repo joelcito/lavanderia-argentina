@@ -120,6 +120,7 @@ class FacturaController extends Controller
                 $pago->cambio             = $cambio_pagado_recibo;
                 $pago->descripcion        = 'VENTA';
                 $pago->tipo_pago          = $tipo_pago_pagado_recibo;
+                $pago->estado             = "INGRESO";
                 $pago->save();
 
             }
@@ -239,7 +240,7 @@ class FacturaController extends Controller
         return $numeroFactura;
     }
 
-    public function  imprimeTicked(Request $request, $factura_id)
+    public function  recibo(Request $request, $factura_id)
     {
         $usuario = Auth::user();
         $factura = Factura::find($factura_id);
@@ -258,22 +259,6 @@ class FacturaController extends Controller
             ->setPaper('a5', 'landscape');
 
         return $pdf->stream('recibo.pdf');
-
-        // $factura = Factura::where('id', $factura_id)
-        //     ->where('sucursal_id', $sucursal->id)
-        //     ->with('sucursal')
-        //     ->with('cliente')
-        //     ->with('usuarioCreador')
-        //     ->first();
-
-        // if (!$factura) {
-        //     return redirect()->back()->with('error', 'Factura no encontrada o no pertenece a su sucursal.');
-        // }
-
-        // // Aquí puedes agregar la lógica para generar el ticket de impresión
-        // // Por ejemplo, podrías usar una librería para generar un PDF o enviar los datos a una impresora
-
-        // return view('factura.imprimeTicket')->with(compact('factura'));
 
     }
 

@@ -17,7 +17,7 @@
         <tbody class="text-gray-600 fw-semibold">
             @forelse ( $facturas as $fac)
                 <tr>
-                    <td>{{ $fac->sucursal->nombre }}</td>
+                    <td>{{ $fac->sucursal?->nombre }}</td>
                     <td>{{ $fac->nombres . ' ' . $fac->ap_paterno . ' ' . $fac->ap_materno }}</td>
                     <td>{{ $fac->fecha }}</td>
                     <td>{{ $fac->total }}</td>
