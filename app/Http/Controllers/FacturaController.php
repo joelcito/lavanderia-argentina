@@ -260,22 +260,6 @@ class FacturaController extends Controller
 
         return $pdf->stream('recibo.pdf');
 
-        // $factura = Factura::where('id', $factura_id)
-        //     ->where('sucursal_id', $sucursal->id)
-        //     ->with('sucursal')
-        //     ->with('cliente')
-        //     ->with('usuarioCreador')
-        //     ->first();
-
-        // if (!$factura) {
-        //     return redirect()->back()->with('error', 'Factura no encontrada o no pertenece a su sucursal.');
-        // }
-
-        // // Aquí puedes agregar la lógica para generar el ticket de impresión
-        // // Por ejemplo, podrías usar una librería para generar un PDF o enviar los datos a una impresora
-
-        // return view('factura.imprimeTicket')->with(compact('factura'));
-
     }
 
 }
