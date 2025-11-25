@@ -132,24 +132,20 @@ class PagoController extends Controller
             $importe_pago = $request->input('importe_pago');
             $saldo        = $request->input('saldo');
             $usuario      = Auth::user();
-            $sucursal     = $usuario->puntoVenta->sucursal;
-            $caja         = new Caja();
-            $cajaVigente  = $caja->sacaCajaVigente($sucursal->id);
-
+            $sucursal     = $usuario->sucursal;
 
             if ($importe_pago > 0 && $importe_pago <= $saldo) {
                 $nuevo                     = new pago();
                 $nuevo->usuario_creador_id = $usuario->id;
                 $nuevo->factura_id         = $factura_id;
-                $nuevo->punto_venta_id     = $usuario->punto_venta_id;
-                $nuevo->caja_id            = $cajaVigente->id;
+                $nuevo->sucursal_id     = $sucursal->id;
                 $nuevo->monto              = $importe_pago;
                 $nuevo->cambio             = 0;
                 $nuevo->fecha              = date('Y-m-d H:i:s');
                 $nuevo->descripcion        = 'VENTA';
                 $nuevo->tipo_pago          = $tipo_pago;
                 $nuevo->estado             = 'INGRESO';
-                $nuevo->apertura_caja      = 'No';
+
                 $nuevo->save();
 
                 if (($saldo - $importe_pago) == 0) {

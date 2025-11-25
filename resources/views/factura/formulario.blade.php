@@ -408,7 +408,7 @@
                                     <div class="col-md-1">
                                         <label class="required fw-semibold fs-6 mb-2">Cantidad</label>
                                         <input type="number" class="form-control form-control-sm" id="cantidad_venta"
-                                            name="cantidad_venta" required min="1">
+                                            name="cantidad_venta" required min="1" value="0" onkeyup="calcularsubTotal()">
                                     </div>
                                     <div class="col-md-2">
                                         <label class="required fw-semibold fs-6 mb-2">Prenda</label>
@@ -515,7 +515,7 @@
                                             <div class="col-md">
                                                 <label class="required fw-semibold fs-6 mb-2">Precio</label>
                                                 <input type="number" class="form-control form-control-sm"
-                                                    id="precio_venta" name="precio_venta" required min="1">
+                                                    id="precio_venta" name="precio_venta" required min="1" value="0" onkeyup="calcularsubTotal()">
                                             </div>
 
                                             <div class="col-md">
@@ -790,6 +790,13 @@
             $('#nombre_cliente').text('SELECCIONAR CLIENTE')
 
         });
+
+        function calcularsubTotal(){
+            let cantidad = parseFloat($('#cantidad_venta').val())
+            let precio   = parseFloat($('#precio_venta').val())
+
+            $('#sub_total').val(cantidad * precio);
+        }
 
         // function ajaxListadoServicios() {
         //     let datos = {}

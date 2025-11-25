@@ -11,44 +11,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 @endsection
 @section('content')
-
-    <!--begin::Modal - Add task-->
-    {{-- <div class="modal fade" id="modalRol" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header" id="kt_modal_add_user_header">
-                    <h3 class="fw-bold">FORMULARIO DE ROL <span class="text-info" id="nombre_busqueda"></span></h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body scroll-y">
-                    <form id="formularioRol">
-                        <input type="hidden" name="id" id="id" value="0">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Nombre</label>
-                                    <input type="text" class="form-control form-control-sm" id="nombre"
-                                        name="nombre">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button class="btn btn-sm w-100 btn-success" onclick="guardarRol()">Guardar</button>
-                        </div>
-                    </div>
-                </div>
-                <!--end::Modal body-->
-            </div>
-        </div>
-        <!--end::Modal dialog-->
-    </div> --}}
-    <!--end::Modal - Add task-->
-
-
     <div class="d-flex flex-column flex-column-fluid">
     <div id="kt_app_content" class="app-content flex-column-fluid">
         <div id="kt_app_content_container" class="app-container container-xxlg">
@@ -75,7 +37,7 @@
                                     </div> --}}
                                 </div>
                                 <div class="card-body py-5">
-                                    <form action="{{ route('reporte.cuentaPorCobrar') }}" method="POST">
+                                    <form action="{{ route('reporte.cuentaPorCobrar') }}" method="POST" target="_blank">
                                         @csrf
                                         <div class="row">
                                             <div class="col-md-8">
