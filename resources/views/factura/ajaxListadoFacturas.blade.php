@@ -10,7 +10,6 @@
                 <th>Usuario</th>
                 <th>Estado</th>
                 <th>Prioridad</th>
-                {{-- <th>Emision</th> --}}
                 <th>Actions</th>
             </tr>
         </thead>
@@ -34,25 +33,6 @@
                             <span class="badge badge-danger">ANULADO</span>
                         @endif
                     </td>
-                    {{-- <td>
-                        @if ($fac->codigo_descripcion == 'VALIDADA')
-                            <span class="badge badge-success">{{ $fac->codigo_descripcion }}</span>
-                        @elseif($fac->codigo_descripcion == 'OBSERVADA')
-                            <span class="badge badge-danger">{{ $fac->codigo_descripcion }}</span>
-                        @elseif($fac->codigo_descripcion == 'PENDIENTE')
-                            <span class="badge badge-warning">{{ $fac->codigo_descripcion }}</span>
-                        @elseif ($fac->facturado == 'Si')
-                            <span class="badge badge-info">NO VALIDADA</span>
-                        @endif
-                    </td>
-                    <td>
-                        @if ($fac->tipo_factura == 'online')
-                            <span class="badge badge-success">ONLINE</span>
-                        @elseif($fac->tipo_factura == 'offline')
-                            <span class="badge badge-warning">OFFLINE</span>
-                        @else
-                        @endif
-                    </td> --}}
                     <td>
                         <span class="badge badge-success">{{ $fac->prioridad }}</span>
                     </td>
@@ -61,9 +41,9 @@
                             <button class="btn btn-primary btn-sm btn-icon tamanio_boton" title="Imprime Recibo"
                                 onclick="imprimeREcibo('{{ $fac->id }}')"><i
                                     class="fa fa-file-pdf"></i></button>
-                            <a href="{{ url('factura/imprimeRecibo', [$fac->id]) }}" target="_blank"
+                            {{-- <a href="{{ url('factura/imprimeRecibo', [$fac->id]) }}" target="_blank"
                                 class="btn btn-info btn-sm btn-icon tamanio_boton" title="Imprime Recibo"><i
-                                    class="fa fa-file-pdf"></i></a>
+                                    class="fa fa-file-pdf"></i></a> --}}
                             <button class="btn btn-danger btn-sm btn-icon tamanio_boton"
                                 onclick="anularRecibo('{{ $fac->id }}')"><i class="fa fa-trash"></i></button>
                         @endif
