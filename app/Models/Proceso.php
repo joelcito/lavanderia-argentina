@@ -35,6 +35,21 @@ class Proceso extends Model
         'descripcion',
 
         'estado',
-        'deleted_at',        
+        'deleted_at',
     ];
+
+    public function maquinaria()
+    {
+        return $this->belongsTo(Maquinaria::class);
+    }
+
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class);
+    }
+
+    public function tipoProceso()
+    {
+        return $this->belongsTo(Tipo_proceso::class, 'tipo_proceso_id');
+    }
 }
