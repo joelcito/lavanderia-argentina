@@ -52,6 +52,7 @@ return new class extends Migration
             $table->dateTime('fecha')->nullable();
             $table->text('observacion')->nullable();
             $table->text('nro_ot')->nullable();
+            $table->string('tipo')->nullable();
 
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();

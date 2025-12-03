@@ -38,12 +38,10 @@
                     </td>
                     <td>
                         @if (is_null($fac->estado))
+                            <a href="{{route('factura.detalle', [$fac->id])}}" class="btn btn-sm btn-icon tamanio_boton btn-info" title="Ver Detelles"><i class="fa fa-eye"></i></a>
                             <button class="btn btn-primary btn-sm btn-icon tamanio_boton" title="Imprime Recibo"
                                 onclick="imprimeREcibo('{{ $fac->id }}')"><i
                                     class="fa fa-file-pdf"></i></button>
-                            {{-- <a href="{{ url('factura/imprimeRecibo', [$fac->id]) }}" target="_blank"
-                                class="btn btn-info btn-sm btn-icon tamanio_boton" title="Imprime Recibo"><i
-                                    class="fa fa-file-pdf"></i></a> --}}
                             <button class="btn btn-danger btn-sm btn-icon tamanio_boton"
                                 onclick="anularRecibo('{{ $fac->id }}')"><i class="fa fa-trash"></i></button>
                         @endif

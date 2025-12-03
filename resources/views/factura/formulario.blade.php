@@ -307,7 +307,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md">
-                                        <label class="required fw-semibold fs-6 mb-2">Pre Lavado</label>
+                                        <label class="required fw-semibold fs-6 mb-2">P. Lav.</label>
                                         <select name="prelavado_id" id="prelavado_id" data-placeholder="SELECIONE" required style="width: 100%">
                                             <option></option>
                                             @foreach ($prelavados as $prelavado)
@@ -384,7 +384,7 @@
                                             </div>
 
                                             <div class="col-md">
-                                                <label class="required fw-semibold fs-6 mb-2">Sub Total</label>
+                                                <label class="required fw-semibold fs-6 mb-2">S. Total</label>
                                                 <input type="number" id="sub_total" name="sub_total" required min="1" style="width: 100%">
                                             </div>
 
@@ -407,6 +407,20 @@
                                                 <i class="fa fa-xs fa-shopping-cart"></i> +
                                             </button>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="display: none" id="bloque-ojales">
+                                    <div class="col-md-4">
+                                        <label class="required fw-semibold fs-6 mb-2">N Ojales</label>
+                                        <input type="number" id="nro_ojales" name="nro_ojales" required min="1" style="width: 100%" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="required fw-semibold fs-6 mb-2">Precio</label>
+                                        <input type="number" id="precio_ojales" name="precio_ojales" required min="0.1" style="width: 100%" value="0.33" step="0.01" onchange="recalularPrecioOjales()">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="required fw-semibold fs-6 mb-2">Total</label>
+                                        <input type="number" id="total_ojales" name="total_ojales" required min="1" style="width: 100%" readonly step="0.01">
                                     </div>
                                 </div>
                             </form>
@@ -533,9 +547,9 @@
 @stop()
 
 @section('js')
-    <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
+    {{-- <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script> --}}
     <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
-    <script src="{{ asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js') }}"></script>
+    {{-- <script src="{{ asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js') }}"></script> --}}
     <script>
         $.ajaxSetup({
             headers: {
@@ -549,8 +563,8 @@
 
         $(document).ready(function() {
 
-            $("#prenda_id, #tela_id, #prelavado_id, #nevado_id, #focalizado_id, #tipo_tela_id, #color_tela_id, #caracteristica_tela_id")
-                .select2();
+            // $("#prenda_id, #tela_id, #prelavado_id, #nevado_id, #focalizado_id, #tipo_tela_id, #color_tela_id, #caracteristica_tela_id")
+            //     .select2();
 
             // Inicializa el DataTable
             table = $('#carrito').DataTable({
@@ -566,9 +580,6 @@
                 order: [],
                 responsive: true
             });
-
-            console.log("DataTable inicializada:", table);
-
 
             let debounceTimer;
             $('.buscar-persona').on('keyup', function() {
@@ -638,6 +649,9 @@
                 let sub_total              = $('#sub_total').val();
                 let observacion            = $('#observacion').val();
                 let nro_ot                 = $('#nro_ot').val();
+                let nro_ojales             = $('#nro_ojales').val();
+                let precio_ojales          = $('#precio_ojales').val();
+                let total_ojales           = $('#total_ojales').val();
 
                 let servicio = {
                     cantidad_venta        : cantidad_venta,
@@ -654,7 +668,10 @@
                     precio_venta          : precio_venta,
                     sub_total             : sub_total,
                     observacion           : observacion,
-                    nro_ot                : nro_ot
+                    nro_ot                : nro_ot,
+                    nro_ojales            : nro_ojales,
+                    precio_ojales         : precio_ojales,
+                    total_ojales          : total_ojales
                 }
 
                 contadorTable++;
@@ -708,6 +725,11 @@
                 $('#sub_total').val(0);
                 $('#observacion').val("");
                 $('#nro_ot').val(0);
+
+                // ESTO ES PARA LOS PRECIO DE OJALES
+                $('#nro_ojales').val(0);
+                $('#total_ojales').val(0);
+                $('#bloque-ojales').hide('toggle')
 
             } else {
                 $("#formulario_venta")[0].reportValidity();
@@ -806,6 +828,28 @@
 
             $('#numero_ojales').val(todo);
 
+            if(cantidadOjales > 1){
+
+                let calculo     = (cantidadOjales - 1) * cantidadPrendas;
+                let precio_ojal = $('#precio_ojales').val();
+                let total       = parseFloat(calculo) * parseFloat(precio_ojal);
+
+                $('#nro_ojales').val(calculo);
+                $('#total_ojales').val(total);
+                $('#bloque-ojales').show('toggle');
+            }else{
+                $('#nro_ojales').val(0);
+                $('#total_ojales').val(0);
+                $('#bloque-ojales').hide('toggle')
+            }
+
+        }
+
+        function recalularPrecioOjales(){
+            let nro_ojales = $('#nro_ojales').val()
+            let precio     = $('#precio_ojales').val()
+            let total      = parseFloat(nro_ojales) * parseFloat(precio);
+            $('#total_ojales').val(total);
         }
     </script>
 @endsection
