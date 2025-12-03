@@ -54,4 +54,20 @@ class Order_trabajo extends Model
     {
         return $this->belongsTo('App\Models\Focalizado', 'focalizado_id');
     }
+
+    public function tipoTela()
+    {
+        return $this->belongsTo('App\Models\Tipo_tela', 'tipo_tela_id');
+    }
+
+    public function colorTela()
+    {
+        return $this->belongsTo('App\Models\Color_tela', 'color_tela_id');
+    }
+
+    public function caracteristicaTela()
+    {
+        return $this->belongsTo('App\Models\Caracteristica', 'color_tela_id');
+    }
 }
+

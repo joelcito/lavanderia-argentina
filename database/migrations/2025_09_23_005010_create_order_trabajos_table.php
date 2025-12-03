@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('usuario_modificador_id')->nullable();
             $table->foreign('usuario_eliminador_id')->references('id')->on('users');
             $table->unsignedBigInteger('usuario_eliminador_id')->nullable();
+
             //foranea factura
             $table->foreign('factura_id')->references('id')->on('facturas');
             $table->unsignedBigInteger('factura_id')->nullable();

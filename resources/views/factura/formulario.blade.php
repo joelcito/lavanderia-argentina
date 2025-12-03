@@ -201,7 +201,7 @@
                                                 <div class="col-md-12">
                                                     <label class="fs-6 fw-semibold form-label mb-2 required">Seleccionar Cliente</label>
                                                     <select name="cliente_seleccionado" id="cliente_seleccionado"
-                                                        class="form-select form-select-sm" onchange="seleccionarCliente()">
+                                                        class="form-select form-select-sm" onchange="seleccionarCliente()" required>
                                                         <option value="">SELECCIONE EL CLIENTE</option>
                                                         @foreach ($clientes as $cliente)
                                                             <option value="{{ $cliente }}">
@@ -214,7 +214,7 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <label
-                                                        class="fs-6 fw-semibold form-label mb-2 required">Telefono</label>
+                                                        class="fs-6 fw-semibold form-label mb-2">Telefono</label>
                                                     <input type="text" class="form-control fw-bold form-control-solid"
                                                         name="telefono_cliente" id="telefono_cliente">
                                                 </div>
@@ -226,7 +226,7 @@
                                                 <div class="col-md-12">
                                                     <label class="fs-6 fw-semibold form-label mb-2">Prioridad</label>
                                                     <select class="form-select form-select-sm" name="prioridad_cliente"
-                                                        id="prioridad_cliente">
+                                                        id="prioridad_cliente" required>
                                                         <option value="NORMAL">NORMAL</option>
                                                         <option value="PARA LA FERIA">PARA LA FERIA</option>
                                                         <option value="URGENTE">URGENTE</option>
@@ -242,7 +242,7 @@
                                             <label class="fs-6 fw-semibold form-label mb-2 required">Fecha de
                                                 Recepcion</label>
                                             <input type="date" class="form-control fw-bold form-control-solid"
-                                                name="fecha_recepcion_cliente" id="fecha_recepcion_cliente">
+                                                name="fecha_recepcion_cliente" id="fecha_recepcion_cliente" required>
                                         </div>
                                         <div class="col-md-12">
                                             <label class="fs-6 fw-semibold form-label mb-2">Entregado Por</label>
@@ -738,7 +738,7 @@
         }
 
         function recepcionar() {
-            if($('#formularioGeneraRecibo')[0].checkValidity()){
+            if($('#formularioGeneraRecibo')[0].checkValidity() && $('#formulario_recepcion')[0].checkValidity()){
                 $.ajax({
                     url: "{{ url('factura/recepcionar') }}",
                     method: "POST",
@@ -778,6 +778,7 @@
                 })
             }else{
                 $('#formularioGeneraRecibo')[0].reportValidity()
+                $('#formulario_recepcion')[0].reportValidity()
             }
 
         }
@@ -835,7 +836,7 @@
                 let total       = parseFloat(calculo) * parseFloat(precio_ojal);
 
                 $('#nro_ojales').val(calculo);
-                $('#total_ojales').val(total);
+                $('#total_ojales').val(total.toFixed(2));
                 $('#bloque-ojales').show('toggle');
             }else{
                 $('#nro_ojales').val(0);
@@ -849,7 +850,7 @@
             let nro_ojales = $('#nro_ojales').val()
             let precio     = $('#precio_ojales').val()
             let total      = parseFloat(nro_ojales) * parseFloat(precio);
-            $('#total_ojales').val(total);
+            $('#total_ojales').val(total.toFixed(2));
         }
     </script>
 @endsection
