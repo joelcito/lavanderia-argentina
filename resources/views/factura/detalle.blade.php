@@ -20,16 +20,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body scroll-y">
-                <form id="formularioRol">
+                <form id="formularioLaser">
                     <input type="hidden" name="orden_trabajo_id" id="orden_trabajo_id" value="0">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <div class="fv-row mb-7">
                                 <label class="required fw-semibold fs-6 mb-2">Orden de trabajo</label>
                                 <input type="text" class="form-control form-control-sm" id="numero_orden_trabajo" name="numero_orden_trabajo" readonly>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-6">
                             <div class="fv-row mb-7">
                                 <label class="required fw-semibold fs-6 mb-2">Cantidad Prendas</label>
                                 <input type="text" class="form-control form-control-sm" id="numero_prendas_orden_trabajo" name="numero_prendas_orden_trabajo" readonly>
@@ -37,10 +37,15 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-11">
                             <div class="fv-row mb-7">
                                 <label class="required fw-semibold fs-6 mb-2">Observaciones</label>
                                 <input type="text" class="form-control form-control-sm" id="observacion_orden_trabajo" name="observacion_orden_trabajo" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="fv-row mb-7 mt-3">
+                                <button type="button" onclick="agregarFilaLaser()" class="btn btn-success btn-sm btn-circle">Agregar Laser</button>
                             </div>
                         </div>
                     </div>
@@ -49,33 +54,37 @@
                         <div class="col-md-12">
                             {{-- <div style="overflow-x: auto;"> --}}
                                 <!--begin::Table-->
-                                <table>
+                                <table style="width: 100%" id="table_laser">
                                     <thead>
                                         <tr>
                                             <th >Talla</th>
                                             <th >Cantidad</th>
+                                            <th >Intensidad</th>
+                                            <th >Altura</th>
+                                            <th >Dpi</th>
                                             <th >Pos. 1</th>
                                             <th >Pos. 2</th>
                                             <th >Pos. 3</th>
                                             <th >Pos. 4</th>
                                             <th >Pre. x Mesa</th>
                                             <th >Tie. Total</th>
-                                            <th >Intensidad</th>
                                             <th >Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><input type="text" width="10px"></td>
-                                            <td><input type="text"></td>
-                                            <td><input type="text"></td>
-                                            <td><input type="text"></td>
-                                            <td><input type="text"></td>
-                                            <td><input type="text"></td>
-                                            <td><input type="text"></td>
-                                            <td><input type="text"></td>
-                                            <td><input type="text"></td>
-                                            <td><input type="text"></td>
+                                            <td><input name="talla_laser[1]" type="text" style="width: 100%;"></td>
+                                            <td><input name="cantidad_laser[1]" type="text" style="width: 100%;"></td>
+                                            <td><input name="intensidad_laser[1]" type="text" style="width: 100%;"></td>
+                                            <td><input name="altura_laser[1]" type="text" style="width: 100%;"></td>
+                                            <td><input name="dpi_laser[1]" type="text" style="width: 100%;"></td>
+                                            <td><input name="pos_1_laser[1]" type="text" style="width: 100%;"></td>
+                                            <td><input name="pos_2_laser[1]" type="text" style="width: 100%;"></td>
+                                            <td><input name="pos_3_laser[1]" type="text" style="width: 100%;"></td>
+                                            <td><input name="pos_4_laser[1]" type="text" style="width: 100%;"></td>
+                                            <td><input name="prenda_x_mesa_laser[1]" type="text" style="width: 100%;"></td>
+                                            <td><input name="tiempo_total_laser[1]" type="text" style="width: 100%;"></td>
+                                            <td><button title="Duplicar Debajo" onclick="duplicarDebajo(1)" class="btn btn-success btn-icon btn-sm btn-circle" type="button"><i class="fa fa-plus"></i></button></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -88,7 +97,7 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-12">
-                        <button class="btn btn-sm w-100 btn-success" onclick="guardarRol()">Guardar</button>
+                        <button class="btn btn-sm w-100 btn-success" onclick="guardarLaser()">Guardar Laser</button>
                     </div>
                 </div>
             </div>
@@ -525,6 +534,8 @@
             }
         })
 
+        let filaTableLaser = 1;
+
         $(document).ready(function() {
             ajaxListadoOrdenTrabajos();
             ajaxListadoOjales();
@@ -568,6 +579,109 @@
             $('#numero_orden_trabajo').val(nroOt);
             $('#numero_prendas_orden_trabajo').val(cantidad);
             $('#modalAgregarLaser').modal('show');
+        }
+
+        function agregarFilaLaser(){
+
+            filaTableLaser++;
+
+            let nuevaFila = `
+                <tr>
+                    <td><input name="talla_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td><input name="cantidad_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td><input name="intensidad_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td><input name="altura_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td><input name="dpi_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td><input name="pos_1_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td><input name="pos_2_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td><input name="pos_3_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td><input name="pos_4_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td><input name="prenda_x_mesa_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td><input name="tiempo_total_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td>
+                        <button title="Duplicar Debajo"
+                            onclick="duplicarDebajo(${filaTableLaser})"
+                            class="btn btn-success btn-icon btn-sm btn-circle" type="button">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                        <button title="Duplicar Debajo"
+                            onclick="elimiarFila(${filaTableLaser})"
+                            class="btn btn-danger btn-icon btn-sm btn-circle" type="button">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+            $("#table_laser tbody").append(nuevaFila);
+
+        }
+
+        function duplicarDebajo(fila){
+
+            filaTableLaser++;
+            let filaOriginal = $("#table_laser tbody tr").eq(fila - 1);
+
+            let talla      = filaOriginal.find('input[name="talla_laser['+fila+']"]').val();
+            let cantidad   = filaOriginal.find('input[name="cantidad_laser['+fila+']"]').val();
+            let intensidad = filaOriginal.find('input[name="intensidad_laser['+fila+']"]').val();
+            let altura     = filaOriginal.find('input[name="altura_laser['+fila+']"]').val();
+            let dpi        = filaOriginal.find('input[name="dpi_laser['+fila+']"]').val();
+            let pos1       = filaOriginal.find('input[name="pos_1_laser['+fila+']"]').val();
+            let pos2       = filaOriginal.find('input[name="pos_2_laser['+fila+']"]').val();
+            let pos3       = filaOriginal.find('input[name="pos_3_laser['+fila+']"]').val();
+            let pos4       = filaOriginal.find('input[name="pos_4_laser['+fila+']"]').val();
+            let pxm        = filaOriginal.find('input[name="prenda_x_mesa_laser['+fila+']"]').val();
+            let tiempo     = filaOriginal.find('input[name="tiempo_total_laser['+fila+']"]').val();
+
+            let nuevaFila = `
+                <tr>
+                    <td><input name="talla_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${talla}"></td>
+                    <td><input name="cantidad_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${cantidad}"></td>
+                    <td><input name="intensidad_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${intensidad}"></td>
+                    <td><input name="altura_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${altura}"></td>
+                    <td><input name="dpi_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${dpi}"></td>
+                    <td><input name="pos_1_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${pos1}"></td>
+                    <td><input name="pos_2_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${pos2}"></td>
+                    <td><input name="pos_3_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${pos3}"></td>
+                    <td><input name="pos_4_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${pos4}"></td>
+                    <td><input name="prenda_x_mesa_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${pxm}"></td>
+                    <td><input name="tiempo_total_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${tiempo}"></td>
+                    <td>
+                        <button title="Duplicar Debajo"
+                            onclick="duplicarDebajo(${filaTableLaser})"
+                            class="btn btn-success btn-icon btn-sm btn-circle" type="button">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                        <button title="Duplicar Debajo"
+                            onclick="elimiarFila(${filaTableLaser})"
+                            class="btn btn-danger btn-icon btn-sm btn-circle" type="button">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+            filaOriginal.after(nuevaFila);
+
+        }
+
+        function elimiarFila(fila){
+            let filaEliminar = $("#table_laser tbody tr").eq(fila - 1);
+            filaEliminar.remove();
+        }
+
+        function guardarLaser(){
+            let datos = $('#formularioLaser').serializeArray();
+            $.ajax({
+                url: "{{ route('ordenTrabajo.guardarLaser') }}",
+                method: "POST",
+                data: datos,
+                success: function(resultado) {
+                    if (resultado.estado)
+                        $('#tabla-orden-trabjo').html(resultado.data.listado)
+                }
+            })
         }
 
    </script>
