@@ -45,8 +45,12 @@
                                 </div>
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Tipo</label>
-                                    <input type="text" class="form-control form-control-sm" id="tipo" name="tipo"
-                                        maxlength="13">
+                                    {{-- <input type="text" class="form-control form-control-sm" id="tipo" name="tipo"
+                                        maxlength="13"> --}}
+                                        <select class="form-select form-select-sm" name="tipo" id="tipo">
+                                            <option value="LITRO">LITRO</option>
+                                            <option value="KILOGRAMO">KILOGRAMO</option>
+                                        </select>
                                 </div>
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Codigo</label>
@@ -90,7 +94,7 @@
                 <div class="modal-footer">
                     <div class="row">
                         <div class="col-md-12">
-                            
+
                         </div>
                     </div>
                 </div>
@@ -342,7 +346,7 @@
             $.ajax({
                 url: "{{ route('movimiento.ajaxListado') }}", // Ruta que veremos después
                 type: 'GET',
-                data: { productoId: productoId, 
+                data: { productoId: productoId,
                     nombre: nombre
                 },
                 success: function(res) {
@@ -362,13 +366,13 @@
         }
 
         function modalIngreso(productoId, sucursalId, nombreSuc) {
-            
+
             document.getElementById('sucursal').value = nombreSuc;
             document.getElementById('idSuc').value = sucursalId;
             document.getElementById('idProd').value = productoId;
 
-            $('#descripcion').val('')            
-            $('#cantidad_ingreso').val('')            
+            $('#descripcion').val('')
+            $('#cantidad_ingreso').val('')
             $('#id').val(0)
             $('#modalIngreso').modal('show')
         }
@@ -419,13 +423,13 @@
         }
 
         function modalSalida(productoId, sucursalId, nombreSuc) {
-            
+
             document.getElementById('sucursales').value = nombreSuc;
             document.getElementById('idSucs').value = sucursalId;
             document.getElementById('idProds').value = productoId;
 
-            $('#descripcion').val('')            
-            $('#cantidad_salida').val('')            
+            $('#descripcion').val('')
+            $('#cantidad_salida').val('')
             $('#id').val(0)
             $('#modalSalida').modal('show')
         }
