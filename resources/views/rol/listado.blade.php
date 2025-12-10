@@ -50,32 +50,32 @@
 
 
     <div class="d-flex flex-column flex-column-fluid">
-    <div id="kt_app_content" class="app-content flex-column-fluid">
-        <div id="kt_app_content_container" class="app-container container-xxlg">
-            <div class="card shadow-sm">
-                <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
-                    <h3 class="card-title fw-bold">Listado de Roles</h3>
-                    <div class="card-toolbar">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoRol()">
-                            <i class="fa fa-plus"></i> Nuevo Rol
-                        </button>
+        <div id="kt_app_content" class="app-content flex-column-fluid">
+            <div id="kt_app_content_container" class="app-container container-xxlg">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
+                        <h3 class="card-title fw-bold">Listado de Roles</h3>
+                        <div class="card-toolbar">
+                            <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoRol()">
+                                <i class="fa fa-plus"></i> Nuevo Rol
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="card-body py-4" id="table_listado">
-                    <!-- El listado se carga por AJAX -->
+                    <div class="card-body py-4" id="table_listado">
+                        <!-- El listado se carga por AJAX -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
 @stop()
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
 
@@ -166,7 +166,7 @@
             $('#nombre').val(rol.nombre)
             $('#id').val(rol.id)
             $('#modalRol').modal('show')
-            
+
         }
 
         function eliminarRol(rol, nombre) {
@@ -211,8 +211,8 @@
                             });
                         }
                     });
-                    
-                    
+
+
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire(
                         'Cancelado',
@@ -222,6 +222,6 @@
                 }
             });
         }
-        
+
     </script>
 @endsection

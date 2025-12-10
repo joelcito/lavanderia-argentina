@@ -9,6 +9,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaquinariaController;
 use App\Http\Controllers\MovimientoController;
 use App\Http\Controllers\NombreTelaController;
+use App\Http\Controllers\OrdenTrabajoController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PrelavadoController;
 use App\Http\Controllers\PrendaController;
@@ -164,6 +165,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/listado', [FacturaController::class, 'listado'])->name('factura.listado');
         Route::get('/recibo/{factura_id}', [FacturaController::class, 'recibo'])->name('factura.recibo');
         Route::post('/ajaxListadoFacturas', [FacturaController::class, 'ajaxListadoFacturas'])->name('factura.ajaxListadoFacturas');
+        Route::get('/detalle/{factura_id}', [FacturaController::class, 'detalle'])->name('factura.detalle');
     });
 
     //PAGO
@@ -202,9 +204,15 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/reporte')->group(function () {
         Route::get('/formulario', [ReporteController::class, 'formulario'])->name('reporte.formulario');
         Route::post('/cuentaPorCobrar', [ReporteController::class, 'cuentaPorCobrar'])->name('reporte.cuentaPorCobrar');
-        // Route::get('/listado', [FacturaController::class, 'listado'])->name('factura.listado');
-        // Route::get('/recibo/{factura_id}', [FacturaController::class, 'recibo'])->name('factura.recibo');
-        // Route::post('/ajaxListadoFacturas', [FacturaController::class, 'ajaxListadoFacturas'])->name('factura.ajaxListadoFacturas');
+    });
+
+    // ORDEN DE TRABAJO
+    Route::prefix('/ordenTrabajo')->group(function () {
+        // Route::get('/formulario', [ReporteController::class, 'formulario'])->name('reporte.formulario');
+        Route::post('/ajaxListadoOrdenTrabajos', [OrdenTrabajoController::class, 'ajaxListadoOrdenTrabajos'])->name('ordenTrabajo.ajaxListadoOrdenTrabajos');
+        Route::post('/ajaxListadoOjales', [OrdenTrabajoController::class, 'ajaxListadoOjales'])->name('ordenTrabajo.ajaxListadoOjales');
+        Route::post('/ajaxListadoLaser', [OrdenTrabajoController::class, 'ajaxListadoLaser'])->name('ordenTrabajo.ajaxListadoLaser');
+        Route::post('/guardarLaser', [OrdenTrabajoController::class, 'guardarLaser'])->name('ordenTrabajo.guardarLaser');
     });
 
 });

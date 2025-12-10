@@ -19,25 +19,24 @@ return new class extends Migration
             $table->unsignedBigInteger('usuario_modificador_id')->nullable();
             $table->foreign('usuario_eliminador_id')->references('id')->on('users');
             $table->unsignedBigInteger('usuario_eliminador_id')->nullable();
-            //foranea producto 
+            //foranea producto
             $table->foreign('producto_id')->references('id')->on('productos');
             $table->unsignedBigInteger('producto_id')->nullable();
-            //foranea sucursal 
+            //foranea sucursal
             $table->foreign('sucursal_id')->references('id')->on('sucursales');
             $table->unsignedBigInteger('sucursal_id')->nullable();
-            //foranea proceso 
-            $table->foreign('proceso_id')->references('id')->on('procesos');
-            $table->unsignedBigInteger('proceso_id')->nullable();
+            //foranea proceso
+            // $table->foreign('proceso_id')->references('id')->on('procesos');
+            // $table->unsignedBigInteger('proceso_id')->nullable();
 
             $table->decimal('ingreso',12,2)->nullable();
             $table->decimal('salida',12,2)->nullable();
             $table->dateTime('fecha')->nullable();
             $table->text('descripcion')->nullable();
-          
 
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();
-            $table->timestamps();   
+            $table->timestamps();
         });
     }
 

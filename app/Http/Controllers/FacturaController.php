@@ -78,13 +78,19 @@ class FacturaController extends Controller
 
             // AHORA VAMOS POR EL CARRO
             foreach ($carro as $key => $item) {
+
+                $numero_ojal             = $item['numero_ojales'];
+                list($primero, $segundo) = explode('/', $numero_ojal);
+                $primero                 = (float)$primero;
+                $segundo                 = (float)$segundo;
+
                 $orden_trabajo                         = new Order_trabajo();
                 $orden_trabajo->usuario_creador_id     = $usuario->id;
                 $orden_trabajo->factura_id             = $factura->id;
                 $orden_trabajo->sucursal_id            = $sucursal->id;
                 $orden_trabajo->cantidad               = $item['cantidad_venta'];
                 $orden_trabajo->prenda_id              = $item['prenda_id'];
-                $orden_trabajo->numero_ojales          = $item['numero_ojales'];
+                $orden_trabajo->numero_ojales          = $primero;
                 $orden_trabajo->tela_id                = $item['tela_id'];
                 $orden_trabajo->prelavado_id           = $item['prelavado_id'];
                 $orden_trabajo->nevado_id              = $item['nevado_id'];
@@ -98,7 +104,24 @@ class FacturaController extends Controller
                 $orden_trabajo->observacion            = $item['observacion'];
                 $orden_trabajo->nro_ot                 = $item['nro_ot'];
                 $orden_trabajo->fecha                  = $factura->fecha_recepcion;
+                $orden_trabajo->tipo                   = "ORDEN_TRABAJO";
                 $orden_trabajo->save();
+
+                if ($primero > 1) {
+
+                    $orden_trabajo                         = new Order_trabajo();
+                    $orden_trabajo->usuario_creador_id     = $usuario->id;
+                    $orden_trabajo->factura_id             = $factura->id;
+                    $orden_trabajo->sucursal_id            = $sucursal->id;
+                    $orden_trabajo->cantidad               = $item['nro_ojales'];
+                    $orden_trabajo->precio                 = $item['precio_ojales'];
+                    $orden_trabajo->subtotal               = $item['total_ojales'];
+                    $orden_trabajo->observacion            = "SERVICIO DE OJAL";
+                    $orden_trabajo->fecha                  = $factura->fecha_recepcion;
+                    $orden_trabajo->tipo                   = "OJAL";
+                    $orden_trabajo->save();
+
+                }
 
                 $montoTotalVenta = $montoTotalVenta + $item['sub_total'];
             }
@@ -260,6 +283,14 @@ class FacturaController extends Controller
 
         return $pdf->stream('recibo.pdf');
 
+    }
+
+    public function detalle(Request $request, $factura_id){
+
+        $factura = Factura::find($factura_id);
+        $cliente = $factura->cliente;
+
+        return view('factura.detalle')->with(compact('factura', 'cliente'));
     }
 
 }

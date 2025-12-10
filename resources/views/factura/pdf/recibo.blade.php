@@ -114,11 +114,11 @@
                         $total = $total + $ot->subtotal;
                     @endphp
                     <tr>
-                        <td>{{ $ot->prenda->nombre }}</td>
-                        <td>{{ $ot->tela->nombre }}</td>
-                        <td>{{ $ot->prelavado->nombre }}</td>
-                        <td>{{ $ot->nevado->nombre }}</td>
-                        <td>{{ $ot->focalizado->nombre }}</td>
+                        <td>{{ $ot->prenda?->nombre }}</td>
+                        <td>{{ $ot->tela?->nombre }}</td>
+                        <td>{{ $ot->prelavado?->nombre }}</td>
+                        <td>{{ $ot->nevado?->nombre }}</td>
+                        <td>{{ $ot->focalizado?->nombre }}</td>
                         <td>{{ $ot->cantidad }}</td>
                         <td>{{ $ot->numero_ojales }}</td>
                         <td>{{ $ot->peso }}</td>
@@ -136,21 +136,6 @@
                 </tr>
             </tfoot>
         </table>
-        {{-- <div class="contenido">
-            <p> </p>
-            <p> </p>
-            <p><strong>Monto:</strong> Bs {{ number_format($factura->total, 2, ',', '.') }}</p>
-            @php
-                $ordenesTrabajo = $factura->ordenTrabajos;
-            @endphp
-            <table>
-                <thead>
-                    <tr>
-
-                    </tr>
-                </thead>
-            </table>
-        </div> --}}
     </div>
 </body>
 </html>
