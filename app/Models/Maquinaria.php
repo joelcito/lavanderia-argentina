@@ -24,4 +24,10 @@ class Maquinaria extends Model
         'estado',
         'deleted_at',
     ];
+
+    public function procesos()
+    {
+        // 'maquinaria_id' es el campo en la tabla procesos que apunta a esta maquinaria
+        return $this->hasMany(Proceso::class, 'maquinaria_id');
+    }
 }

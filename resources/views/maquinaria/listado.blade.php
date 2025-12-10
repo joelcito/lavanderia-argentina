@@ -12,54 +12,60 @@
 @endsection
 @section('content')
 
-    <!--begin::Modal - Add task-->
-    <div class="modal fade" id="modalMaquinaria" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header" id="kt_modal_add_user_header">
-                    <h3 class="fw-bold">FORMULARIO DE MAQUINARIA <span class="text-info" id="numero_busqueda"></span></h3>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body scroll-y">
-                    <form id="formularioMaquinaria">
-                        <input type="hidden" name="id" id="id" value="0">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Tipo</label>
-                                    <input type="text" class="form-control form-control-sm" id="tipo"
-                                        name="tipo">
-                                </div>
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Numero</label>
-                                    <input type="text" class="form-control form-control-sm" id="numero"
-                                        name="numero">
-                                </div>
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Descripcion</label>
-                                    <textarea class="form-control form-control-sm" id="descripcion"
-                                        name="descripcion"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
+<!--begin::Modal - Add task-->
+<div class="modal fade" id="modalMaquinaria" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" id="kt_modal_add_user_header">
+                <h3 class="fw-bold">FORMULARIO DE MAQUINARIA <span class="text-info" id="numero_busqueda"></span></h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body scroll-y">
+                <form id="formularioMaquinaria">
+                    <input type="hidden" name="id" id="id" value="0">
                     <div class="row">
                         <div class="col-md-12">
-                            <button class="btn btn-sm w-100 btn-success" onclick="guardarMaquinaria()">Guardar</button>
+                            <div class="fv-row mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">Tipo</label>
+                                <input type="text" class="form-control form-control-sm" id="tipo" name="tipo">
+                            </div>
+                            <div class="fv-row mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">Numero</label>
+                                <input type="text" class="form-control form-control-sm" id="numero" name="numero">
+                            </div>
+                            <div class="fv-row mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">Descripcion</label>
+                                <textarea class="form-control form-control-sm" id="descripcion"
+                                    name="descripcion"></textarea>
+                            </div>
+                            <div class="fv-row mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">Estado</label>
+                                <select class="form-control form-control-sm" id="estado_maquina" name="estado_maquina">
+                                    <option value="DISPONIBLE">DISPONIBLE</option>
+                                    <option value="EN PROCESO">EN PROCESO</option>
+                                    <option value="NO DISPONIBLE">NO DISPONIBLE</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!--end::Modal body-->
+                </form>
             </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-sm w-100 btn-success" onclick="guardarMaquinaria()">Guardar</button>
+                    </div>
+                </div>
+            </div>
+            <!--end::Modal body-->
         </div>
-        <!--end::Modal dialog-->
     </div>
-    <!--end::Modal - Add task-->
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modal - Add task-->
 
 
-    <div class="d-flex flex-column flex-column-fluid">
+<div class="d-flex flex-column flex-column-fluid">
     <div id="kt_app_content" class="app-content flex-column-fluid">
         <div id="kt_app_content_container" class="app-container container-xxlg">
             <div class="card shadow-sm">
@@ -67,7 +73,7 @@
                     <h3 class="card-title fw-bold">Listado de Maquinarias</h3>
                     <div class="card-toolbar">
                         <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoMaquinaria()">
-                            <i class="fa fa-plus"></i> Nueva  Maquinaria
+                            <i class="fa fa-plus"></i> Nueva Maquinaria
                         </button>
                     </div>
                 </div>
@@ -84,9 +90,9 @@
 @stop()
 
 @section('js')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-<script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
 
         $.ajaxSetup({
@@ -96,18 +102,18 @@
             }
         })
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             ajaxListado();
         });
 
 
-        function ajaxListado(){
+        function ajaxListado() {
             let datos = {};
             $.ajax({
                 url: "{{ route('maquinaria.ajaxListado') }}",
                 method: "POST",
                 data: datos,
-                success: function(resultado) {
+                success: function (resultado) {
 
                     if (resultado.estado) {
                         $('#table_listado').html(resultado.data.listado)
@@ -120,22 +126,23 @@
             })
         }
 
-        function modalNuevoMaquinaria(){
+        function modalNuevoMaquinaria() {
             $('#descripcion').val('')
             $('#numero').val('')
             $('#tipo').val('')
+            $('#estado_maquina').val('DISPONIBLE'); // ← DEFAULT
             $('#id').val(0)
             $('#modalMaquinaria').modal('show')
         }
 
-        function guardarMaquinaria(){
+        function guardarMaquinaria() {
             let datos = $('#formularioMaquinaria').serializeArray();
 
-             $.ajax({
+            $.ajax({
                 url: "{{ route('maquinaria.guardarMaquinaria') }}",
                 method: "POST",
                 data: datos,
-                success: function(resultado) {
+                success: function (resultado) {
                     if (resultado.estado) {
                         Swal.fire({
                             title: "EL REGISTRO FUE EXITOSO.",
@@ -149,7 +156,7 @@
 
                     }
                 },
-                error: function(xhr) {
+                error: function (xhr) {
                     limpiarErorres();
 
                     if (xhr.status === 422) {
@@ -173,14 +180,15 @@
             });
         }
 
-        function editarMaquinaria(maquinaria){
+        function editarMaquinaria(maquinaria) {
 
             $('#descripcion').val(maquinaria.descripcion)
             $('#numero').val(maquinaria.numero)
             $('#tipo').val(maquinaria.tipo)
+            $('#estado').val(maquinaria.estado_maquina);
             $('#id').val(maquinaria.id)
             $('#modalMaquinaria').modal('show')
-            
+
         }
 
         function eliminarMaquinaria(maquinaria, tipo) {
@@ -201,7 +209,7 @@
                         url: "{{ route('maquinaria.eliminarMaquinaria') }}",
                         method: "POST",
                         data: { maquinaria: maquinaria },
-                        success: function(resultado) {
+                        success: function (resultado) {
                             if (resultado.estado) {
                                 ajaxListado(); // resga el listado
                                 Swal.fire(
@@ -217,7 +225,7 @@
                                 );
                             }
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
@@ -225,8 +233,8 @@
                             });
                         }
                     });
-                    
-                    
+
+
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire(
                         'Cancelado',
@@ -236,6 +244,6 @@
                 }
             });
         }
-        
+
     </script>
 @endsection

@@ -109,6 +109,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [MaquinariaController::class, 'ajaxListado'])->name('maquinaria.ajaxListado');
         Route::post('/guardarMaquinaria', [MaquinariaController::class, 'guardarMaquinaria'])->name('maquinaria.guardarMaquinaria');
         Route::post('/eliminarMaquinaria', [MaquinariaController::class, 'eliminarMaquinaria'])->name('maquinaria.eliminarMaquinaria');
+        Route::post('/info', [MaquinariaController::class, 'info'])->name('maquinaria.info');
     });
     // color TELA
     Route::prefix('/color_tela')->group(function () {
@@ -130,6 +131,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [TipoProcesoController::class, 'ajaxListado'])->name('tipo_proceso.ajaxListado');
         Route::post('/guardarTipoProceso', [TipoProcesoController::class, 'guardarTipoProceso'])->name('tipo_proceso.guardarTipoProceso');
         Route::post('/eliminarTipoProceso', [TipoProcesoController::class, 'eliminarTipoProceso'])->name('tipo_proceso.eliminarTipoProceso');
+
     });
     // PRELAVADO
     Route::prefix('/prelavado')->group(function () {
@@ -189,6 +191,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/lista-tipos-proceso', [ProcesosController::class, 'listaTiposProceso'])
             ->name('procesos.listaTiposProceso');
         Route::post('/guardar', [ProcesosController::class, 'guardar'])->name('procesos.guardar');
+        // web.php
+        Route::post('/info-maquinaria', [ProcesosController::class, 'infoMaquinaria'])->name('procesos.infoMaquinaria');
+        Route::post('/actualizar-estados', [ProcesosController::class, 'actualizarEstados'])->name('procesos.actualizarEstados');
 
 
     });
