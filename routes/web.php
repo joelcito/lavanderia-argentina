@@ -197,6 +197,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/info-maquinaria', [ProcesosController::class, 'infoMaquinaria'])->name('procesos.infoMaquinaria');
         Route::post('/actualizar-estados', [ProcesosController::class, 'actualizarEstados'])->name('procesos.actualizarEstados');
 
+        Route::get('/lista-ots', [ProcesosController::class, 'listaOTs'])->name('procesos.listaOTs');
+        Route::get('/detalle-ot/{ot}', [ProcesosController::class, 'detalleOT']);
+
+        Route::post('/finalizar-ot', [ProcesosController::class, 'finalizarOT'])
+            ->name('procesos.finalizarOT');
 
     });
 

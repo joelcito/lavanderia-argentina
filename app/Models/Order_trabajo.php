@@ -25,7 +25,7 @@ class Order_trabajo extends Model
         'fecha',
         'cantidad',
         'descripcion',
-
+        'nro_ot',
         'estado',
         'deleted_at',
     ];
@@ -69,5 +69,11 @@ class Order_trabajo extends Model
     {
         return $this->belongsTo('App\Models\Caracteristica', 'color_tela_id');
     }
+
+    public function procesos()
+    {
+        return $this->hasMany(Proceso::class, 'order_trabajo_id');
+    }
+
 }
 
