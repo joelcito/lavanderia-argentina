@@ -20,8 +20,8 @@ return new class extends Migration
             $table->foreign('usuario_eliminador_id')->references('id')->on('users');
             $table->unsignedBigInteger('usuario_eliminador_id')->nullable();
             //foranea clientes
-            $table->foreign('cliente_id')->references('id')->on('clientes');
-            $table->unsignedBigInteger('cliente_id')->nullable();
+            $table->foreign('usuario_cliente_id')->references('id')->on('users');
+            $table->unsignedBigInteger('usuario_cliente_id')->nullable();
             //foranea usuario recepciono
             $table->foreign('usuario_recepciono_id')->references('id')->on('users');
             $table->unsignedBigInteger('usuario_recepciono_id')->nullable();

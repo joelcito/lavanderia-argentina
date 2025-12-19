@@ -49,7 +49,8 @@ class Factura extends Model
 
     public function cliente()
     {
-        return $this->belongsTo('App\Models\Cliente', 'cliente_id');
+        // return $this->belongsTo('App\Models\Cliente', 'cliente_id');
+        return $this->belongsTo('App\Models\User', 'usuario_cliente_id');
     }
 
     public function ordenTrabajos()

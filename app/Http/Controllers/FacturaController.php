@@ -24,7 +24,9 @@ class FacturaController extends Controller
 {
     public function formulario()
     {
-        $clientes = Cliente::select('id', 'nombres', 'ap_paterno', 'ap_materno', 'celular','direccion','imagen')->get();
+        // $clientes = Cliente::select('id', 'nombres', 'ap_paterno', 'ap_materno', 'celular','direccion','imagen')->get();
+        $rolCliente = env('ROL_CLIENTE');
+        $clientes = User::where('rol_id', $rolCliente)->get();
         $usuario = Auth::user();
         $usuarios = User::all();
 
@@ -45,6 +47,7 @@ class FacturaController extends Controller
         if($request->ajax()){
 
             // dd($request->all());
+
             $usuario                   = Auth::user();
             $sucursal                  = $usuario->sucursal;
             $cliente_id                = $request->input('cliente');
@@ -64,7 +67,7 @@ class FacturaController extends Controller
 
             $factura                        = new Factura();
             $factura->usuario_creador_id    = $usuario->id;
-            $factura->cliente_id            = $cliente_id;
+            $factura->usuario_cliente_id    = $cliente_id;
             $factura->sucursal_id           = $sucursal->id;
             $factura->usuario_recepciono_id = $usuario_recepciono;
             $factura->fecha                 = date('Y-m-d H:i:s');
@@ -105,6 +108,7 @@ class FacturaController extends Controller
                 $orden_trabajo->nro_ot                 = $item['nro_ot'];
                 $orden_trabajo->fecha                  = $factura->fecha_recepcion;
                 $orden_trabajo->tipo                   = "ORDEN_TRABAJO";
+                $orden_trabajo->estado                 = "RECEPCIONADO";
                 $orden_trabajo->save();
 
                 if ($primero > 1) {

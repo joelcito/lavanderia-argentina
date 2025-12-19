@@ -28,8 +28,21 @@ return new class extends Migration
             $table->string('ap_paterno')->nullable()->after('nombres');
             $table->string('ap_materno')->nullable()->after('ap_paterno');
             $table->string('cedula')->nullable()->after('ap_materno');
-            //$table->string('direccion')->nullable()->after('cedula');
+
             $table->string('celular')->nullable()->after('cedula');
+
+            $table->string('nit')->nullable()->after('celular');
+            $table->string('razon_social')->nullable()->after('nit');
+            $table->string('direccion')->nullable()->after('razon_social');
+            $table->string('imagen')->nullable()->after('direccion');
+            $table->string('imagen_CI_anverso')->nullable()->after('imagen');
+            $table->string('imagen_CI_reverso')->nullable()->after('imagen_CI_anverso');
+            $table->string('nombre_referencia_1')->nullable()->after('imagen_CI_reverso');
+            $table->string('celular_referencia_1')->nullable()->after('nombre_referencia_1');
+            $table->string('nombre_referencia_2')->nullable()->after('celular_referencia_1');
+            $table->string('celular_referencia_2')->nullable()->after('nombre_referencia_2');
+            $table->string('nombre_referencia_3')->nullable()->after('celular_referencia_2');
+            $table->string('celular_referencia_3')->nullable()->after('nombre_referencia_3');
 
             $table->string('estado')->nullable()->after('celular');
             $table->datetime('deleted_at')->nullable()->after('estado');
