@@ -81,7 +81,12 @@
                     <i class="fa fa-times"></i>
                 </button>
             </div>
-
+            <div class="col-md-6 mb-3">
+                <label class="fw-bold">Orden de Trabajo</label>
+                <select id="order_trabajo_id" class="form-select">
+                    <option value="">Cargando...</option>
+                </select>
+            </div>
             <div class="modal-body">
                 <input type="hidden" id="id">
                 <div class="row">
@@ -191,6 +196,7 @@
                 $('#maquinaria_id').val(maquinaria_id);
                 cargarProductos();
                 cargarTiposProceso();
+                cargarOTs();
                 $('#modalLavanderia').modal('show');
             });
         }
@@ -213,6 +219,33 @@
             });
         }
 
+
+
+
+        function cargarOTs() {
+            $.ajax({
+                url: "{{ route('procesos.listaOTs') }}",
+                type: "GET",
+                success: function (data) {
+                    let select = $("#order_trabajo_id");
+                    select.empty();
+                    select.append('<option value="">Seleccione OT...</option>');
+
+                    data.forEach(item => {
+                        select.append(
+                            `<option value="${item.id}">OT ${item.nro_ot}</option>`
+                        );
+                    });
+                },
+                error: function (err) {
+                    console.error("Error cargando OTs", err);
+                    Swal.fire('Error', 'No se pudieron cargar las OTs', 'error');
+                }
+            });
+        }
+
+
+
         function guardarLavanderia() {
             let datos = {
                 id: $('#id').val(),
@@ -230,6 +263,30 @@
                 estado: $('#estado').val()
             };
 
+            console.log("Datos enviados:", datos); // <-- depuración rápida
+
+            // Validación mínima antes de enviar
+            if (!datos.order_trabajo_id) {
+                Swal.fire('Error', 'Debe seleccionar una Orden de Trabajo', 'error');
+                return;
+            }
+            if (!datos.producto_id) {
+                Swal.fire('Error', 'Debe seleccionar un producto', 'error');
+                return;
+            }
+            if (!datos.tipo_proceso_id) {
+                Swal.fire('Error', 'Debe seleccionar un tipo de proceso', 'error');
+                return;
+            }
+            if (!datos.maquinaria_id) {
+                Swal.fire('Error', 'Maquinaria no seleccionada', 'error');
+                return;
+            }
+            if (!datos.fecha_ingreso) {
+                Swal.fire('Error', 'Debe indicar la fecha de ingreso', 'error');
+                return;
+            }
+
             $.ajax({
                 url: "{{ route('procesos.guardar') }}",
                 method: "POST",
@@ -244,13 +301,19 @@
                     }
                 },
                 error: function (xhr) {
-                    let errors = xhr.responseJSON.errors;
-                    let mensaje = '';
-                    for (let key in errors) mensaje += errors[key] + '\n';
-                    Swal.fire('Error', mensaje, 'error');
+                    console.log("Error detalle:", xhr.responseJSON);
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        let mensaje = '';
+                        for (let key in errors) mensaje += errors[key] + '\n';
+                        Swal.fire('Error de validación', mensaje, 'error');
+                    } else {
+                        Swal.fire('Error', 'Ocurrió un error en el servidor', 'error');
+                    }
                 }
             });
         }
+
 
         // ================== TEMPORIZADOR ==================
         function actualizarTemporizadores() {

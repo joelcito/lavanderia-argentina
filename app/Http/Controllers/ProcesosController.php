@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Factura;
 use App\Models\Pago;
 use App\Models\Sucursal;
 use App\Models\User;
 use App\Models\Producto;
+use App\Models\Order_trabajo;
 use App\Models\Tipo_proceso;
 use App\Models\Proceso;
 use App\Utils\Respuesta;
@@ -30,22 +32,23 @@ class ProcesosController extends Controller
     {
         if ($request->ajax()) {
 
-            // Obtener procesos con relaciones
-            $procesos = Proceso::all();
-            $valores = [
-                'listado' => view('procesos.ajaxListado')
-                    ->with(compact('procesos'))
-                    ->render()
-            ];
+            $ots = Order_trabajo::with('procesos')
+                ->whereHas('procesos')
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-
-            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
-
-        } else {
-            $data = Respuesta::error(null, "Error al obtener los datos");
+            return response()->json([
+                'estado' => true,
+                'data' => [
+                    'listado' => view('procesos.ajaxListado', compact('ots'))->render()
+                ]
+            ]);
         }
 
-        return $data;
+        return response()->json([
+            'estado' => false,
+            'mensaje' => 'Petición inválida'
+        ], 400);
     }
 
 
@@ -67,6 +70,7 @@ class ProcesosController extends Controller
     {
         // Validación
         $request->validate([
+            'order_trabajo_id' => 'required|exists:order_trabajos,id',
             'maquinaria_id' => 'required|exists:maquinarias,id',
             'producto_id' => 'required|exists:productos,id',
             'tipo_proceso_id' => 'required|exists:tipo_procesos,id',
@@ -77,14 +81,14 @@ class ProcesosController extends Controller
         $maquinaria = Maquinaria::find($request->maquinaria_id);
 
         // Validar que esté disponible
-        if ($maquinaria->estado_maquina !== 'DISPONIBLE') {
-            return response()->json([
-                'estado' => false,
-                'mensaje' => 'La maquinaria seleccionada no está disponible para asignar un proceso.'
-            ], 422);
-        }
+        // if ($maquinaria->estado_maquina !== 'DISPONIBLE') {
+        //     return response()->json([
+        //         'estado' => false,
+        //         'mensaje' => 'La maquinaria seleccionada no está disponible para asignar un proceso.'
+        //     ], 422);
+        // }
 
-        // Crear / actualizar proceso
+        // Crear o actualizar proceso
         $proceso = Proceso::updateOrCreate(
             ['id' => $request->id],
             [
@@ -99,13 +103,20 @@ class ProcesosController extends Controller
                 'ph' => $request->ph,
                 'rb' => $request->rb,
                 'descripcion' => $request->descripcion,
-                'estado' => 'EN PROCESO'
+                'estado' => 'EN PROCESO',
             ]
         );
 
-        // Cambiar estado de la maquinaria automáticamente
+        // Cambiar estado de la maquinaria
         $maquinaria->estado_maquina = 'EN PROCESO';
         $maquinaria->save();
+
+        // Cambiar estado de la OT a TRABAJANDO
+        $orderTrabajo = Order_trabajo::find($request->order_trabajo_id);
+        if ($orderTrabajo && !in_array($orderTrabajo->estado, ['FINALIZADO', 'ENTREGADO'])) {
+            $orderTrabajo->estado = 'TRABAJANDO';
+            $orderTrabajo->save();
+        }
 
         return response()->json([
             'estado' => true,
@@ -116,41 +127,168 @@ class ProcesosController extends Controller
 
     public function infoMaquinaria(Request $request)
     {
-        $maquinaria = Maquinaria::withCount([
-            'procesos' => function ($q) {
-                $q->where('estado', 'PENDIENTE')->orWhere('estado', 'EN_PROCESO');
-            }
-        ])->find($request->id);
+        $maquinaria = Maquinaria::find($request->id);
 
         if (!$maquinaria) {
-            return response()->json(['estado_maquina' => 'NO DISPONIBLE', 'procesos_activos' => 0]);
+            return response()->json([
+                'estado_maquina' => 'NO DISPONIBLE',
+                'procesos_activos' => 0
+            ]);
         }
 
-        // Determinar estado de la máquina
-        $estado = ($maquinaria->procesos_count >= 3) ? 'NO DISPONIBLE' : 'DISPONIBLE';
+        $procesosActivos = Proceso::where('maquinaria_id', $maquinaria->id)
+            ->whereIn('estado', ['PENDIENTE', 'EN_PROCESO'])
+            ->count();
+
+        $estado = ($procesosActivos >= 3)
+            ? 'NO DISPONIBLE'
+            : 'DISPONIBLE';
 
         return response()->json([
             'estado_maquina' => $estado,
-            'procesos_activos' => $maquinaria->procesos_count
+            'procesos_activos' => $procesosActivos
         ]);
     }
 
+
+
+
+    // public function actualizarEstados()
+    // {
+    //     // Obtener todos los procesos activos que no estén finalizados
+    //     $procesos = Proceso::whereIn('estado', ['PENDIENTE', 'EN_PROCESO'])->get();
+
+    //     foreach ($procesos as $proceso) {
+    //         $ahora = now();
+
+    //         // Si la fecha de salida ya pasó, marcar como finalizado
+    //         if ($ahora >= $proceso->fecha_salida) {
+    //             $proceso->estado = 'FINALIZADO';
+    //             $proceso->save();
+    //         }
+    //     }
+
+    //     return response()->json(['estado' => true]);
+    // }
+
+
     public function actualizarEstados()
     {
-        // Obtener todos los procesos activos que no estén finalizados
+        // Obtener procesos activos
         $procesos = Proceso::whereIn('estado', ['PENDIENTE', 'EN_PROCESO'])->get();
 
         foreach ($procesos as $proceso) {
-            $ahora = now();
 
-            // Si la fecha de salida ya pasó, marcar como finalizado
-            if ($ahora >= $proceso->fecha_salida) {
+            if (!$proceso->fecha_salida) {
+                continue;
+            }
+
+            if (now() >= $proceso->fecha_salida) {
+
+                // 1️⃣ Finalizar proceso
                 $proceso->estado = 'FINALIZADO';
                 $proceso->save();
+
+                // 2️⃣ Verificar OT
+                $procesosActivosOT = Proceso::where('order_trabajo_id', $proceso->order_trabajo_id)
+                    ->whereIn('estado', ['PENDIENTE', 'EN_PROCESO'])
+                    ->count();
+
+                if ($procesosActivosOT == 0) {
+                    Order_trabajo::where('id', $proceso->order_trabajo_id)
+                        ->update(['estado' => 'FINALIZADO']);
+                }
+
+                // 3️⃣ Verificar maquinaria
+                $procesosActivosMaquina = Proceso::where('maquinaria_id', $proceso->maquinaria_id)
+                    ->whereIn('estado', ['PENDIENTE', 'EN_PROCESO'])
+                    ->count();
+
+                if ($procesosActivosMaquina == 0) {
+                    Maquinaria::where('id', $proceso->maquinaria_id)
+                        ->update(['estado_maquina' => 'DISPONIBLE']);
+                }
             }
         }
 
         return response()->json(['estado' => true]);
     }
+
+
+
+
+
+    public function listaOTs()
+    {
+        try {
+            $ots = Order_trabajo::select('id', 'nro_ot')
+                ->whereNotIn('estado', ['FINALIZADO', 'ENTREGADO'])
+                ->whereNull('deleted_at')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return response()->json($ots);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile()
+            ], 500);
+        }
+    }
+
+
+    public function detalleOT($id)
+    {
+        $procesos = Proceso::with(['producto', 'maquinaria', 'tipoProceso'])
+            ->where('order_trabajo_id', $id)
+            ->get();
+
+        return response()->json($procesos);
+    }
+
+    public function finalizarOT(Request $request)
+    {
+        $ot = Order_trabajo::find($request->id);
+
+        if (!$ot) {
+            return response()->json([
+                'estado' => false,
+                'mensaje' => 'OT no encontrada'
+            ]);
+        }
+
+        // Cambiar estado de la OT
+        $ot->estado = 'FINALIZADO';
+        $ot->save();
+
+        // Finalizar todos los procesos activos de esa OT
+        Proceso::where('order_trabajo_id', $ot->id)
+            ->whereIn('estado', ['PENDIENTE', 'EN PROCESO'])
+            ->update(['estado' => 'FINALIZADO']);
+
+        // Liberar maquinarias involucradas
+        $maquinarias = Proceso::where('order_trabajo_id', $ot->id)
+            ->pluck('maquinaria_id')
+            ->unique();
+
+        foreach ($maquinarias as $maq_id) {
+            $activos = Proceso::where('maquinaria_id', $maq_id)
+                ->whereIn('estado', ['PENDIENTE', 'EN PROCESO'])
+                ->count();
+
+            if ($activos == 0) {
+                Maquinaria::where('id', $maq_id)
+                    ->update(['estado_maquina' => 'DISPONIBLE']);
+            }
+        }
+
+        return response()->json([
+            'estado' => true,
+            'mensaje' => 'Orden de trabajo finalizada correctamente'
+        ]);
+    }
+
 
 }

@@ -7,426 +7,444 @@
 @endsection
 @section('content')
 
-    <!--end::Modal - New Card-->
-    {{-- <div class="modal fade" id="modal_new_servicio" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered mw-1000px">
-            <div class="modal-content">
-                @include('empresa.components.modalAgregaServicioProducto')
-            </div>
-            <!--end::Modal content-->
+<!--end::Modal - New Card-->
+{{-- <div class="modal fade" id="modal_new_servicio" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered mw-1000px">
+        <div class="modal-content">
+            @include('empresa.components.modalAgregaServicioProducto')
         </div>
-        <!--end::Modal dialog-->
-    </div> --}}
-    <!--end::Modal - New Card-->
-
-    <!--end::Modal - New Card-->
-    {{-- <div class="modal fade" id="modal_new_cliente" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered mw-900px">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="fw-bold">Formulario de Cliente</h2>
-                    <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
-                        <i class="ki-duotone ki-cross fs-1">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
-                    </div>
-                </div>
-                <div class="modal-body scroll-y">
-                    <form id="formulario_new_cliente_empresa">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <label class="fs-6 fw-semibold form-label mb-2 required">Nombres</label>
-                                <input type="text" class="form-control fw-bold form-control-solid"
-                                    name="nombres_cliente_new_usuaio_empresa" id="nombres_cliente_new_usuaio_empresa"
-                                    required>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="fs-6 fw-semibold form-label mb-2 required">Ap Paterno</label>
-                                <input type="text" class="form-control fw-bold form-control-solid"
-                                    name="ap_paterno_cliente_new_usuaio_empresa" id="ap_paterno_cliente_new_usuaio_empresa"
-                                    required>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="fs-6 fw-semibold form-label mb-2">Ap Materno</label>
-                                <input type="text" class="form-control fw-bold form-control-solid"
-                                    name="ap_materno_cliente_new_usuaio_empresa" id="ap_materno_cliente_new_usuaio_empresa">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="fs-6 fw-semibold form-label mb-2">Numero de Celular</label>
-                                <input type="number" class="form-control fw-bold form-control-solid"
-                                    name="num_ceular_cliente_new_usuaio_empresa" id="num_ceular_cliente_new_usuaio_empresa">
-                            </div>
-                        </div>
-                        <div class="row mt-5">
-                            <div class="col-md-2">
-                                <label class="fs-6 fw-semibold form-label mb-2 required">Cedula</label>
-                                <input type="number" class="form-control fw-bold form-control-solid"
-                                    name="cedula_cliente_new_usuaio_empresa" id="cedula_cliente_new_usuaio_empresa"
-                                    required>
-                            </div>
-                            <div class="col-md-2">
-                                <label class="fs-6 fw-semibold form-label mb-2">Complemento</label>
-                                <input type="number" class="form-control fw-bold form-control-solid"
-                                    name="complemento_cliente_new_usuaio_empresa"
-                                    id="complemento_cliente_new_usuaio_empresa">
-                            </div>
-                            <div class="col-md-2">
-                                <label class="fs-6 fw-semibold form-label mb-2">Nit</label>
-                                <input type="number" class="form-control fw-bold form-control-solid"
-                                    name="nit_cliente_new_usuaio_empresa" id="nit_cliente_new_usuaio_empresa">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="fs-6 fw-semibold form-label mb-2">Razon Social</label>
-                                <input type="text" class="form-control fw-bold form-control-solid"
-                                    name="razon_social_cliente_new_usuaio_empresa"
-                                    id="razon_social_cliente_new_usuaio_empresa">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="fs-6 fw-semibold form-label mb-2">Correo</label>
-                                <input type="text" class="form-control fw-bold form-control-solid"
-                                    name="correo_cliente_new_usuaio_empresa" id="correo_cliente_new_usuaio_empresa">
-                            </div>
-                        </div>
-                        <div class="row mt-5">
-                            <div class="col-md-12">
-                                <button type="button" class="btn btn-success w-100 btn-sm"
-                                    onclick="guardarClienteEmpresa()">Agregar Usuario</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <!--end::Modal content-->
-        </div>
-        <!--end::Modal dialog-->
-    </div> --}}
-    <!--end::Modal - New Card-->
-
-    <!--begin::Modal - Add task-->
-    {{-- <div class="modal fade" id="modalAperturaCaja" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            @include('caja.components.formularioAperturaCaja')
-        </div>
-        <!--end::Modal dialog-->
-    </div> --}}
-    <!--end::Modal - Add task-->
-
-
-    <!--begin::Modal - Add task-->
-    {{-- <div class="modal fade" id="modalCerrarCaja" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            @include('caja.components.formularioCerrarCaja', ['cajaAbierta' => $cajaAbierta])
-        </div>
-        <!--end::Modal dialog-->
-    </div> --}}
-    <!--end::Modal - Add task-->
-
-
-    {{-- <!--end::Modal - New Card-->
-    <div class="modal fade" id="modal_lista_accesorios" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered mw-600px">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="fw-bold">AGREGAR ACCESORIOS</h2>
-                    <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
-                        <i class="ki-duotone ki-cross fs-1">
-                            <span class="path1"></span>
-                            <span class="path2"></span>
-                        </i>
-                    </div>
-                </div>
-                <div class="modal-body scroll-y">
-                    <form id="formulario_new_cliente_empresa">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label class="fs-6 fw-semibold form-label mb-2 required">PRODUCTO</label>
-                                <input type="text" class="form-control fw-bold form-control-solid"
-                                    name="nombre_producto_agregar" id="nombre_producto_agregar" readonly>
-                            </div>
-                        </div>
-                        <div class="row mt-5">
-                            <div class="col-md-12">
-                                <div id="tabla_accesorios"></div>
-                            </div>
-                        </div>
-                        <div class="row mt-5">
-                            <div class="col-md-12">
-                                <button type="button" class="btn btn-success w-100 btn-sm"
-                                    onclick="guardarClienteEmpresa()">Agregar Usuario</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <!--end::Modal content-->
-        </div>
-        <!--end::Modal dialog-->
+        <!--end::Modal content-->
     </div>
-    <!--end::Modal - New Card--> --}}
+    <!--end::Modal dialog-->
+</div> --}}
+<!--end::Modal - New Card-->
 
-
-
-    <div class="d-flex flex-column flex-column-fluid">
-        <!--begin::Content-->
-        <div id="kt_app_content" class="app-content flex-column-fluid">
-            <!--begin::Content container-->
-            <div id="kt_app_content_container" class="app-container container-xxlg">
-                <!--begin::Card-->
-                <div class="card">
-                    <div class="card-body py-4">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h1
-                                    class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
-                                    Formulario de Recepcion</h1>
-                            </div>
-                            {{-- <div class="col-md-2">
-                                <a class="btn btn-sm fw-bold btn-danger w-100" onclick="modalCerrarCaja()"><i
-                                        class="fa fa-plus"></i>Cerrer Caja</a>
-                            </div> --}}
+<!--end::Modal - New Card-->
+{{-- <div class="modal fade" id="modal_new_cliente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered mw-900px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="fw-bold">Formulario de Cliente</h2>
+                <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </div>
+            </div>
+            <div class="modal-body scroll-y">
+                <form id="formulario_new_cliente_empresa">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="fs-6 fw-semibold form-label mb-2 required">Nombres</label>
+                            <input type="text" class="form-control fw-bold form-control-solid"
+                                name="nombres_cliente_new_usuaio_empresa" id="nombres_cliente_new_usuaio_empresa"
+                                required>
                         </div>
-                        <hr>
-                        <form id="formulario_recepcion">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <img id="imagen_cliente" src="{{ asset('assets/img/default.jpg') }}"
-                                                alt="Imagen del cliente" width="100%"
-                                                style="object-fit:cover; border-radius:10px; border:1px solid #ccc;">
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <label class="fs-6 fw-semibold form-label mb-2 required">Seleccionar Cliente</label>
-                                                    <select name="cliente_seleccionado" id="cliente_seleccionado"
-                                                        class="form-select form-select-sm" onchange="seleccionarCliente()" required>
-                                                        <option value="">SELECCIONE EL CLIENTE</option>
-                                                        @foreach ($clientes as $cliente)
-                                                            <option value="{{ $cliente }}">
-                                                                {{ $cliente->nombres . ' ' . $cliente->ap_paterno . ' ' . $cliente->ap_materno }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    <input type="hidden" name="cliente_seleccionado_id"
-                                                        id="cliente_seleccionado_id">
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <label
-                                                        class="fs-6 fw-semibold form-label mb-2">Telefono</label>
-                                                    <input type="text" class="form-control fw-bold form-control-solid"
-                                                        name="telefono_cliente" id="telefono_cliente">
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <label class="fs-6 fw-semibold form-label mb-2">Direccion</label>
-                                                    <input type="text" class="form-control fw-bold form-control-solid"
-                                                        name="direccion_cliente" id="direccion_cliente">
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <label class="fs-6 fw-semibold form-label mb-2">Prioridad</label>
-                                                    <select class="form-select form-select-sm" name="prioridad_cliente"
-                                                        id="prioridad_cliente" required>
-                                                        <option value="NORMAL">NORMAL</option>
-                                                        <option value="PARA LA FERIA">PARA LA FERIA</option>
-                                                        <option value="URGENTE">URGENTE</option>
-                                                    </select>
-                                                </div>
+                        <div class="col-md-3">
+                            <label class="fs-6 fw-semibold form-label mb-2 required">Ap Paterno</label>
+                            <input type="text" class="form-control fw-bold form-control-solid"
+                                name="ap_paterno_cliente_new_usuaio_empresa" id="ap_paterno_cliente_new_usuaio_empresa"
+                                required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="fs-6 fw-semibold form-label mb-2">Ap Materno</label>
+                            <input type="text" class="form-control fw-bold form-control-solid"
+                                name="ap_materno_cliente_new_usuaio_empresa" id="ap_materno_cliente_new_usuaio_empresa">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="fs-6 fw-semibold form-label mb-2">Numero de Celular</label>
+                            <input type="number" class="form-control fw-bold form-control-solid"
+                                name="num_ceular_cliente_new_usuaio_empresa" id="num_ceular_cliente_new_usuaio_empresa">
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-md-2">
+                            <label class="fs-6 fw-semibold form-label mb-2 required">Cedula</label>
+                            <input type="number" class="form-control fw-bold form-control-solid"
+                                name="cedula_cliente_new_usuaio_empresa" id="cedula_cliente_new_usuaio_empresa"
+                                required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="fs-6 fw-semibold form-label mb-2">Complemento</label>
+                            <input type="number" class="form-control fw-bold form-control-solid"
+                                name="complemento_cliente_new_usuaio_empresa"
+                                id="complemento_cliente_new_usuaio_empresa">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="fs-6 fw-semibold form-label mb-2">Nit</label>
+                            <input type="number" class="form-control fw-bold form-control-solid"
+                                name="nit_cliente_new_usuaio_empresa" id="nit_cliente_new_usuaio_empresa">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="fs-6 fw-semibold form-label mb-2">Razon Social</label>
+                            <input type="text" class="form-control fw-bold form-control-solid"
+                                name="razon_social_cliente_new_usuaio_empresa"
+                                id="razon_social_cliente_new_usuaio_empresa">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="fs-6 fw-semibold form-label mb-2">Correo</label>
+                            <input type="text" class="form-control fw-bold form-control-solid"
+                                name="correo_cliente_new_usuaio_empresa" id="correo_cliente_new_usuaio_empresa">
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-success w-100 btn-sm"
+                                onclick="guardarClienteEmpresa()">Agregar Usuario</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div> --}}
+<!--end::Modal - New Card-->
+
+<!--begin::Modal - Add task-->
+{{-- <div class="modal fade" id="modalAperturaCaja" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        @include('caja.components.formularioAperturaCaja')
+    </div>
+    <!--end::Modal dialog-->
+</div> --}}
+<!--end::Modal - Add task-->
+
+
+<!--begin::Modal - Add task-->
+{{-- <div class="modal fade" id="modalCerrarCaja" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        @include('caja.components.formularioCerrarCaja', ['cajaAbierta' => $cajaAbierta])
+    </div>
+    <!--end::Modal dialog-->
+</div> --}}
+<!--end::Modal - Add task-->
+
+
+{{-- <!--end::Modal - New Card-->
+<div class="modal fade" id="modal_lista_accesorios" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered mw-600px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="fw-bold">AGREGAR ACCESORIOS</h2>
+                <div class="btn btn-icon btn-sm btn-active-icon-primary" data-bs-dismiss="modal">
+                    <i class="ki-duotone ki-cross fs-1">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                    </i>
+                </div>
+            </div>
+            <div class="modal-body scroll-y">
+                <form id="formulario_new_cliente_empresa">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="fs-6 fw-semibold form-label mb-2 required">PRODUCTO</label>
+                            <input type="text" class="form-control fw-bold form-control-solid"
+                                name="nombre_producto_agregar" id="nombre_producto_agregar" readonly>
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-md-12">
+                            <div id="tabla_accesorios"></div>
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-success w-100 btn-sm"
+                                onclick="guardarClienteEmpresa()">Agregar Usuario</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modal - New Card--> --}}
+
+
+
+<div class="d-flex flex-column flex-column-fluid">
+    <!--begin::Content-->
+    <div id="kt_app_content" class="app-content flex-column-fluid">
+        <!--begin::Content container-->
+        <div id="kt_app_content_container" class="app-container container-xxlg">
+            <!--begin::Card-->
+            <div class="card">
+                <div class="card-body py-4">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1
+                                class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
+                                Formulario de Recepcion</h1>
+                        </div>
+                        {{-- <div class="col-md-2">
+                            <a class="btn btn-sm fw-bold btn-danger w-100" onclick="modalCerrarCaja()"><i
+                                    class="fa fa-plus"></i>Cerrer Caja</a>
+                        </div> --}}
+                    </div>
+                    <hr>
+                    <form id="formulario_recepcion">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <img id="imagen_cliente" src="{{ asset('assets/img/default.jpg') }}"
+                                            alt="Imagen del cliente" width="100%"
+                                            style="object-fit:cover; border-radius:10px; border:1px solid #ccc;">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label class="fs-6 fw-semibold form-label mb-2 required">Seleccionar
+                                                    Cliente</label>
+                                                <select name="cliente_seleccionado" id="cliente_seleccionado"
+                                                    class="form-select form-select-sm" onchange="seleccionarCliente()"
+                                                    required>
+                                                    <option value="">SELECCIONE EL CLIENTE</option>
+                                                    @foreach ($clientes as $cliente)
+                                                        <option value="{{ $cliente }}">
+                                                            {{ $cliente->nombres . ' ' . $cliente->ap_paterno . ' ' . $cliente->ap_materno }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <input type="hidden" name="cliente_seleccionado_id"
+                                                    id="cliente_seleccionado_id">
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="fs-6 fw-semibold form-label mb-2">Telefono</label>
+                                                <input type="text" class="form-control fw-bold form-control-solid"
+                                                    name="telefono_cliente" id="telefono_cliente">
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="fs-6 fw-semibold form-label mb-2">Direccion</label>
+                                                <input type="text" class="form-control fw-bold form-control-solid"
+                                                    name="direccion_cliente" id="direccion_cliente">
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="fs-6 fw-semibold form-label mb-2">Prioridad</label>
+                                                <select class="form-select form-select-sm" name="prioridad_cliente"
+                                                    id="prioridad_cliente" required>
+                                                    <option value="NORMAL">NORMAL</option>
+                                                    <option value="PARA LA FERIA">PARA LA FERIA</option>
+                                                    <option value="URGENTE">URGENTE</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <label class="fs-6 fw-semibold form-label mb-2 required">Fecha de
-                                                Recepcion</label>
-                                            <input type="date" class="form-control fw-bold form-control-solid"
-                                                name="fecha_recepcion_cliente" id="fecha_recepcion_cliente" required>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label class="fs-6 fw-semibold form-label mb-2">Entregado Por</label>
-                                            <input type="text" class="form-control fw-bold form-control-solid"
-                                                name="entregado_por" id="entregado_por">
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label class="fs-6 fw-semibold form-label mb-2">Recibido por</label>
-                                            <input type="text" class="form-control fw-bold form-control-solid"
-                                                name="recibido_por" id="recibido_por"
-                                                value="{{ $usuario->nombres . ' ' . $usuario->ap_paterno . ' ' . $usuario->ap_materno }}"
-                                                readonly>
-                                            <input type="hidden" name="usuario_recepciono_id" id="usuario_recepciono_id"
-                                                value="{{ $usuario->id }}">
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label class="fs-6 fw-semibold form-label mb-2">Fecha Registro</label>
-                                            <input type="date" class="form-control fw-bold form-control-solid"
-                                                value="{{ date('Y-m-d') }}" readonly>
-                                        </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label class="fs-6 fw-semibold form-label mb-2 required">Fecha de
+                                            Recepcion</label>
+                                        <input type="date" class="form-control fw-bold form-control-solid"
+                                            name="fecha_recepcion_cliente" id="fecha_recepcion_cliente" required>
                                     </div>
+                                    <div class="col-md-12">
+                                        <label class="fs-6 fw-semibold form-label mb-2">Entregado Por</label>
+                                        <input type="text" class="form-control fw-bold form-control-solid"
+                                            name="entregado_por" id="entregado_por">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="fs-6 fw-semibold form-label mb-2">Recibido por</label>
+                                        <input type="text" class="form-control fw-bold form-control-solid"
+                                            name="recibido_por" id="recibido_por"
+                                            value="{{ $usuario->nombres . ' ' . $usuario->ap_paterno . ' ' . $usuario->ap_materno }}"
+                                            readonly>
+                                        <input type="hidden" name="usuario_recepciono_id" id="usuario_recepciono_id"
+                                            value="{{ $usuario->id }}">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="fs-6 fw-semibold form-label mb-2">Fecha Registro</label>
+                                        <input type="date" class="form-control fw-bold form-control-solid"
+                                            value="{{ date('Y-m-d') }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-md-12">
+
+                        </div>
+                    </div>
+
+                    <div id="tabla_clientes">
+                    </div>
+                    <hr>
+                    <div id="tabla_ventas">
+                        <form id="formulario_venta">
+                            <div class="row">
+                                <div class="col-md">
+                                    <label class="required fw-semibold fs-6 mb-2">Cantidad</label>
+                                    <input type="number" id="cantidad_venta" style="width: 100%" name="cantidad_venta"
+                                        required min="1" value="0" onkeyup="calcularsubTotal()">
+                                </div>
+                                <div class="col-md">
+                                    <label class="required fw-semibold fs-6 mb-2">Prenda</label>
+                                    <select name="prenda_id" id="prenda_id" style="width: 100%"
+                                        data-placeholder="SELECIONE" required>
+                                        <option></option>
+                                        @foreach ($prendas as $prenda)
+                                            <option value="{{ $prenda->id }}">{{ $prenda->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md">
+                                    <label class="required fw-semibold fs-6 mb-2">Ojales</label>
+                                    <input type="text" style="width: 100%" id="numero_ojales" name="numero_ojales"
+                                        required onchange="cuantificarOjales()" onclick="this.select()">
+                                </div>
+                                <div class="col-md">
+                                    <label class="required fw-semibold fs-6 mb-2">Tela</label>
+                                    <select name="tela_id" id="tela_id" style="width: 100%" data-placeholder="SELECIONE"
+                                        required>
+                                        <option></option>
+                                        @foreach ($telas as $tela)
+                                            <option value="{{ $tela->id }}">{{ $tela->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md">
+                                    <label class="required fw-semibold fs-6 mb-2">P. Lav.</label>
+                                    <select name="prelavado_id" id="prelavado_id" data-placeholder="SELECIONE" required
+                                        style="width: 100%">
+                                        <option></option>
+                                        @foreach ($prelavados as $prelavado)
+                                            <option value="{{ $prelavado->id }}">{{ $prelavado->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md">
+                                    <label class="required fw-semibold fs-6 mb-2">Nevado</label>
+                                    <select name="nevado_id" id="nevado_id" data-placeholder="SELECIONE" required
+                                        style="width: 100%">
+                                        <option></option>
+                                        @foreach ($nevados as $nevado)
+                                            <option value="{{ $nevado->id }}">{{ $nevado->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md">
+                                    <label class="required fw-semibold fs-6 mb-2">Focalizado</label>
+                                    <select name="focalizado_id" id="focalizado_id" data-placeholder="SELECIONE"
+                                        required style="width: 100%">
+                                        <option></option>
+                                        @foreach ($focalizados as $focalizado)
+                                            <option value="{{ $focalizado->id }}">{{ $focalizado->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                {{--
+                            </div>
+                            <div class="row"> --}}
+                                {{-- <div class="col-md-11"> --}}
+                                    {{-- <div class="row"> --}}
+                                        <div class="col-md">
+                                            <label class="required fw-semibold fs-6 mb-2">T. Tela</label>
+                                            <select name="tipo_tela_id" id="tipo_tela_id" data-placeholder="SELECIONE"
+                                                required style="width: 100%">
+                                                <option></option>
+                                                @foreach ($tipoTelas as $tipoTela)
+                                                    <option value="{{ $tipoTela->id }}">{{ $tipoTela->nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md">
+                                            <label class="required fw-semibold fs-6 mb-2">Co. Tela</label>
+                                            <select name="color_tela_id" id="color_tela_id" data-placeholder="SELECIONE"
+                                                required style="width: 100%">
+                                                <option></option>
+                                                @foreach ($colorTelas as $colorTela)
+                                                    <option value="{{ $colorTela->id }}">{{ $colorTela->nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md">
+                                            <label class="required fw-semibold fs-6 mb-2">Ca. Tela</label>
+                                            <select name="caracteristica_tela_id" id="caracteristica_tela_id"
+                                                data-placeholder="SELECIONE" required style="width: 100%">
+                                                <option></option>
+                                                @foreach ($caracteristicaTelas as $caracteristicaTela)
+                                                    <option value="{{ $caracteristicaTela->id }}">
+                                                        {{ $caracteristicaTela->nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md">
+                                            <label class="required fw-semibold fs-6 mb-2">Peso</label>
+                                            <input type="number" id="peso" name="peso" required min="1"
+                                                style="width: 100%">
+                                        </div>
+
+                                        <div class="col-md">
+                                            <label class="required fw-semibold fs-6 mb-2">Precio</label>
+                                            <input type="number" id="precio_venta" name="precio_venta" required min="1"
+                                                value="0" onkeyup="calcularsubTotal()" style="width: 100%">
+                                        </div>
+
+                                        <div class="col-md">
+                                            <label class="required fw-semibold fs-6 mb-2">S. Total</label>
+                                            <input type="number" id="sub_total" name="sub_total" required min="1"
+                                                style="width: 100%">
+                                        </div>
+
+                                        <div class="col-md">
+                                            <label class="required fw-semibold fs-6 mb-2">Obs</label>
+                                            <input type="text" id="observacion" name="observacion" required
+                                                style="width: 100%">
+                                        </div>
+
+                                        <div class="col-md">
+                                            <label class="required fw-semibold fs-6 mb-2">N° OT</label>
+                                            <input type="number" id="nro_ot" name="nro_ot" required min="1"
+                                                style="width: 100%">
+                                        </div>
+                                        {{--
+                                    </div> --}}
+                                    {{-- </div> --}}
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <div class="d-flex justify-content-center gap-2 w-100">
+                                        <button class="btn btn-success btn-circle btn-sm btn-icon" type="button"
+                                            onclick="agregarProducto()" title="Agregar al Carro de compras"
+                                            id="boton-agrega-producto">
+                                            <i class="fa fa-xs fa-shopping-cart"></i> +
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" style="display: none" id="bloque-ojales">
+                                <div class="col-md-4">
+                                    <label class="required fw-semibold fs-6 mb-2">N Ojales</label>
+                                    <input type="number" id="nro_ojales" name="nro_ojales" required min="1"
+                                        style="width: 100%" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="required fw-semibold fs-6 mb-2">Precio</label>
+                                    <input type="number" id="precio_ojales" name="precio_ojales" required min="0.1"
+                                        style="width: 100%" value="0.33" step="0.01" onchange="recalularPrecioOjales()">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="required fw-semibold fs-6 mb-2">Total</label>
+                                    <input type="number" id="total_ojales" name="total_ojales" required min="1"
+                                        style="width: 100%" readonly step="0.01">
                                 </div>
                             </div>
                         </form>
-                        <div class="row">
-                            <div class="col-md-12">
-
-                            </div>
-                        </div>
-
-                        <div id="tabla_clientes">
-                        </div>
                         <hr>
-                        <div id="tabla_ventas">
-                            <form id="formulario_venta">
-                                <div class="row">
-                                    <div class="col-md">
-                                        <label class="required fw-semibold fs-6 mb-2">Cantidad</label>
-                                        <input type="number" id="cantidad_venta" style="width: 100%"
-                                            name="cantidad_venta" required min="1" value="0" onkeyup="calcularsubTotal()">
-                                    </div>
-                                    <div class="col-md">
-                                        <label class="required fw-semibold fs-6 mb-2">Prenda</label>
-                                        <select name="prenda_id" id="prenda_id" style="width: 100%" data-placeholder="SELECIONE" required>
-                                            <option></option>
-                                            @foreach ($prendas as $prenda)
-                                                <option value="{{ $prenda->id }}">{{ $prenda->nombre }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md">
-                                        <label class="required fw-semibold fs-6 mb-2">Ojales</label>
-                                        <input type="text" style="width: 100%" id="numero_ojales" name="numero_ojales" required onchange="cuantificarOjales()" onclick="this.select()">
-                                    </div>
-                                    <div class="col-md">
-                                        <label class="required fw-semibold fs-6 mb-2">Tela</label>
-                                        <select name="tela_id" id="tela_id" style="width: 100%" data-placeholder="SELECIONE" required>
-                                            <option></option>
-                                            @foreach ($telas as $tela)
-                                                <option value="{{ $tela->id }}">{{ $tela->nombre }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md">
-                                        <label class="required fw-semibold fs-6 mb-2">P. Lav.</label>
-                                        <select name="prelavado_id" id="prelavado_id" data-placeholder="SELECIONE" required style="width: 100%">
-                                            <option></option>
-                                            @foreach ($prelavados as $prelavado)
-                                                <option value="{{ $prelavado->id }}">{{ $prelavado->nombre }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md">
-                                        <label class="required fw-semibold fs-6 mb-2">Nevado</label>
-                                        <select name="nevado_id" id="nevado_id" data-placeholder="SELECIONE" required style="width: 100%">
-                                            <option></option>
-                                            @foreach ($nevados as $nevado)
-                                                <option value="{{ $nevado->id }}">{{ $nevado->nombre }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md">
-                                        <label class="required fw-semibold fs-6 mb-2">Focalizado</label>
-                                        <select name="focalizado_id" id="focalizado_id" data-placeholder="SELECIONE" required style="width: 100%">
-                                            <option></option>
-                                            @foreach ($focalizados as $focalizado)
-                                                <option value="{{ $focalizado->id }}">{{ $focalizado->nombre }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                {{-- </div>
-                                <div class="row"> --}}
-                                    {{-- <div class="col-md-11"> --}}
-                                        {{-- <div class="row"> --}}
-                                            <div class="col-md">
-                                                <label class="required fw-semibold fs-6 mb-2">T. Tela</label>
-                                                <select name="tipo_tela_id" id="tipo_tela_id" data-placeholder="SELECIONE" required style="width: 100%">
-                                                    <option></option>
-                                                    @foreach ($tipoTelas as $tipoTela)
-                                                        <option value="{{ $tipoTela->id }}">{{ $tipoTela->nombre }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md">
-                                                <label class="required fw-semibold fs-6 mb-2">Co. Tela</label>
-                                                <select name="color_tela_id"
-                                                    id="color_tela_id" data-placeholder="SELECIONE" required style="width: 100%">
-                                                    <option></option>
-                                                    @foreach ($colorTelas as $colorTela)
-                                                        <option value="{{ $colorTela->id }}">{{ $colorTela->nombre }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md">
-                                                <label class="required fw-semibold fs-6 mb-2">Ca. Tela</label>
-                                                <select name="caracteristica_tela_id"
-                                                    id="caracteristica_tela_id" data-placeholder="SELECIONE" required style="width: 100%">
-                                                    <option></option>
-                                                    @foreach ($caracteristicaTelas as $caracteristicaTela)
-                                                        <option value="{{ $caracteristicaTela->id }}">
-                                                            {{ $caracteristicaTela->nombre }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md">
-                                                <label class="required fw-semibold fs-6 mb-2">Peso</label>
-                                                <input type="number" id="peso" name="peso" required min="1" style="width: 100%">
-                                            </div>
-
-                                            <div class="col-md">
-                                                <label class="required fw-semibold fs-6 mb-2">Precio</label>
-                                                <input type="number"  id="precio_venta" name="precio_venta" required min="1" value="0" onkeyup="calcularsubTotal()" style="width: 100%">
-                                            </div>
-
-                                            <div class="col-md">
-                                                <label class="required fw-semibold fs-6 mb-2">S. Total</label>
-                                                <input type="number" id="sub_total" name="sub_total" required min="1" style="width: 100%">
-                                            </div>
-
-                                            <div class="col-md">
-                                                <label class="required fw-semibold fs-6 mb-2">Obs</label>
-                                                <input type="text" id="observacion" name="observacion" required style="width: 100%">
-                                            </div>
-
-                                            <div class="col-md">
-                                                <label class="required fw-semibold fs-6 mb-2">N° OT</label>
-                                                <input type="number" id="nro_ot" name="nro_ot" required min="1" style="width: 100%">
-                                            </div>
-                                        {{-- </div> --}}
-                                    {{-- </div> --}}
-                                    <div class="col-md-1 d-flex align-items-end">
-                                        <div class="d-flex justify-content-center gap-2 w-100">
-                                            <button class="btn btn-success btn-circle btn-sm btn-icon" type="button"
-                                                onclick="agregarProducto()" title="Agregar al Carro de compras"
-                                                id="boton-agrega-producto">
-                                                <i class="fa fa-xs fa-shopping-cart"></i> +
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row" style="display: none" id="bloque-ojales">
-                                    <div class="col-md-4">
-                                        <label class="required fw-semibold fs-6 mb-2">N Ojales</label>
-                                        <input type="number" id="nro_ojales" name="nro_ojales" required min="1" style="width: 100%" readonly>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="required fw-semibold fs-6 mb-2">Precio</label>
-                                        <input type="number" id="precio_ojales" name="precio_ojales" required min="0.1" style="width: 100%" value="0.33" step="0.01" onchange="recalularPrecioOjales()">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="required fw-semibold fs-6 mb-2">Total</label>
-                                        <input type="number" id="total_ojales" name="total_ojales" required min="1" style="width: 100%" readonly step="0.01">
-                                    </div>
-                                </div>
-                            </form>
-                            <hr>
-                            <div id="tabla_detalles" style="display: none;">
-                                <h3 class="text-center">CARGAR DE ORDEN DE TRABAJOS</h2>
+                        <div id="tabla_detalles" style="display: none;">
+                            <h3 class="text-center">CARGAR DE ORDEN DE TRABAJOS</h2>
                                 <div class="table-responsive" style="max-width: 100%; overflow-x: auto;">
                                     <table id="carrito" class="table align-middle table-row-dashed fs-6 gy-5">
                                         <thead>
@@ -459,9 +477,9 @@
                                             </tr>
                                             <tr>
                                                 <td colspan="6">
-                                                    <input class="form-control form-control-sm" name="descuento_adicional"
-                                                        id="descuento_adicional" type="number" value="0"
-                                                        onchange="ejecutarDescuentoAdicional()">
+                                                    <input class="form-control form-control-sm"
+                                                        name="descuento_adicional" id="descuento_adicional"
+                                                        type="number" value="0" onchange="ejecutarDescuentoAdicional()">
                                                 </td>
                                                 <td colspan="3">
                                                     <input class="form-control form-control-sm" name="monto_total"
@@ -484,7 +502,8 @@
                                                 <div class="col-md-2">
                                                     <label class="required">Tipo Pago</label>
                                                     <select name="tipo_pago_pagado_recibo" id="tipo_pago_pagado_recibo"
-                                                        class="form-control form-control-sm" onchange="validarCamposRecibo()">
+                                                        class="form-control form-control-sm"
+                                                        onchange="validarCamposRecibo()">
                                                         <option value="">Seleccione</option>
                                                         <option value="EFECTIVO">EFECTIVO</option>
                                                         <option value="TRANSFERENCIA">TRANSFERENCIA</option>
@@ -494,9 +513,10 @@
                                                 <div class="col-md-3">
                                                     <label class="required">Realizara algun Pago?</label>
                                                     <div class="d-flex align-items-center mt-3">
-                                                        <label class="form-check form-check-custom form-check-solid me-3">
-                                                            <input class="form-check-input h-20px w-20px" type="checkbox"
-                                                                name="realizo_pago_recibo" value="pago"
+                                                        <label
+                                                            class="form-check form-check-custom form-check-solid me-3">
+                                                            <input class="form-check-input h-20px w-20px"
+                                                                type="checkbox" name="realizo_pago_recibo" value="pago"
                                                                 id="realizo_pago_recibo" />
                                                             <span class="form-check-label fw-semibold">Realizo un
                                                                 pago</span>
@@ -531,25 +551,27 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
-                    <!--end::Card body-->
                 </div>
-                <!--end::Card-->
+                <!--end::Card body-->
             </div>
-            <!--end::Content container-->
+            <!--end::Card-->
         </div>
-        <!--end::Content-->
+        <!--end::Content container-->
     </div>
+    <!--end::Content-->
+</div>
 
 
 @stop()
 
 @section('js')
-    {{-- <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script> --}}
+    {{--
+    <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script> --}}
     <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
-    {{-- <script src="{{ asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js') }}"></script> --}}
+    {{--
+    <script src="{{ asset('assets/plugins/custom/formrepeater/formrepeater.bundle.js') }}"></script> --}}
     <script>
         $.ajaxSetup({
             headers: {
@@ -561,7 +583,7 @@
         var arrayProductos = [];
         var contadorTable = 0;
 
-        $(document).ready(function() {
+        $(document).ready(function () {
 
             // $("#prenda_id, #tela_id, #prelavado_id, #nevado_id, #focalizado_id, #tipo_tela_id, #color_tela_id, #caracteristica_tela_id")
             //     .select2();
@@ -582,17 +604,17 @@
             });
 
             let debounceTimer;
-            $('.buscar-persona').on('keyup', function() {
+            $('.buscar-persona').on('keyup', function () {
 
                 //ajaxListadoClientes();
                 clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(function() {
+                debounceTimer = setTimeout(function () {
                     ajaxListadoClientes();
                 }, 300); // Espera 300 ms antes de ejecutar la función
             });
 
 
-            $('input[name="uso_cafc"]').on('change', function() {
+            $('input[name="uso_cafc"]').on('change', function () {
                 verificarRadioSeleccionado();
             });
 
@@ -621,9 +643,9 @@
 
         }
 
-        function calcularsubTotal(){
+        function calcularsubTotal() {
             let cantidad = parseFloat($('#cantidad_venta').val())
-            let precio   = parseFloat($('#precio_venta').val())
+            let precio = parseFloat($('#precio_venta').val())
 
             $('#sub_total').val(cantidad * precio);
         }
@@ -634,53 +656,53 @@
 
                 $('#tabla_detalles').show('toggle');
 
-                let cantidad_venta         = $('#cantidad_venta').val();
-                let prenda_id              = $('#prenda_id').val();
-                let numero_ojales          = $('#numero_ojales').val();
-                let tela_id                = $('#tela_id').val();
-                let prelavado_id           = $('#prelavado_id').val();
-                let nevado_id              = $('#nevado_id').val();
-                let focalizado_id          = $('#focalizado_id').val();
-                let tipo_tela_id           = $('#tipo_tela_id').val();
-                let color_tela_id          = $('#color_tela_id').val();
+                let cantidad_venta = $('#cantidad_venta').val();
+                let prenda_id = $('#prenda_id').val();
+                let numero_ojales = $('#numero_ojales').val();
+                let tela_id = $('#tela_id').val();
+                let prelavado_id = $('#prelavado_id').val();
+                let nevado_id = $('#nevado_id').val();
+                let focalizado_id = $('#focalizado_id').val();
+                let tipo_tela_id = $('#tipo_tela_id').val();
+                let color_tela_id = $('#color_tela_id').val();
                 let caracteristica_tela_id = $('#caracteristica_tela_id').val();
-                let peso                   = $('#peso').val();
-                let precio_venta           = $('#precio_venta').val();
-                let sub_total              = $('#sub_total').val();
-                let observacion            = $('#observacion').val();
-                let nro_ot                 = $('#nro_ot').val();
-                let nro_ojales             = $('#nro_ojales').val();
-                let precio_ojales          = $('#precio_ojales').val();
-                let total_ojales           = $('#total_ojales').val();
+                let peso = $('#peso').val();
+                let precio_venta = $('#precio_venta').val();
+                let sub_total = $('#sub_total').val();
+                let observacion = $('#observacion').val();
+                let nro_ot = $('#nro_ot').val();
+                let nro_ojales = $('#nro_ojales').val();
+                let precio_ojales = $('#precio_ojales').val();
+                let total_ojales = $('#total_ojales').val();
 
                 let servicio = {
-                    cantidad_venta        : cantidad_venta,
-                    prenda_id             : prenda_id,
-                    numero_ojales         : numero_ojales,
-                    tela_id               : tela_id,
-                    prelavado_id          : prelavado_id,
-                    nevado_id             : nevado_id,
-                    focalizado_id         : focalizado_id,
-                    tipo_tela_id          : tipo_tela_id,
-                    color_tela_id         : color_tela_id,
+                    cantidad_venta: cantidad_venta,
+                    prenda_id: prenda_id,
+                    numero_ojales: numero_ojales,
+                    tela_id: tela_id,
+                    prelavado_id: prelavado_id,
+                    nevado_id: nevado_id,
+                    focalizado_id: focalizado_id,
+                    tipo_tela_id: tipo_tela_id,
+                    color_tela_id: color_tela_id,
                     caracteristica_tela_id: caracteristica_tela_id,
-                    peso                  : peso,
-                    precio_venta          : precio_venta,
-                    sub_total             : sub_total,
-                    observacion           : observacion,
-                    nro_ot                : nro_ot,
-                    nro_ojales            : nro_ojales,
-                    precio_ojales         : precio_ojales,
-                    total_ojales          : total_ojales
+                    peso: peso,
+                    precio_venta: precio_venta,
+                    sub_total: sub_total,
+                    observacion: observacion,
+                    nro_ot: nro_ot,
+                    nro_ojales: nro_ojales,
+                    precio_ojales: precio_ojales,
+                    total_ojales: total_ojales
                 }
 
                 contadorTable++;
 
                 let btnEliminar = `<button class='eliminar btn btn-icon btn-danger btn-circle btn-sm'
-                                    title='Eliminar del carro'
-                                    onclick='eliminarItem(${contadorTable})'>
-                                        <i class='fa fa-trash'></i>
-                                </button>`;
+                                        title='Eliminar del carro'
+                                        onclick='eliminarItem(${contadorTable})'>
+                                            <i class='fa fa-trash'></i>
+                                    </button>`;
 
                 table.row.add([
                     cantidad_venta,
@@ -738,16 +760,16 @@
         }
 
         function recepcionar() {
-            if($('#formularioGeneraRecibo')[0].checkValidity() && $('#formulario_recepcion')[0].checkValidity()){
+            if ($('#formularioGeneraRecibo')[0].checkValidity() && $('#formulario_recepcion')[0].checkValidity()) {
                 $.ajax({
                     url: "{{ url('factura/recepcionar') }}",
                     method: "POST",
                     data: {
-                        carro             : arrayProductos,
-                        cliente           : $('#cliente_seleccionado_id').val(),
-                        prioridad_cliente : $('#prioridad_cliente').val(),
-                        fecha_recepcion   : $('#fecha_recepcion_cliente').val(),
-                        entregado_por     : $('#entregado_por').val(),
+                        carro: arrayProductos,
+                        cliente: $('#cliente_seleccionado_id').val(),
+                        prioridad_cliente: $('#prioridad_cliente').val(),
+                        fecha_recepcion: $('#fecha_recepcion_cliente').val(),
+                        entregado_por: $('#entregado_por').val(),
                         usuario_recepciono: $('#usuario_recepciono_id').val(),
 
                         tipo_pago_pagado_recibo: $('#tipo_pago_pagado_recibo').val(),
@@ -757,7 +779,7 @@
                         cambio_pagado_recibo: $('#cambio_pagado_recibo').val(),
                     },
                     // data: datos,
-                    success: function(data) {
+                    success: function (data) {
                         if (data.estado) {
                             Swal.fire({
                                 icon: 'success',
@@ -776,7 +798,7 @@
                         }
                     }
                 })
-            }else{
+            } else {
                 $('#formularioGeneraRecibo')[0].reportValidity()
                 $('#formulario_recepcion')[0].reportValidity()
             }
@@ -821,24 +843,24 @@
             }
         }
 
-        function cuantificarOjales(){
+        function cuantificarOjales() {
 
             let cantidadPrendas = $('#cantidad_venta').val();
-            let cantidadOjales  = $('#numero_ojales').val();
-            let todo            = cantidadOjales+"/"+cantidadPrendas;
+            let cantidadOjales = $('#numero_ojales').val();
+            let todo = cantidadOjales + "/" + cantidadPrendas;
 
             $('#numero_ojales').val(todo);
 
-            if(cantidadOjales > 1){
+            if (cantidadOjales > 1) {
 
-                let calculo     = (cantidadOjales - 1) * cantidadPrendas;
+                let calculo = (cantidadOjales - 1) * cantidadPrendas;
                 let precio_ojal = $('#precio_ojales').val();
-                let total       = parseFloat(calculo) * parseFloat(precio_ojal);
+                let total = parseFloat(calculo) * parseFloat(precio_ojal);
 
                 $('#nro_ojales').val(calculo);
                 $('#total_ojales').val(total.toFixed(2));
                 $('#bloque-ojales').show('toggle');
-            }else{
+            } else {
                 $('#nro_ojales').val(0);
                 $('#total_ojales').val(0);
                 $('#bloque-ojales').hide('toggle')
@@ -846,10 +868,10 @@
 
         }
 
-        function recalularPrecioOjales(){
+        function recalularPrecioOjales() {
             let nro_ojales = $('#nro_ojales').val()
-            let precio     = $('#precio_ojales').val()
-            let total      = parseFloat(nro_ojales) * parseFloat(precio);
+            let precio = $('#precio_ojales').val()
+            let total = parseFloat(nro_ojales) * parseFloat(precio);
             $('#total_ojales').val(total.toFixed(2));
         }
     </script>

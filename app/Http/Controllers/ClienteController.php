@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use App\Models\User;
 use App\Utils\Respuesta;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class ClienteController extends Controller
@@ -18,7 +20,8 @@ class ClienteController extends Controller
     public function ajaxListado (Request $request){
         if($request->ajax()){
             //sacamos el listado
-            $clientes = Cliente::all();
+            $rolCliente = env('ROL_CLIENTE');
+            $clientes = User::where('rol_id', $rolCliente)->get();
             $valores=[
                 'listado' => view('cliente.ajaxListado')->with(compact('clientes'))->render()
             ];
@@ -38,21 +41,25 @@ class ClienteController extends Controller
         ]);
 
         if ($request->ajax()) {
-            $cliente_id = $request->input('id');            
-            $nombre = $request->input('nombre');
-            $ap_paterno = $request->input('ap_paterno');
-            $ap_materno = $request->input('ap_materno');
-            $cedula = $request->input('cedula');
-            $celular = $request->input('celular');
-            $nit = $request->input('nit');
-            $razon_social = $request->input('razon_social');            
-            $direccion = $request->input('direccion');            
-            $nombre_referencia_1 = $request->input('nombre_referencia_1');  
-            $celular_referencia_1 = $request->input('celular_referencia_1');   
-            $nombre_referencia_2 = $request->input('nombre_referencia_2');  
-            $celular_referencia_2 = $request->input('celular_referencia_2');   
-            $nombre_referencia_3 = $request->input('nombre_referencia_3');  
-            $celular_referencia_3 = $request->input('celular_referencia_3');            
+
+            // dd($request->all());
+            $rolCliente = env('ROL_CLIENTE');
+
+            $cliente_id           = $request->input('id');
+            $nombre               = $request->input('nombre');
+            $ap_paterno           = $request->input('ap_paterno');
+            $ap_materno           = $request->input('ap_materno');
+            $cedula               = $request->input('cedula');
+            $celular              = $request->input('celular');
+            $nit                  = $request->input('nit');
+            $razon_social         = $request->input('razon_social');
+            $direccion            = $request->input('direccion');
+            $nombre_referencia_1  = $request->input('nombre_referencia_1');
+            $celular_referencia_1 = $request->input('celular_referencia_1');
+            $nombre_referencia_2  = $request->input('nombre_referencia_2');
+            $celular_referencia_2 = $request->input('celular_referencia_2');
+            $nombre_referencia_3  = $request->input('nombre_referencia_3');
+            $celular_referencia_3 = $request->input('celular_referencia_3');
             //imagenes
             if ($request->hasFile('imagen', 'imagen_CI_anverso', 'imagen_CI_reverso' )) {
                 $file_imagen = $request->file('imagen');
@@ -67,41 +74,45 @@ class ClienteController extends Controller
                 $imagen_CI_reverso = time() .'_'. Str::uuid() .'.'. $file_imagen_CI_reverso->getClientOriginalExtension();
                 $file_imagen_CI_reverso->storeAs('imagenesClientes', $imagen_CI_reverso, 'public');
             }
-            
+
             $usuario = Auth::user();
 
             if ($cliente_id =='0') {
-                $cliente = new Cliente();
+                $cliente = new User();
                 $cliente->usuario_creador_id = $usuario->id;
             } else {
-                $cliente = Cliente::find($cliente_id);
+                $cliente = User::find($cliente_id);
                 $cliente->usuario_modificador_id = $usuario->id;
             }
 
-            $cliente->nombres = $nombre;
-            $cliente->ap_paterno = $ap_paterno;
-            $cliente->ap_materno = $ap_materno;
-            $cliente->cedula = $cedula;
-            $cliente->celular = $celular;
-            $cliente->nit = $nit;
-            $cliente->razon_social = $razon_social;   
-            $cliente->direccion = $direccion;
-            $cliente->imagen = $imagen;
-            $cliente->imagen_CI_anverso = $imagen_CI_anverso;
-            $cliente->imagen_CI_reverso = $imagen_CI_reverso;
-            $cliente->nombre_referencia_1 = $nombre_referencia_1;
+            $cliente->nombres              = $nombre;
+            $cliente->ap_paterno           = $ap_paterno;
+            $cliente->ap_materno           = $ap_materno;
+            $cliente->cedula               = $cedula;
+            $cliente->celular              = $celular;
+            $cliente->nit                  = $nit;
+            $cliente->razon_social         = $razon_social;
+            $cliente->direccion            = $direccion;
+            $cliente->imagen               = $imagen;
+            $cliente->imagen_CI_anverso    = $imagen_CI_anverso;
+            $cliente->imagen_CI_reverso    = $imagen_CI_reverso;
+            $cliente->nombre_referencia_1  = $nombre_referencia_1;
             $cliente->celular_referencia_1 = $celular_referencia_1;
-            $cliente->nombre_referencia_2 = $nombre_referencia_2;
+            $cliente->nombre_referencia_2  = $nombre_referencia_2;
             $cliente->celular_referencia_2 = $celular_referencia_2;
-            $cliente->nombre_referencia_3 = $nombre_referencia_3;
+            $cliente->nombre_referencia_3  = $nombre_referencia_3;
             $cliente->celular_referencia_3 = $celular_referencia_3;
+            $cliente->name                 = $nombre." ". $ap_paterno." ". $ap_materno;
+            $cliente->email                = $cedula;
+            $cliente->password             = Hash::make($cedula);
+            $cliente->rol_id               = $rolCliente;
             $cliente->save();
 
             $data = Respuesta::success(null, "Datos Obtenidos correctamente");
         } else {
-            $data = Respuesta::error(null, "Error al obtener los datos");            
+            $data = Respuesta::error(null, "Error al obtener los datos");
         }
-        
+
         return $data;
     }
 
@@ -132,7 +143,7 @@ class ClienteController extends Controller
             $data = Respuesta::success(null, "Se elimino con exito");
 
         }else{
-        
+
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
 
