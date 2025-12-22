@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Producto extends Model
 {
-     use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'productos';
 
@@ -27,7 +27,13 @@ class Producto extends Model
         'deleted_at',
     ];
 
-    public function proveedor(){
+    public function proveedor()
+    {
         return $this->belongsTo('App\Models\Proveedor', 'proveedor_id');
+    }
+
+    public function solicitudes()
+    {
+        return $this->hasMany(Solicitud::class, 'producto_id', 'id');
     }
 }

@@ -22,6 +22,8 @@ use App\Http\Controllers\TipoProcesoController;
 use App\Http\Controllers\TipoTelaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProcesosController;
+use App\Http\Controllers\SolicitudController;
+
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -200,8 +202,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/lista-ots', [ProcesosController::class, 'listaOTs'])->name('procesos.listaOTs');
         Route::get('/detalle-ot/{ot}', [ProcesosController::class, 'detalleOT']);
 
-        Route::post('/finalizar-ot', [ProcesosController::class, 'finalizarOT'])
-            ->name('procesos.finalizarOT');
+        Route::post('/finalizar-ot', [ProcesosController::class, 'finalizarOT'])->name('procesos.finalizarOT');
+        Route::get('/productos-aceptados', [ProcesosController::class, 'productosSolicitudesAceptadas'])
+            ->name('procesos.productosSolicitudesAceptadas');
+
+        Route::get('/productos-movimientos', [ProcesosController::class, 'productosMovimientos'])
+            ->name('procesos.productosMovimientos');
+        Route::get('/productos-aceptados', [ProcesosController::class, 'productosSolicitudesAceptadas'])->name('procesos.productosSolicitudesAceptadas');
 
     });
 
@@ -219,5 +226,17 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListadoLaser', [OrdenTrabajoController::class, 'ajaxListadoLaser'])->name('ordenTrabajo.ajaxListadoLaser');
         Route::post('/guardarLaser', [OrdenTrabajoController::class, 'guardarLaser'])->name('ordenTrabajo.guardarLaser');
     });
+
+    //solicitudes
+    Route::prefix('/solicitudes')->group(function () {
+        Route::get('/listado', [SolicitudController::class, 'listado'])->name('solicitudes.listado');
+        Route::post('/ajaxListado', [SolicitudController::class, 'ajaxListado'])->name('solicitudes.ajaxListado');
+        Route::post('/solicitudes/store', [SolicitudController::class, 'store'])->name('solicitudes.store');
+        Route::post('/ajaxDetalleOT', [SolicitudController::class, 'ajaxDetalleOT'])->name('solicitudes.ajaxDetalleOT');
+        Route::post('/accionProducto', [SolicitudController::class, 'accionProducto'])->name('solicitudes.accionProducto');
+
+    });
+
+
 
 });

@@ -75,5 +75,12 @@ class Order_trabajo extends Model
         return $this->hasMany(Proceso::class, 'order_trabajo_id');
     }
 
+
+    public function factura()
+    {
+        return $this->belongsTo(Factura::class, 'factura_id', 'id');
+    }
+
+
 }
 

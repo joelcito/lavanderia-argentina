@@ -23,6 +23,9 @@
 @section('metadatos')
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 @endsection
+
+
+
 @section('content')
 
 <div class="d-flex flex-column flex-column-fluid">
@@ -59,6 +62,11 @@
                 @endforeach
             </div>
 
+            <button class="btn btn-sm btn-primary" onclick="abrirModalSolicitud()">
+                Solicitar productos
+            </button>
+
+
             <div class="card shadow-sm">
                 <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
                     <h3 class="card-title fw-bold mb-0">Listado de Procesos de Lavandería</h3>
@@ -81,71 +89,217 @@
                     <i class="fa fa-times"></i>
                 </button>
             </div>
-            <div class="col-md-6 mb-3">
-                <label class="fw-bold">Orden de Trabajo</label>
-                <select id="order_trabajo_id" class="form-select">
-                    <option value="">Cargando...</option>
-                </select>
-            </div>
+
             <div class="modal-body">
-                <input type="hidden" id="id">
-                <div class="row">
-                    <input type="hidden" id="maquinaria_id" name="maquinaria_id">
-                    <div class="col-md-6 mb-3">
-                        <label class="fw-bold">Producto</label>
-                        <select id="producto_id" class="form-select">
-                            <option value="">Cargando...</option>
-                        </select>
+                <input type="hidden" id="maquinaria_id" name="maquinaria_id">
+
+                <div id="kt_docs_repeater_advanced">
+                    <div class="form-group">
+                        <div data-repeater-list="procesos_lavanderia">
+
+                            <div data-repeater-item>
+                                <!-- FILA 1: OT, Producto, Tipo Proceso -->
+                                <div class="form-group row mb-3 g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">OT</label>
+                                        <select class="form-select order_trabajo_id" name="order_trabajo_id">
+                                            <option value="">Seleccione OT...</option>
+                                            @foreach($ordenes as $ot)
+                                                <option value="{{ $ot->id }}">OT: {{ $ot->id }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Producto</label>
+                                        <select class="form-select producto_id" name="producto_id">
+                                            <option value="">Seleccione producto...</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label">Tipo Proceso</label>
+                                        <select class="form-select tipo_proceso_id" name="tipo_proceso_id">
+                                            <option value="">Seleccione...</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- FILA 2: Fecha, Tiempo, Temp, PH, RB, Descripción, Eliminar -->
+                                <div class="form-group row mb-3 g-3 align-items-end">
+                                    <div class="col-md-2">
+                                        <label class="form-label">Fecha Ingreso</label>
+                                        <input type="datetime-local" class="form-control fecha_ingreso"
+                                            name="fecha_ingreso" />
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label">Fecha Salida</label>
+                                        <input type="datetime-local" class="form-control fecha_salida"
+                                            name="fecha_salida" />
+                                    </div>
+
+                                    <div class="col-md-1">
+                                        <label class="form-label">Tiempo</label>
+                                        <input type="number" class="form-control tiempo" name="tiempo"
+                                            placeholder="Tiempo" />
+                                    </div>
+
+                                    <div class="col-md-1">
+                                        <label class="form-label">°C</label>
+                                        <input type="number" class="form-control temperatura" name="temperatura"
+                                            placeholder="°C" />
+                                    </div>
+
+                                    <div class="col-md-1">
+                                        <label class="form-label">pH</label>
+                                        <input type="number" class="form-control ph" name="ph" placeholder="pH" />
+                                    </div>
+
+                                    <div class="col-md-1">
+                                        <label class="form-label">RB</label>
+                                        <input type="text" class="form-control rb" name="rb" placeholder="RB" />
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label">Descripción</label>
+                                        <input type="text" class="form-control descripcion" name="descripcion"
+                                            placeholder="Descripción" />
+                                    </div>
+
+                                    <!-- <div class="col-md-1">
+                                        <a href="javascript:;" data-repeater-delete
+                                            class="btn btn-sm btn-light-danger w-100">
+                                            <i class="ki-duotone ki-trash fs-3"></i>
+                                        </a>
+                                    </div> -->
+                                    <div class="col-md-1 d-flex align-items-center mt-4">
+                                        <a href="javascript:;" data-repeater-delete
+                                            class="btn btn-sm btn-light-danger w-100 d-flex justify-content-center">
+                                            <i class="fa fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="fw-bold">Tipo de Proceso</label>
-                        <select id="tipo_proceso_id" class="form-select">
-                            <option value="">Cargando...</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="fw-bold">Fecha Ingreso</label>
-                        <input type="datetime-local" id="fecha_ingreso" class="form-control">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="fw-bold">Fecha Salida</label>
-                        <input type="datetime-local" id="fecha_salida" class="form-control">
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="fw-bold">Tiempo (min)</label>
-                        <input type="number" step="1" id="tiempo" class="form-control">
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="fw-bold">Temperatura</label>
-                        <input type="text" id="temperatura" class="form-control">
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="fw-bold">pH</label>
-                        <input type="text" id="ph" class="form-control">
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="fw-bold">RB</label>
-                        <input type="text" id="rb" class="form-control">
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <label class="fw-bold">Descripción</label>
-                        <textarea id="descripcion" class="form-control" rows="3"></textarea>
+
+                    <div class="form-group mt-3">
+                        <a href="javascript:;" data-repeater-create class="btn btn-flex btn-light-primary">
+                            <i class="ki-duotone ki-plus fs-3"></i> Agregar fila
+                        </a>
                     </div>
                 </div>
+
+                <button type="button" class="btn btn-success mt-3" id="guardarProcesosBtn">Guardar procesos</button>
             </div>
 
             <div class="modal-footer">
                 <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                <button class="btn btn-primary" onclick="guardarLavanderia()">Guardar</button>
             </div>
         </div>
     </div>
 </div>
 
+
+
+
+<div class="modal fade" id="modalSolicitudProductos" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Solicitud de Productos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                {{-- SELECT OT --}}
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label>Orden de Trabajo (OT)</label>
+                        <select id="order_trabajo_id_solicitud" class="form-select">
+                            <option value="">Seleccione OT...</option>
+
+                            @foreach($ordenes as $ot)
+                                <option value="{{ $ot->id }}">
+                                    OT: {{ $ot->id }}
+                                    @if($ot->factura)
+                                        - Factura: {{ $ot->factura->numero_factura }}
+                                    @else
+                                        - SIN FACTURA
+                                    @endif
+                                </option>
+                            @endforeach
+
+                        </select>
+
+                    </div>
+                </div>
+
+
+
+                {{-- PRODUCTO --}}
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label>Producto</label>
+                        <select id="producto_id_solicitud" class="form-select">
+                            <option value="">Cargando...</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label>Cantidad</label>
+                        <input type="number" id="cantidad" class="form-control">
+                    </div>
+
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button class="btn btn-success w-100" onclick="agregarProducto()">+</button>
+                    </div>
+                </div>
+
+                {{-- TABLA DETALLE --}}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detalleProductos"></tbody>
+                </table>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="guardarSolicitud()">
+                    Guardar solicitud
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 @stop
 
 @section('js')
+
+
+    <!-- jQuery (si no está en el layout, de lo contrario omítelo) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- jQuery Repeater -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
+
+    <!-- SweetAlert y Datatables -->
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
         $.ajaxSetup({
@@ -181,8 +335,11 @@
 
                 // Limpiar formulario
                 $('#id').val(0);
-                $('#order_trabajo_id').val('');
-                $('#producto_id').val('');
+
+
+                $('#order_trabajo_id_lavanderia').val('');
+                $('#producto_id_lavanderia').val('');
+
                 $('#tipo_proceso_id').val('');
                 $('#fecha_ingreso').val('');
                 $('#fecha_salida').val('');
@@ -194,21 +351,19 @@
                 $('#estado').val('PENDIENTE');
 
                 $('#maquinaria_id').val(maquinaria_id);
-                cargarProductos();
+                cargarProductosLavanderia();
                 cargarTiposProceso();
-                cargarOTs();
+                cargarOTs('order_trabajo_id_lavanderia', function (ot_id) {
+                    // Cada vez que se seleccione una OT, cargar los productos aprobados en el repeater
+                    cargarProductosPorOT(ot_id);
+                });
                 $('#modalLavanderia').modal('show');
+
+
+
             });
         }
 
-        function cargarProductos() {
-            $.get("{{ route('procesos.listaProductos') }}", function (data) {
-                let select = $("#producto_id");
-                select.empty();
-                select.append('<option value="">Seleccione...</option>');
-                data.forEach(item => select.append(`<option value="${item.id}">${item.nombre}</option>`));
-            });
-        }
 
         function cargarTiposProceso() {
             $.get("{{ route('procesos.listaTiposProceso') }}", function (data) {
@@ -220,14 +375,12 @@
         }
 
 
-
-
-        function cargarOTs() {
+        function cargarOTs(selectId) {
             $.ajax({
                 url: "{{ route('procesos.listaOTs') }}",
                 type: "GET",
                 success: function (data) {
-                    let select = $("#order_trabajo_id");
+                    let select = $("#" + selectId);
                     select.empty();
                     select.append('<option value="">Seleccione OT...</option>');
 
@@ -243,7 +396,6 @@
                 }
             });
         }
-
 
 
         function guardarLavanderia() {
@@ -340,5 +492,335 @@
                 });
             }, 1000);
         }
+
+        //solicitud
+
+        let productosSolicitud = [];
+
+        /* ABRIR MODAL */
+
+
+        function abrirModalSolicitud() {
+            productosSolicitud = [];
+            $("#detalleProductos").html('');
+            $("#order_trabajo_id_solicitud").val('');
+            $("#producto_id_solicitud").val('');
+            $("#cantidad").val('');
+            //  cargarOTs('order_trabajo_id_solicitud'); // ID correcto
+            cargarProductosSolicitud(); // ID correcto
+            $('#modalSolicitudProductos').modal('show');
+        }
+
+
+        /* RENDER TABLA */
+        function renderTabla() {
+            let html = '';
+            productosSolicitud.forEach((item, index) => {
+                html += `
+                                                                                                                                                                                                                                                        <tr>
+                                                                                                                                                                                                                                                            <td>${item.producto}</td>
+                                                                                                                                                                                                                                                            <td>${item.cantidad}</td>
+                                                                                                                                                                                                                                                            <td>
+                                                                                                                                                                                                                                                                <button class="btn btn-danger btn-sm"
+                                                                                                                                                                                                                                                                        onclick="eliminarProducto(${index})">
+                                                                                                                                                                                                                                                                    X
+                                                                                                                                                                                                                                                                </button>
+                                                                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                                                                        </tr>
+                                                                                                                                                                                                                                                    `;
+            });
+            $("#detalleProductos").html(html);
+        }
+
+        /* ELIMINAR */
+        function eliminarProducto(index) {
+            productosSolicitud.splice(index, 1);
+            renderTabla();
+        }
+
+        function cargarProductosLavanderia(ot_id) {
+            if (!ot_id) return;
+
+            $.get("{{ route('procesos.productosSolicitudesAceptadas') }}", { ot_id: ot_id }, function (data) {
+                console.log("Productos Lavandería para OT", ot_id, data);
+                let select = $("#producto_id_lavanderia");
+                select.empty();
+                select.append('<option value="">Seleccione...</option>');
+                data.forEach(item => select.append(`<option value="${item.id}">${item.nombre}</option>`));
+            });
+        }
+
+        function cargarProductosSolicitud() {
+            $.get("{{ route('procesos.productosMovimientos') }}", function (data) {
+                console.log("Productos Solicitud:", data); // <-- para depuración
+                let select = $("#producto_id_solicitud");
+                select.empty();
+                select.append('<option value="">Seleccione...</option>');
+                data.forEach(item => select.append(`<option value="${item.id}">${item.nombre} - Stock: ${item.stock}</option>`));
+            });
+        }
+
+        // Guardar solicitud: corregir ID de OT
+
+
+
+        function guardarSolicitud() {
+            let ordenTrabajoId = $("#order_trabajo_id_solicitud").val();
+
+            if (!ordenTrabajoId || productosSolicitud.length === 0) {
+                Swal.fire('Error', 'Seleccione una OT y agregue productos', 'error');
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('solicitudes.store') }}",
+                type: "POST",
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                data: {
+                    orden_trabajo_id: ordenTrabajoId,
+                    productos: productosSolicitud,
+                    estado: 'EN ESPERA' // <-- agregamos el estado aquí
+                },
+                success: function () {
+                    Swal.fire('OK', 'Solicitud registrada correctamente', 'success');
+                    $('#modalSolicitudProductos').modal('hide');
+                },
+                error: function () {
+                    Swal.fire('Error', 'No se pudo guardar la solicitud', 'error');
+                }
+            });
+        }
+
+
+
+        function agregarProducto() {
+            let ordenTrabajoId = $("#order_trabajo_id_solicitud").val(); // ID correcto
+            let productoId = $("#producto_id_solicitud").val(); // ID correcto
+            let productoText = $("#producto_id_solicitud option:selected").text();
+            let cantidad = $("#cantidad").val();
+
+            if (!ordenTrabajoId) {
+                Swal.fire('Atención', 'Seleccione una OT', 'warning');
+                return;
+            }
+
+            if (!productoId || !cantidad) {
+                Swal.fire('Atención', 'Seleccione producto y cantidad', 'warning');
+                return;
+            }
+
+            productosSolicitud.push({
+                producto_id: productoId,
+                producto: productoText,
+                cantidad: cantidad
+            });
+
+            renderTabla();
+        }
+
+
+        $('#order_trabajo_id_lavanderia').on('change', function () {
+            let ot_id = $(this).val();
+            cargarProductosLavanderia(ot_id);
+        });
+
+
+
+
+        function cargarProductosPorOT(ot_id) {
+            $.get("{{ route('procesos.productosSolicitudesAceptadas') }}", { ot_id: ot_id }, function (data) {
+                let repeaterContainer = $("#kt_docs_repeater_advanced [data-repeater-list]");
+                repeaterContainer.empty();
+
+                data.forEach(producto => {
+                    repeaterContainer.append(`
+                                                                                                    <div data-repeater-item>
+                                                                                                        <div class="form-group row mb-5">
+                                                                                                            <div class="col-md-4">
+                                                                                                                <label class="form-label">Producto</label>
+                                                                                                                <input type="text" class="form-control" value="${producto.nombre}" readonly />
+                                                                                                                <input type="hidden" name="producto_id" value="${producto.id}" />
+                                                                                                            </div>
+                                                                                                            <div class="col-md-3">
+                                                                                                                <label class="form-label">Tipo Proceso</label>
+                                                                                                                <select class="form-select" name="tipo_proceso_id">
+                                                                                                                    <option value="">Seleccione...</option>
+                                                                                                                </select>
+                                                                                                            </div>
+                                                                                                            <div class="col-md-2">
+                                                                                                                <label class="form-label">Fecha Ingreso</label>
+                                                                                                                <input type="datetime-local" class="form-control" name="fecha_ingreso" />
+                                                                                                            </div>
+                                                                                                            <div class="col-md-2">
+                                                                                                                <label class="form-label">Fecha Salida</label>
+                                                                                                                <input type="datetime-local" class="form-control" name="fecha_salida" />
+                                                                                                            </div>
+                                                                                                            <div class="col-md-2 mt-5">
+                                                                                                                <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger">
+                                                                                                                    <i class="ki-duotone ki-trash fs-3"></i> Eliminar
+                                                                                                                </a>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                `);
+                });
+
+                // Inicializa repeater **solo si la librería ya está disponible**
+                if (typeof $.fn.repeater === "function" && !$('#kt_docs_repeater_advanced').data('repeater-initialized')) {
+                    $('#kt_docs_repeater_advanced').repeater({
+                        initEmpty: false,
+                        show: function () { $(this).slideDown(); },
+                        hide: function (deleteElement) {
+                            $(this).slideUp(deleteElement);
+                        }
+                    });
+                    $('#kt_docs_repeater_advanced').data('repeater-initialized', true);
+                } else if (typeof $.fn.repeater !== "function") {
+                    console.error("jQuery Repeater no está cargado");
+                }
+            });
+        }
+
+
+        //ororo
+
+        $(document).ready(function () {
+
+            // Inicializar Repeater
+            if (typeof $.fn.repeater === "function") {
+                $('#kt_docs_repeater_advanced').repeater({
+                    initEmpty: false,
+                    show: function () { $(this).slideDown(); },
+                    hide: function (deleteElement) {
+                        $(this).slideUp(deleteElement);
+                    }
+                });
+            } else {
+                console.error("jQuery Repeater no está cargado");
+            }
+
+            // Cada vez que se selecciona una OT en cualquier fila
+            $(document).on('change', '.order_trabajo_id', function () {
+                let fila = $(this).closest('[data-repeater-item]');
+                let ot_id = $(this).val();
+                let productoSelect = fila.find('.producto_id');
+
+                if (!ot_id) {
+                    productoSelect.html('<option value="">Seleccione producto...</option>');
+                    return;
+                }
+
+                $.get("{{ route('procesos.productosSolicitudesAceptadas') }}", { ot_id: ot_id }, function (data) {
+                    console.log("Productos recibidos:", data);
+                    productoSelect.empty();
+                    productoSelect.append('<option value="">Seleccione producto...</option>');
+                    data.forEach(p => productoSelect.append(`<option value="${p.id}">${p.nombre}</option>`));
+                });
+
+                let tipoSelect = fila.find('.tipo_proceso_id');
+                $.get("{{ route('procesos.listaTiposProceso') }}", function (tipos) {
+                    tipoSelect.empty();
+                    tipoSelect.append('<option value="">Seleccione...</option>');
+                    tipos.forEach(t => tipoSelect.append(`<option value="${t.id}">${t.nombre}</option>`));
+                });
+            });
+
+            // Guardar cada proceso individual
+            $('#guardarProcesosBtn').click(function () {
+                let filas = $('#kt_docs_repeater_advanced [data-repeater-item]').filter(':visible'); // SOLO filas visibles
+                let errores = false;
+
+                filas.each(function () {
+                    let fila = $(this);
+                    let datos = {
+                        order_trabajo_id: fila.find('.order_trabajo_id').val(),
+                        producto_id: fila.find('.producto_id').val(),
+                        tipo_proceso_id: fila.find('.tipo_proceso_id').val(),
+                        fecha_ingreso: fila.find('.fecha_ingreso').val(),
+                        fecha_salida: fila.find('.fecha_salida').val(),
+                        tiempo: fila.find('.tiempo').val(),
+                        temperatura: fila.find('.temperatura').val(),
+                        ph: fila.find('.ph').val(),
+                        rb: fila.find('.rb').val(),
+                        descripcion: fila.find('.descripcion').val(),
+                        maquinaria_id: $('#maquinaria_id').val(),
+                        estado: 'PENDIENTE'
+                    };
+
+                    // Validación básica
+                    if (!datos.order_trabajo_id || !datos.producto_id || !datos.tipo_proceso_id || !datos.fecha_ingreso) {
+                        errores = true;
+                        return false; // rompe el each
+                    }
+
+                    // Enviar por AJAX
+                    $.ajax({
+                        url: "{{ route('procesos.guardar') }}",
+                        method: "POST",
+                        data: datos,
+                        async: false,
+                        success: function (res) {
+                            if (res.estado) {
+                                console.log("Proceso guardado:", res.mensaje);
+                            } else {
+                                Swal.fire('Error', res.mensaje, 'error');
+                            }
+                        },
+                        error: function (xhr) {
+                            console.error(xhr.responseJSON);
+                        }
+                    });
+                });
+
+                if (errores) {
+                    Swal.fire('Error', 'Complete todos los campos obligatorios', 'warning');
+                } else {
+                    Swal.fire('OK', 'Procesos guardados correctamente', 'success');
+                    $('#modalLavanderia').modal('hide');
+                }
+            });
+        });
+    </script>
+
+
+
+
+
+
+    </script>
+@endsection
+
+@section('js')
+    <!-- jQuery (solo si no está en tu layout) -->
+    {{--
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> --}}
+
+    <!-- jQuery Repeater -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
+
+    <!-- SweetAlert y Datatables -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // Inicializar Repeater
+            if (typeof $.fn.repeater === "function") {
+                $('#kt_docs_repeater_advanced').repeater({
+                    initEmpty: true,
+                    show: function () { $(this).slideDown(); },
+                    hide: function (deleteElement) {
+                        $(this).slideUp(deleteElement);
+                    }
+                });
+            } else {
+                console.error("jQuery Repeater no está cargado");
+            }
+
+            // Aquí van todas tus funciones AJAX y eventos
+            ajaxListado();
+            actualizarTemporizadores();
+        });
     </script>
 @endsection

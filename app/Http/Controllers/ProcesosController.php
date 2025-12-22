@@ -20,10 +20,14 @@ class ProcesosController extends Controller
 {
 
 
+
     public function listado()
     {
         $maquinarias = Maquinaria::all();
-        return view('procesos.listado', compact('maquinarias'));
+        $productos = Producto::all();
+        $ordenes = Order_trabajo::with(['factura'])->get();
+        // Pasar los datos a la vista
+        return view('procesos.listado', compact('maquinarias', 'productos', 'ordenes'));
     }
 
 
@@ -222,7 +226,7 @@ class ProcesosController extends Controller
     {
         try {
             $ots = Order_trabajo::select('id', 'nro_ot')
-                ->whereNotIn('estado', ['FINALIZADO', 'ENTREGADO'])
+                ->whereIn('estado', ['RECEPCIONADO'])
                 ->whereNull('deleted_at')
                 ->orderBy('created_at', 'desc')
                 ->get();
@@ -288,6 +292,32 @@ class ProcesosController extends Controller
             'estado' => true,
             'mensaje' => 'Orden de trabajo finalizada correctamente'
         ]);
+    }
+
+
+    public function productosSolicitudesAceptadas(Request $request)
+    {
+        $ot_id = $request->ot_id;
+
+        $productos = Producto::whereHas('solicitudes', function ($q) use ($ot_id) {
+            $q->where('orden_trabajo_id', $ot_id)
+                ->where('estado', 'APROBADO');
+        })->get();
+
+        return response()->json($productos);
+    }
+
+    // Productos con stock según movimientos
+    public function productosMovimientos()
+    {
+        $productos = DB::table('productos as p')
+            ->join('movimientos as m', 'm.producto_id', '=', 'p.id')
+            ->select('p.id', 'p.nombre', DB::raw('SUM(COALESCE(m.ingreso,0) - COALESCE(m.salida,0)) as stock'))
+            ->groupBy('p.id', 'p.nombre')
+            ->having('stock', '>', 0)
+            ->get();
+
+        return response()->json($productos);
     }
 
 
