@@ -117,6 +117,33 @@
 </div>
 <!--end::Modal - Add task-->
 
+<!--begin::Modal - Add task-->
+<div class="modal fade" id="modalOrdenTrabajo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" id="kt_modal_add_user_header">
+                <h3 class="fw-bold">FORMULARIO DE ORDEN DE TRABAJO</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formularioOrdenTrabajo">
+                    <div id="formularioAjaxOrdenTrabajo"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-sm w-100 btn-success" onclick="guardarLaser()">Guardar Laser</button>
+                    </div>
+                </div>
+            </div>
+            <!--end::Modal body-->
+        </div>
+    </div>
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modal - Add task-->
+
 <!--begin::Content wrapper-->
 <div class="d-flex flex-column flex-column-fluid">
     <div id="kt_app_content" class="app-content flex-column-fluid">
@@ -249,11 +276,11 @@
                         <!--begin::Item-->
                         <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                             <span class="mr-4">
-                                <i class="fa-solid fa-horse-head" style="font-size: 30px; margin-right: 5px;"></i>
+                                <i class="fa-solid fa-money-bill-1-wave" style="font-size: 30px; margin-right: 5px;"></i>
                             </span>
                             <div class="d-flex flex-column text-dark-75">
-                                <span class="font-weight-bolder font-size-sm text-primary">NUM. REG.</span>
-                                {{-- <h5>{{ $ejemplar->numero_registro }}</h5> --}}
+                                <span class="font-weight-bolder font-size-sm text-primary">PRECIO</span>
+                                <h5>{{ $factura->total }}</h5>
                             </div>
                         </div>
                         <!--end::Item-->
@@ -263,8 +290,8 @@
                                 <i class="fas fa-barcode"  style="font-size: 30px; margin-right: 5px;"></i>
                             </span>
                             <div class="d-flex flex-column text-dark-75">
-                                <span class="font-weight-bolder font-size-sm text-primary">MICRO CHIP</span>
-                                {{-- <h5>{{ $ejemplar->microchip }}</h5> --}}
+                                <span class="font-weight-bolder font-size-sm text-primary">A CUENTA</span>
+                                <h5>{{ number_format($factura->pagos->sum('monto'), 2) }}</h5>
                             </div>
                         </div>
                         <!--end::Item-->
@@ -274,18 +301,19 @@
                                 <i class="fas fa-democrat"  style="font-size: 30px; margin-right: 5px;"></i>
                             </span>
                             <div class="d-flex flex-column text-dark-75">
-                                <span class="font-weight-bolder font-size-sm text-primary">NUM. ARETE</span>
-                                {{-- <h5>{{ $ejemplar->arete }}</h5> --}}
+                                <span class="font-weight-bolder font-size-sm text-primary">SALDO</span>
+                                <h5>{{ number_format(($factura->total - $factura->pagos->sum('monto')),2) }}</h5>
                             </div>
                         </div>
                         <!--end::Item-->
                         <!--begin::Item-->
                         <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                             <span class="mr-4">
-                                <i class="fas fa-list-alt" style="font-size: 30px; margin-right: 5px;"></i>
+                                <i class="fas fa-file-pdf" style="font-size: 30px; margin-right: 5px;"></i>
                             </span>
                             <div class="d-flex flex-column text-dark-75">
-                                <span class="font-weight-bolder font-size-sm text-primary">TIPO</span>
+                                <span class="font-weight-bolder font-size-sm text-primary">NOTA VENTA</span>
+                                <a target="_blank" href="{{ url('factura/recibo') }}/{{ $factura->id }}" class="btn btn-danger btn-sm btn-icon w-100"><i class="fa fa-file-pdf"></i></a>
                                 {{-- <h5>{{ $ejemplar->tipo }}</h5> --}}
                             </div>
                         </div>
@@ -293,11 +321,11 @@
                         <!--begin::Item-->
                         <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                             <span class="mr-4">
-                                <i class="fas fa-calendar-day" style="font-size: 30px; margin-right: 5px;"></i>
+                                <i class="fas fa-edit" style="font-size: 30px; margin-right: 5px;"></i>
                             </span>
                             <div class="d-flex flex-column text-dark-75">
-                                <span class="font-weight-bolder font-size-sm text-primary">F. NACIMIENTO</span>
-                                {{-- <h5>{{ $ejemplar->fecha_nacimiento }}</h5> --}}
+                                <span class="font-weight-bolder font-size-sm text-primary">EDITAR</span>
+                                <button onclick="ajaxFormularioEditarOrdenTrabajo()" class="btn btn-warning btn-sm btn-icon w-100"><i class="fa fa-edit"></i></button>
                             </div>
                         </div>
                         <!--end::Item-->
@@ -753,6 +781,27 @@
             let totalMin = $('#tiempo_total_laser_'+dato).val();
 
             $('#valor_laser_'+dato).val(parseFloat(valor) * parseFloat(totalMin));
+        }
+
+        function ajaxFormularioEditarOrdenTrabajo(orden){
+
+            // let datos = $('#formularioLaser').serializeArray();
+            $.ajax({
+                url: "{{ route('ordenTrabajo.ajaxFormularioEditarOrdenTrabajo') }}",
+                method: "POST",
+                data: {factura:{{ $factura->id }}},
+                success: function(resultado) {
+                    if (resultado.estado){
+
+                        $('#formularioAjaxOrdenTrabajo').html(resultado.data.listado)
+
+                        $('#modalOrdenTrabajo').modal('show')
+                    }
+                }
+            })
+
+
+
         }
 
    </script>

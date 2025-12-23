@@ -41,6 +41,7 @@
                     <td>{{ $ordenTrabajo->observacion }}</td>
                     <td>{{ $ordenTrabajo->nro_ot }}</td>
                     <td>
+                        <button title="Editar Orden Trabajo" class="btn btn-sm btn-icon btn-warning btn-circle" onclick="editarOrdenTrabajo({{ $ordenTrabajo->id }})"><i class="fa fa-edit"></i></button>
                         <button title="Agregar Laser" class="btn btn-sm btn-icon btn-primary btn-circle" onclick="modalAgregarLaser({{ $ordenTrabajo->id }}, '{{ $ordenTrabajo->nro_ot }}' , '{{ $ordenTrabajo->observacion }}', '{{ $ordenTrabajo->cantidad }}')"><i class="fa fa-pray"></i></button>
                     </td>
                 </tr>

@@ -225,6 +225,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListadoOjales', [OrdenTrabajoController::class, 'ajaxListadoOjales'])->name('ordenTrabajo.ajaxListadoOjales');
         Route::post('/ajaxListadoLaser', [OrdenTrabajoController::class, 'ajaxListadoLaser'])->name('ordenTrabajo.ajaxListadoLaser');
         Route::post('/guardarLaser', [OrdenTrabajoController::class, 'guardarLaser'])->name('ordenTrabajo.guardarLaser');
+        Route::post('/ajaxFormularioEditarOrdenTrabajo', [OrdenTrabajoController::class, 'ajaxFormularioEditarOrdenTrabajo'])->name('ordenTrabajo.ajaxFormularioEditarOrdenTrabajo');
         // Route::post('/ajaxListadoLaser', [OrdenTrabajoController::class, 'ajaxListadoLaser'])->name('ordenTrabajo.ajaxListadoLaser');
     });
 

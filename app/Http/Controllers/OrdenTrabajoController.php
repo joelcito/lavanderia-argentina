@@ -2,7 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Caracteristica;
+use App\Models\Color_tela;
+use App\Models\Factura;
+use App\Models\Focalizado;
+use App\Models\Nevado;
+use App\Models\Nombre_tela;
 use App\Models\Order_trabajo;
+use App\Models\Prelavado;
+use App\Models\Prenda;
+use App\Models\Tipo_tela;
 use App\Utils\Respuesta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -94,6 +103,8 @@ class OrdenTrabajoController extends Controller
             $valor_laser         = $request->input('valor_laser');
             $precio_minuto_valor = $request->input('precio_minuto_valor');
 
+            $totalAdicionLaserFactura = 0;
+
             // dd($cantidad_laser);
 
             foreach ($talla_laser as $index => $value) {
@@ -120,10 +131,49 @@ class OrdenTrabajoController extends Controller
                 $orden_trabajo->altura             = $altura_laser[$index];
                 $orden_trabajo->dpi                = $dpi_laser[$index];
                 $orden_trabajo->save();
+
+                $totalAdicionLaserFactura = $totalAdicionLaserFactura + $valor_laser[$index];
             }
+
+            $factura = $ordenTrabajoPadre->factura;
+            $precioFactura = $factura->total;
+            $factura->total = $precioFactura + $totalAdicionLaserFactura;
+            $factura->save();
 
             $data = Respuesta::success(null, "Datos Obtenidos correctamente");
         } else {
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+    }
+
+    public function ajaxFormularioEditarOrdenTrabajo(Request $request){
+        if($request->ajax()){
+
+            // dd($request->all());
+
+            $factura_id = $request->input('factura');
+
+            $ordenesTrabajos = Order_trabajo::where('factura_id', $factura_id)
+                                            ->where('tipo', 'ORDEN_TRABAJO')
+                                            ->get();
+
+            $prendas             = Prenda::all();
+            $telas               = Nombre_tela::all();
+            $prelavados          = Prelavado::all();
+            $nevados             = Nevado::all();
+            $focalizados         = Focalizado::all();
+            $tipoTelas           = Tipo_tela::all();
+            $colorTelas          = Color_tela::all();
+            $caracteristicaTelas = Caracteristica::all();
+
+            $valores = [
+                'listado' => view('factura.ajaxFormularioEditarOrdenTrabajo')->with(compact('ordenesTrabajos', 'prendas', 'telas', 'prelavados', 'nevados', 'focalizados', 'tipoTelas', 'colorTelas','caracteristicaTelas'))->render()
+            ];
+
+            $data = Respuesta::success($valores, "Datos Obtenidos correctamente");
+
+        }else{
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
         return $data;

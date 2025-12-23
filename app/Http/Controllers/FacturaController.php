@@ -113,17 +113,20 @@ class FacturaController extends Controller
 
                 if ($primero > 1) {
 
-                    $orden_trabajo                         = new Order_trabajo();
-                    $orden_trabajo->usuario_creador_id     = $usuario->id;
-                    $orden_trabajo->factura_id             = $factura->id;
-                    $orden_trabajo->sucursal_id            = $sucursal->id;
-                    $orden_trabajo->cantidad               = $item['nro_ojales'];
-                    $orden_trabajo->precio                 = $item['precio_ojales'];
-                    $orden_trabajo->subtotal               = $item['total_ojales'];
-                    $orden_trabajo->observacion            = "SERVICIO DE OJAL";
-                    $orden_trabajo->fecha                  = $factura->fecha_recepcion;
-                    $orden_trabajo->tipo                   = "OJAL";
+                    $orden_trabajo                     = new Order_trabajo();
+                    $orden_trabajo->usuario_creador_id = $usuario->id;
+                    $orden_trabajo->order_trabajos_id  = $orden_trabajo->id;
+                    $orden_trabajo->factura_id         = $factura->id;
+                    $orden_trabajo->sucursal_id        = $sucursal->id;
+                    $orden_trabajo->cantidad           = $item['nro_ojales'];
+                    $orden_trabajo->precio             = $item['precio_ojales'];
+                    $orden_trabajo->subtotal           = $item['total_ojales'];
+                    $orden_trabajo->observacion        = "SERVICIO DE OJAL";
+                    $orden_trabajo->fecha              = $factura->fecha_recepcion;
+                    $orden_trabajo->tipo               = "OJAL";
                     $orden_trabajo->save();
+
+                    $montoTotalVenta = $montoTotalVenta + $item['total_ojales'];
 
                 }
 
