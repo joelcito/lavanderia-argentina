@@ -90,7 +90,9 @@ class OrdenTrabajoController extends Controller
             $prenda_x_mesa_laser = $request->input('prenda_x_mesa_laser');
             $tiempo_total_laser  = $request->input('tiempo_total_laser');
             $usuario             = Auth::user();
-            $ordenTrabajoPadre = Order_trabajo::find($orden_trabajo_id);
+            $ordenTrabajoPadre   = Order_trabajo::find($orden_trabajo_id);
+            $valor_laser         = $request->input('valor_laser');
+            $precio_minuto_valor = $request->input('precio_minuto_valor');
 
             // dd($cantidad_laser);
 
@@ -101,8 +103,9 @@ class OrdenTrabajoController extends Controller
                 $orden_trabajo->factura_id         = $ordenTrabajoPadre->factura_id;
                 $orden_trabajo->sucursal_id        = $ordenTrabajoPadre->sucursal_id;
                 $orden_trabajo->cantidad           = $cantidad_laser[$index];
-                $orden_trabajo->precio             = 1;
-                $orden_trabajo->subtotal           = 1;
+                $orden_trabajo->precio             = $valor_laser[$index];
+                $orden_trabajo->precio_minuto      = $precio_minuto_valor[$index];
+                $orden_trabajo->subtotal           = $valor_laser[$index];
                 $orden_trabajo->fecha              = date('Y-m-d H:i:s');
                 $orden_trabajo->observacion        = "SERVICIO DE LASER";
                 $orden_trabajo->tipo               = "LASER";

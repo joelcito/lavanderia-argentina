@@ -184,12 +184,12 @@ class FacturaController extends Controller
                 'facturas.usuario_creador_id',
                 'facturas.sucursal_id',
                 'facturas.prioridad',
-                'clientes.cedula',
-                'clientes.nombres',
-                'clientes.ap_paterno',
-                'clientes.ap_materno',
+                'users.cedula',
+                'users.nombres',
+                'users.ap_paterno',
+                'users.ap_materno',
             )
-                ->join('clientes', 'clientes.id', '=', 'facturas.cliente_id')
+                ->join('users', 'users.id', '=', 'facturas.usuario_cliente_id')
                 // ->where('facturas.facturado', 'No')
                 // ->where('facturas.sucursal_id', $sucursal_id)
                 // ->where('facturas.punto_venta_id', $punto_venta_id)
@@ -208,10 +208,10 @@ class FacturaController extends Controller
                 $query->where('facturas.numero_factura', $numero_factura);
             }
 
-            if (!is_null($request->input('buscar_nro_cedula'))) {
-                $cedula = $request->input('buscar_nro_cedula');
-                $query->where('clientes.cedula', $cedula);
-            }
+            // if (!is_null($request->input('buscar_nro_cedula'))) {
+            //     $cedula = $request->input('buscar_nro_cedula');
+            //     $query->where('clientes.cedula', $cedula);
+            // }
 
             if (!is_null($request->input('buscar_nit'))) {
                 $nit = $request->input('buscar_nit');
@@ -226,7 +226,7 @@ class FacturaController extends Controller
 
             if (
                 !is_null($request->input('buscar_nro_factura')) &&
-                !is_null($request->input('buscar_nro_cedula')) &&
+                // !is_null($request->input('buscar_nro_cedula')) &&
                 !is_null($request->input('buscar_fecha_inicio')) &&
                 !is_null($request->input('buscar_fecha_fin'))
             ) {

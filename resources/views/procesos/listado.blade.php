@@ -81,7 +81,7 @@
 
 <!-- ================= MODAL ================= -->
 <div class="modal fade" id="modalLavanderia" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-light-info">
                 <h5 class="modal-title fw-bold">Registrar Proceso de Lavandería</h5>

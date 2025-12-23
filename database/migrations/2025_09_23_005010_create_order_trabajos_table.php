@@ -48,6 +48,7 @@ return new class extends Migration
             $table->decimal('numero_ojales',12,2)->nullable();
             $table->string('peso')->nullable();
             $table->decimal('precio',12,2)->nullable();
+            $table->decimal('precio_minuto',12,2)->nullable();
             $table->decimal('subtotal',12,2)->nullable();
             $table->decimal('descuento',12,2)->nullable();
             $table->dateTime('fecha')->nullable();
