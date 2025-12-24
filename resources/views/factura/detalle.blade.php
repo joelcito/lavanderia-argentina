@@ -119,7 +119,7 @@
 
 <!--begin::Modal - Add task-->
 <div class="modal fade" id="modalOrdenTrabajo" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 90%">
         <div class="modal-content">
             <div class="modal-header" id="kt_modal_add_user_header">
                 <h3 class="fw-bold">FORMULARIO DE ORDEN DE TRABAJO</h3>
@@ -133,7 +133,7 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-12">
-                        <button class="btn btn-sm w-100 btn-success" onclick="guardarLaser()">Guardar Laser</button>
+                        <button class="btn btn-sm w-100 btn-success" onclick="">Guardar</button>
                     </div>
                 </div>
             </div>

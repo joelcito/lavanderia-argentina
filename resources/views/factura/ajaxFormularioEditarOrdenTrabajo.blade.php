@@ -25,23 +25,67 @@
                 <tr>
                     <td><input type="text" value="{{ $ordenTrabajo->cantidad }}" style="width: 100%"></td>
                     <td>
-                        <select name="" id="">
-
+                        <select name="" id="" style="width: 100%;">
+                            @foreach ($prendas as $prenda)
+                                <option {{ $ordenTrabajo->prenda_id == $prenda->id? 'selected' : '' }} value="{{ $prenda->id }}">{{ $prenda->nombre }}</option>
+                            @endforeach
                         </select>
                     </td>
-                    <td><input type="text" style="width: 100%"></td>
-                    <td><input type="text" style="width: 100%"></td>
-                    <td><input type="text" style="width: 100%"></td>
-                    <td><input type="text" style="width: 100%"></td>
-                    <td><input type="text" style="width: 100%"></td>
-                    <td><input type="text" style="width: 100%"></td>
-                    <td><input type="text" style="width: 100%"></td>
-                    <td><input type="text" style="width: 100%"></td>
-                    <td><input type="text" style="width: 100%"></td>
-                    <td><input type="text" style="width: 100%"></td>
-                    <td><input type="text" style="width: 100%"></td>
-                    <td><input type="text" style="width: 100%"></td>
-                    <td><input type="text" style="width: 100%"></td>
+                    <td><input type="text" value="{{ $ordenTrabajo->numero_ojales }}" style="width: 100%"></td>
+                    <td>
+                        <select name="" id="" style="width: 100%;">
+                            @foreach ($telas as $tela)
+                                <option {{ $ordenTrabajo->tela_id == $tela->id? 'selected' : '' }} value="{{ $tela->id }}">{{ $tela->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <select name="" id="" style="width: 100%;">
+                            @foreach ($prelavados as $prelavado)
+                                <option {{ $ordenTrabajo->prelavado_id == $prelavado->id? 'selected' : '' }} value="{{ $prelavado->id }}">{{ $prelavado->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <select name="" id="" style="width: 100%;">
+                            @foreach ($nevados as $nevado)
+                                <option {{ $ordenTrabajo->nevado_id == $nevado->id? 'selected' : '' }} value="{{ $nevado->id }}">{{ $nevado->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <select name="" id="" style="width: 100%;">
+                            @foreach ($focalizados as $focalizado)
+                                <option {{ $ordenTrabajo->focalizado_id == $focalizado->id? 'selected' : '' }} value="{{ $focalizado->id }}">{{ $focalizado->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <select name="" id="" style="width: 100%;">
+                            @foreach ($tipoTelas as $tipoTela)
+                                <option {{ $ordenTrabajo->tipo_tela_id == $tipoTela->id? 'selected' : '' }} value="{{ $tipoTela->id }}">{{ $tipoTela->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <select name="" id="" style="width: 100%;">
+                            @foreach ($colorTelas as $coloTela)
+                                <option {{ $ordenTrabajo->color_tela_id == $coloTela->id? 'selected' : '' }} value="{{ $coloTela->id }}">{{ $coloTela->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>
+                        <select name="" id="" style="width: 100%;">
+                            @foreach ($caracteristicaTelas as $caracteristicaTela)
+                                <option {{ $ordenTrabajo->color_tela_id == $caracteristicaTela->id? 'selected' : '' }} value="{{ $caracteristicaTela->id }}">{{ $caracteristicaTela->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td><input type="text" value="{{ $ordenTrabajo->peso }}" style="width: 100%"></td>
+                    <td><input type="text" value="{{ $ordenTrabajo->precio }}" style="width: 100%"></td>
+                    <td><input type="text" value="{{ $ordenTrabajo->subtotal }}" style="width: 100%"></td>
+                    <td><input type="text" value="{{ $ordenTrabajo->observacion }}" style="width: 100%"></td>
+                    <td><input type="text" value="{{ $ordenTrabajo->nro_ot }}" style="width: 100%"></td>
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>
