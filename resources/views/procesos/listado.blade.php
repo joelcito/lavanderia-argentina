@@ -517,17 +517,17 @@
             let html = '';
             productosSolicitud.forEach((item, index) => {
                 html += `
-                                                                                                                                                                                                                                                        <tr>
-                                                                                                                                                                                                                                                            <td>${item.producto}</td>
-                                                                                                                                                                                                                                                            <td>${item.cantidad}</td>
-                                                                                                                                                                                                                                                            <td>
-                                                                                                                                                                                                                                                                <button class="btn btn-danger btn-sm"
-                                                                                                                                                                                                                                                                        onclick="eliminarProducto(${index})">
-                                                                                                                                                                                                                                                                    X
-                                                                                                                                                                                                                                                                </button>
-                                                                                                                                                                                                                                                            </td>
-                                                                                                                                                                                                                                                        </tr>
-                                                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                            <tr>
+                                                                                                                                                                                                                                                                <td>${item.producto}</td>
+                                                                                                                                                                                                                                                                <td>${item.cantidad}</td>
+                                                                                                                                                                                                                                                                <td>
+                                                                                                                                                                                                                                                                    <button class="btn btn-danger btn-sm"
+                                                                                                                                                                                                                                                                            onclick="eliminarProducto(${index})">
+                                                                                                                                                                                                                                                                        X
+                                                                                                                                                                                                                                                                    </button>
+                                                                                                                                                                                                                                                                </td>
+                                                                                                                                                                                                                                                            </tr>
+                                                                                                                                                                                                                                                        `;
             });
             $("#detalleProductos").html(html);
         }
@@ -634,35 +634,35 @@
 
                 data.forEach(producto => {
                     repeaterContainer.append(`
-                                                                                                    <div data-repeater-item>
-                                                                                                        <div class="form-group row mb-5">
-                                                                                                            <div class="col-md-4">
-                                                                                                                <label class="form-label">Producto</label>
-                                                                                                                <input type="text" class="form-control" value="${producto.nombre}" readonly />
-                                                                                                                <input type="hidden" name="producto_id" value="${producto.id}" />
-                                                                                                            </div>
-                                                                                                            <div class="col-md-3">
-                                                                                                                <label class="form-label">Tipo Proceso</label>
-                                                                                                                <select class="form-select" name="tipo_proceso_id">
-                                                                                                                    <option value="">Seleccione...</option>
-                                                                                                                </select>
-                                                                                                            </div>
-                                                                                                            <div class="col-md-2">
-                                                                                                                <label class="form-label">Fecha Ingreso</label>
-                                                                                                                <input type="datetime-local" class="form-control" name="fecha_ingreso" />
-                                                                                                            </div>
-                                                                                                            <div class="col-md-2">
-                                                                                                                <label class="form-label">Fecha Salida</label>
-                                                                                                                <input type="datetime-local" class="form-control" name="fecha_salida" />
-                                                                                                            </div>
-                                                                                                            <div class="col-md-2 mt-5">
-                                                                                                                <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger">
-                                                                                                                    <i class="ki-duotone ki-trash fs-3"></i> Eliminar
-                                                                                                                </a>
+                                                                                                        <div data-repeater-item>
+                                                                                                            <div class="form-group row mb-5">
+                                                                                                                <div class="col-md-4">
+                                                                                                                    <label class="form-label">Producto</label>
+                                                                                                                    <input type="text" class="form-control" value="${producto.nombre}" readonly />
+                                                                                                                    <input type="hidden" name="producto_id" value="${producto.id}" />
+                                                                                                                </div>
+                                                                                                                <div class="col-md-3">
+                                                                                                                    <label class="form-label">Tipo Proceso</label>
+                                                                                                                    <select class="form-select" name="tipo_proceso_id">
+                                                                                                                        <option value="">Seleccione...</option>
+                                                                                                                    </select>
+                                                                                                                </div>
+                                                                                                                <div class="col-md-2">
+                                                                                                                    <label class="form-label">Fecha Ingreso</label>
+                                                                                                                    <input type="datetime-local" class="form-control" name="fecha_ingreso" />
+                                                                                                                </div>
+                                                                                                                <div class="col-md-2">
+                                                                                                                    <label class="form-label">Fecha Salida</label>
+                                                                                                                    <input type="datetime-local" class="form-control" name="fecha_salida" />
+                                                                                                                </div>
+                                                                                                                <div class="col-md-2 mt-5">
+                                                                                                                    <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger">
+                                                                                                                        <i class="ki-duotone ki-trash fs-3"></i> Eliminar
+                                                                                                                    </a>
+                                                                                                                </div>
                                                                                                             </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                `);
+                                                                                                    `);
                 });
 
                 // Inicializa repeater **solo si la librería ya está disponible**
@@ -777,9 +777,23 @@
                 } else {
                     Swal.fire('OK', 'Procesos guardados correctamente', 'success');
                     $('#modalLavanderia').modal('hide');
+                    recargarListado();
                 }
             });
         });
+
+
+
+        function recargarListado() {
+            $.get("{{ route('procesos.ajaxListado') }}", function (res) {
+                if (res.estado) {
+                    $('#table_listado').html(res.data.listado);
+                } else {
+                    $('#table_listado').html('<p class="text-danger text-center">Error al cargar los procesos</p>');
+                }
+            });
+        }
+
     </script>
 
 
