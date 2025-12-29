@@ -3,6 +3,7 @@
         <thead>
             <tr>
                 <th>Número OT</th>
+                <th>Numero de Venta</th>
                 <th>Estado OT</th>
                 <th>Acciones</th>
             </tr>
@@ -11,7 +12,11 @@
             @forelse ($ots as $ot)
                 <tr>
                     <td>{{ $ot->nro_ot }}</td>
+                    <td>
+                        {{ $ot->factura->numero_factura ?? 'SIN FACTURA' }}
+                    </td>
                     <td>{{ $ot->estado }}</td>
+
                     <td>
                         <button class="btn btn-info btn-sm" onclick="verDetalleOT({{ $ot->id }})">
                             Ver detalle OT
