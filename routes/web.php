@@ -226,7 +226,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListadoLaser', [OrdenTrabajoController::class, 'ajaxListadoLaser'])->name('ordenTrabajo.ajaxListadoLaser');
         Route::post('/guardarLaser', [OrdenTrabajoController::class, 'guardarLaser'])->name('ordenTrabajo.guardarLaser');
         Route::post('/ajaxFormularioEditarOrdenTrabajo', [OrdenTrabajoController::class, 'ajaxFormularioEditarOrdenTrabajo'])->name('ordenTrabajo.ajaxFormularioEditarOrdenTrabajo');
-        // Route::post('/ajaxListadoLaser', [OrdenTrabajoController::class, 'ajaxListadoLaser'])->name('ordenTrabajo.ajaxListadoLaser');
+        Route::post('/ajaxNroOtFactura', [OrdenTrabajoController::class, 'ajaxNroOtFactura'])->name('ordenTrabajo.ajaxNroOtFactura');
+
+        Route::get('/imprimirOrdenTrabajo/{factura_id}/{nro_orden}', [OrdenTrabajoController::class, 'imprimirOrdenTrabajo'])->name('ordenTrabajo.imprimirOrdenTrabajo');
     });
 
     //solicitudes

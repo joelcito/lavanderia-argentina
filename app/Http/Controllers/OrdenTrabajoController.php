@@ -15,6 +15,7 @@ use App\Models\Tipo_tela;
 use App\Utils\Respuesta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PDF;
 
 class OrdenTrabajoController extends Controller
 {
@@ -183,6 +184,62 @@ class OrdenTrabajoController extends Controller
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
         return $data;
+
+    }
+
+    public function ajaxNroOtFactura(Request $request){
+
+        if($request->ajax()){
+
+            // dd($request->all());
+
+            $factura_id = $request->input('factura');
+
+            $ordenes = Order_trabajo::select('nro_ot')
+                                    ->where('factura_id',$factura_id)
+                                    ->where('tipo', 'ORDEN_TRABAJO')
+                                    ->distinct()
+                                    ->get();
+
+            $valores = [
+                'listaOt' => $ordenes
+            ];
+
+            $data = Respuesta::success($valores, "Datos Obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+
+    }
+
+    public function imprimirOrdenTrabajo(Request $request, $factura_id, $nro_orden){
+
+        // dd($factura_id, $nro_orden);
+
+        $usuario = Auth::user();
+        $factura = Factura::find($factura_id);
+        $ordenesTrabajos = Order_trabajo::where('factura_id', $factura_id)
+                                        ->where('nro_ot', $nro_orden)
+                                        ->get();
+
+        $data = [
+            'cliente' => 'Juan Pérez',
+            'fecha'   => date('d/m/Y'),
+            'monto'   => 150.50,
+            'detalle' => 'Pago de hospedaje - Habitación 203',
+            'usuario' => $usuario,
+            'factura' => $factura,
+            'ordenesTrabajos' => $ordenesTrabajos,
+            'nro_orden' => $nro_orden
+        ];
+
+        $pdf = PDF::loadView('ordenTrabajo.pdf.imprimirOrdenTrabajo', $data)
+                    // ->setPaper([0, 0, 612, 396]);
+                    ->setPaper('a5', 'landscape');
+
+        return $pdf->stream('imprimirOrdenTrabajo.pdf');
 
     }
 }

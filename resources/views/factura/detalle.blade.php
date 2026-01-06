@@ -144,6 +144,34 @@
 </div>
 <!--end::Modal - Add task-->
 
+<!--begin::Modal - Add task-->
+<div class="modal fade" id="modalOrdenTrabajoImpresion" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="kt_modal_add_user_header">
+                <h3 class="fw-bold">FORMULARIO DE IMPRESION POR ORDEN DE TRABAJO</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formularioOrdenTrabajoSelect">
+                    <select class="form-select form-select-sm" name="numero_ot_select" id="numero_ot_select">
+                    </select>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-sm w-100 btn-success" onclick="imprimirOrdenTrabajo()">Guardar</button>
+                    </div>
+                </div>
+            </div>
+            <!--end::Modal body-->
+        </div>
+    </div>
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modal - Add task-->
+
 <!--begin::Content wrapper-->
 <div class="d-flex flex-column flex-column-fluid">
     <div id="kt_app_content" class="app-content flex-column-fluid">
@@ -326,6 +354,17 @@
                             <div class="d-flex flex-column text-dark-75">
                                 <span class="font-weight-bolder font-size-sm text-primary">EDITAR</span>
                                 <button onclick="ajaxFormularioEditarOrdenTrabajo()" class="btn btn-warning btn-sm btn-icon w-100"><i class="fa fa-edit"></i></button>
+                            </div>
+                        </div>
+                        <!--end::Item-->
+                        <!--begin::Item-->
+                        <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
+                            <span class="mr-4">
+                                <i class="fas fa-plus" style="font-size: 30px; margin-right: 5px;"></i>
+                            </span>
+                            <div class="d-flex flex-column text-dark-75">
+                                <span class="font-weight-bolder font-size-sm text-primary">IMPRESION DE OT</span>
+                                <button onclick="ajaxNroOtFactura()" class="btn btn-info btn-sm btn-icon w-100"><i class="fa fa-plus"></i></button>
                             </div>
                         </div>
                         <!--end::Item-->
@@ -799,10 +838,50 @@
                     }
                 }
             })
-
-
-
         }
 
+        function ajaxNroOtFactura(){
+            $.ajax({
+                url: "{{ route('ordenTrabajo.ajaxNroOtFactura') }}",
+                method: "POST",
+                data: {factura:{{ $factura->id }}},
+                success: function(resultado) {
+                    if (resultado.estado){
+                        let listado = resultado.data.listaOt
+                        $('#numero_ot_select').empty().append('<option value="">Seleccione una OT</option>');
+                        $.each(listado, function (i, element) {
+                            $('#numero_ot_select').append(
+                                $('<option>', {
+                                    value: element.nro_ot,
+                                    text: 'OT ' + element.nro_ot
+                                })
+                            );
+                        });
+                        $('#modalOrdenTrabajoImpresion').modal('show')
+                    }
+                }
+            })
+        }
+
+        function imprimirOrdenTrabajo(){
+            let select = $('#numero_ot_select').val();
+
+            if (!select) {
+                // alert('Seleccione una OT');
+                Swal.fire(
+                    'Error',
+                    'Seleccione una OT',
+                    'error'
+                );
+                return;
+            }
+
+            let url = "{{ route('ordenTrabajo.imprimirOrdenTrabajo', ['factura_id' => '__FACTURA__', 'nro_orden' => '__OT__']) }}"
+                .replace('__FACTURA__', {{ $factura->id }})
+                .replace('__OT__', select);
+
+            // window.location.href = url;
+            window.open(url, '_blank');
+        }
    </script>
 @endsection
