@@ -1,9 +1,8 @@
-
 <div style="overflow-x: auto;">
     <!--begin::Table-->
-    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_roles">
+    <table class="table align-middle table-row-dashed fs-7 gy-6" id="kt_table_roles">
         <thead>
-            <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+            <tr class="text-start text-muted fw-bold fs-8 text-uppercase gs-0">
                 <th>Cantidad</th>
                 <th>Ojales</th>
                 <th>Prenda</th>
@@ -19,6 +18,7 @@
                 <th>Sub Total</th>
                 <th>Observaciones</th>
                 <th>Nro. OT</th>
+                <th>Estado</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -41,7 +41,18 @@
                     <td>{{ $ordenTrabajo->observacion }}</td>
                     <td>{{ $ordenTrabajo->nro_ot }}</td>
                     <td>
-                        <button title="Editar Orden Trabajo" class="btn btn-sm btn-icon btn-warning btn-circle" onclick="editarOrdenTrabajo({{ $ordenTrabajo->id }})"><i class="fa fa-edit"></i></button>
+                        @if ($ordenTrabajo->estado == "RECEPCIONADO")
+                            <span class="badge badge-info">{{ $ordenTrabajo->estado }}</span>
+                        @elseif($ordenTrabajo->estado == "TRABAJANDO" || $ordenTrabajo->estado == "EN PROCESO")
+                            <span class="badge badge-warning">{{ $ordenTrabajo->estado }}</span>
+                        @elseif($ordenTrabajo->estado == "FINALIZADO")
+                            <span class="badge badge-success">{{ $ordenTrabajo->estado }}</span>
+                        @elseif($ordenTrabajo->estado == "ENTREGADO")
+                            <span class="badge badge-dark">{{ $ordenTrabajo->estado }}</span>
+                        @endif
+                    </td>
+                    <td>
+                        <button title="Editar Estado Orden Trabajo" class="btn btn-sm btn-icon btn-warning btn-circle" onclick="editarEstadoOrdenTrabajo({{ $ordenTrabajo->nro_ot }}, '{{ $ordenTrabajo->estado }}')"><i class="fa fa-edit"></i></button>
                         <button title="Agregar Laser" class="btn btn-sm btn-icon btn-primary btn-circle" onclick="modalAgregarLaser({{ $ordenTrabajo->id }}, '{{ $ordenTrabajo->nro_ot }}' , '{{ $ordenTrabajo->observacion }}', '{{ $ordenTrabajo->cantidad }}')"><i class="fa fa-pray"></i></button>
                     </td>
                 </tr>

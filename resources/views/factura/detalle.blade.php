@@ -172,6 +172,41 @@
 </div>
 <!--end::Modal - Add task-->
 
+<!--begin::Modal - Add task-->
+<div class="modal fade" id="modalEdicionEstadoOrdenTrabajo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="kt_modal_add_user_header">
+                <h5 class="fw-bold">FORMULARIO CAMBIO DE ESTADO DE ORDEN DE TRABAJO <span class="text-info" id="numero_orden_trabajo_text"></span></h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formularioCambioEstadoOrdenTrabajo">
+                    <select class="form-select form-select-sm" name="estado_orden_trabajo" id="estado_orden_trabajo">
+                        <option value="RECEPCIONADO">RECEPCIONADO</option>
+                        <option value="TRABAJANDO">TRABAJANDO</option>
+                        <option value="EN PROCESO">EN PROCESO</option>
+                        <option value="FINALIZADO">FINALIZADO</option>
+                        <option value="ENTREGADO">ENTREGADO</option>
+                    </select>
+                    <input type="hidden" id="factura_id_estado" name="factura_id_estado" value="{{ $factura->id }}">
+                    <input type="hidden" id="nro_ot_estado" name="nro_ot_estado" value="{{ $factura->id }}">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-sm w-100 btn-success" onclick="guardarEstadoOrdenTrabajo()">Guardar</button>
+                    </div>
+                </div>
+            </div>
+            <!--end::Modal body-->
+        </div>
+    </div>
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modal - Add task-->
+
 <!--begin::Content wrapper-->
 <div class="d-flex flex-column flex-column-fluid">
     <div id="kt_app_content" class="app-content flex-column-fluid">
@@ -882,6 +917,36 @@
 
             // window.location.href = url;
             window.open(url, '_blank');
+        }
+
+        function editarEstadoOrdenTrabajo(orden, estado){
+            console.log(orden);
+
+            $('#numero_orden_trabajo_text').text(orden)
+            $('#estado_orden_trabajo').val(estado)
+            $('#nro_ot_estado').val(orden)
+
+            $('#modalEdicionEstadoOrdenTrabajo').modal('show')
+        }
+
+        function guardarEstadoOrdenTrabajo(){
+            let datos = $('#formularioCambioEstadoOrdenTrabajo').serializeArray();
+            $.ajax({
+                url: "{{ route('ordenTrabajo.guardarEstadoOrdenTrabajo') }}",
+                method: "POST",
+                data: datos,
+                success: function(resultado) {
+                    if (resultado.estado){
+                        ajaxListadoOrdenTrabajos();
+                        Swal.fire(
+                            'Exito',
+                            'Se Actualizo el estado con exito',
+                            'success'
+                        );
+                        $('#modalEdicionEstadoOrdenTrabajo').modal('hide')
+                    }
+                }
+            })
         }
    </script>
 @endsection

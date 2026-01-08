@@ -242,4 +242,26 @@ class OrdenTrabajoController extends Controller
         return $pdf->stream('imprimirOrdenTrabajo.pdf');
 
     }
+
+    public function guardarEstadoOrdenTrabajo(Request $request){
+
+        if($request->ajax()){
+
+            $factura_id = $request->input('factura_id_estado');
+            $estado = $request->input('estado_orden_trabajo');
+            $nro_ot = $request->input('nro_ot_estado');
+
+            Order_trabajo::where('factura_id', $factura_id)
+                        ->where('nro_ot', $nro_ot)
+                        ->update([
+                            'estado' => $estado
+                        ]);
+
+            $data = Respuesta::success(null, "Datos Actualizados correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+    }
 }
