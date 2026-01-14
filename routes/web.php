@@ -216,6 +216,17 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/reporte')->group(function () {
         Route::get('/formulario', [ReporteController::class, 'formulario'])->name('reporte.formulario');
         Route::post('/cuentaPorCobrar', [ReporteController::class, 'cuentaPorCobrar'])->name('reporte.cuentaPorCobrar');
+
+        Route::get('/stock', [ReporteController::class, 'formularioStock'])->name('reporte.stock.formulario');
+        Route::post('/stock-historico', [ReporteController::class, 'stockHistorico'])->name('reporte.stock.historico');
+        Route::post('/stock/pdf', [ReporteController::class, 'stockPdf'])->name('reporte.stock.pdf');
+
+        Route::get('/proceso', [ReporteController::class, 'formularioProceso'])->name('reporte.proceso.formulario');
+
+        Route::post('/proceso/pdf', [ReporteController::class, 'procesoPdf'])->name('reporte.proceso.pdf');
+
+        Route::get('/stockFormularioProceso', [ReporteController::class, 'stockFormularioProceso'])->name('reporte.stockFormularioProceso');
+        Route::post('/procesoPDF', [ReporteController::class, 'generarProcesoPDF'])->name('reporte.procesoPDF');
     });
 
     // ORDEN DE TRABAJO

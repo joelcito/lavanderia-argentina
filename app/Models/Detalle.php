@@ -36,4 +36,22 @@ class Detalle extends Model
         'estado',
         'deleted_at',
     ];
+
+
+    public function prenda()
+    {
+        return $this->belongsTo(Prenda::class, 'prenda_id');
+    }
+    public function nombre_tela()
+    {
+        return $this->belongsTo(Nombre_tela::class, 'nombre_tela_id');
+    }
+    public function prelavado()
+    {
+        return $this->belongsTo(Prelavado::class, 'prelavado_id');
+    }
+    public function focalizado()
+    {
+        return $this->belongsTo(Focalizado::class, 'focalizado_id');
+    }
 }

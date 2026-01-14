@@ -80,6 +80,10 @@ class Order_trabajo extends Model
         return $this->belongsTo(Factura::class, 'factura_id', 'id');
     }
 
+    public function detalles()
+    {
+        return $this->hasMany(Detalle::class, 'order_trabajo_id');
+    }
 
 }
 

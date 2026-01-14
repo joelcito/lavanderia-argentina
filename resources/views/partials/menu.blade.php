@@ -254,12 +254,32 @@
                     </span>
                     <!--end:Menu link-->
                     <div class="menu-sub menu-sub-accordion">
-                        <div class="menu-item">
-                            <a class="menu-link " href="{{ route('reporte.formulario') }}">
+                        <!-- <div class="menu-item">
+                            <a class="menu-link" href="{{ route('reporte.formulario') }}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
-                                <span class="menu-title text-white">Reportes</span>
+                                <span class="menu-title text-white">Reporte Productos</span>
+                            </a>
+                        </div> -->
+
+                        <!-- Reporte Procesos -->
+                        <div class="menu-item">
+                            <a class="menu-link" href="{{ route('reporte.proceso.formulario') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">Reporte Procesos</span>
+                            </a>
+                        </div>
+
+                        <!-- NUEVO: Stock Histórico -->
+                        <div class="menu-item">
+                            <a class="menu-link" href="{{ route('reporte.stock.formulario') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">Stock Histórico</span>
                             </a>
                         </div>
                     </div>
