@@ -26,92 +26,101 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <label class="required fw-semibold fs-6 mb-2">Nombres</label>
-                                <input type="text" class="form-control form-control-sm" id="nombre" name="nombre">
+                                <input type="text" class="form-control form-control-sm" id="nombre" name="nombre" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="required fw-semibold fs-6 mb-2">Apellido paterno</label>
-                                <input type="text" class="form-control form-control-sm" id="ap_paterno"
-                                    name="ap_paterno">
+                                <input type="text" class="form-control form-control-sm" id="ap_paterno" name="ap_paterno" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="required fw-semibold fs-6 mb-2">Apellido materno</label>
+                                <label class="fw-semibold fs-6 mb-2">Apellido materno</label>
                                 <input type="text" class="form-control form-control-sm" id="ap_materno"
                                     name="ap_materno">
                             </div>
                         </div>
                         <div class="row mt-5">
                             <div class="col-md-3">
-                                <label class="required fw-semibold fs-6 mb-2">Celular</label>
+                                <label class="fw-semibold fs-6 mb-2">Celular</label>
                                 <input type="text" class="form-control form-control-sm" id="celular" name="celular"
                                     maxlength="8">
                             </div>
                             <div class="col-md-3">
-                                <label class="required fw-semibold fs-6 mb-2">Cedula Identidad</label>
+                                <label class="fw-semibold fs-6 mb-2">Cedula Identidad</label>
                                 <input type="text" class="form-control form-control-sm" id="cedula" name="cedula"
                                     maxlength="10">
                             </div>
                             <div class="col-md-3">
 
-                                <label class="required fw-semibold fs-6 mb-2">NIT</label>
+                                <label class="fw-semibold fs-6 mb-2">NIT</label>
                                 <input type="text" class="form-control form-control-sm" id="nit" name="nit">
                             </div>
                             <div class="col-md-3">
-                                <label class="required fw-semibold fs-6 mb-2">Razon Social</label>
+                                <label class="fw-semibold fs-6 mb-2">Razon Social</label>
                                 <input type="text" class="form-control form-control-sm" id="razon_social"
                                     name="razon_social">
                             </div>
                         </div>
                         <div class="row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Direccion</label>
+                                    <label class="fw-semibold fs-6 mb-2">Direccion</label>
                                     <textarea class="form-control form-control-sm" id="direccion"
                                         name="direccion"></textarea>
                         </div>
                         <div class="fv-row mb-7">
-                            <label class="required fw-semibold fs-6 mb-2">Imagen Cliente</label>
+                            <label class="fw-semibold fs-6 mb-2">Imagen Cliente</label>
                             <input type="file" accept="image/*" class="form-control form-control-sm" id="imagen"
                                     name="imagen">
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <label class="required fw-semibold fs-6 mb-2">Imagen Cedula Identidad Anverso</label>
+                                <label class="fw-semibold fs-6 mb-2">Imagen Cedula Identidad Anverso</label>
                                 <input type="file" accept="image/*" class="form-control form-control-sm" id="imagen_CI_anverso"
                                     name="imagen_CI_anverso">
                             </div>
                             <div class="col-md-6">
-                                <label class="required fw-semibold fs-6 mb-2">Imagen Cedula Identidad Reverso</label>
+                                <label class="fw-semibold fs-6 mb-2">Imagen Cedula Identidad Reverso</label>
                                 <input type="file" accept="image/*" class="form-control form-control-sm" id="imagen_CI_reverso"
                                     name="imagen_CI_reverso">
                             </div>
                         </div>
                         <div class="row mb-7 mt-7">
                             <label class="fw-semibold fs-6 mb-2">REFERENCIAS:</label>
-                            <div class="col-md-4">     
-                                <label class="fw-semibold fs-6 mb-2">Nombre Completo</label>                           
-                                <input type="text" class="form-control form-control-sm"  
+                            <div class="col-md-4">
+                                <label class="fw-semibold fs-6 mb-2">Nombre Completo</label>
+                                <input type="text" class="form-control form-control-sm"
                                 id="nombre_referencia_1" name="nombre_referencia_1">
 
-                                <label class="fw-semibold fs-6 mb-2">Celular</label>                           
-                                <input type="text" class="form-control form-control-sm"  
+                                <label class="fw-semibold fs-6 mb-2">Celular</label>
+                                <input type="text" class="form-control form-control-sm"
                                 id="celular_referencia_1" name="celular_referencia_1" maxlength="8">
                             </div>
-                            <div class="col-md-4">     
-                                <label class="fw-semibold fs-6 mb-2">Nombre Completo</label>                           
-                                <input type="text" class="form-control form-control-sm"  
+                            <div class="col-md-4">
+                                <label class="fw-semibold fs-6 mb-2">Nombre Completo</label>
+                                <input type="text" class="form-control form-control-sm"
                                 id="nombre_referencia_2" name="nombre_referencia_2">
 
-                                <label class="fw-semibold fs-6 mb-2">Celular</label>                           
-                                <input type="text" class="form-control form-control-sm"  
+                                <label class="fw-semibold fs-6 mb-2">Celular</label>
+                                <input type="text" class="form-control form-control-sm"
                                 id="celular_referencia_2" name="celular_referencia_2" maxlength="8">
                             </div>
-                            <div class="col-md-4">     
-                                <label class="fw-semibold fs-6 mb-2">Nombre Completo</label>                           
-                                <input type="text" class="form-control form-control-sm"  
+                            <div class="col-md-4">
+                                <label class="fw-semibold fs-6 mb-2">Nombre Completo</label>
+                                <input type="text" class="form-control form-control-sm"
                                 id="nombre_referencia_3" name="nombre_referencia_3">
 
-                                <label class="fw-semibold fs-6 mb-2">Celular</label>                           
-                                <input type="text" class="form-control form-control-sm"  
+                                <label class="fw-semibold fs-6 mb-2">Celular</label>
+                                <input type="text" class="form-control form-control-sm"
                                 id="celular_referencia_3" name="celular_referencia_3" maxlength="8">
-                            </div>                            
+                            </div>
+                        </div>
+                        <div class="row mt-7">
+                            <div class="col-md-6">
+                                <label class="required fw-semibold fs-6 mb-2">Correo de ingreso al sistema</label>
+                                <input type="email" class="form-control form-control-sm" id="email" name="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="required fw-semibold fs-6 mb-2">Contrasenia</label>
+                                <input type="password" class="form-control form-control-sm" id="password" name="password" required>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -210,51 +219,63 @@
         }
 
         function guardarCliente() {
-            let form = document.getElementById('formularioCliente');
-            let datos = new FormData(form);  // <-- Importante
 
-            $.ajax({
-                url: "{{ route('cliente.guardarCliente') }}",
-                method: "POST",
-                data: datos,
-                processData: false, // <-- Obligatorio para FormData
-                contentType: false, // <-- Obligatorio para FormData
-                success: function(resultado) {
-                    if (resultado.estado) {
-                        Swal.fire({
-                            title: "EL REGISTRO FUE EXITOSO.",
-                            icon: "success",
-                            timer: 3000, // Se cierra en 3 segundos
-                            showConfirmButton: false
-                        });
-                        ajaxListado();
-                        $('#modalCliente').modal('hide');
-                    } else {
+            if ($("#formularioCliente")[0].checkValidity()) {
+                let form = document.getElementById('formularioCliente');
+                let datos = new FormData(form);  // <-- Importante
 
-                    }
-                },
-                error: function(xhr) {
-                    limpiarErorres();
+                $.ajax({
+                    url: "{{ route('cliente.guardarCliente') }}",
+                    method: "POST",
+                    data: datos,
+                    processData: false, // <-- Obligatorio para FormData
+                    contentType: false, // <-- Obligatorio para FormData
+                    success: function(resultado) {
+                        if (resultado.estado) {
+                            Swal.fire({
+                                title: "EL REGISTRO FUE EXITOSO.",
+                                icon: "success",
+                                timer: 3000, // Se cierra en 3 segundos
+                                showConfirmButton: false
+                            });
+                            ajaxListado();
+                            $('#modalCliente').modal('hide');
+                        } else {
 
-                    if (xhr.status === 422) {
-                        let errores = xhr.responseJSON.errors;
-
-                        for (let campo in errores) {
-                            let mensaje = errores[campo][0];
-
-                            let input = $(`[name="${campo}"]`);
-                            input.addClass("is-invalid");
-                            input.after(`<div class="invalid-feedback">${mensaje}</div>`);
                         }
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Ocurrió un error inesperado.',
-                        });
+                    },
+                    error: function(xhr) {
+                        // limpiarErorres();
+
+                        if (xhr.status === 422) {
+                            let errores = xhr.responseJSON.errors;
+
+                            for (let campo in errores) {
+                                let mensaje = errores[campo][0];
+
+                                let input = $(`[name="${campo}"]`);
+                                input.addClass("is-invalid");
+                                input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                            }
+
+                            // Swal.fire({
+                            //     icon: 'error',
+                            //     title: 'Error',
+                            //     text: JSON.strify(xhr.responseJSON),
+                            // });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error inesperado.',
+                            });
+                        }
                     }
-                }
-            });
+                });
+            }else{
+                $("#formularioCliente")[0].reportValidity();
+            }
+
         }
 
         function editarCliente(cliente) {

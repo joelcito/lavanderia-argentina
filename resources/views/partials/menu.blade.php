@@ -182,6 +182,14 @@
                                 <span class="menu-title text-white">Aprobaciòn de solicitudes</span>
                             </a>
                         </div>
+                        <div class="menu-item">
+                            <a class="menu-link" href="{{ url('nevado/listado') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">Nevados</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
 

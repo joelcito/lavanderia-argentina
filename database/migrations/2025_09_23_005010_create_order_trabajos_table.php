@@ -56,6 +56,9 @@ return new class extends Migration
             $table->text('nro_ot')->nullable();
             $table->string('tipo')->nullable();
 
+            $table->decimal('cantidad_planchado',12,2)->nullable();
+            $table->decimal('cantidad_focalizado',12,2)->nullable();
+
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();
             $table->timestamps();

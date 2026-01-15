@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ClienteController extends Controller
 {
@@ -34,11 +35,7 @@ class ClienteController extends Controller
     }
 
     public function guardarCliente(Request $request){
-        $this->validate($request, [
-            'imagen'=>'required|image|max:6000',
-            'imagen_CI_anverso'=>'required|image|max:6000',
-            'imagen_CI_reverso'=>'required|image|max:6000'
-        ]);
+
 
         if ($request->ajax()) {
 
@@ -60,6 +57,39 @@ class ClienteController extends Controller
             $celular_referencia_2 = $request->input('celular_referencia_2');
             $nombre_referencia_3  = $request->input('nombre_referencia_3');
             $celular_referencia_3 = $request->input('celular_referencia_3');
+            $email                = $request->input('email');
+            $password             = $request->input('password');
+
+
+            $usuario = Auth::user();
+
+            if ($cliente_id =='0') {
+                $cliente = new User();
+                $cliente->usuario_creador_id = $usuario->id;
+
+                $this->validate($request, [
+                    'nombre'=>'required',
+                    'ap_paterno'=>'required',
+                    'email' => 'required|email|unique:users,email',
+                    'password'=>'required',
+                ]);
+
+            } else {
+
+                $this->validate($request, [
+                    'nombre'      => 'required',
+                    'ap_paterno'  => 'required',
+                    'email'       => [
+                        'required',
+                        'email',
+                        Rule::unique('users', 'email')->ignore($cliente_id),
+                    ],
+                ]);
+
+                $cliente = User::find($cliente_id);
+                $cliente->usuario_modificador_id = $usuario->id;
+            }
+
             //imagenes
             if ($request->hasFile('imagen', 'imagen_CI_anverso', 'imagen_CI_reverso' )) {
                 $file_imagen = $request->file('imagen');
@@ -73,16 +103,10 @@ class ClienteController extends Controller
                 $file_imagen_CI_reverso = $request->file('imagen_CI_reverso');
                 $imagen_CI_reverso = time() .'_'. Str::uuid() .'.'. $file_imagen_CI_reverso->getClientOriginalExtension();
                 $file_imagen_CI_reverso->storeAs('imagenesClientes', $imagen_CI_reverso, 'public');
-            }
-
-            $usuario = Auth::user();
-
-            if ($cliente_id =='0') {
-                $cliente = new User();
-                $cliente->usuario_creador_id = $usuario->id;
-            } else {
-                $cliente = User::find($cliente_id);
-                $cliente->usuario_modificador_id = $usuario->id;
+            }else{
+                $imagen            = null;
+                $imagen_CI_anverso = null;
+                $imagen_CI_reverso = null;
             }
 
             $cliente->nombres              = $nombre;
@@ -103,8 +127,10 @@ class ClienteController extends Controller
             $cliente->nombre_referencia_3  = $nombre_referencia_3;
             $cliente->celular_referencia_3 = $celular_referencia_3;
             $cliente->name                 = $nombre." ". $ap_paterno." ". $ap_materno;
-            $cliente->email                = $cedula;
-            $cliente->password             = Hash::make($cedula);
+            $cliente->email                = $email;
+            if ($cliente_id == '0') {
+                $cliente->password = Hash::make($password);
+            }
             $cliente->rol_id               = $rolCliente;
             $cliente->save();
 

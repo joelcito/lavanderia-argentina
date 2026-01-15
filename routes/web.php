@@ -23,6 +23,7 @@ use App\Http\Controllers\TipoTelaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProcesosController;
 use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\NevadoController;
 
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Auth;
@@ -251,6 +252,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxDetalleOT', [SolicitudController::class, 'ajaxDetalleOT'])->name('solicitudes.ajaxDetalleOT');
         Route::post('/accionProducto', [SolicitudController::class, 'accionProducto'])->name('solicitudes.accionProducto');
 
+    });
+
+    // NEVADO
+    Route::prefix('/nevado')->group(function () {
+        Route::get('/listado', [NevadoController::class, 'listado'])->name('nevado.listado');
+        Route::post('/ajaxListado', [NevadoController::class, 'ajaxListado'])->name('nevado.ajaxListado');
+        Route::post('/guardarNevado', [NevadoController::class, 'guardarNevado'])->name('nevado.guardarNevado');
+        Route::post('/eliminarNevado', [NevadoController::class, 'eliminarNevado'])->name('nevado.eliminarNevado');
     });
 
 
