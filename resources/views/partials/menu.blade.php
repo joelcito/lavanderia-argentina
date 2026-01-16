@@ -19,6 +19,7 @@
                     <!--end:Menu content-->
                 </div>
                 <!--end:Menu item-->
+
                 <div data-kt-menu-trigger="click"
                     class="menu-item menu-accordion {{ Request::is('usuario/*', 'rol/*', 'proveedor/*', 'unidadMedida/*', 'puntoVenta/*', 'productoServicio/*', 'producto/*', 'cliente/*', 'urlApiServicio/*', 'pago/*', 'cotizacion/*') ? 'show' : '' }}">
                     <!--begin:Menu link-->
@@ -190,6 +191,40 @@
                                 <span class="menu-title text-white">Nevados</span>
                             </a>
                         </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ Route::currentRouteName() == 'rol' ? 'active' : '' }}"
+                                href="{{ route('order-trabajo.rol') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">
+                                    Planchador/Focalizador
+                                </span>
+                            </a>
+                        </div>
+
+
+
+                        <!-- @php
+                           
+                            $userRol = strtolower(auth()->user()->rol); // minúscula para comparar
+                        @endphp -->
+
+                        <!-- @if(in_array($userRol, ['Planchador', 'Focalizador'])) -->
+                        <div class="menu-item">
+                            <!-- <a class="menu-link {{ Route::currentRouteName() == 'order-trabajo.rol' ? 'active' : '' }}"
+                                href="{{ route('order-trabajo.rol') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span> -->
+                            <span class="menu-title text-white">
+                                Planchador/Focalizador
+                            </span>
+                            <!-- </a> -->
+                        </div>
+                        <!-- @endif -->
+
+
                     </div>
                 </div>
 

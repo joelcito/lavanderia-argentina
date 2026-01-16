@@ -223,12 +223,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/stock/pdf', [ReporteController::class, 'stockPdf'])->name('reporte.stock.pdf');
 
         Route::get('/proceso', [ReporteController::class, 'formularioProceso'])->name('reporte.proceso.formulario');
-
+        Route::get('/proceso/ots/{factura_id}', [ReporteController::class, 'obtenerOTs'])->name('reporte.proceso.obtenerOTs');
         Route::post('/proceso/pdf', [ReporteController::class, 'procesoPdf'])->name('reporte.proceso.pdf');
+        Route::get('/prueba-ot', function () {
+            $facturas = App\Models\Factura::all();
+            return view('reporte.prueba_ot', compact('facturas'));
+        });
 
-        Route::get('/stockFormularioProceso', [ReporteController::class, 'stockFormularioProceso'])->name('reporte.stockFormularioProceso');
-        Route::post('/procesoPDF', [ReporteController::class, 'generarProcesoPDF'])->name('reporte.procesoPDF');
     });
+
+
 
     // ORDEN DE TRABAJO
     Route::prefix('/ordenTrabajo')->group(function () {
@@ -242,6 +246,21 @@ Route::middleware('auth')->group(function () {
         Route::post('/guardarEstadoOrdenTrabajo', [OrdenTrabajoController::class, 'guardarEstadoOrdenTrabajo'])->name('ordenTrabajo.guardarEstadoOrdenTrabajo');
 
         Route::get('/imprimirOrdenTrabajo/{factura_id}/{nro_orden}', [OrdenTrabajoController::class, 'imprimirOrdenTrabajo'])->name('ordenTrabajo.imprimirOrdenTrabajo');
+
+
+        Route::get('/rol', [OrdenTrabajoController::class, 'vistaRol'])->name('order-trabajo.rol');
+
+        // Guardar cantidad de planchado/focalizado
+        Route::post('/guardar-cantidad', [OrdenTrabajoController::class, 'guardarCantidad'])->name('order-trabajo.guardarCantidad');
+
+        // Obtener OTs por factura (AJAX)
+        Route::get('/ots/{factura_id}', [OrdenTrabajoController::class, 'obtenerOTs'])->name('order-trabajo.obtenerOTs');
+
+        Route::get('/listadoCantidades', [OrdenTrabajoController::class, 'listadoCantidades'])->name('order-trabajo.listadoCantidades');
+
+        Route::get('/listarCantidades', [OrdenTrabajoController::class, 'listarCantidades'])->name('order-trabajo.listarCantidades');
+
+
     });
 
     //solicitudes

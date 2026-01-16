@@ -67,6 +67,7 @@
 </head>
 <!--end::Head-->
 <!--begin::Body-->
+@yield('scripts')
 
 <body id="kt_app_body" data-kt-app-layout="dark-sidebar" data-kt-app-header-fixed="true"
     data-kt-app-sidebar-enabled="true" data-kt-app-sidebar-fixed="true" data-kt-app-sidebar-hoverable="true"

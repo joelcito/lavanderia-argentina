@@ -3,133 +3,169 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>FICHA DE PROCESO</title>
+    <title>Ficha de Proceso OT {{ $ordenTrabajo->nro_ot }}</title>
     <style>
         body {
-            font-family: DejaVu Sans, sans-serif;
-            font-size: 10px;
-        }
-
-        .recibo {
-            width: 95%;
-            margin: auto;
-            padding: 10px;
-        }
-
-        .titulo {
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .subtitulo {
-            text-align: center;
+            font-family: Arial, sans-serif;
             font-size: 12px;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            text-align: center;
             margin-bottom: 10px;
+        }
+
+        header img {
+            height: 60px;
+            margin-bottom: 5px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: 0;
+            padding: 0;
+        }
+
+        .section {
+            margin-top: 15px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 10px;
+            margin-top: 5px;
         }
 
         th,
         td {
-            border: 1px solid #444;
-            padding: 3px;
-            text-align: center;
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: left;
+            font-size: 11px;
         }
 
         th {
             background-color: #f0f0f0;
         }
 
-        .info-ot td {
+        .totals {
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .observaciones {
+            margin-top: 10px;
+        }
+
+        .info-central td {
             border: none;
-            text-align: left;
-            padding: 2px;
+            text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
-    <div class="recibo">
-        <div class="titulo">FICHA DE PROCESO</div>
-        <div class="subtitulo">Fecha de impresión: {{ $fechaImpresion }}</div>
+    <!-- Encabezado con logo e info central -->
+    <header>
+        <!-- <img src="{{ public_path('logo.png') }}" alt="Logo Empresa"> -->
+        <h2>FICHA DE PROCESO</h2>
+    </header>
 
-        <!-- Información general OT -->
-        <table class="info-ot">
+    <!-- Información central: OT, Cliente, Fecha, Totales -->
+    <div class="section">
+        <table class="info-central">
             <tr>
-                <td><strong>OT:</strong> {{ $ot->nro_ot }}</td>
-                <td><strong>Cliente:</strong>
-                    {{ $cliente->codigo ?? 'No encontrado' }} - {{ $cliente->nombre ?? 'No encontrado' }}
-                </td>
-                <td><strong>Total Prendas:</strong> {{ number_format($totalPrendas, 2) }}</td>
-                <td><strong>Total Peso:</strong> {{ number_format($totalPeso, 2) }} kg</td>
+                <td>OT: {{ $ordenTrabajo->nro_ot }}</td>
+                <td>Cliente: {{ $factura->cliente?->name ?? 'N/A' }}</td>
+                <td>Fecha: {{ $fechaImpresion }}</td>
+            </tr>
+            <tr>
+                <td>Total Prendas: {{ $ordenTrabajo->cantidad }}</td>
+                <td>Total Peso: {{ $ordenTrabajo->peso }} kg</td>
+                <td>Factura N°: {{ $factura->numero_factura }}</td>
             </tr>
         </table>
+    </div>
 
-        <!-- Detalles de prendas -->
+    <!-- Detalles de Servicios -->
+    <div class="section">
+        <h3>DETALLES DE SERVICIOS</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Nº</th>
                     <th>Prenda</th>
                     <th>Cantidad</th>
                     <th>Peso</th>
-                    <th>Detalle</th>
+                    <th>Pre-Lavado</th>
+                    <th>Nevado</th>
+                    <th>Focalizado</th>
+                    <th>Tipo Tela</th>
+                    <th>Color Tela</th>
+                    <th>Característica</th>
+                    <th>Ojales</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($ot->detalles as $key => $detalle)
-                    <tr>
-                        <td>{{ $key + 1 }}</td>
-                        <td>{{ $detalle->prenda->nombre ?? 'N/A' }}</td>
-                        <td>{{ $detalle->cantidad ?? 0 }}</td>
-                        <td>{{ $detalle->peso ?? 0 }}</td>
-                        <td>
-                            {{ $detalle->nombre_tela->nombre ?? '' }} /
-                            {{ $detalle->prelavado->nombre ?? '' }} /
-                            {{ $detalle->focalizado->nombre ?? '' }}
-                        </td>
-                    </tr>
-                @endforeach
+                <tr>
+                    <td>{{ $ordenTrabajo->prenda?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->cantidad }}</td>
+                    <td>{{ $ordenTrabajo->peso }}</td>
+                    <td>{{ $ordenTrabajo->prelavado?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->nevado?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->focalizado?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->tipoTela?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->colorTela?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->caracteristicaTela?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->numero_ojales ?? '-' }}</td>
+                </tr>
             </tbody>
         </table>
+    </div>
 
-        <!-- Tabla de procesos -->
+    <!-- Procesos -->
+    <div class="section">
+        <h3>PROCESOS</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Nº</th>
                     <th>Ciclo</th>
-                    <th>Cant (gramos)</th>
+                    <th>Cant (g)</th>
                     <th>Producto</th>
-                    <th>% gr/litro</th>
+                    <th>%</th>
+                    <th>gr/l</th>
                     <th>Tiempo</th>
-                    <th>TEMP(ºC)</th>
+                    <th>Temp (°C)</th>
                     <th>pH</th>
                     <th>R:B</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($ot->procesos as $index => $proceso)
+                @foreach($procesos as $proceso)
                     <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $proceso->tipoProceso->nombre ?? 'N/A' }}</td>
-                        <td>{{ $proceso->cantida ?? 0 }}</td>
-                        <td>{{ $proceso->producto->nombre ?? 'N/A' }}</td>
-                        <td>{{ $proceso->gr_litro ?? 0 }}</td>
-                        <td>{{ $proceso->tiempo ?? 0 }}</td>
-                        <td>{{ $proceso->temperatura ?? '' }}</td>
-                        <td>{{ $proceso->ph ?? '' }}</td>
-                        <td>{{ $proceso->rb ?? '' }}</td>
+                        <td>{{ $proceso->tipoProceso?->nombre }}</td>
+                        <td>{{ $proceso->cantida }}</td>
+                        <td>{{ $proceso->producto?->nombre }}</td>
+                        <td>{{ $proceso->porcentaje }}</td>
+                        <td>{{ $proceso->gr_litro }}</td>
+                        <td>{{ $proceso->tiempo }}</td>
+                        <td>{{ $proceso->temperatura }}</td>
+                        <td>{{ $proceso->ph }}</td>
+                        <td>{{ $proceso->rb }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
+
+    <div class="section observaciones">
+        <p><strong>Observaciones:</strong> {{ $ordenTrabajo->descripcion ?? '-' }}</p>
+    </div>
+
+
 </body>
 
 </html>

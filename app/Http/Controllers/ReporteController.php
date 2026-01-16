@@ -28,60 +28,61 @@ class ReporteController extends Controller
         return view('reporte.stock_formulario', compact('sucursales'));
     }
 
-
     public function formularioProceso()
     {
-        // Traemos OTs que tienen procesos, agrupadas por OT, ordenadas por número de OT
-        $ots = DB::table('procesos')
-            ->join('order_trabajos', 'procesos.order_trabajo_id', '=', 'order_trabajos.id')
-            ->select('order_trabajos.id as ot_id', 'order_trabajos.nro_ot')
-            ->groupBy('order_trabajos.id', 'order_trabajos.nro_ot')
-            ->orderBy('order_trabajos.nro_ot', 'asc')
-            ->get();
-
-        return view('reporte.stock_formulario_proceso', compact('ots'));
+        $facturas = Factura::orderBy('id', 'desc')->get();
+        return view('reporte.stock_formulario_proceso', compact('facturas'));
     }
 
-    // Método para generar PDF del proceso
+
+    public function obtenerOTs($factura_id)
+    {
+        return Order_trabajo::where('factura_id', $factura_id)
+            ->select('id', 'nro_ot')
+            ->orderBy('nro_ot')
+            ->get();
+    }
+
+
     public function procesoPdf(Request $request)
     {
-        $otId = $request->order_trabajo_id;
 
-        $ot = Order_trabajo::with([
-            'factura.cliente',       // Cliente
-            'detalles.prenda',
-            'detalles.nombre_tela',
-            'detalles.prelavado',
-            'detalles.focalizado',
+        $ordenTrabajo = Order_trabajo::with([
+            'prenda',
+            'prelavado',
+            'focalizado',
+            'nevado',
+            'tipoTela',
+            'colorTela',
+            'caracteristicaTela',
+            'factura.cliente',
             'procesos.producto',
             'procesos.tipoProceso'
-        ])->findOrFail($otId);
+        ])->findOrFail($request->order_trabajo_id);
 
-        $cliente = $ot->factura->cliente ?? null;
+        $factura = $ordenTrabajo->factura;
+        $procesos = $ordenTrabajo->procesos;
 
-        $totalPrendas = $ot->detalles->sum('cantidad');
-        $totalPeso = $ot->detalles->sum('peso');
+        $totalPrendas = $ordenTrabajo->cantidad;
+        $totalPeso = $ordenTrabajo->peso;
         $fechaImpresion = now()->format('d/m/Y');
 
-        $pdf = PDF::loadView('reporte.pdf.proceso_pdf', compact(
-            'ot',
-            'cliente',
+        return PDF::loadView('reporte.pdf.proceso_pdf', compact(
+            'factura',
+            'ordenTrabajo',
+            'procesos',
             'totalPrendas',
             'totalPeso',
             'fechaImpresion'
-        ))->setPaper('A4', 'portrait');
-
-        return $pdf->stream('ficha_proceso_' . $ot->nro_ot . '.pdf');
+        ))->stream('ficha_proceso_OT_' . $ordenTrabajo->nro_ot . '.pdf');
     }
+
 
 
     public function generarProcesoPDF(Request $request)
     {
-        $fechaInicio = Carbon::parse($request->fecha_inicio);
-        $fechaFin = Carbon::parse($request->fecha_fin);
-        $sucursal_id = $request->sucursal_id;
 
-        $ots = Order_trabajo::with([
+        $ot = Order_trabajo::with([
             'factura.cliente',
             'detalles.prenda',
             'detalles.nombre_tela',
@@ -89,17 +90,29 @@ class ReporteController extends Controller
             'detalles.focalizado',
             'procesos.producto',
             'procesos.tipoProceso'
-        ])
-            ->where('sucursal_id', $sucursal_id)
-            ->whereBetween('fecha', [$fechaInicio, $fechaFin])
-            ->get();
+        ])->findOrFail($request->order_trabajo_id);
+
+        $cliente = $ot->factura->cliente;
+
+
+        $totalPrendas = $ot->detalles->sum('cantidad');
+        $totalPeso = $ot->detalles->sum('peso');
 
         $fechaImpresion = now()->format('d/m/Y');
 
-        $pdf = PDF::loadView('reporte.pdf.proceso_pdf', compact('ots', 'fechaImpresion'));
-        return $pdf->stream('reporte_procesos.pdf');
-    }
+        $data = [
+            'ot' => $ot,
+            'cliente' => $cliente,
+            'totalPrendas' => $totalPrendas,
+            'totalPeso' => $totalPeso,
+            'fechaImpresion' => $fechaImpresion
+        ];
 
+        $pdf = PDF::loadView('reporte.pdf.proceso_pdf', $data)
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('ficha_proceso_OT_' . $ot->nro_ot . '.pdf');
+    }
 
     public function cuentaPorCobrar(Request $request)
     {
