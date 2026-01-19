@@ -301,9 +301,8 @@
                                         required onchange="cuantificarOjales()" onclick="this.select()">
                                 </div>
                                 <div class="col-md">
-                                    <label class="required fw-semibold fs-6 mb-2">Tela</label>
-                                    <select name="tela_id" id="tela_id" style="width: 100%" data-placeholder="SELECIONE"
-                                        required>
+                                    <label class="fw-semibold fs-6 mb-2">Tela</label>
+                                    <select name="tela_id" id="tela_id" style="width: 100%" data-placeholder="SELECIONE">
                                         <option></option>
                                         @foreach ($telas as $tela)
                                             <option value="{{ $tela->id }}">{{ $tela->nombre }}</option>
@@ -321,9 +320,8 @@
                                     </select>
                                 </div>
                                 <div class="col-md">
-                                    <label class="required fw-semibold fs-6 mb-2">Nevado</label>
-                                    <select name="nevado_id" id="nevado_id" data-placeholder="SELECIONE" required
-                                        style="width: 100%">
+                                    <label class="fw-semibold fs-6 mb-2">Nevado</label>
+                                    <select name="nevado_id" id="nevado_id" data-placeholder="SELECIONE" style="width: 100%">
                                         <option></option>
                                         @foreach ($nevados as $nevado)
                                             <option value="{{ $nevado->id }}">{{ $nevado->nombre }}</option>
@@ -331,9 +329,8 @@
                                     </select>
                                 </div>
                                 <div class="col-md">
-                                    <label class="required fw-semibold fs-6 mb-2">Focalizado</label>
-                                    <select name="focalizado_id" id="focalizado_id" data-placeholder="SELECIONE"
-                                        required style="width: 100%">
+                                    <label class="fw-semibold fs-6 mb-2">Focalizado</label>
+                                    <select name="focalizado_id" id="focalizado_id" data-placeholder="SELECIONE" style="width: 100%">
                                         <option></option>
                                         @foreach ($focalizados as $focalizado)
                                             <option value="{{ $focalizado->id }}">{{ $focalizado->nombre }}</option>
@@ -370,9 +367,8 @@
                                         </div>
 
                                         <div class="col-md">
-                                            <label class="required fw-semibold fs-6 mb-2">Ca. Tela</label>
-                                            <select name="caracteristica_tela_id" id="caracteristica_tela_id"
-                                                data-placeholder="SELECIONE" required style="width: 100%">
+                                            <label class="fw-semibold fs-6 mb-2">Ca. Tela</label>
+                                            <select name="caracteristica_tela_id" id="caracteristica_tela_id" data-placeholder="SELECIONE" style="width: 100%">
                                                 <option></option>
                                                 @foreach ($caracteristicaTelas as $caracteristicaTela)
                                                     <option value="{{ $caracteristicaTela->id }}">
@@ -383,9 +379,8 @@
                                         </div>
 
                                         <div class="col-md">
-                                            <label class="required fw-semibold fs-6 mb-2">Peso</label>
-                                            <input type="number" id="peso" name="peso" required min="1"
-                                                style="width: 100%">
+                                            <label class="fw-semibold fs-6 mb-2">Peso</label>
+                                            <input type="number" id="peso" name="peso" min="1" style="width: 100%">
                                         </div>
 
                                         <div class="col-md">
@@ -401,9 +396,8 @@
                                         </div>
 
                                         <div class="col-md">
-                                            <label class="required fw-semibold fs-6 mb-2">Obs</label>
-                                            <input type="text" id="observacion" name="observacion" required
-                                                style="width: 100%">
+                                            <label class="fw-semibold fs-6 mb-2">Obs</label>
+                                            <input type="text" id="observacion" name="observacion" style="width: 100%">
                                         </div>
 
                                         <div class="col-md">

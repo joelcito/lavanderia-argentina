@@ -98,7 +98,10 @@
 
                 if (!facturaId) return;
 
-                $.get(`/ordenTrabajo/ots/${facturaId}`, function (data) {
+                // $.get(`/ordenTrabajo/ots/${facturaId}`, function (data) {
+                let urlBase = "{{ route('order-trabajo.obtenerOTs', ':id') }}";
+                let d = urlBase.replace(':id', facturaId);
+                $.get(d, function (data) {
                     if (data.length > 0) {
                         data.forEach(function (ot) {
                             $('#ot_select').append(`<option value="${ot.id}">OT ${ot.nro_ot}</option>`);
@@ -142,7 +145,7 @@
 
 
             function listarCantidades() {
-                $.get("/ordenTrabajo/listarCantidades", function (data) {
+                $.get("{{ route('order-trabajo.listarCantidades') }}", function (data) {
                     let html = '';
                     data.forEach(function (item) {
                         html += `<tr>
