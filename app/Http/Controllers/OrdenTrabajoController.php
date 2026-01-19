@@ -239,7 +239,8 @@ class OrdenTrabajoController extends Controller
 
         $pdf = PDF::loadView('ordenTrabajo.pdf.imprimirOrdenTrabajo', $data)
             // ->setPaper([0, 0, 612, 396]);
-            ->setPaper('a5', 'landscape');
+            // ->setPaper('a5', 'landscape');
+            ->setPaper([0, 0, 612, 1008], 'portrait');
 
         return $pdf->stream('imprimirOrdenTrabajo.pdf');
 
