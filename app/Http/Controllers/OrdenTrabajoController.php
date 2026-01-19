@@ -285,9 +285,10 @@ class OrdenTrabajoController extends Controller
     public function obtenerOTs($factura_id)
     {
         return Order_trabajo::where('factura_id', $factura_id)
-            ->select('id', 'nro_ot')
-            ->orderBy('nro_ot')
-            ->get();
+                            ->where('tipo', 'ORDEN_TRABAJO')
+                            ->select('id', 'nro_ot')
+                            ->orderBy('nro_ot')
+                            ->get();
     }
 
 
@@ -314,7 +315,9 @@ class OrdenTrabajoController extends Controller
 
     public function listarCantidades()
     {
-        $ordenes = Order_trabajo::with('factura')->get();
+        $ordenes = Order_trabajo::with('factura')
+                                ->where('tipo', 'ORDEN_TRABAJO')
+                                ->get();
         $data = $ordenes->map(function ($o) {
             return [
                 'factura_numero' => $o->factura->numero_factura,

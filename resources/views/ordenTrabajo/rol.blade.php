@@ -11,9 +11,9 @@
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label>Factura</label>
+                        <label>Factura / Nota de Recepcion</label>
                         <select id="factura_select" class="form-control">
-                            <option value="">Seleccione Factura</option>
+                            <option value="">Seleccione Factura / Nota Recepcion</option>
                             @foreach($facturas as $factura)
                                 <option value="{{ $factura->id }}">{{ $factura->numero_factura }}</option>
                             @endforeach
@@ -35,10 +35,10 @@
                     <table class="table table-bordered" id="tablaCantidades">
                         <thead>
                             <tr>
-                                <th>Factura</th>
-                                <th>OT</th>
-                                <th>Planchado</th>
-                                <th>Focalizado</th>
+                                <th>Factura / Nota de Recepcion</th>
+                                <th>Nro. OT</th>
+                                <th>Cantidad Planchado</th>
+                                <th>Cantidad Focalizado</th>
                             </tr>
                         </thead>
                         <tbody>
