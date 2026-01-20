@@ -380,7 +380,7 @@
 
                                         <div class="col-md">
                                             <label class="fw-semibold fs-6 mb-2">Peso</label>
-                                            <input type="number" id="peso" name="peso" min="1" style="width: 100%">
+                                            <input type="number" id="peso" name="peso" min="0" step="0.01" style="width: 100%">
                                         </div>
 
                                         <div class="col-md">
