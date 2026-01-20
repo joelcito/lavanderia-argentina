@@ -85,7 +85,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header" id="kt_modal_add_user_header">
-                    <h3 class="fw-bold">STOCK POR SUCUASALES <span id="nombreProductoModal"></span></h3>
+                    <h3 class="fw-bold">STOCK POR SUCUASALES <span class="text-info" id="nombreProductoModal"></span></h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body scroll-y">
@@ -110,7 +110,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header" id="kt_modal_add_user_header">
-                    <h3 class="fw-bold">INGRESO DE STOCK:  <span class="text-info" id="nombreProductoModal"></span></h3>
+                    <h3 class="fw-bold">INGRESO DE STOCK:  <span class="text-info" id="nombreProductoModal-1"></span></h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body scroll-y">
@@ -163,7 +163,7 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header" id="kt_modal_add_user_header">
-                    <h3 class="fw-bold">SALIDA DE STOCK:  <span class="text-info" id="nombreProductoModal"></span></h3>
+                    <h3 class="fw-bold">SALIDA DE STOCK:  <span class="text-info" id="nombreProductoModal-2"></span></h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body scroll-y">
@@ -342,6 +342,8 @@
         function abrirStock(productoId, nombre) {
 
             document.getElementById('nombreProductoModal').textContent = nombre;
+            document.getElementById('nombreProductoModal-1').textContent = nombre;
+            document.getElementById('nombreProductoModal-2').textContent = nombre;
 
             $.ajax({
                 url: "{{ route('movimiento.ajaxListado') }}", // Ruta que veremos después
@@ -394,6 +396,7 @@
                         });
                         ajaxListado();
                         $('#modalIngreso').modal('hide');
+                        $('#modalStockSucursal').modal('hide');
                     } else {
 
                     }
@@ -451,6 +454,7 @@
                         });
                         ajaxListado();
                         $('#modalSalida').modal('hide');
+                        $('#modalStockSucursal').modal('hide');
                     } else {
                         Swal.fire({
                             title: "LA SALIDA ES MAYOR AL STOCK",

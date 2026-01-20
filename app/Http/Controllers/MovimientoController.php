@@ -30,20 +30,22 @@ class MovimientoController extends Controller
                 ->get();
 
                 // dd($stocks);*/
-            $stocks = Sucursal::leftJoin('movimientos', function($join) use ($productoId) {
-                    $join->on('sucursales.id', '=', 'movimientos.sucursal_id')
-                        ->where('movimientos.producto_id', '=', $productoId);
-                })
-                ->select(
-                    'sucursales.id as sucursal_id',
-                    'sucursales.nombre as sucursal_nombre',
-                    DB::raw('COALESCE(SUM(movimientos.ingreso) - SUM(movimientos.salida), 0) as stock_sucursal')
-                )
-                ->groupBy('sucursales.id', 'sucursales.nombre')
-                ->get();
+            // $stocks = Sucursal::leftJoin('movimientos', function($join) use ($productoId) {
+            //         $join->on('sucursales.id', '=', 'movimientos.sucursal_id')
+            //             ->where('movimientos.producto_id', '=', $productoId);
+            //     })
+            //     ->select(
+            //         'sucursales.id as sucursal_id',
+            //         'sucursales.nombre as sucursal_nombre',
+            //         DB::raw('COALESCE(SUM(movimientos.ingreso) - SUM(movimientos.salida), 0) as stock_sucursal')
+            //     )
+            //     ->groupBy('sucursales.id', 'sucursales.nombre')
+            //     ->get();
+
+            $sucursales = Sucursal::all();
 
             $valores = [
-                'stock' => view('movimiento.ajaxListado')->with(compact('stocks', 'productoId'))->render()
+                'stock' => view('movimiento.ajaxListado')->with(compact('productoId', 'sucursales'))->render()
             ];
 
             $data = Respuesta::success($valores, "Datos Obtenidos correctamente");
@@ -77,8 +79,9 @@ class MovimientoController extends Controller
 
             $movimiento->producto_id = $producto_id;
             $movimiento->sucursal_id = $sucursal_id;
-            $movimiento->ingreso = $ingreso;
-            $movimiento->fecha = $fecha;
+            $movimiento->ingreso     = $ingreso;
+            $movimiento->salida      = 0;
+            $movimiento->fecha       = $fecha;
             $movimiento->descripcion = $descripcion;
 
             $movimiento->save();
@@ -124,11 +127,11 @@ class MovimientoController extends Controller
             $movimiento = new Movimiento();
             $movimiento->usuario_creador_id = $usuario->id;
 
-
             $movimiento->producto_id = $producto_id;
             $movimiento->sucursal_id = $sucursal_id;
-            $movimiento->salida = $salida;
-            $movimiento->fecha = $fecha;
+            $movimiento->salida      = $salida;
+            $movimiento->ingreso     = 0;
+            $movimiento->fecha       = $fecha;
             $movimiento->descripcion = $descripcion;
 
             $movimiento->save();
