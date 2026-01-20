@@ -40,15 +40,18 @@ class ProductoController extends Controller
 
         if($request->ajax()){
 
+            // dd($request->all());
+
             //AL INICIO DECLARACION DE VARIABLES
-            $producto_id = $request->input('id');
-            $proveedor_id = $request->input('proveedor_id');
-            $nombre = $request->input('nombre');
-            $tipo = $request->input('tipo');
-            $codigo = $request->input('codigo');
-            $minimo_stock = $request->input('minimo_stock');
-            $usuario = Auth::user();
-            
+            $producto_id     = $request->input('id');
+            $proveedor_id    = $request->input('proveedor_id');
+            $nombre          = $request->input('nombre');
+            $tipo            = $request->input('tipo');
+            $codigo          = $request->input('codigo');
+            $minimo_stock    = $request->input('minimo_stock');
+            $precio_producto = $request->input('precio_producto');
+            $usuario         = Auth::user();
+
             if($producto_id == '0'){
                 //LA CREACION DE UN NUEVa producto
                 $producto = new Producto();
@@ -61,9 +64,10 @@ class ProductoController extends Controller
             }
 
             $producto->proveedor_id = $proveedor_id;
-            $producto->nombre = $nombre;
-            $producto->tipo = $tipo;
-            $producto->codigo = $codigo;
+            $producto->nombre       = $nombre;
+            $producto->tipo         = $tipo;
+            $producto->codigo       = $codigo;
+            $producto->precio       = $precio_producto;
             $producto->minimo_stock = $minimo_stock;
             $producto->save();
 
@@ -74,7 +78,7 @@ class ProductoController extends Controller
         }
 
         return $data;
-        
+
     }
 
     public function eliminarProducto(Request $request){
@@ -96,7 +100,7 @@ class ProductoController extends Controller
             $data = Respuesta::success(null, "Se elimino con exito");
 
         }else{
-        
+
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
 

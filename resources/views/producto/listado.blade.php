@@ -26,6 +26,15 @@
                         <input type="hidden" name="id" id="id" value="0">
                         <div class="row">
                             <div class="col-md-12">
+
+
+
+
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Proveedor</label>
                                     <select class="form-control form-control-sm" id="proveedor_id" name="proveedor_id"
@@ -38,29 +47,42 @@
                                         @endforelse
                                     </select>
                                 </div>
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Nombre</label>
-                                    <input type="text" class="form-control form-control-sm" id="nombre"
-                                        name="nombre">
-                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Tipo</label>
-                                    {{-- <input type="text" class="form-control form-control-sm" id="tipo" name="tipo"
-                                        maxlength="13"> --}}
-                                        <select class="form-select form-select-sm" name="tipo" id="tipo">
-                                            <option value="LITRO">LITRO</option>
-                                            <option value="KILOGRAMO">KILOGRAMO</option>
-                                        </select>
+                                    <select class="form-select form-select-sm" name="tipo" id="tipo" required>
+                                        <option value="LITRO">LITRO</option>
+                                        <option value="KILOGRAMO">KILOGRAMO</option>
+                                        <option value="GRAMO">GRAMO</option>
+                                    </select>
                                 </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Codigo</label>
-                                    <input type="text" class="form-control form-control-sm" id="codigo"
-                                        name="codigo">
+                                    <input type="text" class="form-control form-control-sm" id="codigo" name="codigo" required>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Nombre</label>
+                                    <input type="text" class="form-control form-control-sm" id="nombre" name="nombre" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Precio Compra</label>
+                                    <input type="number" class="form-control form-control-sm" id="precio_producto" name="precio_producto" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Minimo Stock</label>
-                                    <input type="text" class="form-control form-control-sm" id="minimo_stock"
-                                        name="minimo_stock" maxlength="8">
+                                    <input type="number" class="form-control form-control-sm" id="minimo_stock" name="minimo_stock" maxlength="8" required>
                                 </div>
                             </div>
                         </div>
@@ -283,48 +305,53 @@
         }
 
         function guardarProducto() {
-            let datos = $('#formularioProducto').serializeArray();
 
-            $.ajax({
-                url: "{{ route('producto.guardarProducto') }}",
-                method: "POST",
-                data: datos,
-                success: function(resultado) {
-                    if (resultado.estado) {
-                        Swal.fire({
-                            title: "EL REGISTRO FUE EXITOSO.",
-                            icon: "success",
-                            timer: 3000, // Se cierra en 3 segundos
-                            showConfirmButton: false
-                        });
-                        ajaxListado();
-                        $('#modalProducto').modal('hide');
-                    } else {
+            if($("#formularioProducto")[0].checkValidity()){
+                let datos = $('#formularioProducto').serializeArray();
+                $.ajax({
+                    url: "{{ route('producto.guardarProducto') }}",
+                    method: "POST",
+                    data: datos,
+                    success: function(resultado) {
+                        if (resultado.estado) {
+                            Swal.fire({
+                                title: "EL REGISTRO FUE EXITOSO.",
+                                icon: "success",
+                                timer: 3000, // Se cierra en 3 segundos
+                                showConfirmButton: false
+                            });
+                            ajaxListado();
+                            $('#modalProducto').modal('hide');
+                        } else {
 
-                    }
-                },
-                error: function(xhr) {
-                    limpiarErorres();
-
-                    if (xhr.status === 422) {
-                        let errores = xhr.responseJSON.errors;
-
-                        for (let campo in errores) {
-                            let mensaje = errores[campo][0];
-
-                            let input = $(`[name="${campo}"]`);
-                            input.addClass("is-invalid");
-                            input.after(`<div class="invalid-feedback">${mensaje}</div>`);
                         }
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Ocurrió un error inesperado.',
-                        });
+                    },
+                    error: function(xhr) {
+                        limpiarErorres();
+
+                        if (xhr.status === 422) {
+                            let errores = xhr.responseJSON.errors;
+
+                            for (let campo in errores) {
+                                let mensaje = errores[campo][0];
+
+                                let input = $(`[name="${campo}"]`);
+                                input.addClass("is-invalid");
+                                input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                            }
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error inesperado.',
+                            });
+                        }
                     }
-                }
-            });
+                });
+            }else{
+                $("#formularioProducto")[0].reportValidity();
+            }
+
         }
 
         function editarProducto(producto) {
