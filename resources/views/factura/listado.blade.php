@@ -975,5 +975,54 @@
             }
         }
 
+        function anularRecibo(recibo, numero){
+            Swal.fire({
+                title: "Esta seguro de Anular el numero de recibo "+numero+"?",
+                text: "Esta accion no se podra revertir!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, estoy seguro!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ url('factura/anularRecibo') }}",
+                        method: "POST",
+                        data: {recibo:recibo},
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.estado) {
+                                ajaxListado();
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: "EXITO",
+                                    text: JSON.stringify(data.msg),
+                                    showConfirmButton: false, // No mostrar botón de confirmación
+                                    // timer            : 2000,        // 5 segundos
+                                    timerProgressBar: true
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    text: JSON.stringify(data.msg),
+                                    title: "ERROR",
+                                    showConfirmButton: false, // No mostrar botón de confirmación
+                                    // timer            : 2000,        // 5 segundos
+                                    timerProgressBar: true
+                                });
+                            }
+                        }, error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error inesperado.' + xhr,
+                            });
+                        }
+                    })
+                }
+            });
+        }
+
     </script>
 @endsection

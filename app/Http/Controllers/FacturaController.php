@@ -7,6 +7,7 @@ use App\Models\Cliente;
 use App\Models\Color_tela;
 use App\Models\Factura;
 use App\Models\Focalizado;
+use App\Models\Movimiento;
 use App\Models\Nevado;
 use App\Models\Nombre_tela;
 use App\Models\Order_trabajo;
@@ -298,6 +299,40 @@ class FacturaController extends Controller
         $cliente = $factura->cliente;
 
         return view('factura.detalle')->with(compact('factura', 'cliente'));
+    }
+
+    public function anularRecibo(Request $request){
+
+        if($request->ajax()){
+
+            // dd($request->all());
+            $factura_id = $request->input('recibo');
+            $usuario    = Auth::user();
+            $factura    = Factura::find($factura_id);
+
+            // dd($factura, $factura_id, $request->all());
+
+            // Obtener los IDs de los detalles
+            $orden_trabajoIds = Order_trabajo::where('factura_id', $factura->id)->pluck('id')->toArray();
+
+            //ELIMINAMOS LOS MOVIMIENTOS
+            Movimiento::whereIn('orden_trabajo_id', $orden_trabajoIds)->delete();
+
+            // PARA ELIMINAR LOS ORDENEES DE TRABAJO
+            Order_trabajo::where('factura_id', $factura->id)->delete();
+
+            // PARA ELIMINAR LOS PAGOS
+            Pago::where('factura_id', $factura->id)->delete();
+
+            $factura->estado = 'Anulado';
+            $factura->save();
+
+            $data = Respuesta::success(null, 'SE ANULO CON EXITO');
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
     }
 
 }

@@ -43,7 +43,7 @@
                                 onclick="imprimeREcibo('{{ $fac->id }}')"><i
                                     class="fa fa-file-pdf"></i></button>
                             <button class="btn btn-danger btn-sm btn-icon tamanio_boton"
-                                onclick="anularRecibo('{{ $fac->id }}')"><i class="fa fa-trash"></i></button>
+                                onclick="anularRecibo('{{ $fac->id }}', '{{ $fac->numero_factura }}')"><i class="fa fa-trash"></i></button>
                         @endif
                     </td>
                 </tr>

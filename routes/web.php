@@ -169,6 +169,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/recibo/{factura_id}', [FacturaController::class, 'recibo'])->name('factura.recibo');
         Route::post('/ajaxListadoFacturas', [FacturaController::class, 'ajaxListadoFacturas'])->name('factura.ajaxListadoFacturas');
         Route::get('/detalle/{factura_id}', [FacturaController::class, 'detalle'])->name('factura.detalle');
+        Route::post('/anularRecibo', [FacturaController::class, 'anularRecibo']);
     });
 
     //PAGO
