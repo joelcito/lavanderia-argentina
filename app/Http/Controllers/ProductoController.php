@@ -49,7 +49,7 @@ class ProductoController extends Controller
             $tipo            = $request->input('tipo');
             $codigo          = $request->input('codigo');
             $minimo_stock    = $request->input('minimo_stock');
-            $precio_producto = $request->input('precio_producto');
+            // $precio_producto = $request->input('precio_producto');
             $usuario         = Auth::user();
 
             if($producto_id == '0'){
@@ -67,7 +67,7 @@ class ProductoController extends Controller
             $producto->nombre       = $nombre;
             $producto->tipo         = $tipo;
             $producto->codigo       = $codigo;
-            $producto->precio       = $precio_producto;
+            // $producto->precio       = $precio_producto;
             $producto->minimo_stock = $minimo_stock;
             $producto->save();
 

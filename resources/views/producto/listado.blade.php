@@ -25,15 +25,6 @@
                     <form id="formularioProducto">
                         <input type="hidden" name="id" id="id" value="0">
                         <div class="row">
-                            <div class="col-md-12">
-
-
-
-
-
-                            </div>
-                        </div>
-                        <div class="row">
                             <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Proveedor</label>
@@ -67,19 +58,13 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Nombre</label>
                                     <input type="text" class="form-control form-control-sm" id="nombre" name="nombre" required>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Precio Compra</label>
-                                    <input type="number" class="form-control form-control-sm" id="precio_producto" name="precio_producto" step="0.01" required>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Minimo Stock</label>
                                     <input type="number" class="form-control form-control-sm" id="minimo_stock" name="minimo_stock" maxlength="8" required>
@@ -141,22 +126,41 @@
                         <input type="hidden" name="idProd" id="idProd" >
                         <input type="hidden" name="idSuc" id="idSuc" >
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Sucursal</label>
-                                    <input type="text" class="form-control form-control-sm" id="sucursal"
-                                        name="sucursal" readonly>
+                                    <input type="text" class="form-control form-control-sm" id="sucursal" name="sucursal" readonly>
                                 </div>
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Ingrese la Cantidad</label>
-                                    <input type="number" class="form-control form-control-sm" id="cantidad_ingreso"
-                                        name="cantidad_ingreso">
-                                </div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Fecha de Ingreso</label>
-                                    <input type="text" class="form-control form-control-sm" id="fecha_ingreso"
-                                        name="fecha_ingreso" value="{{ date('Y-m-d') }}" readonly>
+                                    <input type="text" class="form-control form-control-sm" id="fecha_ingreso" name="fecha_ingreso" value="{{ date('Y-m-d') }}" readonly>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Ingrese la Cantidad</label>
+                                    <input type="number" class="form-control form-control-sm" min="0.01" id="cantidad_ingreso" name="cantidad_ingreso" required step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Precio de Compra</label>
+                                    <input type="number" class="form-control form-control-sm" id="precio_compra" name="precio_compra" min="0.01" required step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Codigo Compra</label>
+                                    <input type="text" class="form-control form-control-sm" id="codigo_compra" name="codigo_compra">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Descripcion</label>
                                     <textarea class="form-control form-control-sm" id="descripcion"
@@ -194,22 +198,34 @@
                         <input type="hidden" name="idProds" id="idProds" >
                         <input type="hidden" name="idSucs" id="idSucs" >
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Sucursal</label>
-                                    <input type="text" class="form-control form-control-sm" id="sucursales"
-                                        name="sucursales" readonly>
+                                    <input type="text" class="form-control form-control-sm" id="sucursales" name="sucursales" readonly>
                                 </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Fecha de Salida</label>
+                                    <input type="text" class="form-control form-control-sm" id="fecha_salida" name="fecha_salida" value="{{ date('Y-m-d') }}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Seleccione Ingreso</label>
+                                    <select class="form-select form-select-sm" name="movimiento_id_ingreso" id="movimiento_id_ingreso" required></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Salida la Cantidad</label>
                                     <input type="number" class="form-control form-control-sm" id="cantidad_salida"
                                         name="cantidad_salida">
                                 </div>
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Fecha de Salida</label>
-                                    <input type="text" class="form-control form-control-sm" id="fecha_salida"
-                                        name="fecha_salida" value="{{ date('Y-m-d') }}" readonly>
-                                </div>
+
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Descripcion</label>
                                     <textarea class="form-control form-control-sm" id="descripcion"
@@ -402,57 +418,108 @@
 
             $('#descripcion').val('')
             $('#cantidad_ingreso').val('')
+            $('#precio_compra').val('')
+            $('#codigo_compra').val('')
             $('#id').val(0)
             $('#modalIngreso').modal('show')
         }
 
         function guardarIngreso() {
-            let datos = $('#formularioIngreso').serializeArray();
+            if($("#formularioIngreso")[0].checkValidity()){
+                let datos = $('#formularioIngreso').serializeArray();
+                $.ajax({
+                    url: "{{ route('movimiento.guardarIngreso') }}",
+                    method: "POST",
+                    data: datos,
+                    success: function(resultado) {
+                        if (resultado.estado) {
+                            Swal.fire({
+                                title: "EL REGISTRO FUE EXITOSO.",
+                                icon: "success",
+                                timer: 3000, // Se cierra en 3 segundos
+                                showConfirmButton: false
+                            });
+                            ajaxListado();
+                            $('#modalIngreso').modal('hide');
+                            $('#modalStockSucursal').modal('hide');
+                        } else {
 
-            $.ajax({
-                url: "{{ route('movimiento.guardarIngreso') }}",
-                method: "POST",
-                data: datos,
-                success: function(resultado) {
-                    if (resultado.estado) {
-                        Swal.fire({
-                            title: "EL REGISTRO FUE EXITOSO.",
-                            icon: "success",
-                            timer: 3000, // Se cierra en 3 segundos
-                            showConfirmButton: false
-                        });
-                        ajaxListado();
-                        $('#modalIngreso').modal('hide');
-                        $('#modalStockSucursal').modal('hide');
-                    } else {
-
-                    }
-                },
-                error: function(xhr) {
-                    limpiarErorres();
-
-                    if (xhr.status === 422) {
-                        let errores = xhr.responseJSON.errors;
-
-                        for (let campo in errores) {
-                            let mensaje = errores[campo][0];
-
-                            let input = $(`[name="${campo}"]`);
-                            input.addClass("is-invalid");
-                            input.after(`<div class="invalid-feedback">${mensaje}</div>`);
                         }
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Ocurrió un error inesperado.',
-                        });
+                    },
+                    error: function(xhr) {
+                        limpiarErorres();
+
+                        if (xhr.status === 422) {
+                            let errores = xhr.responseJSON.errors;
+
+                            for (let campo in errores) {
+                                let mensaje = errores[campo][0];
+
+                                let input = $(`[name="${campo}"]`);
+                                input.addClass("is-invalid");
+                                input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                            }
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error inesperado.',
+                            });
+                        }
                     }
-                }
-            });
+                });
+            }else{
+                $("#formularioIngreso")[0].reportValidity();
+            }
         }
 
         function modalSalida(productoId, sucursalId, nombreSuc) {
+
+            let datos = $('#formularioIngreso').serializeArray();
+                $.ajax({
+                    url: "{{ route('movimiento.guardarIngreso') }}",
+                    method: "POST",
+                    data: {
+
+                    },
+                    success: function(resultado) {
+                        if (resultado.estado) {
+                            Swal.fire({
+                                title: "EL REGISTRO FUE EXITOSO.",
+                                icon: "success",
+                                timer: 3000, // Se cierra en 3 segundos
+                                showConfirmButton: false
+                            });
+                            ajaxListado();
+                            $('#modalIngreso').modal('hide');
+                            $('#modalStockSucursal').modal('hide');
+                        } else {
+
+                        }
+                    },
+                    error: function(xhr) {
+                        limpiarErorres();
+
+                        if (xhr.status === 422) {
+                            let errores = xhr.responseJSON.errors;
+
+                            for (let campo in errores) {
+                                let mensaje = errores[campo][0];
+
+                                let input = $(`[name="${campo}"]`);
+                                input.addClass("is-invalid");
+                                input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                            }
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error inesperado.',
+                            });
+                        }
+                    }
+                });
+
 
             document.getElementById('sucursales').value = nombreSuc;
             document.getElementById('idSucs').value = sucursalId;

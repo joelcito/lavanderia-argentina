@@ -32,6 +32,10 @@ return new class extends Migration
             $table->decimal('ingreso',12,2)->nullable();
             $table->decimal('salida',12,2)->nullable();
             $table->dateTime('fecha')->nullable();
+
+            $table->string('codigo_compra')->nullable();
+            $table->decimal('precio',12,2)->nullable();
+
             $table->text('descripcion')->nullable();
 
             $table->string('estado')->nullable();

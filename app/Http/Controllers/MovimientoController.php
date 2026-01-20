@@ -65,11 +65,13 @@ class MovimientoController extends Controller
 
             //AL INICIO DECLARACION DE VARIABLES
             $movimiento_id = $request->input('id');
-            $producto_id = $request->input('idProd');
-            $sucursal_id = $request->input('idSuc');
-            $ingreso = $request->input('cantidad_ingreso');
-            $fecha = $request->input('fecha_ingreso');
-            $descripcion = $request->input('descripcion');
+            $producto_id   = $request->input('idProd');
+            $sucursal_id   = $request->input('idSuc');
+            $ingreso       = $request->input('cantidad_ingreso');
+            $fecha         = $request->input('fecha_ingreso');
+            $descripcion   = $request->input('descripcion');
+            $precio_compra   = $request->input('precio_compra');
+            $codigo_compra   = $request->input('codigo_compra');
 
             $usuario = Auth::user();
 
@@ -77,12 +79,14 @@ class MovimientoController extends Controller
             $movimiento = new Movimiento();
             $movimiento->usuario_creador_id = $usuario->id;
 
-            $movimiento->producto_id = $producto_id;
-            $movimiento->sucursal_id = $sucursal_id;
-            $movimiento->ingreso     = $ingreso;
-            $movimiento->salida      = 0;
-            $movimiento->fecha       = $fecha;
-            $movimiento->descripcion = $descripcion;
+            $movimiento->producto_id   = $producto_id;
+            $movimiento->sucursal_id   = $sucursal_id;
+            $movimiento->ingreso       = $ingreso;
+            $movimiento->precio        = $precio_compra;
+            $movimiento->codigo_compra = $codigo_compra;
+            $movimiento->salida        = 0;
+            $movimiento->fecha         = $fecha;
+            $movimiento->descripcion   = $descripcion;
 
             $movimiento->save();
 
