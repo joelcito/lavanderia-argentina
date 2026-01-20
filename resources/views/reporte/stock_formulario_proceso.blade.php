@@ -11,17 +11,17 @@
                     @csrf
                     <div class="row">
 
-
                         <div class="col-md-6">
                             <label>Factura</label>
                             <select id="factura_select" class="form-control" required>
                                 <option value="">Seleccione Factura</option>
                                 @foreach($facturas as $factura)
-                                    <option value="{{ $factura->id }}">{{ $factura->numero_factura }}</option>
+                                    <option value="{{ $factura->id }}">
+                                        {{ $factura->numero_factura }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
-
 
                         <div class="col-md-6">
                             <label>OT</label>
@@ -29,7 +29,6 @@
                                 <option value="">Seleccione OT</option>
                             </select>
                         </div>
-
 
                         <input type="hidden" name="factura_id" id="factura_id">
 
@@ -46,6 +45,10 @@
 @section('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        const urlObtenerOTs = "{{ route('reporte.proceso.obtenerOTs', ':factura_id') }}";
+    </script>
+
+    <script>
         $(document).ready(function () {
             $('#factura_select').on('change', function () {
                 let facturaId = $(this).val();
@@ -56,11 +59,12 @@
                     return;
                 }
 
-                // URL directa
-                let url = `/reporte/proceso/ots/${facturaId}`;
+
+                let url = urlObtenerOTs.replace(':factura_id', facturaId);
 
                 $.get(url, function (data) {
                     let html = '<option value="">Seleccione OT</option>';
+
                     if (data.length > 0) {
                         data.forEach(function (ot) {
                             html += `<option value="${ot.id}">OT ${ot.nro_ot}</option>`;
@@ -68,9 +72,10 @@
                     } else {
                         html += '<option value="">No hay OTs disponibles</option>';
                     }
+
                     $('#numero_ot_select').html(html);
-                }).fail(function (xhr, status, error) {
-                    console.error("Error AJAX:", status, error);
+                }).fail(function (xhr) {
+                    console.error('Error AJAX OTs:', xhr);
                 });
             });
         });

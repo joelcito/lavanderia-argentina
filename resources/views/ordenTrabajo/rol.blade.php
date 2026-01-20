@@ -65,10 +65,11 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label>Tipo de Proceso</label>
+
                             <select name="tipo" id="tipo" class="form-control" required>
                                 <option value="">Seleccione</option>
-                                <option value="Planchado">Planchado</option>
-                                <option value="Focalizado">Focalizado</option>
+                                <option value="planchado">Planchado</option>
+                                <option value="focalizado">Focalizado</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -149,11 +150,11 @@
                     let html = '';
                     data.forEach(function (item) {
                         html += `<tr>
-                            <td>${item.factura_numero}</td>
-                            <td>${item.nro_ot}</td>
-                            <td>${item.cantidad_planchado ?? 0}</td>
-                            <td>${item.cantidad_focalizado ?? 0}</td>
-                        </tr>`;
+                                <td>${item.factura_numero}</td>
+                                <td>${item.nro_ot}</td>
+                                <td>${item.cantidad_planchado ?? 0}</td>
+                                <td>${item.cantidad_focalizado ?? 0}</td>
+                            </tr>`;
                     });
                     $('#tablaCantidades tbody').html(html);
                 });
