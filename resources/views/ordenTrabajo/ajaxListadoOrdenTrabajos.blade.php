@@ -27,13 +27,13 @@
                 <tr>
                     <td>{{ $ordenTrabajo->cantidad }}</td>
                     <td>{{ $ordenTrabajo->numero_ojales }}</td>
-                    <td>{{ $ordenTrabajo->prenda->nombre }}</td>
-                    <td>{{ $ordenTrabajo->tela->nombre }}</td>
-                    <td>{{ $ordenTrabajo->prelavado->nombre }}</td>
-                    <td>{{ $ordenTrabajo->nevado->nombre }}</td>
-                    <td>{{ $ordenTrabajo->focalizado->nombre }}</td>
-                    <td>{{ $ordenTrabajo->tipoTela->nombre }}</td>
-                    <td>{{ $ordenTrabajo->colorTela->nombre }}</td>
+                    <td>{{ $ordenTrabajo->prenda?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->tela?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->prelavado?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->nevado?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->focalizado?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->tipoTela?->nombre }}</td>
+                    <td>{{ $ordenTrabajo->colorTela?->nombre }}</td>
                     <td>{{ $ordenTrabajo->caracteristicaTela?->nombre }}</td>
                     <td>{{ $ordenTrabajo->preso }}</td>
                     <td>{{ $ordenTrabajo->precio }}</td>
