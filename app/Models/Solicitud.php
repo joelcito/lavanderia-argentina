@@ -30,7 +30,8 @@ class Solicitud extends Model
 
     public function ordenTrabajo()
     {
-        return $this->belongsTo('App\Models\Order_Trabajo', 'orden_trabajo_id');
+        // return $this->belongsTo('App\Models\Order_trabajo', 'orden_trabajo_id');
+        return $this->belongsTo(Order_trabajo::class, 'orden_trabajo_id');
     }
 
     public function usuarioCreador()
