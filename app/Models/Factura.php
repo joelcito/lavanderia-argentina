@@ -60,6 +60,6 @@ class Factura extends Model
 
     public function pagos()
     {
-        return $this->hasMany(pago::class);
+        return $this->hasMany(Pago::class);
     }
 }
