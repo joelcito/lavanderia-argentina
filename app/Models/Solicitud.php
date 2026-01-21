@@ -23,6 +23,10 @@ class Solicitud extends Model
         'deleted_at'
     ];
 
+    protected $casts = [
+        'ordenes_trabajo' => 'array',
+    ];
+
     public function producto()
     {
         return $this->belongsTo('App\Models\Producto', 'producto_id', 'id');
