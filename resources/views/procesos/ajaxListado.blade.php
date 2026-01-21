@@ -80,11 +80,12 @@
     function verDetalleOT(ot_id) {
         $.get("/procesos/detalle-ot/" + ot_id, function (data) {
             let html = '<table class="table table-bordered">';
-            html += '<thead><tr><th>Producto</th><th>Maquinaria</th><th>Tipo Proceso</th><th>Fecha Ingreso</th><th>Fecha Salida</th><th>Estado</th></tr></thead><tbody>';
+            html += '<thead><tr><th>Producto</th><th>Nº</th><th>Maquinaria</th><th>Tipo Proceso</th><th>Fecha Ingreso</th><th>Fecha Salida</th><th>Estado</th></tr></thead><tbody>';
 
             data.forEach(p => {
                 html += `<tr>
                         <td>${p.producto?.nombre ?? '-'}</td>
+                        <td>${p.maquinaria?.numero ?? '-'}</td>
                         <td>${p.maquinaria?.tipo ?? '-'}</td>
                         <td>${p.tipo_proceso?.nombre ?? '-'}</td>
                         <td>${p.fecha_ingreso ?? '-'}</td>
