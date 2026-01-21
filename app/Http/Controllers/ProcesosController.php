@@ -72,27 +72,16 @@ class ProcesosController extends Controller
 
     public function guardar(Request $request)
     {
-        // Validación
+
         $request->validate([
             'order_trabajo_id' => 'required|exists:order_trabajos,id',
-            'maquinaria_id' => 'required|exists:maquinarias,id',
             'producto_id' => 'required|exists:productos,id',
             'tipo_proceso_id' => 'required|exists:tipo_procesos,id',
             'fecha_ingreso' => 'required|date',
         ]);
 
-        // Obtener maquinaria
+
         $maquinaria = Maquinaria::find($request->maquinaria_id);
-
-        // Validar que esté disponible
-        // if ($maquinaria->estado_maquina !== 'DISPONIBLE') {
-        //     return response()->json([
-        //         'estado' => false,
-        //         'mensaje' => 'La maquinaria seleccionada no está disponible para asignar un proceso.'
-        //     ], 422);
-        // }
-
-        // Crear o actualizar proceso
         $proceso = Proceso::updateOrCreate(
             ['id' => $request->id],
             [

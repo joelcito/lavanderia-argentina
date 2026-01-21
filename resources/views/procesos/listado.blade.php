@@ -40,6 +40,9 @@
                         onclick="modalNuevaLavanderiaConMaquinaria({{ $m->id }})">
                         <div class="fw-bold">{{ ucfirst($m->tipo) }}</div>
 
+                         <div class="text-muted small">
+                            Equipo N° {{ $m->numero}}
+                        </div> 
                         <!-- Estado -->
                         <span class="badge {{ $m->estado_maquina == 'DISPONIBLE' ? 'bg-success' : 'bg-danger' }}">
                             {{ $m->estado_maquina }}
@@ -422,10 +425,10 @@
                 Swal.fire('Error', 'Debe seleccionar una Orden de Trabajo', 'error');
                 return;
             }
-            if (!datos.producto_id) {
-                Swal.fire('Error', 'Debe seleccionar un producto', 'error');
-                return;
-            }
+            // if (!datos.producto_id) {
+            //     Swal.fire('Error', 'Debe seleccionar un producto', 'error');
+            //     return;
+            // }
             if (!datos.tipo_proceso_id) {
                 Swal.fire('Error', 'Debe seleccionar un tipo de proceso', 'error');
                 return;
