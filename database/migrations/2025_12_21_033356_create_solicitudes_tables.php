@@ -21,10 +21,10 @@ return new class extends Migration
             $table->unsignedBigInteger('usuario_eliminador_id')->nullable();
 
             $table->foreign('producto_id')->references('id')->on('productos');
-            // $table->unsignedBigInteger('producto_id')->nullable();
+            $table->unsignedBigInteger('producto_id')->nullable();
             // $table->foreign('orden_trabajo_id')->references('id')->on('order_trabajos');
+            // $table->unsignedBigInteger('orden_trabajo_id')->nullable();
             $table->json('ordenes_trabajo')->nullable();
-            $table->unsignedBigInteger('orden_trabajo_id')->nullable();
             $table->decimal('cantidad',12,2)->nullable();
             $table->decimal('porcentaje',12,2)->nullable();
 
