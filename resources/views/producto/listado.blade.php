@@ -477,58 +477,48 @@
 
             let datos = $('#formularioIngreso').serializeArray();
                 $.ajax({
-                    url: "{{ route('movimiento.guardarIngreso') }}",
+                    url: "{{ route('movimiento.sacarTipoIngreso') }}",
                     method: "POST",
                     data: {
-
+                        producto:productoId,
+                        sucursal:sucursalId
                     },
                     success: function(resultado) {
                         if (resultado.estado) {
-                            Swal.fire({
-                                title: "EL REGISTRO FUE EXITOSO.",
-                                icon: "success",
-                                timer: 3000, // Se cierra en 3 segundos
-                                showConfirmButton: false
+                            let datos = resultado.data.select
+                            let $select = $('#movimiento_id_ingreso');
+                            $select.empty();
+                            $select.append('<option value="">Seleccione una opción</option>');
+                            $.each(datos, function (index, element) {
+                                $select.append(
+                                    $('<option>', {
+                                        value: element.id,
+                                        text: element.codigo_compra
+                                    })
+                                );
                             });
-                            ajaxListado();
-                            $('#modalIngreso').modal('hide');
-                            $('#modalStockSucursal').modal('hide');
+
+                            document.getElementById('sucursales').value = nombreSuc;
+                            document.getElementById('idSucs').value = sucursalId;
+                            document.getElementById('idProds').value = productoId;
+
+                            $('#descripcion').val('')
+                            $('#cantidad_salida').val('')
+                            $('#id').val(0)
+                            $('#modalSalida').modal('show')
                         } else {
 
                         }
                     },
                     error: function(xhr) {
-                        limpiarErorres();
 
-                        if (xhr.status === 422) {
-                            let errores = xhr.responseJSON.errors;
-
-                            for (let campo in errores) {
-                                let mensaje = errores[campo][0];
-
-                                let input = $(`[name="${campo}"]`);
-                                input.addClass("is-invalid");
-                                input.after(`<div class="invalid-feedback">${mensaje}</div>`);
-                            }
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Ocurrió un error inesperado.',
-                            });
-                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ocurrió un error inesperado.',
+                        });
                     }
                 });
-
-
-            document.getElementById('sucursales').value = nombreSuc;
-            document.getElementById('idSucs').value = sucursalId;
-            document.getElementById('idProds').value = productoId;
-
-            $('#descripcion').val('')
-            $('#cantidad_salida').val('')
-            $('#id').val(0)
-            $('#modalSalida').modal('show')
         }
 
         function guardarSalida() {

@@ -85,7 +85,7 @@ class MovimientoController extends Controller
             $movimiento->precio        = $precio_compra;
             $movimiento->codigo_compra = $codigo_compra;
             $movimiento->salida        = 0;
-            $movimiento->fecha         = $fecha;
+            $movimiento->fecha         = date('Y-m-d H:i:s');
             $movimiento->descripcion   = $descripcion;
 
             $movimiento->save();
@@ -107,13 +107,17 @@ class MovimientoController extends Controller
 
         if($request->ajax()){
 
+            // dd($request->all());
+
             //AL INICIO DECLARACION DE VARIABLES
-            $movimiento_id = $request->input('id');
-            $producto_id = $request->input('idProds');
-            $sucursal_id = $request->input('idSucs');
-            $salida = $request->input('cantidad_salida');
-            $fecha = $request->input('fecha_salida');
-            $descripcion = $request->input('descripcion');
+            $movimiento_id         = $request->input('id');
+            $producto_id           = $request->input('idProds');
+            $sucursal_id           = $request->input('idSucs');
+            $salida                = $request->input('cantidad_salida');
+            $fecha                 = $request->input('fecha_salida');
+            $descripcion           = $request->input('descripcion');
+            $movimiento_id_ingreso = $request->input('movimiento_id_ingreso');
+
 
             $usuario = Auth::user();
 
@@ -128,19 +132,46 @@ class MovimientoController extends Controller
             }
 
             //LA CREACION DE UN NUEVa movimiento
-            $movimiento = new Movimiento();
+            $movimiento                     = new Movimiento();
             $movimiento->usuario_creador_id = $usuario->id;
-
-            $movimiento->producto_id = $producto_id;
-            $movimiento->sucursal_id = $sucursal_id;
-            $movimiento->salida      = $salida;
-            $movimiento->ingreso     = 0;
-            $movimiento->fecha       = $fecha;
-            $movimiento->descripcion = $descripcion;
+            $movimiento->producto_id        = $producto_id;
+            $movimiento->sucursal_id        = $sucursal_id;
+            $movimiento->salida             = $salida;
+            $movimiento->ingreso            = 0;
+            $movimiento->fecha              = date('Y-m-d H:i:s');
+            $movimiento->descripcion        = $descripcion;
+            $movimiento->movimiento_id      = $movimiento_id_ingreso;
 
             $movimiento->save();
 
             $data = Respuesta::success(null, "Datos Obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+
+        return $data;
+
+    }
+
+    public function sacarTipoIngreso(Request $request){
+
+        if($request->ajax()){
+
+            $producto_id = $request->input('producto');
+            $sucursal_id = $request->input('sucursal');
+
+            $movimientos = Movimiento::select('movimientos.id', 'movimientos.codigo_compra', 'movimientos.fecha')
+                                    ->where('movimientos.sucursal_id', $sucursal_id)
+                                    ->where('movimientos.producto_id', $producto_id)
+                                    ->where('movimientos.ingreso', '>', 0)
+                                    ->get();
+
+            $valores = [
+                'select' => $movimientos
+            ];
+
+            $data = Respuesta::success($valores, "Datos Obtenidos correctamente");
 
         }else{
             $data = Respuesta::error(null, "Error al obtener los datos");

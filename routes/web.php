@@ -157,6 +157,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/ajaxListado', [MovimientoController::class, 'ajaxListado'])->name('movimiento.ajaxListado');
         Route::post('/guardarIngreso', [MovimientoController::class, 'guardarIngreso'])->name('movimiento.guardarIngreso');
         Route::post('/guardarSalida', [MovimientoController::class, 'guardarSalida'])->name('movimiento.guardarSalida');
+        Route::post('/sacarTipoIngreso', [MovimientoController::class, 'sacarTipoIngreso'])->name('movimiento.sacarTipoIngreso');
 
         //Route::post('/guardarMovimiento', [MovimientoController::class, 'guardarMovimiento'])->name('movimiento.guardarMovimiento');
     });
