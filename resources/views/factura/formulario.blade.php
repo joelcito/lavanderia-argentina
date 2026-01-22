@@ -385,14 +385,12 @@
 
                                         <div class="col-md">
                                             <label class="required fw-semibold fs-6 mb-2">Precio</label>
-                                            <input type="number" id="precio_venta" name="precio_venta" required min="1"
-                                                value="0" onkeyup="calcularsubTotal()" style="width: 100%">
+                                            <input type="number" id="precio_venta" name="precio_venta" required min="0.01" step="0.01" value="0" onkeyup="calcularsubTotal()" style="width: 100%">
                                         </div>
 
                                         <div class="col-md">
                                             <label class="required fw-semibold fs-6 mb-2">S. Total</label>
-                                            <input type="number" id="sub_total" name="sub_total" required min="1"
-                                                style="width: 100%">
+                                            <input type="number" id="sub_total" name="sub_total" required min="0.01" step="0.01"  style="width: 100%">
                                         </div>
 
                                         <div class="col-md">

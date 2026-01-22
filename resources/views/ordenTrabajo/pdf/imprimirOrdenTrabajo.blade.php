@@ -61,8 +61,12 @@
             <tr>
                 <td><strong>Cliente:</strong></td>
                 <td class="text-left">{{ $factura->cliente->nombres." ".$factura->cliente->ap_materno." ".$factura->cliente->ap_paterno }}</td>
-                <td><strong>Fecha:</strong></td>
-                <td class="text-left">{{ $fecha }}</td>
+                <td><strong>Fecha Registro:</strong></td>
+                <td class="text-left">{{ date('d/m/Y H:i:s', strtotime($factura->fecha)) }}</td>
+                <td><strong>Usuario Impresion:</strong></td>
+                <td class="text-left">{{ $usuario->nombres." ".$usuario->ap_materno." ".$usuario->ap_paterno }}</td>
+                <td><strong>Fecha Impresion:</strong></td>
+                <td class="text-left">{{ date('d/m/Y H:i:s') }}</td>
             </tr>
         </table>
 
