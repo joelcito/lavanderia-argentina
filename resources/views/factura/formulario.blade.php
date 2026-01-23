@@ -337,75 +337,67 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                {{--
-                            </div>
-                            <div class="row"> --}}
-                                {{-- <div class="col-md-11"> --}}
-                                    {{-- <div class="row"> --}}
-                                        <div class="col-md">
-                                            <label class="required fw-semibold fs-6 mb-2">T. Tela</label>
-                                            <select name="tipo_tela_id" id="tipo_tela_id" data-placeholder="SELECIONE"
-                                                required style="width: 100%">
-                                                <option></option>
-                                                @foreach ($tipoTelas as $tipoTela)
-                                                    <option value="{{ $tipoTela->id }}">{{ $tipoTela->nombre }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                <div class="col-md">
+                                    <label class="required fw-semibold fs-6 mb-2">T. Tela</label>
+                                    <select name="tipo_tela_id" id="tipo_tela_id" data-placeholder="SELECIONE"
+                                        required style="width: 100%">
+                                        <option></option>
+                                        @foreach ($tipoTelas as $tipoTela)
+                                            <option value="{{ $tipoTela->id }}">{{ $tipoTela->nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-                                        <div class="col-md">
-                                            <label class="required fw-semibold fs-6 mb-2">Co. Tela</label>
-                                            <select name="color_tela_id" id="color_tela_id" data-placeholder="SELECIONE"
-                                                required style="width: 100%">
-                                                <option></option>
-                                                @foreach ($colorTelas as $colorTela)
-                                                    <option value="{{ $colorTela->id }}">{{ $colorTela->nombre }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                <div class="col-md">
+                                    <label class="required fw-semibold fs-6 mb-2">Co. Tela</label>
+                                    <select name="color_tela_id" id="color_tela_id" data-placeholder="SELECIONE"
+                                        required style="width: 100%">
+                                        <option></option>
+                                        @foreach ($colorTelas as $colorTela)
+                                            <option value="{{ $colorTela->id }}">{{ $colorTela->nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-                                        <div class="col-md">
-                                            <label class="fw-semibold fs-6 mb-2">Ca. Tela</label>
-                                            <select name="caracteristica_tela_id" id="caracteristica_tela_id" data-placeholder="SELECIONE" style="width: 100%">
-                                                <option></option>
-                                                @foreach ($caracteristicaTelas as $caracteristicaTela)
-                                                    <option value="{{ $caracteristicaTela->id }}">
-                                                        {{ $caracteristicaTela->nombre }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                <div class="col-md">
+                                    <label class="fw-semibold fs-6 mb-2">Ca. Tela</label>
+                                    <select name="caracteristica_tela_id" id="caracteristica_tela_id" data-placeholder="SELECIONE" style="width: 100%">
+                                        <option></option>
+                                        @foreach ($caracteristicaTelas as $caracteristicaTela)
+                                            <option value="{{ $caracteristicaTela->id }}">
+                                                {{ $caracteristicaTela->nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
 
-                                        <div class="col-md">
-                                            <label class="fw-semibold fs-6 mb-2">Peso</label>
-                                            <input type="number" id="peso" name="peso" min="0" step="0.01" style="width: 100%">
-                                        </div>
+                                <div class="col-md">
+                                    <label class="fw-semibold fs-6 mb-2">Peso</label>
+                                    <input type="number" id="peso" name="peso" min="0" step="0.01" style="width: 100%">
+                                </div>
 
-                                        <div class="col-md">
-                                            <label class="required fw-semibold fs-6 mb-2">Precio</label>
-                                            <input type="number" id="precio_venta" name="precio_venta" required min="0.01" step="0.01" value="0" onkeyup="calcularsubTotal()" style="width: 100%">
-                                        </div>
+                                <div class="col-md">
+                                    <label class="required fw-semibold fs-6 mb-2">Precio</label>
+                                    <input type="number" id="precio_venta" name="precio_venta" required min="0.01" step="0.01" value="0" onkeyup="calcularsubTotal()" style="width: 100%">
+                                </div>
 
-                                        <div class="col-md">
-                                            <label class="required fw-semibold fs-6 mb-2">S. Total</label>
-                                            <input type="number" id="sub_total" name="sub_total" required min="0.01" step="0.01"  style="width: 100%">
-                                        </div>
+                                <div class="col-md">
+                                    <label class="required fw-semibold fs-6 mb-2">S. Total</label>
+                                    <input type="number" id="sub_total" name="sub_total" required min="0.01" step="0.01"  style="width: 100%">
+                                </div>
 
-                                        <div class="col-md">
-                                            <label class="fw-semibold fs-6 mb-2">Obs</label>
-                                            <input type="text" id="observacion" name="observacion" style="width: 100%">
-                                        </div>
+                                <div class="col-md">
+                                    <label class="fw-semibold fs-6 mb-2">Obs</label>
+                                    <input type="text" id="observacion" name="observacion" style="width: 100%">
+                                </div>
 
-                                        <div class="col-md">
-                                            <label class="required fw-semibold fs-6 mb-2">N° OT</label>
-                                            <input type="number" id="nro_ot" name="nro_ot" required min="1"
-                                                style="width: 100%">
-                                        </div>
-                                        {{--
-                                    </div> --}}
-                                    {{-- </div> --}}
+                                <div class="col-md">
+                                    <label class="required fw-semibold fs-6 mb-2">N° OT</label>
+                                    <input type="number" id="nro_ot" name="nro_ot" required min="1"
+                                        style="width: 100%">
+                                </div>
                                 <div class="col-md-1 d-flex align-items-end">
                                     <div class="d-flex justify-content-center gap-2 w-100">
                                         <button class="btn btn-success btn-circle btn-sm btn-icon" type="button"
