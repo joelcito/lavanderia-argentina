@@ -21,6 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('usuario_eliminador_id')->nullable();
 
             $table->string('nombre')->nullable();
+            $table->decimal('precio_planchado')->nullable();
 
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();

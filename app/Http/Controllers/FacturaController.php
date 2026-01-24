@@ -111,6 +111,7 @@ class FacturaController extends Controller
                 $orden_trabajo->fecha                  = $factura->fecha_recepcion;
                 $orden_trabajo->tipo                   = "ORDEN_TRABAJO";
                 $orden_trabajo->estado                 = "RECEPCIONADO";
+                $orden_trabajo->con_muestra            = $item['con_muestra'] == "true"? true : false;
                 $orden_trabajo->save();
 
                 if ($primero > 1) {

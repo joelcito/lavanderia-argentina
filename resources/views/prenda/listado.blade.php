@@ -24,11 +24,17 @@
                     <form id="formularioPrenda">
                         <input type="hidden" name="id" id="id" value="0">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-8">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Nombre</label>
                                     <input type="text" class="form-control form-control-sm" id="nombre"
                                         name="nombre">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Precio Planchado</label>
+                                    <input type="number" min="0.01" step="0.01" class="form-control form-control-sm" id="precio_planchado" name="precio_planchado">
                                 </div>
                             </div>
                         </div>
@@ -75,7 +81,7 @@
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
 
@@ -112,6 +118,7 @@
 
         function modalNuevoPrenda(){
             $('#nombre').val('')
+            $('#precio_planchado').val(0)
             $('#id').val(0)
             $('#modalPrenda').modal('show')
         }
@@ -164,9 +171,10 @@
         function editarPrenda(prenda){
 
             $('#nombre').val(prenda.nombre)
+            $('#precio_planchado').val(prenda.precio_planchado)
             $('#id').val(prenda.id)
             $('#modalPrenda').modal('show')
-            
+
         }
 
         function eliminarPrenda(prenda, nombre) {
@@ -211,8 +219,8 @@
                             });
                         }
                     });
-                    
-                    
+
+
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire(
                         'Cancelado',
@@ -222,6 +230,6 @@
                 }
             });
         }
-        
+
     </script>
 @endsection

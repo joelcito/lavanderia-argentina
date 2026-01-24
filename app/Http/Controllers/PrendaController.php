@@ -37,10 +37,11 @@ class PrendaController extends Controller
         if($request->ajax()){
 
             //AL INICIO DECLARACION DE VARIABLES
-            $prenda_id = $request->input('id');
-            $nombre = $request->input('nombre');
-            $usuario = Auth::user();
-            
+            $prenda_id        = $request->input('id');
+            $nombre           = $request->input('nombre');
+            $precio_planchado = $request->input('precio_planchado');
+            $usuario          = Auth::user();
+
             if($prenda_id == '0'){
                 //LA CREACION DE UN NUEVa PRENDA
                 $prenda = new Prenda();
@@ -52,7 +53,8 @@ class PrendaController extends Controller
                 $prenda->usuario_modificador_id = $usuario->id;
             }
 
-            $prenda->nombre = $nombre;
+            $prenda->nombre           = $nombre;
+            $prenda->precio_planchado = $precio_planchado;
             $prenda->save();
 
             $data = Respuesta::success(null, "Datos Obtenidos correctamente");
@@ -62,7 +64,7 @@ class PrendaController extends Controller
         }
 
         return $data;
-        
+
     }
 
     public function eliminarPrenda(Request $request){
@@ -84,7 +86,7 @@ class PrendaController extends Controller
             $data = Respuesta::success(null, "Se elimino con exito");
 
         }else{
-        
+
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
 

@@ -4,6 +4,7 @@
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                 <th>Nombre</th>
+                <th>Precio Planchado</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -11,6 +12,7 @@
             @forelse ($prendas as $prenda)
                 <tr>
                     <td>{{ $prenda->nombre }}</td>
+                    <td>{{ $prenda->precio_planchado }}</td>
                     <td>
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar prenda" onclick="editarPrenda({{ json_encode($prenda) }})"><i class="fa fa-edit"></i></button>
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar prenda" onclick="eliminarPrenda('{{ $prenda->id }}',  '{{ $prenda->nombre }}')"><i class="fa fa-trash"></i></button>

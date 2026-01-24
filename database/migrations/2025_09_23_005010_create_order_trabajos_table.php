@@ -55,6 +55,7 @@ return new class extends Migration
             $table->text('observacion')->nullable();
             $table->text('nro_ot')->nullable();
             $table->string('tipo')->nullable();
+            $table->boolean('con_muestra')->nullable();
 
             $table->decimal('cantidad_planchado',12,2)->nullable();
             $table->decimal('cantidad_focalizado',12,2)->nullable();

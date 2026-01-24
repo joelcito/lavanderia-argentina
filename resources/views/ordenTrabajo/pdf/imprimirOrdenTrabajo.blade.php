@@ -49,6 +49,31 @@
         .flex-section { display: table; width: 100%; margin-top: 5px; }
         .flex-section .col { display: table-cell; width: 50%; vertical-align: top; padding-right: 5px; }
         .hr-small { margin: 5px 0; border: 0; border-top: 1px solid #444; }
+
+        .focalizado-x {
+            position: relative;
+        }
+
+        .focalizado-x::before,
+        .focalizado-x::after {
+            content: "";
+            position: absolute;
+            top: 16%;
+            left: 30%;
+            width: 40%;
+            height: 3px;
+            background-color: red;
+            z-index: 10;
+        }
+
+        .focalizado-x::before {
+            transform: rotate(45deg);
+        }
+
+        .focalizado-x::after {
+            transform: rotate(-45deg);
+        }
+
     </style>
 </head>
 <body>
@@ -76,19 +101,42 @@
                 <tr><th>DETALLES DE SERVICIOS</th></tr>
             </thead>
             <tbody>
+            @php
+                $cantidaPrendas = 0;
+            @endphp
             @foreach ($ordenesTrabajos as $ordenTrabajo)
+                @php
+                    $cantidaPrendas = $cantidaPrendas + $ordenTrabajo->cantidad;
+                @endphp
                 <tr>
                     <td>
                         {{ $ordenTrabajo->prenda?->nombre }} ;
-                        [Cantidad:{{ $ordenTrabajo->cantidad }}] ;
+                        [Cant:{{ $ordenTrabajo->cantidad }}] ;
                         [Peso:{{ $ordenTrabajo->peso }}] ;
                         [Ojales:{{ $ordenTrabajo->numero_ojales }}/{{ $ordenTrabajo->cantidad }}] ;
-                        [Pre-Lavado:{{ $ordenTrabajo->prelavado?->nombre }}] ;
-                        [Nevado:{{ $ordenTrabajo->nevado?->nombre }}] ;
-                        [Focalizado:{{ $ordenTrabajo->focalizado?->nombre }}] ;
-                        [Tipo Tela:{{ $ordenTrabajo->tipoTela?->nombre }}] ;
-                        [Color Tela:{{ $ordenTrabajo->colorTela?->nombre }}] ;
-                        [Caracteristica Tela:{{ $ordenTrabajo->caracteristicaTela?->nombre }}]
+                        @if ($ordenTrabajo->prelavado)
+                            [Pre-Lavado:{{ $ordenTrabajo->prelavado?->nombre }}] ;
+                        @endif
+                        @if ($ordenTrabajo->nevado)
+                            [Nevado:{{ $ordenTrabajo->nevado?->nombre }}] ;
+                        @endif
+                        @if ($ordenTrabajo->focalizado)
+                            [Focalizado:{{ $ordenTrabajo->focalizado?->nombre }}] ;
+                        @endif
+                        @if ($ordenTrabajo->tipoTela)
+                            [Tipo Tela:{{ $ordenTrabajo->tipoTela?->nombre }}] ;
+                        @endif
+                        @if ($ordenTrabajo->colorTela)
+                            [Color Tela:{{ $ordenTrabajo->colorTela?->nombre }}] ;
+                        @endif
+                        @if ($ordenTrabajo->caracteristicaTela)
+                            [Caracteristica Tela:{{ $ordenTrabajo->caracteristicaTela?->nombre }}]
+                        @endif
+                        @if ($ordenTrabajo->con_muestra)
+                            [Con Muestra: SI]
+                        @else
+                            [Con Muestra: NO]
+                        @endif
                     </td>
                 </tr>
             @endforeach
@@ -107,7 +155,7 @@
 
         <div class="flex-section">
             <div class="col">
-                <table class="table">
+                <table class="table {{ $ordenTrabajo->focalizado? '' : 'focalizado-x' }} ">
                     <thead><tr><th>FOCALIZADO</th></tr></thead>
                     <tbody>
                     <tr>
@@ -117,7 +165,7 @@
                             ...................................................................................................... <br>
                             ...................................................................................................... <br>
                             <strong>Cant. prendas Foc.:</strong> <br>
-                            ...................................................................................................... <br>
+                            ........................................... {{ $cantidaPrendas }} ..................................................... <br>
                             ......................................................................................................
                         </td>
                     </tr>
@@ -135,7 +183,7 @@
                             ...................................................................................................... <br>
                             ...................................................................................................... <br>
                             <strong>Cant. prendas Planch.:</strong> <br>
-                            ...................................................................................................... <br>
+                            ............................................ {{ $cantidaPrendas }} .................................................... <br>
                             ......................................................................................................
                         </td>
                     </tr>

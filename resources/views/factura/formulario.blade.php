@@ -297,8 +297,7 @@
                                 </div>
                                 <div class="col-md">
                                     <label class="required fw-semibold fs-6 mb-2">Ojales</label>
-                                    <input type="text" style="width: 100%" id="numero_ojales" name="numero_ojales"
-                                        required onchange="cuantificarOjales()" onclick="this.select()">
+                                    <input type="text" style="width: 100%" id="numero_ojales" name="numero_ojales" required onchange="cuantificarOjales()" onclick="this.select()" autocomplete="off">
                                 </div>
                                 <div class="col-md">
                                     <label class="fw-semibold fs-6 mb-2">Tela</label>
@@ -350,7 +349,7 @@
                                 </div>
 
                                 <div class="col-md">
-                                    <label class="required fw-semibold fs-6 mb-2">Co. Tela</label>
+                                    <label class="required fw-semibold fs-6 mb-2">C. Tela</label>
                                     <select name="color_tela_id" id="color_tela_id" data-placeholder="SELECIONE"
                                         required style="width: 100%">
                                         <option></option>
@@ -397,6 +396,10 @@
                                     <label class="required fw-semibold fs-6 mb-2">N° OT</label>
                                     <input type="number" id="nro_ot" name="nro_ot" required min="1"
                                         style="width: 100%">
+                                </div>
+                                <div class="col-md">
+                                    <label class="fw-semibold fs-6 mb-2">Muest</label>
+                                    <input type="checkbox" id="con_muestra" name="con_muestra" style="width: 100%">
                                 </div>
                                 <div class="col-md-1 d-flex align-items-end">
                                     <div class="d-flex justify-content-center gap-2 w-100">
@@ -448,29 +451,13 @@
                                                 <th>Sub Total</th>
                                                 <th>Obs</th>
                                                 <th>OT</th>
+                                                <th>Muest</th>
                                                 <th>Acción</th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-gray-600 fw-semibold">
                                             <!-- Aquí se agregarán las filas del carrito -->
                                         </tbody>
-                                        {{-- <tfoot>
-                                            <tr>
-                                                <th colspan="6">Descuento Adicional</th>
-                                                <th colspan="3">Monto Total</th>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="6">
-                                                    <input class="form-control form-control-sm"
-                                                        name="descuento_adicional" id="descuento_adicional"
-                                                        type="number" value="0" onchange="ejecutarDescuentoAdicional()">
-                                                </td>
-                                                <td colspan="3">
-                                                    <input class="form-control form-control-sm" name="monto_total"
-                                                        id="monto_total" type="number" readonly value="0">
-                                                </td>
-                                            </tr>
-                                        </tfoot> --}}
                                     </table>
                                 </div>
 
@@ -640,44 +627,46 @@
 
                 $('#tabla_detalles').show('toggle');
 
-                let cantidad_venta = $('#cantidad_venta').val();
-                let prenda_id = $('#prenda_id').val();
-                let numero_ojales = $('#numero_ojales').val();
-                let tela_id = $('#tela_id').val();
-                let prelavado_id = $('#prelavado_id').val();
-                let nevado_id = $('#nevado_id').val();
-                let focalizado_id = $('#focalizado_id').val();
-                let tipo_tela_id = $('#tipo_tela_id').val();
-                let color_tela_id = $('#color_tela_id').val();
+                let cantidad_venta         = $('#cantidad_venta').val();
+                let prenda_id              = $('#prenda_id').val();
+                let numero_ojales          = $('#numero_ojales').val();
+                let tela_id                = $('#tela_id').val();
+                let prelavado_id           = $('#prelavado_id').val();
+                let nevado_id              = $('#nevado_id').val();
+                let focalizado_id          = $('#focalizado_id').val();
+                let tipo_tela_id           = $('#tipo_tela_id').val();
+                let color_tela_id          = $('#color_tela_id').val();
                 let caracteristica_tela_id = $('#caracteristica_tela_id').val();
-                let peso = $('#peso').val();
-                let precio_venta = $('#precio_venta').val();
-                let sub_total = $('#sub_total').val();
-                let observacion = $('#observacion').val();
-                let nro_ot = $('#nro_ot').val();
-                let nro_ojales = $('#nro_ojales').val();
-                let precio_ojales = $('#precio_ojales').val();
-                let total_ojales = $('#total_ojales').val();
+                let peso                   = $('#peso').val();
+                let precio_venta           = $('#precio_venta').val();
+                let sub_total              = $('#sub_total').val();
+                let observacion            = $('#observacion').val();
+                let nro_ot                 = $('#nro_ot').val();
+                let nro_ojales             = $('#nro_ojales').val();
+                let precio_ojales          = $('#precio_ojales').val();
+                let total_ojales           = $('#total_ojales').val();
+                let con_muestra            = $('#con_muestra').is(':checked');
 
                 let servicio = {
-                    cantidad_venta: cantidad_venta,
-                    prenda_id: prenda_id,
-                    numero_ojales: numero_ojales,
-                    tela_id: tela_id,
-                    prelavado_id: prelavado_id,
-                    nevado_id: nevado_id,
-                    focalizado_id: focalizado_id,
-                    tipo_tela_id: tipo_tela_id,
-                    color_tela_id: color_tela_id,
+                    cantidad_venta        : cantidad_venta,
+                    prenda_id             : prenda_id,
+                    numero_ojales         : numero_ojales,
+                    tela_id               : tela_id,
+                    prelavado_id          : prelavado_id,
+                    nevado_id             : nevado_id,
+                    focalizado_id         : focalizado_id,
+                    tipo_tela_id          : tipo_tela_id,
+                    color_tela_id         : color_tela_id,
                     caracteristica_tela_id: caracteristica_tela_id,
-                    peso: peso,
-                    precio_venta: precio_venta,
-                    sub_total: sub_total,
-                    observacion: observacion,
-                    nro_ot: nro_ot,
-                    nro_ojales: nro_ojales,
-                    precio_ojales: precio_ojales,
-                    total_ojales: total_ojales
+                    peso                  : peso,
+                    precio_venta          : precio_venta,
+                    sub_total             : sub_total,
+                    observacion           : observacion,
+                    nro_ot                : nro_ot,
+                    nro_ojales            : nro_ojales,
+                    precio_ojales         : precio_ojales,
+                    total_ojales          : total_ojales,
+                    con_muestra           : con_muestra
                 }
 
                 contadorTable++;
@@ -704,6 +693,7 @@
                     sub_total,
                     observacion,
                     nro_ot,
+                    (con_muestra? 'SI': 'NO'),
                     btnEliminar
                 ]).node().id = 'producto-' + contadorTable;
                 table.draw(false);
@@ -731,6 +721,7 @@
                 $('#sub_total').val(0);
                 $('#observacion').val("");
                 $('#nro_ot').val(0);
+                $('#con_muestra').prop('checked', false);
 
                 // ESTO ES PARA LOS PRECIO DE OJALES
                 $('#nro_ojales').val(0);
