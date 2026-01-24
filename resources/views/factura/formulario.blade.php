@@ -647,7 +647,10 @@
                 let total_ojales           = $('#total_ojales').val();
                 let con_muestra            = $('#con_muestra').is(':checked');
 
+                contadorTable++;
+
                 let servicio = {
+                    contadorTable         : contadorTable,
                     cantidad_venta        : cantidad_venta,
                     prenda_id             : prenda_id,
                     numero_ojales         : numero_ojales,
@@ -669,7 +672,6 @@
                     con_muestra           : con_muestra
                 }
 
-                contadorTable++;
 
                 let btnEliminar = `<button class='eliminar btn btn-icon btn-danger btn-circle btn-sm'
                                         title='Eliminar del carro'
@@ -736,43 +738,52 @@
 
         function recepcionar() {
             if ($('#formularioGeneraRecibo')[0].checkValidity() && $('#formulario_recepcion')[0].checkValidity()) {
-                $.ajax({
-                    url: "{{ url('factura/recepcionar') }}",
-                    method: "POST",
-                    data: {
-                        carro: arrayProductos,
-                        cliente: $('#cliente_seleccionado_id').val(),
-                        prioridad_cliente: $('#prioridad_cliente').val(),
-                        fecha_recepcion: $('#fecha_recepcion_cliente').val(),
-                        entregado_por: $('#entregado_por').val(),
-                        usuario_recepciono: $('#usuario_recepciono_id').val(),
+                if(arrayProductos.length > 0){
+                    $.ajax({
+                        url: "{{ url('factura/recepcionar') }}",
+                        method: "POST",
+                        data: {
+                            carro: arrayProductos,
+                            cliente: $('#cliente_seleccionado_id').val(),
+                            prioridad_cliente: $('#prioridad_cliente').val(),
+                            fecha_recepcion: $('#fecha_recepcion_cliente').val(),
+                            entregado_por: $('#entregado_por').val(),
+                            usuario_recepciono: $('#usuario_recepciono_id').val(),
 
-                        tipo_pago_pagado_recibo: $('#tipo_pago_pagado_recibo').val(),
-                        realizo_pago_recibo: $('#realizo_pago_recibo').is(':checked'),
-                        monto_total_pagado_recibo: $('#monto_total_pagado_recibo').val(),
-                        monto_pagado_recibo: $('#monto_pagado_recibo').val(),
-                        cambio_pagado_recibo: $('#cambio_pagado_recibo').val(),
-                    },
-                    // data: datos,
-                    success: function (data) {
-                        if (data.estado) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: "Exito!",
-                                text: "Se genero con exito la venta",
-                                timer: 4000
-                            })
-                            location.reload();
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: "Error!",
-                                text: "Ocurrio un error!",
-                                timer: 4000
-                            })
+                            tipo_pago_pagado_recibo: $('#tipo_pago_pagado_recibo').val(),
+                            realizo_pago_recibo: $('#realizo_pago_recibo').is(':checked'),
+                            monto_total_pagado_recibo: $('#monto_total_pagado_recibo').val(),
+                            monto_pagado_recibo: $('#monto_pagado_recibo').val(),
+                            cambio_pagado_recibo: $('#cambio_pagado_recibo').val(),
+                        },
+                        // data: datos,
+                        success: function (data) {
+                            if (data.estado) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: "Exito!",
+                                    text: "Se genero con exito la venta",
+                                    timer: 4000
+                                })
+                                location.reload();
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: "Error!",
+                                    text: "Ocurrio un error!",
+                                    timer: 4000
+                                })
+                            }
                         }
-                    }
-                })
+                    })
+                }else{
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Error!",
+                        text: "Debe agregar productos al carro de ventas",
+                        timer: 6000
+                    })
+                }
             } else {
                 $('#formularioGeneraRecibo')[0].reportValidity()
                 $('#formulario_recepcion')[0].reportValidity()
@@ -848,6 +859,23 @@
             let precio = $('#precio_ojales').val()
             let total = parseFloat(nro_ojales) * parseFloat(precio);
             $('#total_ojales').val(total.toFixed(2));
+        }
+
+        function eliminarItem(id) {
+
+            var fila = table.row("#producto-" + id);
+
+            table.row(fila).remove().draw(false);
+
+            // Elimina el producto del array
+            arrayProductos = arrayProductos.filter(s => s.contadorTable !== id);
+
+
+            // Actualizar el monto total
+            let sumaTotal = arrayProductos.reduce((sum, current) => sum + current.sub_total, 0);
+            let descuentoAdicional = $('#descuento_adicional').val();
+            $('#monto_total_pagado_recibo').val(parseFloat(sumaTotal));
+
         }
     </script>
 @endsection
