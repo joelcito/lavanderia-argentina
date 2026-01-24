@@ -175,7 +175,7 @@ class OrdenTrabajoController extends Controller
             $caracteristicaTelas = Caracteristica::all();
 
             $valores = [
-                'listado' => view('factura.ajaxFormularioEditarOrdenTrabajo')->with(compact('ordenesTrabajos', 'prendas', 'telas', 'prelavados', 'nevados', 'focalizados', 'tipoTelas', 'colorTelas', 'caracteristicaTelas'))->render()
+                'listado' => view('factura.ajaxFormularioEditarOrdenTrabajo')->with(compact('ordenesTrabajos', 'prendas', 'telas', 'prelavados', 'nevados', 'focalizados', 'tipoTelas', 'colorTelas', 'caracteristicaTelas', 'factura_id'))->render()
             ];
 
             $data = Respuesta::success($valores, "Datos Obtenidos correctamente");
@@ -327,5 +327,127 @@ class OrdenTrabajoController extends Controller
             ];
         });
         return response()->json($data);
+    }
+
+    public function  cambiaDatoOrdenTrabajo(Request $request) {
+
+        if($request->ajax()){
+
+            // dd($request->all());
+
+            $tipo          = $request->input('tipo');
+            $ordenTrabajo  = $request->input('ordenTrabajo');
+            $dato          = $request->input('dato');
+            $orden_trabajo = Order_trabajo::find($ordenTrabajo);
+            $usuario       = Auth::user();
+            $sucursal      = $usuario->sucursal;
+
+            if($tipo == "CANTIDAD")
+                $orden_trabajo->cantidad = $dato;
+            elseif($tipo == "PRENDA")
+               $orden_trabajo->prenda_id = $dato;
+            elseif($tipo == "OJAL"){
+
+                // SACAMOS EL OJAL
+                $ojal    = Order_trabajo::where('order_trabajos_id', $orden_trabajo->id)->first();
+                $factura = $orden_trabajo->factura;
+
+                // SACAMOS LA FACTURA
+                $precioActualFactura  = $factura->total;
+
+                if($dato > 1){
+                    if($ojal){
+                        $precioFacturaSinOjal = $precioActualFactura - $ojal->subtotal;
+
+                        // RECALUCLAMOS TODOD
+                        $nroOjales  = ($dato - 1) * $orden_trabajo->cantidad;
+                        $precioOjal = $nroOjales * $ojal->precio;
+
+                        $ojal->cantidad = $nroOjales;
+                        $ojal->subtotal = $precioOjal;
+                        $ojal->save();
+
+                        // MODIFICAMOS EL PRECIO DE LA FACTURA
+                        $factura->total = $precioFacturaSinOjal + $ojal->subtotal;
+                        $factura->save();
+                    }else{
+
+                        // RECALUCLAMOS TODOD
+                        $nroOjales  = ($dato - 1) * $orden_trabajo->cantidad;
+                        $precioOjal = $nroOjales * 0.33;
+
+                        $orden_trabajoOjal                     = new Order_trabajo();
+                        $orden_trabajoOjal->usuario_creador_id = $usuario->id;
+                        $orden_trabajoOjal->order_trabajos_id  = $orden_trabajo->id;
+                        $orden_trabajoOjal->factura_id         = $factura->id;
+                        $orden_trabajoOjal->sucursal_id        = $sucursal->id;
+                        $orden_trabajoOjal->cantidad           = $nroOjales;
+                        $orden_trabajoOjal->precio             = 0.33;
+                        $orden_trabajoOjal->subtotal           = $precioOjal;
+                        $orden_trabajoOjal->observacion        = "SERVICIO DE OJAL";
+                        $orden_trabajoOjal->fecha              = date('Y-m-d H:i:s');
+                        $orden_trabajoOjal->tipo               = "OJAL";
+                        $orden_trabajoOjal->save();
+                        // PARA ADICIONAR EL PRECIO A LA FACTURA
+                        $factura->total = $factura->total + $precioOjal;
+                    }
+                }else{
+                    if($ojal){
+                        $precioFacturaSinOjal        = $precioActualFactura - $ojal->subtotal;
+                        $ojal->usuario_eliminador_id = $usuario->id;
+                        $ojal->save();
+                        Order_trabajo::destroy($ojal->id);
+                        $factura->total = $precioFacturaSinOjal;
+
+                    }
+                }
+                $factura->save();
+                $orden_trabajo->numero_ojales = $dato;
+            }elseif($tipo == "TELA")
+                $orden_trabajo->tela_id = $dato;
+            elseif($tipo == "PRE_LAVADO")
+                $orden_trabajo->prelavado_id = $dato;
+            elseif($tipo == "NEVADO")
+                $orden_trabajo->nevado_id = $dato;
+            elseif($tipo == "FOCALIZADO")
+                $orden_trabajo->focalizado_id = $dato;
+            elseif($tipo == "TIPO_TELA")
+                $orden_trabajo->tipo_tela_id = $dato;
+            elseif($tipo == "COLOR_TELA")
+                $orden_trabajo->color_tela_id = $dato;
+            elseif($tipo == "CARACTERISTICA_TELA")
+                $orden_trabajo->caracteristica_tela_id = $dato;
+            elseif($tipo == "PESO")
+                $orden_trabajo->peso = $dato;
+            elseif($tipo == "PRECIO"){
+
+                $subTotal                 = $orden_trabajo->cantidad * $dato;
+                $precioActualOrdenTrabajo = $orden_trabajo->subtotal;
+                $factura                  = $orden_trabajo->factura;
+
+                $orden_trabajo->precio   = $dato;
+                $orden_trabajo->subtotal = $subTotal;
+
+                // PARA LA FACTURA
+                $precioActualFactura = $factura->total;
+
+                $factura = $orden_trabajo->factura;
+                $factura->total = ($precioActualFactura - $precioActualOrdenTrabajo) + $subTotal;
+                $factura->save();
+
+            }elseif($tipo == "OBSERVACIONES")
+                $orden_trabajo->observacion = $dato;
+            elseif($tipo == "NRO_OT")
+                $orden_trabajo->nro_ot = $dato;
+
+            $orden_trabajo->save();
+
+            $data = Respuesta::success(null, "Datos Obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+
     }
 }

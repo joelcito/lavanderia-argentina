@@ -171,6 +171,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListadoFacturas', [FacturaController::class, 'ajaxListadoFacturas'])->name('factura.ajaxListadoFacturas');
         Route::get('/detalle/{factura_id}', [FacturaController::class, 'detalle'])->name('factura.detalle');
         Route::post('/anularRecibo', [FacturaController::class, 'anularRecibo']);
+        Route::post('/agregarNuevoOrdenTrabajo', [FacturaController::class, 'agregarNuevoOrdenTrabajo']);
     });
 
     //PAGO
@@ -257,12 +258,9 @@ Route::middleware('auth')->group(function () {
 
         // Obtener OTs por factura (AJAX)
         Route::get('/ots/{factura_id}', [OrdenTrabajoController::class, 'obtenerOTs'])->name('order-trabajo.obtenerOTs');
-
         Route::get('/listadoCantidades', [OrdenTrabajoController::class, 'listadoCantidades'])->name('order-trabajo.listadoCantidades');
-
         Route::get('/listarCantidades', [OrdenTrabajoController::class, 'listarCantidades'])->name('order-trabajo.listarCantidades');
-
-
+        Route::post('/cambiaDatoOrdenTrabajo', [OrdenTrabajoController::class, 'cambiaDatoOrdenTrabajo'])->name('ordenTrabajo.cambiaDatoOrdenTrabajo');
     });
 
     //solicitudes

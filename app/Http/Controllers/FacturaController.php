@@ -20,6 +20,7 @@ use App\Utils\Respuesta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PDF;
+use Svg\Tag\Rect;
 
 class FacturaController extends Controller
 {
@@ -114,18 +115,18 @@ class FacturaController extends Controller
 
                 if ($primero > 1) {
 
-                    $orden_trabajo                     = new Order_trabajo();
-                    $orden_trabajo->usuario_creador_id = $usuario->id;
-                    $orden_trabajo->order_trabajos_id  = $orden_trabajo->id;
-                    $orden_trabajo->factura_id         = $factura->id;
-                    $orden_trabajo->sucursal_id        = $sucursal->id;
-                    $orden_trabajo->cantidad           = $item['nro_ojales'];
-                    $orden_trabajo->precio             = $item['precio_ojales'];
-                    $orden_trabajo->subtotal           = $item['total_ojales'];
-                    $orden_trabajo->observacion        = "SERVICIO DE OJAL";
-                    $orden_trabajo->fecha              = $factura->fecha_recepcion;
-                    $orden_trabajo->tipo               = "OJAL";
-                    $orden_trabajo->save();
+                    $orden_trabajoOjal                     = new Order_trabajo();
+                    $orden_trabajoOjal->usuario_creador_id = $usuario->id;
+                    $orden_trabajoOjal->order_trabajos_id  = $orden_trabajo->id;
+                    $orden_trabajoOjal->factura_id         = $factura->id;
+                    $orden_trabajoOjal->sucursal_id        = $sucursal->id;
+                    $orden_trabajoOjal->cantidad           = $item['nro_ojales'];
+                    $orden_trabajoOjal->precio             = $item['precio_ojales'];
+                    $orden_trabajoOjal->subtotal           = $item['total_ojales'];
+                    $orden_trabajoOjal->observacion        = "SERVICIO DE OJAL";
+                    $orden_trabajoOjal->fecha              = $factura->fecha_recepcion;
+                    $orden_trabajoOjal->tipo               = "OJAL";
+                    $orden_trabajoOjal->save();
 
                     $montoTotalVenta = $montoTotalVenta + $item['total_ojales'];
 
@@ -333,6 +334,101 @@ class FacturaController extends Controller
             $data = Respuesta::error(null, "No existe");
         }
         return $data;
+    }
+
+    public function  agregarNuevoOrdenTrabajo(Request $request) {
+
+        if($request->ajax()){
+
+            // dd($request->all());
+
+            $usuario                = Auth::user();
+            $sucursal               = $usuario->sucursal;
+            $factura_orden_trabajo  = $request->input('factura_orden_trabajo');
+            $cantidad_venta         = $request->input('cantidad_venta');
+            $prenda_id              = $request->input('prenda_id');
+            $numero_ojales          = $request->input('numero_ojales');
+            $tela_id                = $request->input('tela_id');
+            $prelavado_id           = $request->input('prelavado_id');
+            $nevado_id              = $request->input('nevado_id');
+            $focalizado_id          = $request->input('focalizado_id');
+            $tipo_tela_id           = $request->input('tipo_tela_id');
+            $color_tela_id          = $request->input('color_tela_id');
+            $caracteristica_tela_id = $request->input('caracteristica_tela_id');
+            $peso                   = $request->input('peso');
+            $precio_venta           = $request->input('precio_venta');
+            $sub_total              = $request->input('sub_total');
+            $observacion            = $request->input('observacion');
+            $nro_ot                 = $request->input('nro_ot');
+            $nro_ojales             = $request->input('nro_ojales');
+            $precio_ojales          = $request->input('precio_ojales');
+            $total_ojales           = $request->input('total_ojales');
+
+            $numero_ojal             = $numero_ojales;
+            list($primero, $segundo) = explode('/', $numero_ojal);
+            $primero                 = (float)$primero;
+            $segundo                 = (float)$segundo;
+            $montoTotalVenta         = 0;
+
+            $orden_trabajo                         = new Order_trabajo();
+            $orden_trabajo->usuario_creador_id     = $usuario->id;
+            $orden_trabajo->factura_id             = $factura_orden_trabajo;
+            $orden_trabajo->sucursal_id            = $sucursal->id;
+            $orden_trabajo->cantidad               = $cantidad_venta;
+            $orden_trabajo->prenda_id              = $prenda_id;
+            $orden_trabajo->numero_ojales          = $primero;
+            $orden_trabajo->tela_id                = $tela_id;
+            $orden_trabajo->prelavado_id           = $prelavado_id;
+            $orden_trabajo->nevado_id              = $nevado_id;
+            $orden_trabajo->focalizado_id          = $focalizado_id;
+            $orden_trabajo->tipo_tela_id           = $tipo_tela_id;
+            $orden_trabajo->color_tela_id          = $color_tela_id;
+            $orden_trabajo->caracteristica_tela_id = $caracteristica_tela_id;
+            $orden_trabajo->peso                   = $peso;
+            $orden_trabajo->precio                 = $precio_venta;
+            $orden_trabajo->subtotal               = $sub_total;
+            $orden_trabajo->observacion            = $observacion;
+            $orden_trabajo->nro_ot                 = $nro_ot;
+            $orden_trabajo->fecha                  = date('Y-m-d H:i:s');
+            $orden_trabajo->tipo                   = "ORDEN_TRABAJO";
+            $orden_trabajo->estado                 = "RECEPCIONADO";
+            $orden_trabajo->save();
+
+            if ($primero > 1) {
+
+                $orden_trabajoOjal                     = new Order_trabajo();
+                $orden_trabajoOjal->usuario_creador_id = $usuario->id;
+                $orden_trabajoOjal->order_trabajos_id  = $orden_trabajo->id;
+                $orden_trabajoOjal->factura_id         = $factura_orden_trabajo;
+                $orden_trabajoOjal->sucursal_id        = $sucursal->id;
+                $orden_trabajoOjal->cantidad           = $nro_ojales;
+                $orden_trabajoOjal->precio             = $precio_ojales;
+                $orden_trabajoOjal->subtotal           = $total_ojales;
+                $orden_trabajoOjal->observacion        = "SERVICIO DE OJAL";
+                $orden_trabajoOjal->fecha              = $orden_trabajo->fecha;
+                $orden_trabajoOjal->tipo               = "OJAL";
+                $orden_trabajoOjal->save();
+
+                $montoTotalVenta = $montoTotalVenta + $total_ojales;
+
+            }
+
+            $montoTotalVenta = $montoTotalVenta + $sub_total;
+
+            // MODIFICAMOS LA FACTURA
+            $factura        = Factura::find($factura_orden_trabajo);
+            $precioFactura  = $factura->total;
+            $factura->total = $montoTotalVenta + $precioFactura;
+            $factura->save();
+
+            $data = Respuesta::success(null, 'SE ARGEGO CON EXITO');
+
+        }else{
+
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+
     }
 
 }

@@ -130,13 +130,13 @@
                     <div id="formularioAjaxOrdenTrabajo"></div>
                 </form>
             </div>
-            <div class="modal-footer">
+            {{-- <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-12">
                         <button class="btn btn-sm w-100 btn-success" onclick="">Guardar</button>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <!--end::Modal body-->
         </div>
     </div>
@@ -950,23 +950,98 @@
         }
 
         function agregarProducto(){
-            Swal.fire({
-  title: "Are you sure?",
-  text: "You won't be able to revert this!",
-  icon: "warning",
-  showCancelButton: true,
-  confirmButtonColor: "#3085d6",
-  cancelButtonColor: "#d33",
-  confirmButtonText: "Yes, delete it!"
-}).then((result) => {
-  if (result.isConfirmed) {
-    Swal.fire({
-      title: "Deleted!",
-      text: "Your file has been deleted.",
-      icon: "success"
-    });
-  }
-});
+
+            if($("#formularioNewOt")[0].checkValidity()){
+                Swal.fire({
+                    title: "Esta seguro de agregar un nuevo OT?",
+                    text: "Ya no podras revertir eso!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, agregar!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let datos = $('#formularioNewOt').serializeArray();
+                        $.ajax({
+                            url: "{{ url('factura/agregarNuevoOrdenTrabajo') }}",
+                            method: "POST",
+                            data: datos,
+                            success: function(resultado) {
+                                if (resultado.estado){
+                                    ajaxListadoOrdenTrabajos();
+                                    Swal.fire(
+                                        'Exito',
+                                        'Se agrego con exito',
+                                        'success'
+                                    );
+                                    ajaxListadoOjales();
+                                    $('#formularioAjaxOrdenTrabajo').html("")
+                                    ajaxFormularioEditarOrdenTrabajo();
+                                }
+                            }
+                        })
+                    }
+                });
+            }else{
+                $("#formularioNewOt")[0].reportValidity();
+            }
+        }
+
+        function calcularsubTotal() {
+            let cantidad = parseFloat($('#cantidad_venta').val())
+            let precio = parseFloat($('#precio_venta').val())
+
+            $('#sub_total').val(cantidad * precio);
+        }
+
+        function cuantificarOjales() {
+
+            let cantidadPrendas = $('#cantidad_venta').val();
+            let cantidadOjales = $('#numero_ojales').val();
+            let todo = cantidadOjales + "/" + cantidadPrendas;
+
+            $('#numero_ojales').val(todo);
+
+            if (cantidadOjales > 1) {
+
+                let calculo = (cantidadOjales - 1) * cantidadPrendas;
+                let precio_ojal = $('#precio_ojales').val();
+                let total = parseFloat(calculo) * parseFloat(precio_ojal);
+
+                $('#nro_ojales').val(calculo);
+                $('#total_ojales').val(total.toFixed(2));
+                $('#bloque-ojales').show('toggle');
+            } else {
+                $('#nro_ojales').val(0);
+                $('#total_ojales').val(0);
+                $('#bloque-ojales').hide('toggle')
+            }
+
+        }
+
+        function cambiarDato(tipo, ordenTrabajo, dato){
+
+            $.ajax({
+                url: "{{ route('ordenTrabajo.cambiaDatoOrdenTrabajo') }}",
+                method: "POST",
+                data: {
+                    tipo:tipo,
+                    ordenTrabajo:ordenTrabajo,
+                    dato:dato.value
+                },
+                success: function(resultado) {
+                    if (resultado.estado){
+                        $('#'+tipo+"_"+ordenTrabajo).show('toggle')
+                    }else{
+                        Swal.fire(
+                            'Error',
+                            'Ocurrio un error',
+                            'error'
+                        );
+                    }
+                }
+            })
         }
    </script>
 @endsection
