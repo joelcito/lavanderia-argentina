@@ -149,7 +149,7 @@ class SolicitudController extends Controller
                 // Insertar registro de salida en movimientos
                 DB::table('movimientos')->insert([
                     'producto_id' => $s->producto_id,
-                    'orden_trabajo_id' => json_encode($s->orden_trabajo_id), // Guardar array como JSON
+                    // 'orden_trabajo_id' => json_encode($s->orden_trabajo_id), // Guardar array como JSON
                     'salida' => $s->cantidad,
                     'ingreso' => 0,
                     'fecha' => now(),
@@ -184,20 +184,36 @@ class SolicitudController extends Controller
 
     public function otsPorFactura($factura_id)
     {
-        $ots = DB::table('order_trabajos')
-            ->where('factura_id', $factura_id)
-            ->where('tipo', 'ORDEN_TRABAJO')
-            ->select(
-                'nro_ot',
-                DB::raw('GROUP_CONCAT(id) as ids'),
-                DB::raw('SUM(peso) as peso_total')
-            )
-            ->groupBy('nro_ot')
-            ->orderBy('nro_ot')
-            ->get();
+        try {
+            $factura = Factura::with('ordenTrabajos')->findOrFail($factura_id);
 
+            $ots = $factura->ordenTrabajos->map(function ($ot) {
+                return [
+                    'ids' => $ot->id, // si son múltiples, podrías usar ->pluck('id')->toArray()
+                    'nro_ot' => $ot->numero_ot,
+                    'peso_total' => $ot->peso_total ?? 0
+                ];
+            });
+
+            return response()->json($ots);
+        } catch (\Exception $e) {
+            \Log::error("Error al obtener OTs por factura: " . $e->getMessage());
+            return response()->json(['error' => 'No se pudieron cargar las OTs'], 500);
+        }
+    }
+
+    public function listaOTsPorFactura(Request $request)
+    {
+        $factura_id = $request->factura_id;
+
+        if (!$factura_id) {
+            return response()->json([]);
+        }
+
+        $ots = Order_Trabajo::where('factura_id', $factura_id)->get(); // <- aquí puede fallar
         return response()->json($ots);
     }
+
 
 
 

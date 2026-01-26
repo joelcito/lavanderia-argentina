@@ -99,20 +99,28 @@
                 <div id="kt_docs_repeater_advanced">
                     <div class="form-group">
                         <div data-repeater-list="procesos_lavanderia">
-
                             <div data-repeater-item>
-                                <!-- FILA 1: OT, Producto, Tipo Proceso -->
                                 <div class="form-group row mb-3 g-3">
+                                    <!-- Factura -->
                                     <div class="col-md-4">
-                                        <label class="form-label">OT</label>
-                                        <select class="form-select order_trabajo_id" name="order_trabajo_id">
-                                            <option value="">Seleccione OT...</option>
-                                            @foreach($ordenes as $ot)
-                                                <option value="{{ $ot->id }}">OT: {{ $ot->id }}</option>
+                                        <label class="form-label">Factura</label>
+                                        <select class="form-select factura_id" name="factura_id">
+                                            <option value="">Seleccione factura...</option>
+                                            @foreach($facturas as $factura)
+                                                <option value="{{ $factura->id }}">{{ $factura->numero_factura }}</option>
                                             @endforeach
                                         </select>
                                     </div>
 
+                                    <!-- OT -->
+                                    <div class="col-md-4">
+                                        <label class="form-label">OT</label>
+                                        <select class="form-select order_trabajo_id" name="order_trabajo_id">
+                                            <option value="">Seleccione OT...</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Producto -->
                                     <div class="col-md-4">
                                         <label class="form-label">Producto</label>
                                         <select class="form-select producto_id" name="producto_id">
@@ -120,7 +128,8 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <!-- Tipo Proceso -->
+                                    <div class="col-md-4 mt-3">
                                         <label class="form-label">Tipo Proceso</label>
                                         <select class="form-select tipo_proceso_id" name="tipo_proceso_id">
                                             <option value="">Seleccione...</option>
@@ -128,54 +137,40 @@
                                     </div>
                                 </div>
 
-                                <!-- FILA 2: Fecha, Tiempo, Temp, PH, RB, Descripción, Eliminar -->
                                 <div class="form-group row mb-3 g-3 align-items-end">
                                     <div class="col-md-2">
                                         <label class="form-label">Fecha Ingreso</label>
                                         <input type="datetime-local" class="form-control fecha_ingreso"
                                             name="fecha_ingreso" />
                                     </div>
-
                                     <div class="col-md-2">
                                         <label class="form-label">Fecha Salida</label>
                                         <input type="datetime-local" class="form-control fecha_salida"
                                             name="fecha_salida" />
                                     </div>
-
                                     <div class="col-md-1">
                                         <label class="form-label">Tiempo</label>
                                         <input type="number" class="form-control tiempo" name="tiempo"
                                             placeholder="Tiempo" />
                                     </div>
-
                                     <div class="col-md-1">
                                         <label class="form-label">°C</label>
                                         <input type="number" class="form-control temperatura" name="temperatura"
                                             placeholder="°C" />
                                     </div>
-
                                     <div class="col-md-1">
                                         <label class="form-label">pH</label>
                                         <input type="number" class="form-control ph" name="ph" placeholder="pH" />
                                     </div>
-
                                     <div class="col-md-1">
                                         <label class="form-label">RB</label>
                                         <input type="text" class="form-control rb" name="rb" placeholder="RB" />
                                     </div>
-
                                     <div class="col-md-3">
                                         <label class="form-label">Descripción</label>
                                         <input type="text" class="form-control descripcion" name="descripcion"
                                             placeholder="Descripción" />
                                     </div>
-
-                                    <!-- <div class="col-md-1">
-                                        <a href="javascript:;" data-repeater-delete
-                                            class="btn btn-sm btn-light-danger w-100">
-                                            <i class="ki-duotone ki-trash fs-3"></i>
-                                        </a>
-                                    </div> -->
                                     <div class="col-md-1 d-flex align-items-center mt-4">
                                         <a href="javascript:;" data-repeater-delete
                                             class="btn btn-sm btn-light-danger w-100 d-flex justify-content-center">
@@ -184,7 +179,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
@@ -388,6 +382,35 @@
         }
 
 
+        // Cuando cambia la factura, cargar las OTs correspondientes
+        $(document).on('change', '.factura_id', function () {
+            let fila = $(this).closest('[data-repeater-item]');
+            let factura_id = $(this).val();
+            let otSelect = fila.find('.order_trabajo_id');
+            let productoSelect = fila.find('.producto_id');
+
+            otSelect.html('<option value="">Cargando...</option>');
+            productoSelect.html('<option value="">Seleccione producto...</option>');
+
+            if (!factura_id) {
+                otSelect.html('<option value="">Seleccione OT...</option>');
+                return;
+            }
+
+            $.get("{{ route('procesos.listaOTsPorFactura') }}", { factura_id: factura_id }, function (data) {
+                otSelect.empty().append('<option value="">Seleccione OT...</option>');
+                if (data.length) {
+                    data.forEach(ot => otSelect.append(`<option value="${ot.id}">OT ${ot.nro_ot}</option>`));
+                } else {
+                    otSelect.append('<option value="">No hay OTs para esta factura</option>');
+                }
+            });
+        });
+
+
+
+
+
         function cargarOTs(selectId) {
             $.ajax({
                 url: "{{ route('procesos.listaOTs') }}",
@@ -536,35 +559,35 @@
 
                 data.forEach(producto => {
                     repeaterContainer.append(`
-                                                                                                    <div data-repeater-item>
-                                                                                                        <div class="form-group row mb-5">
-                                                                                                            <div class="col-md-4">
-                                                                                                                <label class="form-label">Producto</label>
-                                                                                                                <input type="text" class="form-control" value="${producto.nombre}" readonly />
-                                                                                                                <input type="hidden" name="producto_id" value="${producto.id}" />
-                                                                                                            </div>
-                                                                                                            <div class="col-md-3">
-                                                                                                                <label class="form-label">Tipo Proceso</label>
-                                                                                                                <select class="form-select" name="tipo_proceso_id">
-                                                                                                                    <option value="">Seleccione...</option>
-                                                                                                                </select>
-                                                                                                            </div>
-                                                                                                            <div class="col-md-2">
-                                                                                                                <label class="form-label">Fecha Ingreso</label>
-                                                                                                                <input type="datetime-local" class="form-control" name="fecha_ingreso" />
-                                                                                                            </div>
-                                                                                                            <div class="col-md-2">
-                                                                                                                <label class="form-label">Fecha Salida</label>
-                                                                                                                <input type="datetime-local" class="form-control" name="fecha_salida" />
-                                                                                                            </div>
-                                                                                                            <div class="col-md-2 mt-5">
-                                                                                                                <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger">
-                                                                                                                    <i class="ki-duotone ki-trash fs-3"></i> Eliminar
-                                                                                                                </a>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                `);
+                                                                                                                                        <div data-repeater-item>
+                                                                                                                                            <div class="form-group row mb-5">
+                                                                                                                                                <div class="col-md-4">
+                                                                                                                                                    <label class="form-label">Producto</label>
+                                                                                                                                                    <input type="text" class="form-control" value="${producto.nombre}" readonly />
+                                                                                                                                                    <input type="hidden" name="producto_id" value="${producto.id}" />
+                                                                                                                                                </div>
+                                                                                                                                                <div class="col-md-3">
+                                                                                                                                                    <label class="form-label">Tipo Proceso</label>
+                                                                                                                                                    <select class="form-select" name="tipo_proceso_id">
+                                                                                                                                                        <option value="">Seleccione...</option>
+                                                                                                                                                    </select>
+                                                                                                                                                </div>
+                                                                                                                                                <div class="col-md-2">
+                                                                                                                                                    <label class="form-label">Fecha Ingreso</label>
+                                                                                                                                                    <input type="datetime-local" class="form-control" name="fecha_ingreso" />
+                                                                                                                                                </div>
+                                                                                                                                                <div class="col-md-2">
+                                                                                                                                                    <label class="form-label">Fecha Salida</label>
+                                                                                                                                                    <input type="datetime-local" class="form-control" name="fecha_salida" />
+                                                                                                                                                </div>
+                                                                                                                                                <div class="col-md-2 mt-5">
+                                                                                                                                                    <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger">
+                                                                                                                                                        <i class="ki-duotone ki-trash fs-3"></i> Eliminar
+                                                                                                                                                    </a>
+                                                                                                                                                </div>
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                    `);
                 });
 
                 // Inicializa repeater **solo si la librería ya está disponible**
@@ -602,34 +625,39 @@
             }
 
             // Cada vez que se selecciona una OT en cualquier fila
+
+            // Cuando cambia la OT → cargar productos de esa OT
             $(document).on('change', '.order_trabajo_id', function () {
                 let fila = $(this).closest('[data-repeater-item]');
                 let ot_id = $(this).val();
                 let productoSelect = fila.find('.producto_id');
+                let tipoSelect = fila.find('.tipo_proceso_id');
+
+                productoSelect.html('<option value="">Cargando...</option>');
+                tipoSelect.html('<option value="">Cargando...</option>');
 
                 if (!ot_id) {
                     productoSelect.html('<option value="">Seleccione producto...</option>');
+                    tipoSelect.html('<option value="">Seleccione...</option>');
                     return;
                 }
 
+                // Productos aprobados por OT
                 $.get("{{ route('procesos.productosSolicitudesAceptadas') }}", { ot_id: ot_id }, function (data) {
-                    console.log("Productos recibidos:", data);
-                    productoSelect.empty();
-                    productoSelect.append('<option value="">Seleccione producto...</option>');
+                    productoSelect.empty().append('<option value="">Seleccione producto...</option>');
                     data.forEach(p => productoSelect.append(`<option value="${p.id}">${p.nombre}</option>`));
                 });
 
-                let tipoSelect = fila.find('.tipo_proceso_id');
+                // Tipos de proceso
                 $.get("{{ route('procesos.listaTiposProceso') }}", function (tipos) {
-                    tipoSelect.empty();
-                    tipoSelect.append('<option value="">Seleccione...</option>');
+                    tipoSelect.empty().append('<option value="">Seleccione...</option>');
                     tipos.forEach(t => tipoSelect.append(`<option value="${t.id}">${t.nombre}</option>`));
                 });
             });
 
-            // Guardar cada proceso individual
+            // Guardar procesos
             $('#guardarProcesosBtn').click(function () {
-                let filas = $('#kt_docs_repeater_advanced [data-repeater-item]').filter(':visible'); // SOLO filas visibles
+                let filas = $('#kt_docs_repeater_advanced [data-repeater-item]').filter(':visible');
                 let errores = false;
 
                 filas.each(function () {
@@ -649,28 +677,20 @@
                         estado: 'PENDIENTE'
                     };
 
-                    // Validación básica
                     if (!datos.order_trabajo_id || !datos.producto_id || !datos.tipo_proceso_id || !datos.fecha_ingreso) {
                         errores = true;
-                        return false; // rompe el each
+                        return false;
                     }
 
-                    // Enviar por AJAX
                     $.ajax({
                         url: "{{ route('procesos.guardar') }}",
                         method: "POST",
                         data: datos,
                         async: false,
                         success: function (res) {
-                            if (res.estado) {
-                                console.log("Proceso guardado:", res.mensaje);
-                            } else {
-                                Swal.fire('Error', res.mensaje, 'error');
-                            }
+                            if (!res.estado) Swal.fire('Error', res.mensaje, 'error');
                         },
-                        error: function (xhr) {
-                            console.error(xhr.responseJSON);
-                        }
+                        error: function (xhr) { console.error(xhr.responseJSON); }
                     });
                 });
 
@@ -682,19 +702,17 @@
                     recargarListado();
                 }
             });
+
+            function recargarListado() {
+                $.get("{{ route('procesos.ajaxListado') }}", function (res) {
+                    if (res.estado) $('#table_listado').html(res.data.listado);
+                    else $('#table_listado').html('<p class="text-danger text-center">Error al cargar los procesos</p>');
+                });
+            }
+
         });
 
 
-
-        function recargarListado() {
-            $.get("{{ route('procesos.ajaxListado') }}", function (res) {
-                if (res.estado) {
-                    $('#table_listado').html(res.data.listado);
-                } else {
-                    $('#table_listado').html('<p class="text-danger text-center">Error al cargar los procesos</p>');
-                }
-            });
-        }
 
 
 
@@ -713,14 +731,14 @@
 
             $.get("{{ route('solicitudes.otsPorFactura', ':id') }}".replace(':id', facturaId), function (data) {
                 let select = $('#ot_agrupada');
-                select.empty().append('<option value="">Seleccione OT...</option>');
+                select.empty();
+                select.append('<option value="">Seleccione OT...</option>');
                 data.forEach(ot => {
-                    select.append(`
-                                    <option value='${ot.ids}'>OT ${ot.nro_ot} (Peso: ${ot.peso_total})</option>
-                                `);
+                    select.append(`<option value='${ot.ids}'>OT ${ot.nro_ot} (Peso: ${ot.peso_total})</option>`);
                 });
             });
         });
+
 
         // OT → actualizar cantidad (suma de OT)
         $('#ot_agrupada').on('change', function () {
@@ -793,17 +811,17 @@
             solicitudTemporal.forEach((item, index) => {
                 let productoNombre = $('#producto_id_solicitud option:selected').text();
                 tbody.append(`
-                        <tr>
-                            <td>${productoNombre}</td>
-                            <td>${item.codigo_compra}</td>
-                            <td>${item.orden_trabajo_id.join(', ')}</td>
-                            <td>${item.porcentaje}%</td>
-                            <td>${item.cantidad.toFixed(2)}</td>
-                            <td>
-                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProductoTemporal(${index})">Eliminar</button>
-                            </td>
-                        </tr>
-                    `);
+                                                            <tr>
+                                                                <td>${productoNombre}</td>
+                                                                <td>${item.codigo_compra}</td>
+                                                                <td>${item.orden_trabajo_id.join(', ')}</td>
+                                                                <td>${item.porcentaje}%</td>
+                                                                <td>${item.cantidad.toFixed(2)}</td>
+                                                                <td>
+                                                                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProductoTemporal(${index})">Eliminar</button>
+                                                                </td>
+                                                            </tr>
+                                                        `);
             });
         }
 

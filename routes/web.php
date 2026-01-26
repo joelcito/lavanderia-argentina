@@ -215,6 +215,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/productos-aceptados', [ProcesosController::class, 'productosSolicitudesAceptadas'])->name('procesos.productosSolicitudesAceptadas');
 
 
+
+        Route::get('/ots-por-factura', [ProcesosController::class, 'listaOTsPorFactura'])
+            ->name('procesos.listaOTsPorFactura');
+
     });
 
     // REPORTE
