@@ -27,7 +27,14 @@ class ProcesosController extends Controller
         $productos = Producto::all();
         $ordenes = Order_trabajo::with(['factura'])->get();
         // Pasar los datos a la vista
-        return view('procesos.listado', compact('maquinarias', 'productos', 'ordenes'));
+        $facturas = Factura::with('ordenTrabajos')
+            ->where(function ($query) {
+                $query->where('estado', '!=', 'Anulado') // excluir anuladas
+                    ->orWhereNull('estado');          // incluir las que están sin estado (NULL)
+            })
+            ->get();
+
+        return view('procesos.listado', compact('maquinarias', 'productos', 'ordenes', 'facturas'));
     }
 
 
@@ -304,6 +311,18 @@ class ProcesosController extends Controller
             ->select('p.id', 'p.nombre', DB::raw('SUM(COALESCE(m.ingreso,0) - COALESCE(m.salida,0)) as stock'))
             ->groupBy('p.id', 'p.nombre')
             ->having('stock', '>', 0)
+            ->get();
+
+        return response()->json($productos);
+    }
+
+    public function productosConStock()
+    {
+        $productos = DB::table('movimientos')
+            ->join('productos', 'productos.id', '=', 'movimientos.producto_id')
+            ->select('productos.id', 'productos.nombre', DB::raw('SUM(movimientos.ingreso - movimientos.salida) as stock'))
+            ->groupBy('productos.id', 'productos.nombre')
+            ->havingRaw('stock > 0')
             ->get();
 
         return response()->json($productos);

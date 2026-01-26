@@ -1,25 +1,53 @@
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>OT</th>
-            <th>Cantidad de solicitudes</th>
-            <th>Acción</th>
-        </tr>
-    </thead>
-    <tbody>
-        @php
-            $ots = $solicitudes->groupBy('orden_trabajo_id');
-        @endphp
-        @foreach($ots as $otId => $sols)
+<div style="overflow-x: auto;">
+    <!--begin::Table-->
+    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_aprobacion">
+
+        <thead>
             <tr>
-                <td>{{ $otId }}</td>
-                <td>{{ count($sols) }}</td>
-                <td>
-                    <button class="btn btn-primary btn-sm" onclick="abrirModalOT({{ $otId }})">
-                        Aprobar OT
-                    </button>
-                </td>
+                <th>OT</th>
+                <th>Cantidad de solicitudes</th>
+                <th>Acción</th>
             </tr>
-        @endforeach
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach($ots as $otId => $sols)
+                <tr>
+                    <td>{{ $otId }}</td>
+                    <td>{{ count($sols) }}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="abrirModalOT({{ $otId }})">
+                            Aprobar OT
+                        </button>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+    <!--end::Table-->
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#kt_aprobacion').DataTable({
+            lengthMenu: [10, 25, 50, 100], // Opciones de longitud de página
+            dom: '<"dt-head row"<"col-md-6"l><"col-md-6"f>><"clear">t<"dt-footer row"<"col-md-5"i><"col-md-7"p>>', // Use dom for basic layout
+            language: {
+                paginate: {
+                    first: 'Primero',
+                    last: 'Último',
+                    next: 'Siguiente',
+                    previous: 'Anterior'
+                },
+                search: 'Buscar:',
+                lengthMenu: 'Mostrar _MENU_ registros por página',
+                info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+                emptyTable: 'No hay datos disponibles'
+            },
+            order: [],
+            //  searching: true,
+            responsive: true
+        });
+
+
+    });
+</script>

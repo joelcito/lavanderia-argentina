@@ -214,6 +214,7 @@ Route::middleware('auth')->group(function () {
             ->name('procesos.productosMovimientos');
         Route::get('/productos-aceptados', [ProcesosController::class, 'productosSolicitudesAceptadas'])->name('procesos.productosSolicitudesAceptadas');
 
+
     });
 
     // REPORTE
@@ -270,6 +271,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/solicitudes/store', [SolicitudController::class, 'store'])->name('solicitudes.store');
         Route::post('/ajaxDetalleOT', [SolicitudController::class, 'ajaxDetalleOT'])->name('solicitudes.ajaxDetalleOT');
         Route::post('/accionProducto', [SolicitudController::class, 'accionProducto'])->name('solicitudes.accionProducto');
+        Route::get('/ots', [SolicitudController::class, 'listaOTs'])->name('solicitudes.listaOTs');
+        Route::get('/ots-por-factura/{factura_id}', [SolicitudController::class, 'otsPorFactura'])->name('solicitudes.otsPorFactura');
+
+        Route::get('/codigos-compra', [SolicitudController::class, 'codigosCompra'])->name('solicitudes.codigosCompra');
+        Route::get('/productos-con-stock', [SolicitudController::class, 'productosConStock'])->name('solicitudes.productosConStock');
+
 
     });
 

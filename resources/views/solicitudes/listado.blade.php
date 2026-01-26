@@ -1,5 +1,12 @@
 @extends('layouts.app') {{-- Ajusta según tu layout --}}
-
+@section('css')
+    <link href="{{ asset('assets/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <style>
+        .tamanio_boton {
+            font-size: 6px;
+        }
+    </style>
+@endsection
 @section('title', 'Listado de Solicitudes')
 @section('css')
     <link href="{{ asset('assets/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
@@ -67,6 +74,9 @@
 @endsection
 
     @section('js')
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
         <script>
             $(document).ready(function () {
                 cargarSolicitudes();
@@ -113,28 +123,28 @@
                     success: function (res) {
                         if (res.estado) {
                             let html = `<table class="table table-bordered table-striped">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Producto</th>
-                                                                    <th>Cantidad</th>
-                                                                    <th>Estado</th>
-                                                                    <th>Usuario</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>`;
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Producto</th>
+                                                                                    <th>Cantidad</th>
+                                                                                    <th>Estado</th>
+                                                                                    <th>Usuario</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>`;
                             res.data.solicitudes.forEach(s => {
                                 html += `<tr>
-                                                        <td>${s.producto}</td>
-                                                        <td>${s.cantidad}</td>
-                                                        <td>${s.estado}</td>
-                                                        <td>${s.usuario}</td>
-                                                       <td>
-                ${s.estado === 'EN ESPERA' ? `
-                    <button class="btn btn-success btn-sm" onclick="accionSolicitud(${s.id}, 'aprobar')">Aprobar</button>
-                    <button class="btn btn-danger btn-sm" onclick="accionSolicitud(${s.id}, 'rechazar')">Rechazar</button>
-                ` : ''}
-            </td>
-                                                    </tr>`;
+                                                                        <td>${s.producto}</td>
+                                                                        <td>${s.cantidad}</td>
+                                                                        <td>${s.estado}</td>
+                                                                        <td>${s.usuario}</td>
+                                                                       <td>
+                                ${s.estado === 'EN PROCESO' ? `
+                                    <button class="btn btn-success btn-sm" onclick="accionSolicitud(${s.id}, 'aprobar')">Aprobar</button>
+                                    <button class="btn btn-danger btn-sm" onclick="accionSolicitud(${s.id}, 'rechazar')">Rechazar</button>
+                                ` : ''}
+                            </td>
+                                                                    </tr>`;
                             });
                             html += `</tbody></table>`;
 
