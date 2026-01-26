@@ -432,4 +432,99 @@ class FacturaController extends Controller
 
     }
 
+    public function listadoFacturaCliente(Request $request){
+
+        // $usuario = Auth::user();
+        // $facturas = Factura::where('usuario_cliente_id', $usuario)->get();
+
+        return view('factura.listadoFacturaCliente');
+
+    }
+
+    public function ajaxListadoFacturasCliente(Request $request){
+
+        if($request->ajax()){
+
+            $usuario    = Auth::user();
+            $usuario_id = $usuario->id;
+
+            $query = Factura::select(
+                'facturas.estado',
+                'facturas.nit',
+                'facturas.id',
+                'facturas.fecha',
+                'facturas.total',
+                'facturas.numero_factura',
+                'facturas.usuario_creador_id',
+                'facturas.sucursal_id',
+                'facturas.prioridad',
+                'users.cedula',
+                'users.nombres',
+                'users.ap_paterno',
+                'users.ap_materno',
+            )
+            ->join('users', 'users.id', '=', 'facturas.usuario_cliente_id')
+            ->where('facturas.usuario_cliente_id', $usuario_id);
+
+            if (!is_null($request->input('buscar_nro_factura'))) {
+                $numero_factura = $request->input('buscar_nro_factura');
+                $query->where('facturas.numero_factura', $numero_factura);
+            }
+
+            if (!is_null($request->input('buscar_fecha_inicio')) && !is_null($request->input('buscar_fecha_fin'))) {
+                $fecha_ini = $request->input('buscar_fecha_inicio');
+                $fecha_fin = $request->input('buscar_fecha_fin');
+                $query->whereBetween('facturas.fecha', [$fecha_ini . " 00:00:00", $fecha_fin . " 23:59:59"]);
+            }
+
+            if (
+                !is_null($request->input('buscar_nro_factura')) &&
+                !is_null($request->input('buscar_fecha_inicio')) &&
+                !is_null($request->input('buscar_fecha_fin'))
+            ) {
+                $facturas = $query->limit(500)->get();
+            } else {
+                $facturas = $query->orderBy('facturas.id', 'desc')->limit(100)->get();
+            }
+
+            $valores = [
+                'listado' => view('factura.ajaxListadoFacturasCliente')->with(compact('facturas'))->render()
+            ];
+            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+
+    }
+
+    public function detalleCliente(Request $request, $factura_id){
+
+        $usuario    = Auth::user();
+        $factura = Factura::find($factura_id);
+
+        if($factura){
+            if($factura->usuario_cliente_id == $usuario->id){
+
+                $cliente = $factura->cliente;
+
+                return view('factura.detalleCliente')->with(compact('cliente', 'factura'));
+
+            }else{
+                return response()->view('errors.custom', [
+                        'code' => 429,
+                        'title' => 'VENTA no autorizado',
+                        'message' => 'Debe tener un VENTA autorizada para continuar.'
+                    ], 429);
+            }
+        }else{
+            return response()->view('errors.custom', [
+                        'code' => 429,
+                        'title' => 'VENTA no encontrado',
+                        'message' => 'Debe tener un VENTA activo para continuar.'
+                    ], 429);
+        }
+    }
+
 }

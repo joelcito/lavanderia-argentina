@@ -78,8 +78,48 @@ class User extends Authenticatable
         return $this->rol_id == 1 ? true : false;
     }
 
+    public function  isLavador()
+    {
+        return $this->rol_id == 2 ? true : false;
+    }
+
+    public function  isCliente()
+    {
+        return $this->rol_id == 3 ? true : false;
+    }
+
+    public function  isEncargadoAlmacen()
+    {
+        return $this->rol_id == 4 ? true : false;
+    }
+
+    public function  isPlanchador()
+    {
+        return $this->rol_id == 5 ? true : false;
+    }
+
+    public function  isFocalizador()
+    {
+        return $this->rol_id == 6 ? true : false;
+    }
+
+    public function  isAyudanteLavado()
+    {
+        return $this->rol_id == 7 ? true : false;
+    }
+
+    public function  isAuxuliarOficina()
+    {
+        return $this->rol_id == 8 ? true : false;
+    }
+
     public function sucursal()
     {
         return $this->belongsTo('App\Models\Sucursal', 'sucursal_id');
+    }
+
+    public function rol()
+    {
+        return $this->belongsTo('App\Models\Rol', 'rol_id');
     }
 }

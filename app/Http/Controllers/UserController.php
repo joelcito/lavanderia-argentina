@@ -14,7 +14,8 @@ class UserController extends Controller
 {
     public function listado (){
 
-        $roles = Rol::all();
+        // $roles = Rol::all();
+        $roles = Rol::where('id', '!=', 3)->get();
         $sucursales = Sucursal::all();
 
         return view ('user.listado')->with(compact('roles', 'sucursales'));
@@ -23,7 +24,8 @@ class UserController extends Controller
     public function ajaxListado (Request $request){
         if($request->ajax()){
             //sacamos el listado
-            $usuarios = User::all();
+            // $usuarios = User::all();
+            $usuarios = User::where('rol_id', '!=', 3)->get();
             $valores=[
                 'listado' => view('user.ajaxListado')->with(compact('usuarios'))->render()
             ];
@@ -34,7 +36,7 @@ class UserController extends Controller
         }
         return $data;
     }
-    
+
     public function guardarUser(Request $request){
         if ($request->ajax()) {
             $user_id = $request->input('id');
@@ -72,9 +74,9 @@ class UserController extends Controller
 
             $data = Respuesta::success(null, "Datos Obtenidos correctamente");
         } else {
-            $data = Respuesta::error(null, "Error al obtener los datos");            
+            $data = Respuesta::error(null, "Error al obtener los datos");
         }
-        
+
         return $data;
     }
 
@@ -97,7 +99,7 @@ class UserController extends Controller
             $data = Respuesta::success(null, "Se elimino con exito");
 
         }else{
-        
+
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
 

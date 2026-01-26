@@ -130,6 +130,10 @@ class ClienteController extends Controller
             $cliente->email                = $email;
             if ($cliente_id == '0') {
                 $cliente->password = Hash::make($password);
+            }else{
+                if($password != null && $password != ""){
+                    $cliente->password = Hash::make($password);
+                }
             }
             $cliente->rol_id               = $rolCliente;
             $cliente->save();

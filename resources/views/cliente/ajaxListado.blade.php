@@ -9,7 +9,7 @@
                 <th>Apellido Materno</th>
                 <th>Celular</th>
                 <th>C.I.</th>
-                <th>NIT</th>               
+                <th>NIT</th>
                 <th>Razon Social</th>
                 <th>Direccion</th>
                 <th>Actions</th>
@@ -42,15 +42,15 @@
                             <tbody class="text-gray-600 fw-semibold">
                                     <tr>
                                         <td>{{ $cliente->nombre_referencia_1 }}</td>
-                                        <td>{{ $cliente->celular_referencia_1 }}</td>        
+                                        <td>{{ $cliente->celular_referencia_1 }}</td>
                                     </tr>
                                     <tr>
                                         <td>{{ $cliente->nombre_referencia_2 }}</td>
-                                        <td>{{ $cliente->celular_referencia_2 }}</td>        
+                                        <td>{{ $cliente->celular_referencia_2 }}</td>
                                     </tr>
                                     <tr>
                                         <td>{{ $cliente->nombre_referencia_3 }}</td>
-                                        <td>{{ $cliente->celular_referencia_3 }}</td>        
+                                        <td>{{ $cliente->celular_referencia_3 }}</td>
                                     </tr>
                             </tbody>
                         </table>

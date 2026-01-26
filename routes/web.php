@@ -236,7 +236,6 @@ Route::middleware('auth')->group(function () {
     });
 
 
-
     // ORDEN DE TRABAJO
     Route::prefix('/ordenTrabajo')->group(function () {
         // Route::get('/formulario', [ReporteController::class, 'formulario'])->name('reporte.formulario');
@@ -263,6 +262,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/cambiaDatoOrdenTrabajo', [OrdenTrabajoController::class, 'cambiaDatoOrdenTrabajo'])->name('ordenTrabajo.cambiaDatoOrdenTrabajo');
     });
 
+    Route::prefix('/facturaCliente')->group(function () {
+        Route::get('/listadoFacturaCliente', [FacturaController::class, 'listadoFacturaCliente'])->name('factura.listadoFacturaCliente');
+        Route::post('/ajaxListadoFacturasCliente', [FacturaController::class, 'ajaxListadoFacturasCliente'])->name('factura.ajaxListadoFacturasCliente');
+        Route::get('/detalleCliente/{factura_id}', [FacturaController::class, 'detalleCliente'])->name('factura.detalleCliente');
+    });
+
+
     //solicitudes
     Route::prefix('/solicitudes')->group(function () {
         Route::get('/listado', [SolicitudController::class, 'listado'])->name('solicitudes.listado');
@@ -280,7 +286,5 @@ Route::middleware('auth')->group(function () {
         Route::post('/guardarNevado', [NevadoController::class, 'guardarNevado'])->name('nevado.guardarNevado');
         Route::post('/eliminarNevado', [NevadoController::class, 'eliminarNevado'])->name('nevado.eliminarNevado');
     });
-
-
 
 });

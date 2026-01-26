@@ -16,6 +16,7 @@ use App\Utils\Respuesta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PDF;
+use Svg\Tag\Rect;
 
 class OrdenTrabajoController extends Controller
 {
@@ -448,6 +449,6 @@ class OrdenTrabajoController extends Controller
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
         return $data;
-
     }
+
 }

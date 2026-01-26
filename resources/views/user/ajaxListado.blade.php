@@ -7,10 +7,11 @@
                 <th>Nombre</th>
                 <th>Apellido Paterno</th>
                 <th>Apellido Materno</th>
+                <th>Rol</th>
                 <th>C.I.</th>
                 <th>Celular</th>
                 <th>Nombre Usuario</th>
-                <th>Email</th>               
+                <th>Email</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -21,6 +22,9 @@
                     <td>{{ $user->nombres }}</td>
                     <td>{{ $user->ap_paterno }}</td>
                     <td>{{ $user->ap_materno }}</td>
+                    <td>
+                        <span class="badge badge-success">{{ $user->rol->nombre }}</span>
+                    </td>
                     <td>{{ $user->cedula }}</td>
                     <td>{{ $user->celular }}</td>
                     <td>{{ $user->name }}</td>

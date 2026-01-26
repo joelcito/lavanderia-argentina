@@ -67,9 +67,9 @@
                                             <th >Pos. 3</th>
                                             <th >Pos. 4</th>
                                             <th >Pre. x Mesa</th>
-                                            <th >Seg/Pre</th>
+                                            <th >Tie. Total</th>
                                             <th >Pre Min</th>
-                                            <th >Sub total</th>
+                                            <th >Precio</th>
                                             <th >Actions</th>
                                         </tr>
                                     </thead>
@@ -378,28 +378,6 @@
                                 <span class="font-weight-bolder font-size-sm text-primary">NOTA VENTA</span>
                                 <a target="_blank" href="{{ url('factura/recibo') }}/{{ $factura->id }}" class="btn btn-danger btn-sm btn-icon w-100"><i class="fa fa-file-pdf"></i></a>
                                 {{-- <h5>{{ $ejemplar->tipo }}</h5> --}}
-                            </div>
-                        </div>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
-                            <span class="mr-4">
-                                <i class="fas fa-edit" style="font-size: 30px; margin-right: 5px;"></i>
-                            </span>
-                            <div class="d-flex flex-column text-dark-75">
-                                <span class="font-weight-bolder font-size-sm text-primary">EDITAR</span>
-                                <button onclick="ajaxFormularioEditarOrdenTrabajo()" class="btn btn-warning btn-sm btn-icon w-100"><i class="fa fa-edit"></i></button>
-                            </div>
-                        </div>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
-                            <span class="mr-4">
-                                <i class="fas fa-plus" style="font-size: 30px; margin-right: 5px;"></i>
-                            </span>
-                            <div class="d-flex flex-column text-dark-75">
-                                <span class="font-weight-bolder font-size-sm text-primary">IMPRESION DE OT</span>
-                                <button onclick="ajaxNroOtFactura()" class="btn btn-info btn-sm btn-icon w-100"><i class="fa fa-plus"></i></button>
                             </div>
                         </div>
                         <!--end::Item-->

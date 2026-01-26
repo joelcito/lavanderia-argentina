@@ -19,7 +19,17 @@
                 <th>Observaciones</th>
                 <th>Nro. OT</th>
                 <th>Estado</th>
-                <th>Actions</th>
+                @if (
+                        Auth::user()->isAdmin() ||
+                        Auth::user()->isLavador() ||
+                        Auth::user()->isEncargadoAlmacen() ||
+                        Auth::user()->isPlanchador() ||
+                        Auth::user()->isFocalizador() ||
+                        Auth::user()->isAyudanteLavado() ||
+                        Auth::user()->isAuxuliarOficina()
+                    )
+                    <th>Actions</th>
+                @endif
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -51,10 +61,20 @@
                             <span class="badge badge-dark">{{ $ordenTrabajo->estado }}</span>
                         @endif
                     </td>
-                    <td>
-                        <button title="Editar Estado Orden Trabajo" class="btn btn-sm btn-icon btn-warning btn-circle" onclick="editarEstadoOrdenTrabajo({{ $ordenTrabajo->nro_ot }}, '{{ $ordenTrabajo->estado }}')"><i class="fa fa-edit"></i></button>
-                        <button title="Agregar Laser" class="btn btn-sm btn-icon btn-primary btn-circle" onclick="modalAgregarLaser({{ $ordenTrabajo->id }}, '{{ $ordenTrabajo->nro_ot }}' , '{{ $ordenTrabajo->observacion }}', '{{ $ordenTrabajo->cantidad }}')"><i class="fa fa-pray"></i></button>
-                    </td>
+                    @if (
+                        Auth::user()->isAdmin() ||
+                        Auth::user()->isLavador() ||
+                        Auth::user()->isEncargadoAlmacen() ||
+                        Auth::user()->isPlanchador() ||
+                        Auth::user()->isFocalizador() ||
+                        Auth::user()->isAyudanteLavado() ||
+                        Auth::user()->isAuxuliarOficina()
+                    )
+                        <td>
+                            <button title="Editar Estado Orden Trabajo" class="btn btn-sm btn-icon btn-warning btn-circle" onclick="editarEstadoOrdenTrabajo({{ $ordenTrabajo->nro_ot }}, '{{ $ordenTrabajo->estado }}')"><i class="fa fa-edit"></i></button>
+                            <button title="Agregar Laser" class="btn btn-sm btn-icon btn-primary btn-circle" onclick="modalAgregarLaser({{ $ordenTrabajo->id }}, '{{ $ordenTrabajo->nro_ot }}' , '{{ $ordenTrabajo->observacion }}', '{{ $ordenTrabajo->cantidad }}')"><i class="fa fa-pray"></i></button>
+                        </td>
+                    @endif
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>
