@@ -27,7 +27,14 @@ class ProcesosController extends Controller
         $productos = Producto::all();
         $ordenes = Order_trabajo::with(['factura'])->get();
         // Pasar los datos a la vista
-        return view('procesos.listado', compact('maquinarias', 'productos', 'ordenes'));
+        $facturas = Factura::with('ordenTrabajos')
+            ->where(function ($query) {
+                $query->where('estado', '!=', 'Anulado') // excluir anuladas
+                    ->orWhereNull('estado');          // incluir las que están sin estado (NULL)
+            })
+            ->get();
+
+        return view('procesos.listado', compact('maquinarias', 'productos', 'ordenes', 'facturas'));
     }
 
 
@@ -286,14 +293,46 @@ class ProcesosController extends Controller
 
     public function productosSolicitudesAceptadas(Request $request)
     {
-        $ot_id = $request->ot_id;
+        try {
+            $ot_id = $request->query('ot_id');
 
-        $productos = Producto::whereHas('solicitudes', function ($q) use ($ot_id) {
-            $q->where('orden_trabajo_id', $ot_id)
-                ->where('estado', 'APROBADO');
-        })->get();
+            if (!$ot_id) {
+                return response()->json([
+                    'estado' => false,
+                    'mensaje' => 'No se proporcionó ot_id',
+                    'data' => []
+                ]);
+            }
 
-        return response()->json($productos);
+            // Verificamos que la OT exista
+            $ot = OrderTrabajo::find($ot_id);
+            if (!$ot) {
+                return response()->json([
+                    'estado' => false,
+                    'mensaje' => 'OT no encontrada',
+                    'data' => []
+                ]);
+            }
+
+            // Traemos productos aceptados para esa OT
+            $productos = Producto::whereHas('solicitudes', function ($query) use ($ot_id) {
+                $query->where('order_trabajo_id', $ot_id)
+                    ->where('estado', 'ACEPTADO'); // Solo aceptados
+            })->get();
+
+            return response()->json([
+                'estado' => true,
+                'data' => $productos
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error productosSolicitudesAceptadas: ' . $e->getMessage());
+            return response()->json([
+                'estado' => false,
+                'mensaje' => 'Error al consultar productos: ' . $e->getMessage(),
+                'data' => []
+            ], 500);
+        }
     }
 
     // Productos con stock según movimientos
@@ -307,6 +346,30 @@ class ProcesosController extends Controller
             ->get();
 
         return response()->json($productos);
+    }
+
+    public function productosConStock()
+    {
+        $productos = DB::table('movimientos')
+            ->join('productos', 'productos.id', '=', 'movimientos.producto_id')
+            ->select('productos.id', 'productos.nombre', DB::raw('SUM(movimientos.ingreso - movimientos.salida) as stock'))
+            ->groupBy('productos.id', 'productos.nombre')
+            ->havingRaw('stock > 0')
+            ->get();
+
+        return response()->json($productos);
+    }
+
+    public function listaOTsPorFactura(Request $request)
+    {
+        $factura_id = $request->factura_id;
+
+        if (!$factura_id) {
+            return response()->json([]);
+        }
+
+        $ots = Order_Trabajo::where('factura_id', $factura_id)->get(); // <- aquí puede fallar
+        return response()->json($ots);
     }
 
 

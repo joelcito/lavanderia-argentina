@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Request;
 
 class Movimiento extends Model
 {
@@ -24,18 +25,37 @@ class Movimiento extends Model
         'salida',
         'fecha',
         'descripcion',
-       
+
 
         'estado',
         'deleted_at',
-        
+
     ];
 
-    public function producto(){
+    public function producto()
+    {
         return $this->belongsTo('App\Models\Producto', 'producto_id');
     }
 
-    public function sucursal(){
+    public function sucursal()
+    {
         return $this->belongsTo('App\Models\Sucursal', 'sucursal_id');
+    }
+
+    public function productosConStock()
+    {
+        // Obtenemos los productos que tengan stock positivo
+        $productos = Movimiento::select('producto_id', DB::raw('SUM(ingreso - salida) as stock'))
+            ->groupBy('producto_id')
+            ->having('stock', '>', 0)
+            ->with('producto') // relación con modelo Producto
+            ->get()
+            ->map(fn($m) => [
+                'id' => $m->producto_id,
+                'nombre' => $m->producto->nombre ?? 'Sin nombre',
+                'stock' => $m->stock
+            ]);
+
+        return response()->json($productos);
     }
 }

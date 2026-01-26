@@ -40,9 +40,9 @@
                         onclick="modalNuevaLavanderiaConMaquinaria({{ $m->id }})">
                         <div class="fw-bold">{{ ucfirst($m->tipo) }}</div>
 
-                         <div class="text-muted small">
+                        <div class="text-muted small">
                             Equipo N° {{ $m->numero}}
-                        </div> 
+                        </div>
                         <!-- Estado -->
                         <span class="badge {{ $m->estado_maquina == 'DISPONIBLE' ? 'bg-success' : 'bg-danger' }}">
                             {{ $m->estado_maquina }}
@@ -99,20 +99,28 @@
                 <div id="kt_docs_repeater_advanced">
                     <div class="form-group">
                         <div data-repeater-list="procesos_lavanderia">
-
                             <div data-repeater-item>
-                                <!-- FILA 1: OT, Producto, Tipo Proceso -->
                                 <div class="form-group row mb-3 g-3">
+                                    <!-- Factura -->
                                     <div class="col-md-4">
-                                        <label class="form-label">OT</label>
-                                        <select class="form-select order_trabajo_id" name="order_trabajo_id">
-                                            <option value="">Seleccione OT...</option>
-                                            @foreach($ordenes as $ot)
-                                                <option value="{{ $ot->id }}">OT: {{ $ot->id }}</option>
+                                        <label class="form-label">Factura</label>
+                                        <select class="form-select factura_id" name="factura_id">
+                                            <option value="">Seleccione factura...</option>
+                                            @foreach($facturas as $factura)
+                                                <option value="{{ $factura->id }}">{{ $factura->numero_factura }}</option>
                                             @endforeach
                                         </select>
                                     </div>
 
+                                    <!-- OT -->
+                                    <div class="col-md-4">
+                                        <label class="form-label">OT</label>
+                                        <select class="form-select order_trabajo_id" name="order_trabajo_id">
+                                            <option value="">Seleccione OT...</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Producto -->
                                     <div class="col-md-4">
                                         <label class="form-label">Producto</label>
                                         <select class="form-select producto_id" name="producto_id">
@@ -120,7 +128,8 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-md-4">
+                                    <!-- Tipo Proceso -->
+                                    <div class="col-md-4 mt-3">
                                         <label class="form-label">Tipo Proceso</label>
                                         <select class="form-select tipo_proceso_id" name="tipo_proceso_id">
                                             <option value="">Seleccione...</option>
@@ -128,54 +137,40 @@
                                     </div>
                                 </div>
 
-                                <!-- FILA 2: Fecha, Tiempo, Temp, PH, RB, Descripción, Eliminar -->
                                 <div class="form-group row mb-3 g-3 align-items-end">
                                     <div class="col-md-2">
                                         <label class="form-label">Fecha Ingreso</label>
                                         <input type="datetime-local" class="form-control fecha_ingreso"
                                             name="fecha_ingreso" />
                                     </div>
-
                                     <div class="col-md-2">
                                         <label class="form-label">Fecha Salida</label>
                                         <input type="datetime-local" class="form-control fecha_salida"
                                             name="fecha_salida" />
                                     </div>
-
                                     <div class="col-md-1">
                                         <label class="form-label">Tiempo</label>
                                         <input type="number" class="form-control tiempo" name="tiempo"
                                             placeholder="Tiempo" />
                                     </div>
-
                                     <div class="col-md-1">
                                         <label class="form-label">°C</label>
                                         <input type="number" class="form-control temperatura" name="temperatura"
                                             placeholder="°C" />
                                     </div>
-
                                     <div class="col-md-1">
                                         <label class="form-label">pH</label>
                                         <input type="number" class="form-control ph" name="ph" placeholder="pH" />
                                     </div>
-
                                     <div class="col-md-1">
                                         <label class="form-label">RB</label>
                                         <input type="text" class="form-control rb" name="rb" placeholder="RB" />
                                     </div>
-
                                     <div class="col-md-3">
                                         <label class="form-label">Descripción</label>
                                         <input type="text" class="form-control descripcion" name="descripcion"
                                             placeholder="Descripción" />
                                     </div>
-
-                                    <!-- <div class="col-md-1">
-                                        <a href="javascript:;" data-repeater-delete
-                                            class="btn btn-sm btn-light-danger w-100">
-                                            <i class="ki-duotone ki-trash fs-3"></i>
-                                        </a>
-                                    </div> -->
                                     <div class="col-md-1 d-flex align-items-center mt-4">
                                         <a href="javascript:;" data-repeater-delete
                                             class="btn btn-sm btn-light-danger w-100 d-flex justify-content-center">
@@ -184,7 +179,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
@@ -205,9 +199,7 @@
     </div>
 </div>
 
-
-
-
+<!-- Modal Solicitud de Productos -->
 <div class="modal fade" id="modalSolicitudProductos" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -219,74 +211,86 @@
 
             <div class="modal-body">
 
-                {{-- SELECT OT --}}
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label>Orden de Trabajo (OT)</label>
-                        <select id="order_trabajo_id_solicitud" class="form-select">
-                            <option value="">Seleccione OT...</option>
-
-                            @foreach($ordenes as $ot)
-                                <option value="{{ $ot->id }}">
-                                    OT: {{ $ot->id }}
-                                    @if($ot->factura)
-                                        - Factura: {{ $ot->factura->numero_factura }}
-                                    @else
-                                        - SIN FACTURA
-                                    @endif
-                                </option>
-                            @endforeach
-
-                        </select>
-
-                    </div>
+                <!-- FACTURA -->
+                <div class="mb-3">
+                    <label>Factura</label>
+                    <select id="factura_id_solicitud" class="form-select">
+                        <option value="">Seleccione factura...</option>
+                        @foreach($facturas as $factura)
+                            <option value="{{ $factura->id }}">{{ $factura->numero_factura }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
-
-
-                {{-- PRODUCTO --}}
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label>Producto</label>
-                        <select id="producto_id_solicitud" class="form-select">
-                            <option value="">Cargando...</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-3">
-                        <label>Cantidad</label>
-                        <input type="number" id="cantidad" class="form-control">
-                    </div>
-
-                    <div class="col-md-3 d-flex align-items-end">
-                        <button class="btn btn-success w-100" onclick="agregarProducto()">+</button>
-                    </div>
+                <!-- ORDEN DE TRABAJO -->
+                <div class="mb-3">
+                    <label>Orden de Trabajo (OT agrupadas)</label>
+                    <select id="ot_agrupada" class="form-select">
+                        <option value="">Seleccione OT...</option>
+                    </select>
                 </div>
 
-                {{-- TABLA DETALLE --}}
-                <table class="table table-bordered">
+                <!-- CÓDIGO DE COMPRA -->
+                <div class="mb-3">
+                    <label>Código de Compra</label>
+                    <select id="codigo_compra" class="form-select">
+                        <option value="">Seleccione código...</option>
+                    </select>
+                </div>
+
+                <!-- PRODUCTO -->
+                <div class="mb-3">
+                    <label>Producto (con stock)</label>
+                    <select id="producto_id_solicitud" class="form-select">
+                        <option value="">Seleccione producto...</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label>Porcentaje (%)</label>
+                    <input type="number" step="0.01" id="porcentaje_solicitado" class="form-control"
+                        placeholder="Ej: 3">
+                </div>
+
+                <!-- CANTIDAD -->
+                <div class="mb-3">
+                    <label>Cantidad (Peso total OT)</label>
+                    <input type="number" step="0.01" id="cantidad_solicitada" class="form-control" readonly>
+                </div>
+
+                <!-- Botón Agregar al listado temporal -->
+                <div class="mb-3">
+                    <button class="btn btn-success" type="button" onclick="agregarProductoTemporal()">Agregar al
+                        listado</button>
+                </div>
+
+                <!-- Tabla de listado temporal -->
+                <table class="table table-bordered" id="tabla_solicitud_temporal">
                     <thead>
                         <tr>
                             <th>Producto</th>
+                            <th>Código Compra</th>
+                            <th>OT(s)</th>
+                            <th>Porcentaje (%)</th>
                             <th>Cantidad</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
-                    <tbody id="detalleProductos"></tbody>
+                    <tbody>
+                        <!-- Filas agregadas dinámicamente aquí -->
+                    </tbody>
                 </table>
 
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-primary" onclick="guardarSolicitud()">
-                    Guardar solicitud
-                </button>
+                <button class="btn btn-primary" onclick="guardarSolicitud()">Guardar Solicitud</button>
+                <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
             </div>
 
         </div>
     </div>
 </div>
-
 
 @stop
 
@@ -376,6 +380,35 @@
                 data.forEach(item => select.append(`<option value="${item.id}">${item.nombre}</option>`));
             });
         }
+
+
+        // Cuando cambia la factura, cargar las OTs correspondientes
+        $(document).on('change', '.factura_id', function () {
+            let fila = $(this).closest('[data-repeater-item]');
+            let factura_id = $(this).val();
+            let otSelect = fila.find('.order_trabajo_id');
+            let productoSelect = fila.find('.producto_id');
+
+            otSelect.html('<option value="">Cargando...</option>');
+            productoSelect.html('<option value="">Seleccione producto...</option>');
+
+            if (!factura_id) {
+                otSelect.html('<option value="">Seleccione OT...</option>');
+                return;
+            }
+
+            $.get("{{ route('procesos.listaOTsPorFactura') }}", { factura_id: factura_id }, function (data) {
+                otSelect.empty().append('<option value="">Seleccione OT...</option>');
+                if (data.length) {
+                    data.forEach(ot => otSelect.append(`<option value="${ot.id}">OT ${ot.nro_ot}</option>`));
+                } else {
+                    otSelect.append('<option value="">No hay OTs para esta factura</option>');
+                }
+            });
+        });
+
+
+
 
 
         function cargarOTs(selectId) {
@@ -496,50 +529,6 @@
             }, 1000);
         }
 
-        //solicitud
-
-        let productosSolicitud = [];
-
-        /* ABRIR MODAL */
-
-
-        function abrirModalSolicitud() {
-            productosSolicitud = [];
-            $("#detalleProductos").html('');
-            $("#order_trabajo_id_solicitud").val('');
-            $("#producto_id_solicitud").val('');
-            $("#cantidad").val('');
-            //  cargarOTs('order_trabajo_id_solicitud'); // ID correcto
-            cargarProductosSolicitud(); // ID correcto
-            $('#modalSolicitudProductos').modal('show');
-        }
-
-
-        /* RENDER TABLA */
-        function renderTabla() {
-            let html = '';
-            productosSolicitud.forEach((item, index) => {
-                html += `
-                                                                                                                                                                                                                                                            <tr>
-                                                                                                                                                                                                                                                                <td>${item.producto}</td>
-                                                                                                                                                                                                                                                                <td>${item.cantidad}</td>
-                                                                                                                                                                                                                                                                <td>
-                                                                                                                                                                                                                                                                    <button class="btn btn-danger btn-sm"
-                                                                                                                                                                                                                                                                            onclick="eliminarProducto(${index})">
-                                                                                                                                                                                                                                                                        X
-                                                                                                                                                                                                                                                                    </button>
-                                                                                                                                                                                                                                                                </td>
-                                                                                                                                                                                                                                                            </tr>
-                                                                                                                                                                                                                                                        `;
-            });
-            $("#detalleProductos").html(html);
-        }
-
-        /* ELIMINAR */
-        function eliminarProducto(index) {
-            productosSolicitud.splice(index, 1);
-            renderTabla();
-        }
 
         function cargarProductosLavanderia(ot_id) {
             if (!ot_id) return;
@@ -553,73 +542,6 @@
             });
         }
 
-        function cargarProductosSolicitud() {
-            $.get("{{ route('procesos.productosMovimientos') }}", function (data) {
-                console.log("Productos Solicitud:", data); // <-- para depuración
-                let select = $("#producto_id_solicitud");
-                select.empty();
-                select.append('<option value="">Seleccione...</option>');
-                data.forEach(item => select.append(`<option value="${item.id}">${item.nombre} - Stock: ${item.stock}</option>`));
-            });
-        }
-
-        // Guardar solicitud: corregir ID de OT
-
-
-
-        function guardarSolicitud() {
-            let ordenTrabajoId = $("#order_trabajo_id_solicitud").val();
-
-            if (!ordenTrabajoId || productosSolicitud.length === 0) {
-                Swal.fire('Error', 'Seleccione una OT y agregue productos', 'error');
-                return;
-            }
-
-            $.ajax({
-                url: "{{ route('solicitudes.store') }}",
-                type: "POST",
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                data: {
-                    orden_trabajo_id: ordenTrabajoId,
-                    productos: productosSolicitud,
-                    estado: 'EN ESPERA' // <-- agregamos el estado aquí
-                },
-                success: function () {
-                    Swal.fire('OK', 'Solicitud registrada correctamente', 'success');
-                    $('#modalSolicitudProductos').modal('hide');
-                },
-                error: function () {
-                    Swal.fire('Error', 'No se pudo guardar la solicitud', 'error');
-                }
-            });
-        }
-
-
-
-        function agregarProducto() {
-            let ordenTrabajoId = $("#order_trabajo_id_solicitud").val(); // ID correcto
-            let productoId = $("#producto_id_solicitud").val(); // ID correcto
-            let productoText = $("#producto_id_solicitud option:selected").text();
-            let cantidad = $("#cantidad").val();
-
-            if (!ordenTrabajoId) {
-                Swal.fire('Atención', 'Seleccione una OT', 'warning');
-                return;
-            }
-
-            if (!productoId || !cantidad) {
-                Swal.fire('Atención', 'Seleccione producto y cantidad', 'warning');
-                return;
-            }
-
-            productosSolicitud.push({
-                producto_id: productoId,
-                producto: productoText,
-                cantidad: cantidad
-            });
-
-            renderTabla();
-        }
 
 
         $('#order_trabajo_id_lavanderia').on('change', function () {
@@ -637,35 +559,35 @@
 
                 data.forEach(producto => {
                     repeaterContainer.append(`
-                                                                                                        <div data-repeater-item>
-                                                                                                            <div class="form-group row mb-5">
-                                                                                                                <div class="col-md-4">
-                                                                                                                    <label class="form-label">Producto</label>
-                                                                                                                    <input type="text" class="form-control" value="${producto.nombre}" readonly />
-                                                                                                                    <input type="hidden" name="producto_id" value="${producto.id}" />
-                                                                                                                </div>
-                                                                                                                <div class="col-md-3">
-                                                                                                                    <label class="form-label">Tipo Proceso</label>
-                                                                                                                    <select class="form-select" name="tipo_proceso_id">
-                                                                                                                        <option value="">Seleccione...</option>
-                                                                                                                    </select>
-                                                                                                                </div>
-                                                                                                                <div class="col-md-2">
-                                                                                                                    <label class="form-label">Fecha Ingreso</label>
-                                                                                                                    <input type="datetime-local" class="form-control" name="fecha_ingreso" />
-                                                                                                                </div>
-                                                                                                                <div class="col-md-2">
-                                                                                                                    <label class="form-label">Fecha Salida</label>
-                                                                                                                    <input type="datetime-local" class="form-control" name="fecha_salida" />
-                                                                                                                </div>
-                                                                                                                <div class="col-md-2 mt-5">
-                                                                                                                    <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger">
-                                                                                                                        <i class="ki-duotone ki-trash fs-3"></i> Eliminar
-                                                                                                                    </a>
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    `);
+                                                                                                                                        <div data-repeater-item>
+                                                                                                                                            <div class="form-group row mb-5">
+                                                                                                                                                <div class="col-md-4">
+                                                                                                                                                    <label class="form-label">Producto</label>
+                                                                                                                                                    <input type="text" class="form-control" value="${producto.nombre}" readonly />
+                                                                                                                                                    <input type="hidden" name="producto_id" value="${producto.id}" />
+                                                                                                                                                </div>
+                                                                                                                                                <div class="col-md-3">
+                                                                                                                                                    <label class="form-label">Tipo Proceso</label>
+                                                                                                                                                    <select class="form-select" name="tipo_proceso_id">
+                                                                                                                                                        <option value="">Seleccione...</option>
+                                                                                                                                                    </select>
+                                                                                                                                                </div>
+                                                                                                                                                <div class="col-md-2">
+                                                                                                                                                    <label class="form-label">Fecha Ingreso</label>
+                                                                                                                                                    <input type="datetime-local" class="form-control" name="fecha_ingreso" />
+                                                                                                                                                </div>
+                                                                                                                                                <div class="col-md-2">
+                                                                                                                                                    <label class="form-label">Fecha Salida</label>
+                                                                                                                                                    <input type="datetime-local" class="form-control" name="fecha_salida" />
+                                                                                                                                                </div>
+                                                                                                                                                <div class="col-md-2 mt-5">
+                                                                                                                                                    <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger">
+                                                                                                                                                        <i class="ki-duotone ki-trash fs-3"></i> Eliminar
+                                                                                                                                                    </a>
+                                                                                                                                                </div>
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                    `);
                 });
 
                 // Inicializa repeater **solo si la librería ya está disponible**
@@ -703,34 +625,39 @@
             }
 
             // Cada vez que se selecciona una OT en cualquier fila
+
+            // Cuando cambia la OT → cargar productos de esa OT
             $(document).on('change', '.order_trabajo_id', function () {
                 let fila = $(this).closest('[data-repeater-item]');
                 let ot_id = $(this).val();
                 let productoSelect = fila.find('.producto_id');
+                let tipoSelect = fila.find('.tipo_proceso_id');
+
+                productoSelect.html('<option value="">Cargando...</option>');
+                tipoSelect.html('<option value="">Cargando...</option>');
 
                 if (!ot_id) {
                     productoSelect.html('<option value="">Seleccione producto...</option>');
+                    tipoSelect.html('<option value="">Seleccione...</option>');
                     return;
                 }
 
+                // Productos aprobados por OT
                 $.get("{{ route('procesos.productosSolicitudesAceptadas') }}", { ot_id: ot_id }, function (data) {
-                    console.log("Productos recibidos:", data);
-                    productoSelect.empty();
-                    productoSelect.append('<option value="">Seleccione producto...</option>');
+                    productoSelect.empty().append('<option value="">Seleccione producto...</option>');
                     data.forEach(p => productoSelect.append(`<option value="${p.id}">${p.nombre}</option>`));
                 });
 
-                let tipoSelect = fila.find('.tipo_proceso_id');
+                // Tipos de proceso
                 $.get("{{ route('procesos.listaTiposProceso') }}", function (tipos) {
-                    tipoSelect.empty();
-                    tipoSelect.append('<option value="">Seleccione...</option>');
+                    tipoSelect.empty().append('<option value="">Seleccione...</option>');
                     tipos.forEach(t => tipoSelect.append(`<option value="${t.id}">${t.nombre}</option>`));
                 });
             });
 
-            // Guardar cada proceso individual
+            // Guardar procesos
             $('#guardarProcesosBtn').click(function () {
-                let filas = $('#kt_docs_repeater_advanced [data-repeater-item]').filter(':visible'); // SOLO filas visibles
+                let filas = $('#kt_docs_repeater_advanced [data-repeater-item]').filter(':visible');
                 let errores = false;
 
                 filas.each(function () {
@@ -750,28 +677,20 @@
                         estado: 'PENDIENTE'
                     };
 
-                    // Validación básica
                     if (!datos.order_trabajo_id || !datos.producto_id || !datos.tipo_proceso_id || !datos.fecha_ingreso) {
                         errores = true;
-                        return false; // rompe el each
+                        return false;
                     }
 
-                    // Enviar por AJAX
                     $.ajax({
                         url: "{{ route('procesos.guardar') }}",
                         method: "POST",
                         data: datos,
                         async: false,
                         success: function (res) {
-                            if (res.estado) {
-                                console.log("Proceso guardado:", res.mensaje);
-                            } else {
-                                Swal.fire('Error', res.mensaje, 'error');
-                            }
+                            if (!res.estado) Swal.fire('Error', res.mensaje, 'error');
                         },
-                        error: function (xhr) {
-                            console.error(xhr.responseJSON);
-                        }
+                        error: function (xhr) { console.error(xhr.responseJSON); }
                     });
                 });
 
@@ -783,18 +702,160 @@
                     recargarListado();
                 }
             });
+
+            function recargarListado() {
+                $.get("{{ route('procesos.ajaxListado') }}", function (res) {
+                    if (res.estado) $('#table_listado').html(res.data.listado);
+                    else $('#table_listado').html('<p class="text-danger text-center">Error al cargar los procesos</p>');
+                });
+            }
+
         });
 
 
 
-        function recargarListado() {
-            $.get("{{ route('procesos.ajaxListado') }}", function (res) {
-                if (res.estado) {
-                    $('#table_listado').html(res.data.listado);
-                } else {
-                    $('#table_listado').html('<p class="text-danger text-center">Error al cargar los procesos</p>');
-                }
+
+
+        //solicitud
+
+
+        let solicitudTemporal = [];
+        let otSeleccionada = [];
+
+        // FACTURA → OTs
+        $('#factura_id_solicitud').on('change', function () {
+            let facturaId = $(this).val();
+            if (!facturaId) return;
+
+            $('#ot_agrupada').html('<option value="">Cargando...</option>');
+
+            $.get("{{ route('solicitudes.otsPorFactura', ':id') }}".replace(':id', facturaId), function (data) {
+                let select = $('#ot_agrupada');
+                select.empty();
+                select.append('<option value="">Seleccione OT...</option>');
+                data.forEach(ot => {
+                    select.append(`<option value='${ot.ids}'>OT ${ot.nro_ot} (Peso: ${ot.peso_total})</option>`);
+                });
             });
+        });
+
+
+        // OT → actualizar cantidad (suma de OT)
+        $('#ot_agrupada').on('change', function () {
+            let selected = $(this).find('option:selected');
+            let otIds = selected.val() ? selected.val().split(',').map(Number) : [];
+            otSeleccionada = otIds;
+
+            let pesoMatch = selected.text().match(/\(Peso: ([\d\.]+)\)/);
+            let peso = pesoMatch ? parseFloat(pesoMatch[1]) : 0;
+            $('#cantidad_solicitada').val(peso);
+
+            // Cargar códigos de compra según las OT seleccionadas
+            if (otIds.length) {
+                $.get("{{ route('solicitudes.codigosCompra') }}", { orden_trabajo_id: otIds }, function (data) {
+                    let select = $('#codigo_compra');
+                    select.empty().append('<option value="">Seleccione código...</option>');
+                    data.forEach(c => select.append(`<option value="${c.codigo_compra}">${c.codigo_compra} (Stock: ${c.stock})</option>`));
+                });
+            }
+        });
+
+        // CÓDIGO → Productos con stock
+        $('#codigo_compra').on('change', function () {
+            let codigo = $(this).val();
+            $('#producto_id_solicitud').html('<option value="">Cargando...</option>');
+
+            if (!codigo) return;
+
+            $.get("{{ route('solicitudes.productosConStock') }}", { codigo_compra: codigo }, function (data) {
+                let select = $('#producto_id_solicitud');
+                select.empty().append('<option value="">Seleccione producto...</option>');
+                data.forEach(p => select.append(`<option value="${p.producto_id}">${p.nombre} (Stock: ${p.stock})</option>`));
+            });
+        });
+
+        // Agregar producto al listado temporal
+        function agregarProductoTemporal() {
+            let productoId = $('#producto_id_solicitud').val();
+            let productoTexto = $('#producto_id_solicitud option:selected').text();
+            let codigoCompra = $('#codigo_compra').val();
+
+            let cantidadTotal = parseFloat($('#cantidad_solicitada').val());
+            let porcentaje = parseFloat($('#porcentaje_solicitado').val()) || 0;
+
+            if (!productoId || !codigoCompra || !otSeleccionada.length || !cantidadTotal || !porcentaje) {
+                Swal.fire('Error', 'Complete todos los campos antes de agregar', 'warning');
+                return;
+            }
+
+            // Calculamos la cantidad según el porcentaje
+            let cantidadCalculada = (cantidadTotal * porcentaje) / 100;
+
+            solicitudTemporal.push({
+                producto_id: productoId,
+                codigo_compra: codigoCompra,
+                orden_trabajo_id: otSeleccionada,
+                cantidad: cantidadCalculada,
+                porcentaje: porcentaje
+            });
+
+            actualizarTablaTemporal();
+        }
+
+
+        // Actualizar tabla temporal
+        function actualizarTablaTemporal() {
+            let tbody = $('#tabla_solicitud_temporal tbody');
+            tbody.empty();
+
+            solicitudTemporal.forEach((item, index) => {
+                let productoNombre = $('#producto_id_solicitud option:selected').text();
+                tbody.append(`
+                                                            <tr>
+                                                                <td>${productoNombre}</td>
+                                                                <td>${item.codigo_compra}</td>
+                                                                <td>${item.orden_trabajo_id.join(', ')}</td>
+                                                                <td>${item.porcentaje}%</td>
+                                                                <td>${item.cantidad.toFixed(2)}</td>
+                                                                <td>
+                                                                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProductoTemporal(${index})">Eliminar</button>
+                                                                </td>
+                                                            </tr>
+                                                        `);
+            });
+        }
+
+        // Eliminar producto temporal
+        function eliminarProductoTemporal(index) {
+            solicitudTemporal.splice(index, 1);
+            actualizarTablaTemporal();
+        }
+
+        // Guardar todas las solicitudes
+        function guardarSolicitud() {
+            if (!solicitudTemporal.length) {
+                Swal.fire('Error', 'Agregue al menos un producto al listado', 'warning');
+                return;
+            }
+
+            $.post("{{ route('solicitudes.store') }}", {
+                _token: "{{ csrf_token() }}",
+                solicitudes: solicitudTemporal
+            }, function (res) {
+                Swal.fire('OK', 'Solicitudes registradas correctamente', 'success');
+                $('#modalSolicitudProductos').modal('hide');
+                solicitudTemporal = [];
+                actualizarTablaTemporal();
+            }).fail(function (xhr) {
+                console.error(xhr.responseJSON);
+                Swal.fire('Error', 'Ocurrió un error al guardar la solicitud', 'error');
+            });
+        }
+
+        function abrirModalSolicitud() {
+            // Si estás usando Bootstrap 5
+            let modal = new bootstrap.Modal(document.getElementById('modalSolicitudProductos'));
+            modal.show();
         }
 
     </script>
