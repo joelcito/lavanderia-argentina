@@ -95,18 +95,40 @@
             </tr>
         </table>
 
+        {{-- <table id="tabla">
+            <tr>
+                <td><strong>Cliente:</strong></td>
+                <td class="text-left">{{ $factura->cliente->nombres." ".$factura->cliente->ap_materno." ".$factura->cliente->ap_paterno }}</td>
+                <td><strong>Fecha Registro:</strong></td>
+                <td class="text-left">{{ date('d/m/Y H:i:s', strtotime($factura->fecha)) }}</td>
+                <td><strong>Usuario Impresion:</strong></td>
+                <td class="text-left">{{ $usuario->nombres." ".$usuario->ap_materno." ".$usuario->ap_paterno }}</td>
+                <td><strong>Fecha Impresion:</strong></td>
+                <td class="text-left">{{ date('d/m/Y H:i:s') }}</td>
+            </tr>
+        </table> --}}
+
         <hr class="hr-small">
         <table class="table">
             <thead>
-                <tr><th>DETALLES DE SERVICIOS</th></tr>
+                <tr>
+                    <th>DETALLES DE SERVICIOS</th>
+                    <th>TOTALES</th>
+                </tr>
             </thead>
             <tbody>
             @php
                 $cantidaPrendas = 0;
+                $cantidaPeso = 0;
+                // dd( count($ordenesTrabajos));
             @endphp
-            @foreach ($ordenesTrabajos as $ordenTrabajo)
+            @foreach ($ordenesTrabajos as $key => $ordenTrabajo)
                 @php
-                    $cantidaPrendas = $cantidaPrendas + $ordenTrabajo->cantidad;
+                    // $cantidaPrendas = $cantidaPrendas + $ordenTrabajo->cantidad;
+                    // $cantidaPeso = $cantidaPeso + $ordenTrabajo->peso;
+
+                    $cantidaPrendas = $ordenesTrabajos->sum('cantidad');
+                    $cantidaPeso = $ordenesTrabajos->sum('peso');
                 @endphp
                 <tr>
                     <td>
@@ -138,6 +160,12 @@
                             [Con Muestra: NO]
                         @endif
                     </td>
+                    @if ($key==0)
+                        <td rowspan="{{ count($ordenesTrabajos) }}">
+                            Pes T: {{ $cantidaPeso }}<br>
+                            Pre T: {{ $cantidaPrendas }}
+                        </td>
+                    @endif
                 </tr>
             @endforeach
             </tbody>
