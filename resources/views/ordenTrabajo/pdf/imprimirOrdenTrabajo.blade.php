@@ -124,18 +124,15 @@
             @endphp
             @foreach ($ordenesTrabajos as $key => $ordenTrabajo)
                 @php
-                    // $cantidaPrendas = $cantidaPrendas + $ordenTrabajo->cantidad;
-                    // $cantidaPeso = $cantidaPeso + $ordenTrabajo->peso;
-
                     $cantidaPrendas = $ordenesTrabajos->sum('cantidad');
-                    $cantidaPeso = $ordenesTrabajos->sum('peso');
+                    $cantidaPeso    = $ordenesTrabajos->sum('peso');
                 @endphp
                 <tr>
                     <td>
                         {{ $ordenTrabajo->prenda?->nombre }} ;
-                        [Cant:{{ $ordenTrabajo->cantidad }}] ;
+                        [Cant:{{ (int) $ordenTrabajo->cantidad }}] ;
                         [Peso:{{ $ordenTrabajo->peso }}] ;
-                        [Ojales:{{ $ordenTrabajo->numero_ojales }}/{{ $ordenTrabajo->cantidad }}] ;
+                        [Ojales:{{ (int) $ordenTrabajo->numero_ojales }}/{{ (int)$ordenTrabajo->cantidad }}] ;
                         @if ($ordenTrabajo->prelavado)
                             [Pre-Lavado:{{ $ordenTrabajo->prelavado?->nombre }}] ;
                         @endif
@@ -193,8 +190,13 @@
                             ...................................................................................................... <br>
                             ...................................................................................................... <br>
                             <strong>Cant. prendas Foc.:</strong> <br>
-                            ........................................... {{ $cantidaPrendas }} ..................................................... <br>
-                            ......................................................................................................
+                            <center>
+                                @foreach ($ordenesTrabajos as $key => $ordenTrabajo)
+                                    [{{ (int)$ordenTrabajo->cantidad }} - {{ $ordenTrabajo->prenda?->nombre }}]
+                                @endforeach
+                            </center>
+                            {{-- ........................................... {{ $cantidaPrendas }} ..................................................... <br> --}}
+                            {{-- ...................................................................................................... --}}
                         </td>
                     </tr>
                     </tbody>
@@ -211,8 +213,13 @@
                             ...................................................................................................... <br>
                             ...................................................................................................... <br>
                             <strong>Cant. prendas Planch.:</strong> <br>
-                            ............................................ {{ $cantidaPrendas }} .................................................... <br>
-                            ......................................................................................................
+                            <center>
+                                @foreach ($ordenesTrabajos as $key => $ordenTrabajo)
+                                    [{{ (int)$ordenTrabajo->cantidad }} - {{ $ordenTrabajo->prenda?->nombre }}]
+                                @endforeach
+                            </center>
+                            {{-- ............................................ {{ $cantidaPrendas }} .................................................... <br>
+                            ...................................................................................................... --}}
                         </td>
                     </tr>
                     </tbody>

@@ -451,4 +451,40 @@ class OrdenTrabajoController extends Controller
         return $data;
     }
 
+    public function ajaxFormularioLaser(Request $request){
+
+        if ($request->ajax()){
+
+            // dd($request->all());
+
+            $factura      = $request->input('factura');
+            $ordenTrabajo = $request->input('ordenTrabajo');
+            $nroOt        = $request->input('nroOt');
+            $observacion  = $request->input('observacion');
+            $cantidad     = $request->input('cantidad');
+
+            $ordenesTrabajos = Order_trabajo::where('factura_id', $factura)
+                                            ->where('nro_ot', $nroOt)
+                                            ->get();
+
+            $prandas = "";
+
+            foreach ($ordenesTrabajos as $key => $ordenTrabajo) {
+                $prandas = $prandas . $ordenTrabajo->cantidad." - ".$ordenTrabajo->prenda?->no0mbre;
+            }
+
+            $valores = [
+                'formulario' => view('ordenTrabajo.formularioLaser')->with(compact('factura','ordenTrabajo','nroOt','observacion','cantidad', 'ordenesTrabajos', 'prandas'))->render()
+            ];
+
+            $data = Respuesta::success($valores, "Datos Obtenidos correctamente");
+
+        }else{
+
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+
+    }
+
 }
