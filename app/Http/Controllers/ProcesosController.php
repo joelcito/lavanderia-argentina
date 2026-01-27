@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Solicitud;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Factura;
@@ -77,18 +78,65 @@ class ProcesosController extends Controller
         return response()->json($tipos);
     }
 
+    // public function guardar(Request $request)
+    // {
+
+    //     $request->validate([
+    //         'order_trabajo_id' => 'required|exists:order_trabajos,id',
+    //         'tipo_proceso_id' => 'required|exists:tipo_procesos,id',
+    //         'fecha_ingreso' => 'required|date',
+    //     ]);
+
+
+    //     $maquinaria = Maquinaria::find($request->maquinaria_id);
+    //     $proceso = Proceso::updateOrCreate(
+    //         ['id' => $request->id],
+    //         [
+    //             'order_trabajo_id' => $request->order_trabajo_id,
+    //             'producto_id' => $request->producto_id,
+    //             'maquinaria_id' => $request->maquinaria_id,
+    //             'tipo_proceso_id' => $request->tipo_proceso_id,
+    //             'fecha_ingreso' => $request->fecha_ingreso,
+    //             'fecha_salida' => $request->fecha_salida,
+    //             'tiempo' => $request->tiempo,
+    //             'temperatura' => $request->temperatura,
+    //             'ph' => $request->ph,
+    //             'rb' => $request->rb,
+    //             'descripcion' => $request->descripcion,
+    //             'estado' => 'EN PROCESO',
+    //         ]
+    //     );
+
+    //     // Cambiar estado de la maquinaria
+    //     $maquinaria->estado_maquina = 'EN PROCESO';
+    //     $maquinaria->save();
+
+
+    //     // Cambiar estado de la OT a TRABAJANDO
+    //     $orderTrabajo = Order_trabajo::find($request->order_trabajo_id);
+    //     if ($orderTrabajo && !in_array($orderTrabajo->estado, ['FINALIZADO', 'ENTREGADO'])) {
+    //         $orderTrabajo->estado = 'TRABAJANDO';
+    //         $orderTrabajo->save();
+    //     }
+
+    //     return response()->json([
+    //         'estado' => true,
+    //         'mensaje' => 'Proceso registrado correctamente.',
+    //         'data' => $proceso
+    //     ]);
+    // }
+
     public function guardar(Request $request)
     {
-
         $request->validate([
             'order_trabajo_id' => 'required|exists:order_trabajos,id',
-            'producto_id' => 'required|exists:productos,id',
             'tipo_proceso_id' => 'required|exists:tipo_procesos,id',
             'fecha_ingreso' => 'required|date',
+            'producto_id' => 'nullable|exists:productos,id',
         ]);
 
-
         $maquinaria = Maquinaria::find($request->maquinaria_id);
+
         $proceso = Proceso::updateOrCreate(
             ['id' => $request->id],
             [
@@ -108,10 +156,12 @@ class ProcesosController extends Controller
         );
 
         // Cambiar estado de la maquinaria
-        $maquinaria->estado_maquina = 'EN PROCESO';
-        $maquinaria->save();
+        if ($maquinaria) {
+            $maquinaria->estado_maquina = 'EN PROCESO';
+            $maquinaria->save();
+        }
 
-        // Cambiar estado de la OT a TRABAJANDO
+        // Cambiar estado de la OT a TRABAJANDO si aplica
         $orderTrabajo = Order_trabajo::find($request->order_trabajo_id);
         if ($orderTrabajo && !in_array($orderTrabajo->estado, ['FINALIZADO', 'ENTREGADO'])) {
             $orderTrabajo->estado = 'TRABAJANDO';
@@ -124,6 +174,78 @@ class ProcesosController extends Controller
             'data' => $proceso
         ]);
     }
+
+    public function guardarListado(Request $request)
+    {
+        $procesos = $request->input('procesos', []); // array de procesos del listado
+
+        if (empty($procesos)) {
+            return response()->json([
+                'estado' => false,
+                'mensaje' => 'No se encontraron procesos para guardar.'
+            ]);
+        }
+
+        $resultados = [];
+
+        foreach ($procesos as $item) {
+            // Validar campos mínimos por cada proceso
+            $validator = \Validator::make($item, [
+                'order_trabajo_id' => 'required|exists:order_trabajos,id',
+                'tipo_proceso_id' => 'required|exists:tipo_procesos,id',
+                'fecha_ingreso' => 'required|date',
+                'producto_id' => 'nullable|exists:productos,id',
+                'maquinaria_id' => 'required|exists:maquinarias,id',
+            ]);
+
+            if ($validator->fails()) {
+                // Omitir este registro y continuar con los demás
+                continue;
+            }
+
+            $maquinaria = Maquinaria::find($item['maquinaria_id']);
+
+            $proceso = Proceso::create([
+                'order_trabajo_id' => $item['order_trabajo_id'],
+                'producto_id' => $item['producto_id'] ?? null,
+                'maquinaria_id' => $item['maquinaria_id'],
+                'tipo_proceso_id' => $item['tipo_proceso_id'],
+                'fecha_ingreso' => $item['fecha_ingreso'],
+                'fecha_salida' => $item['fecha_salida'] ?? null,
+                'tiempo' => $item['tiempo'] ?? null,
+                'temperatura' => $item['temperatura'] ?? null,
+                'ph' => $item['ph'] ?? null,
+                'rb' => $item['rb'] ?? null,
+                'descripcion' => $item['descripcion'] ?? null,
+                'estado' => 'TRABAJANDO',
+            ]);
+
+            // Cambiar estado de la maquinaria a EN PROCESO
+            if ($maquinaria) {
+                $maquinaria->estado_maquina = 'EN PROCESO';
+                $maquinaria->save();
+            }
+
+            // Cambiar estado de la OT a TRABAJANDO si aplica
+            $orderTrabajo = Order_trabajo::find($item['order_trabajo_id']);
+            if ($orderTrabajo && !in_array($orderTrabajo->estado, ['FINALIZADO', 'ENTREGADO'])) {
+                $orderTrabajo->estado = 'TRABAJANDO';
+                $orderTrabajo->save();
+            }
+
+            $resultados[] = $proceso;
+        }
+
+        return response()->json([
+            'estado' => true,
+            'mensaje' => 'Listado de procesos guardado correctamente.',
+            'data' => $resultados
+        ]);
+    }
+
+
+
+
 
     public function infoMaquinaria(Request $request)
     {
@@ -216,8 +338,6 @@ class ProcesosController extends Controller
 
 
 
-
-
     public function listaOTs()
     {
         try {
@@ -305,7 +425,7 @@ class ProcesosController extends Controller
             }
 
             // Verificamos que la OT exista
-            $ot = OrderTrabajo::find($ot_id);
+            $ot = Order_Trabajo::find($ot_id);
             if (!$ot) {
                 return response()->json([
                     'estado' => false,
@@ -317,7 +437,7 @@ class ProcesosController extends Controller
             // Traemos productos aceptados para esa OT
             $productos = Producto::whereHas('solicitudes', function ($query) use ($ot_id) {
                 $query->where('order_trabajo_id', $ot_id)
-                    ->where('estado', 'ACEPTADO'); // Solo aceptados
+                    ->where('estado', 'APROBADO'); // Solo aceptados
             })->get();
 
             return response()->json([
@@ -360,17 +480,58 @@ class ProcesosController extends Controller
         return response()->json($productos);
     }
 
-    public function listaOTsPorFactura(Request $request)
-    {
-        $factura_id = $request->factura_id;
 
-        if (!$factura_id) {
+    public function otsPorFactura(Request $request)
+    {
+        $factura_id = $request->query('factura_id'); // nota: query string
+
+        if (!$factura_id)
             return response()->json([]);
+
+        $ots = Solicitud::where('factura_id', $factura_id)
+            ->where('estado', 'APROBADO') // solo aprobados
+            ->select('orden_trabajo_id')
+            ->distinct()
+            ->pluck('orden_trabajo_id')
+            ->toArray();
+
+        $data = Order_trabajo::whereIn('id', $ots)
+            ->get()
+            ->map(function ($ot) {
+                return [
+                    'id' => $ot->id,
+                    'nro_ot' => $ot->nro_ot,
+                    'peso_total' => $ot->peso_total ?? 0,
+                ];
+            });
+
+        return response()->json($data);
+    }
+
+    public function productosAprobadosPorOT($ot_id)
+    {
+        $solicitudes = Solicitud::whereJsonContains('orden_trabajo_id', $ot_id)
+            ->where('estado', 'APROBADO')
+            ->get();
+
+        $productos = collect();
+
+        foreach ($solicitudes as $solicitud) {
+            $ids = json_decode($solicitud->producto_id);
+            if (is_array($ids)) {
+                $productos->push(...$ids);
+            }
         }
 
-        $ots = Order_Trabajo::where('factura_id', $factura_id)->get(); // <- aquí puede fallar
-        return response()->json($ots);
+        $productos = $productos->unique()->values();
+
+        $productosData = Producto::whereIn('id', $productos)->get(['id', 'nombre']);
+
+        return response()->json($productosData);
     }
+
+
+
 
 
 }

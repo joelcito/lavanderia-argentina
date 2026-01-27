@@ -62,4 +62,5 @@ class Factura extends Model
     {
         return $this->hasMany(Pago::class);
     }
+
 }

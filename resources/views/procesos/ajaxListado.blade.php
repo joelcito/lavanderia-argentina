@@ -1,5 +1,5 @@
 <div style="overflow-x: auto;">
-    <table class="table table-bordered table-hover" id="table_ots">
+    <table class="table table-bordered table-hover" id="kt_table_color_tela">
         <thead>
             <tr>
                 <th>Número OT</th>
@@ -54,7 +54,7 @@
 
 <script>
     $(document).ready(function () {
-        $('#kt_table_usuarios').DataTable({
+        $('#kt_table_color_tela').DataTable({
             lengthMenu: [10, 25, 50, 100], // Opciones de longitud de página
             dom: '<"dt-head row"<"col-md-6"l><"col-md-6"f>><"clear">t<"dt-footer row"<"col-md-5"i><"col-md-7"p>>', // Use dom for basic layout
             language: {

@@ -172,6 +172,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/detalle/{factura_id}', [FacturaController::class, 'detalle'])->name('factura.detalle');
         Route::post('/anularRecibo', [FacturaController::class, 'anularRecibo']);
         Route::post('/agregarNuevoOrdenTrabajo', [FacturaController::class, 'agregarNuevoOrdenTrabajo']);
+        //
+        Route::get('/facturas-estado-null', [FacturaController::class, 'getFacturasNull'])->name('factura.estadoNull');
+        Route::get('/ots', [FacturaController::class, 'getOTs'])->name('factura.obtenerOTs');
+        Route::get('/productos', [FacturaController::class, 'getProductosAprobados'])->name('factura.productos');
+
     });
 
     //PAGO
@@ -198,7 +203,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/lista-tipos-proceso', [ProcesosController::class, 'listaTiposProceso'])
             ->name('procesos.listaTiposProceso');
-        Route::post('/guardar', [ProcesosController::class, 'guardar'])->name('procesos.guardar');
+
         // web.php
         Route::post('/info-maquinaria', [ProcesosController::class, 'infoMaquinaria'])->name('procesos.infoMaquinaria');
         Route::post('/actualizar-estados', [ProcesosController::class, 'actualizarEstados'])->name('procesos.actualizarEstados');
@@ -207,17 +212,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/detalle-ot/{ot}', [ProcesosController::class, 'detalleOT']);
 
         Route::post('/finalizar-ot', [ProcesosController::class, 'finalizarOT'])->name('procesos.finalizarOT');
-        Route::get('/productos-aceptados', [ProcesosController::class, 'productosSolicitudesAceptadas'])
-            ->name('procesos.productosSolicitudesAceptadas');
+        Route::get('/productos-movimientos', [ProcesosController::class, 'productosMovimientos'])->name('procesos.productosMovimientos');
 
-        Route::get('/productos-movimientos', [ProcesosController::class, 'productosMovimientos'])
-            ->name('procesos.productosMovimientos');
-        Route::get('/productos-aceptados', [ProcesosController::class, 'productosSolicitudesAceptadas'])->name('procesos.productosSolicitudesAceptadas');
+        //  Route::get('/ots-por-factura', [ProcesosController::class, 'listaOTsPorFactura'])->name('procesos.listaOTsPorFactura');
+        Route::get('/ots-por-factura', [ProcesosController::class, 'otsPorFactura'])->name('procesos.otsPorFactura');
+
+        Route::get(
+            '/productos-aprobados-por-ot/{ot_id}',
+            [ProcesosController::class, 'productosAprobadosPorOT']
+        )->name('procesos.productosAprobadosPorOT');
+        //////////////////
+// Procesos
+        Route::post('/guardar-listado', [ProcesosController::class, 'guardarListado'])->name('procesos.guardarListado');
 
 
-
-        Route::get('/ots-por-factura', [ProcesosController::class, 'listaOTsPorFactura'])
-            ->name('procesos.listaOTsPorFactura');
 
     });
 
@@ -239,6 +247,7 @@ Route::middleware('auth')->group(function () {
         });
 
     });
+
 
 
     // ORDEN DE TRABAJO
@@ -266,26 +275,31 @@ Route::middleware('auth')->group(function () {
         Route::post('/cambiaDatoOrdenTrabajo', [OrdenTrabajoController::class, 'cambiaDatoOrdenTrabajo'])->name('ordenTrabajo.cambiaDatoOrdenTrabajo');
     });
 
+
+
     Route::prefix('/facturaCliente')->group(function () {
         Route::get('/listadoFacturaCliente', [FacturaController::class, 'listadoFacturaCliente'])->name('factura.listadoFacturaCliente');
         Route::post('/ajaxListadoFacturasCliente', [FacturaController::class, 'ajaxListadoFacturasCliente'])->name('factura.ajaxListadoFacturasCliente');
         Route::get('/detalleCliente/{factura_id}', [FacturaController::class, 'detalleCliente'])->name('factura.detalleCliente');
     });
 
-
     //solicitudes
     Route::prefix('/solicitudes')->group(function () {
         Route::get('/listado', [SolicitudController::class, 'listado'])->name('solicitudes.listado');
         Route::post('/ajaxListado', [SolicitudController::class, 'ajaxListado'])->name('solicitudes.ajaxListado');
-        Route::post('/solicitudes/store', [SolicitudController::class, 'store'])->name('solicitudes.store');
+        Route::post('/store', [SolicitudController::class, 'store'])->name('solicitudes.store');
         Route::post('/ajaxDetalleOT', [SolicitudController::class, 'ajaxDetalleOT'])->name('solicitudes.ajaxDetalleOT');
         Route::post('/accionProducto', [SolicitudController::class, 'accionProducto'])->name('solicitudes.accionProducto');
         Route::get('/ots', [SolicitudController::class, 'listaOTs'])->name('solicitudes.listaOTs');
-        Route::get('/ots-por-factura/{factura_id}', [SolicitudController::class, 'otsPorFactura'])->name('solicitudes.otsPorFactura');
+        // Route::get('/ots-por-factura/{factura_id}', [SolicitudController::class, 'otsPorFactura'])->name('solicitudes.otsPorFactura');
+        Route::get('/ots/{id}', [SolicitudController::class, 'otsPorFactura'])->name('solicitudes.otsPorFactura');
 
         Route::get('/codigos-compra', [SolicitudController::class, 'codigosCompra'])->name('solicitudes.codigosCompra');
         Route::get('/productos-con-stock', [SolicitudController::class, 'productosConStock'])->name('solicitudes.productosConStock');
 
+        Route::get('/productos-stock', [SolicitudController::class, 'productosConStock'])->name('solicitudes.productosConStock');
+        Route::get('/detalle/{id}', [SolicitudController::class, 'detalle'])->name('solicitudes.detalle');
+        Route::post('/ajax-detalle-ot', [SolicitudController::class, 'ajaxDetalleOT'])->name('solicitudes.ajaxDetalleOT');
 
     });
 

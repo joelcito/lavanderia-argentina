@@ -50,23 +50,53 @@ class SolicitudController extends Controller
         ]);
     }
 
+    // public function store(Request $request)
+    // {
+    //     $data = $request->input('solicitudes');
+
+    //     foreach ($data as $item) {
+    //         $solicitud = new Solicitud();
+    //         $solicitud->usuario_creador_id = auth()->id();
+    //         $solicitud->producto_id = $item['producto_id'];
+    //         $solicitud->orden_trabajo_id = json_encode($item['orden_trabajo_id']); // guardamos array como JSON
+    //         $solicitud->cantidad = $item['cantidad']; // ya calculada según porcentaje
+    //         $solicitud->porcentaje = $item['porcentaje']; // nuevo campo
+    //         $solicitud->estado = 'EN PROCESO';
+    //         $solicitud->save();
+    //     }
+
+    //     return response()->json(['estado' => true, 'mensaje' => 'Solicitudes guardadas correctamente']);
+    // }
+
     public function store(Request $request)
     {
-        $data = $request->input('solicitudes');
+        DB::beginTransaction();
 
-        foreach ($data as $item) {
-            $solicitud = new Solicitud();
-            $solicitud->usuario_creador_id = auth()->id();
-            $solicitud->producto_id = $item['producto_id'];
-            $solicitud->orden_trabajo_id = json_encode($item['orden_trabajo_id']); // guardamos array como JSON
-            $solicitud->cantidad = $item['cantidad']; // ya calculada según porcentaje
-            $solicitud->porcentaje = $item['porcentaje']; // nuevo campo
-            $solicitud->estado = 'EN PROCESO';
-            $solicitud->save();
+        try {
+            foreach ($request->solicitudes as $item) {
+
+                $solicitud = new Solicitud();
+                $solicitud->usuario_creador_id = auth()->id();
+                $solicitud->producto_id = $item['producto_id'];
+                $solicitud->orden_trabajo_id = json_encode($item['orden_trabajo_ids']); // 👈 AQUÍ
+                $solicitud->cantidad = $item['cantidad'];
+                $solicitud->porcentaje = $item['porcentaje'];
+                $solicitud->estado = 'EN PROCESO';
+                $solicitud->save();
+            }
+
+            DB::commit();
+            return response()->json(['estado' => true]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'estado' => false,
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json(['estado' => true, 'mensaje' => 'Solicitudes guardadas correctamente']);
     }
+
 
     // Detalle de OT
     public function ajaxDetalleOT(Request $request)
@@ -182,25 +212,59 @@ class SolicitudController extends Controller
 
 
 
+    // public function otsPorFactura($factura_id)
+    // {
+    //     try {
+    //         $factura = Factura::with('ordenTrabajos')->findOrFail($factura_id);
+
+    //         $ots = $factura->ordenTrabajos->map(function ($ot) {
+    //             return [
+    //                 'ids' => $ot->id, // si son múltiples, podrías usar ->pluck('id')->toArray()
+    //                 'nro_ot' => $ot->numero_ot,
+    //                 'peso_total' => $ot->peso_total ?? 0
+    //             ];
+    //         });
+
+    //         return response()->json($ots);
+    //     } catch (\Exception $e) {
+    //         \Log::error("Error al obtener OTs por factura: " . $e->getMessage());
+    //         return response()->json(['error' => 'No se pudieron cargar las OTs'], 500);
+    //     }
+    // }
+
     public function otsPorFactura($factura_id)
     {
         try {
-            $factura = Factura::with('ordenTrabajos')->findOrFail($factura_id);
+            $ots = Order_Trabajo::where('factura_id', $factura_id)
+                ->where('estado', 'RECEPCIONADO')
+                ->where('tipo', 'ORDEN_TRABAJO')
+                ->get();
 
-            $ots = $factura->ordenTrabajos->map(function ($ot) {
+            if ($ots->isEmpty()) {
+                return response()->json([]);
+            }
+
+            $agrupadas = $ots->groupBy('nro_ot')->map(function ($grupo, $nro_ot) {
+                $ids = $grupo->pluck('id')->toArray();
+                $peso_total = $grupo->sum('peso'); // columna real
                 return [
-                    'ids' => $ot->id, // si son múltiples, podrías usar ->pluck('id')->toArray()
-                    'nro_ot' => $ot->numero_ot,
-                    'peso_total' => $ot->peso_total ?? 0
+                    'nro_ot' => $nro_ot,
+                    'ids' => $ids,
+                    'peso_total' => $peso_total,
                 ];
-            });
+            })->values();
 
-            return response()->json($ots);
+            return response()->json($agrupadas);
+
         } catch (\Exception $e) {
             \Log::error("Error al obtener OTs por factura: " . $e->getMessage());
             return response()->json(['error' => 'No se pudieron cargar las OTs'], 500);
         }
     }
+
+
+
+
 
     public function listaOTsPorFactura(Request $request)
     {
@@ -218,13 +282,10 @@ class SolicitudController extends Controller
 
 
     // Códigos de compra según producto
-    public function codigosCompra(Request $request)
+    public function codigosCompra()
     {
         $codigos = Movimiento::whereNotNull('codigo_compra')
-            ->select(
-                'codigo_compra',
-                DB::raw('SUM(ingreso) - SUM(salida) as stock')
-            )
+            ->select('codigo_compra', DB::raw('SUM(ingreso) - SUM(salida) as stock'))
             ->groupBy('codigo_compra')
             ->having('stock', '>', 0)
             ->get();
@@ -232,25 +293,21 @@ class SolicitudController extends Controller
         return response()->json($codigos);
     }
 
+
+
     // Obtener productos con stock según el código de compra
     public function productosConStock(Request $request)
     {
         $codigo = $request->codigo_compra;
-
-        if (!$codigo) {
+        if (!$codigo)
             return response()->json([]);
-        }
 
         $productos = Movimiento::where('codigo_compra', $codigo)
-            ->select(
-                'producto_id',
-                DB::raw('SUM(ingreso) - SUM(salida) as stock')
-            )
+            ->select('producto_id', DB::raw('SUM(ingreso) - SUM(salida) as stock'))
             ->groupBy('producto_id')
             ->having('stock', '>', 0)
             ->get();
 
-        // Obtener nombres de los productos
         $productos = $productos->map(function ($p) {
             $nombre = DB::table('productos')->where('id', $p->producto_id)->value('nombre');
             return [
@@ -262,6 +319,7 @@ class SolicitudController extends Controller
 
         return response()->json($productos);
     }
+
 
 
 }
