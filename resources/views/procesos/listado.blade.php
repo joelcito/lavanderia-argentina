@@ -83,121 +83,122 @@
 </div>
 
 <!-- ================= MODAL ================= -->
-<div class="modal fade" id="modalLavanderia" tabindex="-1">
-    <div class="modal-dialog modal-xl">
+<div class="modal fade" id="modalLavanderia" tabindex="-1" aria-labelledby="modalLavanderiaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl"> <!-- modal más ancho -->
         <div class="modal-content">
-            <div class="modal-header bg-light-info">
-                <h5 class="modal-title fw-bold">Registrar Proceso de Lavandería</h5>
-                <button type="button" class="btn btn-icon btn-sm" data-bs-dismiss="modal">
-                    <i class="fa fa-times"></i>
-                </button>
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLavanderiaLabel">Nueva Lavandería</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
 
             <div class="modal-body">
-                <input type="hidden" id="maquinaria_id" name="maquinaria_id">
+                <!-- Formulario -->
+                <form id="formLavanderia" class="row g-3">
+                    <input type="hidden" id="id">
+                    <input type="hidden" id="maquinaria_id">
 
-                <div id="kt_docs_repeater_advanced">
-                    <div class="form-group">
-                        <div data-repeater-list="procesos_lavanderia">
-                            <div data-repeater-item>
-                                <div class="form-group row mb-3 g-3">
-                                    <!-- Factura -->
-                                    <div class="col-md-4">
-                                        <label class="form-label">Factura</label>
-                                        <select class="form-select factura_id" name="factura_id">
-                                            <option value="">Seleccione factura...</option>
-                                            @foreach($facturas as $factura)
-                                                <option value="{{ $factura->id }}">{{ $factura->numero_factura }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <!-- OT -->
-                                    <div class="col-md-4">
-                                        <label class="form-label">OT</label>
-                                        <select class="form-select order_trabajo_id" name="order_trabajo_id">
-                                            <option value="">Seleccione OT...</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Producto -->
-                                    <div class="col-md-4">
-                                        <label class="form-label">Producto</label>
-                                        <select class="form-select producto_id" name="producto_id">
-                                            <option value="">Seleccione producto...</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Tipo Proceso -->
-                                    <div class="col-md-4 mt-3">
-                                        <label class="form-label">Tipo Proceso</label>
-                                        <select class="form-select tipo_proceso_id" name="tipo_proceso_id">
-                                            <option value="">Seleccione...</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group row mb-3 g-3 align-items-end">
-                                    <div class="col-md-2">
-                                        <label class="form-label">Fecha Ingreso</label>
-                                        <input type="datetime-local" class="form-control fecha_ingreso"
-                                            name="fecha_ingreso" />
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="form-label">Fecha Salida</label>
-                                        <input type="datetime-local" class="form-control fecha_salida"
-                                            name="fecha_salida" />
-                                    </div>
-                                    <div class="col-md-1">
-                                        <label class="form-label">Tiempo</label>
-                                        <input type="number" class="form-control tiempo" name="tiempo"
-                                            placeholder="Tiempo" />
-                                    </div>
-                                    <div class="col-md-1">
-                                        <label class="form-label">°C</label>
-                                        <input type="number" class="form-control temperatura" name="temperatura"
-                                            placeholder="°C" />
-                                    </div>
-                                    <div class="col-md-1">
-                                        <label class="form-label">pH</label>
-                                        <input type="number" class="form-control ph" name="ph" placeholder="pH" />
-                                    </div>
-                                    <div class="col-md-1">
-                                        <label class="form-label">RB</label>
-                                        <input type="text" class="form-control rb" name="rb" placeholder="RB" />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label">Descripción</label>
-                                        <input type="text" class="form-control descripcion" name="descripcion"
-                                            placeholder="Descripción" />
-                                    </div>
-                                    <div class="col-md-1 d-flex align-items-center mt-4">
-                                        <a href="javascript:;" data-repeater-delete
-                                            class="btn btn-sm btn-light-danger w-100 d-flex justify-content-center">
-                                            <i class="fa fa-trash"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col-md-4">
+                        <label for="factura_id" class="form-label">Factura</label>
+                        <select id="factura_id" class="form-select">
+                            <option value="">Seleccione factura...</option>
+                        </select>
                     </div>
 
-                    <div class="form-group mt-3">
-                        <a href="javascript:;" data-repeater-create class="btn btn-flex btn-light-primary">
-                            <i class="ki-duotone ki-plus fs-3"></i> Agregar fila
-                        </a>
+                    <div class="col-md-4">
+                        <label for="order_trabajo_id_lavanderia" class="form-label">OT</label>
+                        <select id="order_trabajo_id_lavanderia" class="form-select">
+                            <option value="">Seleccione OT...</option>
+                        </select>
                     </div>
+
+                    <div class="col-md-4">
+                        <label for="producto_id_lavanderia" class="form-label">Producto</label>
+                        <select id="producto_id_lavanderia" class="form-select">
+                            <option value="">Seleccione producto...</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="tipo_proceso_id" class="form-label">Tipo de Proceso</label>
+                        <select id="tipo_proceso_id" class="form-control">
+                            <option value="">Seleccione tipo de proceso...</option>
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <label for="fecha_ingreso" class="form-label">Fecha Ingreso</label>
+                        <input type="datetime-local" id="fecha_ingreso" class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="fecha_salida" class="form-label">Fecha Salida</label>
+                        <input type="datetime-local" id="fecha_salida" class="form-control">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="tiempo" class="form-label">Tiempo</label>
+                        <input type="text" id="tiempo" class="form-control">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="temperatura" class="form-label">Temperatura</label>
+                        <input type="text" id="temperatura" class="form-control">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="ph" class="form-label">PH</label>
+                        <input type="text" id="ph" class="form-control">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="rb" class="form-label">RB</label>
+                        <input type="text" id="rb" class="form-control">
+                    </div>
+
+                    <div class="col-12">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea id="descripcion" class="form-control" rows="2"></textarea>
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <button type="button" class="btn btn-primary" id="agregarAlListado">Agregar al listado</button>
+                    </div>
+                </form>
+
+                <hr>
+
+                <!-- Tabla Listado Temporal -->
+                <div class="table-responsive">
+                    <table id="tablaListadoTemporal" class="table table-striped table-bordered mt-2">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Factura</th>
+                                <th>OT</th>
+                                <th>Producto</th>
+                                <th>Proceso</th>
+                                <th>Fecha Ingreso</th>
+                                <th>Fecha Salida</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Filas se agregan dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-12 text-end mt-3">
+                    <button type="button" class="btn btn-success" id="guardarListado">Guardar listado</button>
                 </div>
 
-                <button type="button" class="btn btn-success mt-3" id="guardarProcesosBtn">Guardar procesos</button>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-            </div>
-        </div>
-    </div>
+            </div> <!-- modal-body -->
+        </div> <!-- modal-content -->
+    </div> <!-- modal-dialog -->
 </div>
+
+
+
+
 
 <!-- Modal Solicitud de Productos -->
 <div class="modal fade" id="modalSolicitudProductos" tabindex="-1">
@@ -309,6 +310,73 @@
 
     <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
+
+        $(document).on('change', '.factura_id', function () {
+            let fila = $(this).closest('[data-repeater-item]');
+            let factura_id = $(this).val();
+            let otSelect = fila.find('.order_trabajo_id');
+            otSelect.html('<option value="">Cargando OTs...</option>');
+
+            if (!factura_id) {
+                otSelect.html('<option value="">Seleccione OT...</option>');
+                fila.find('.producto_id').html('<option value="">Seleccione producto...</option>');
+                return;
+            }
+
+            // 🚀 Ruta correcta con query string
+            let url = "{{ route('procesos.otsPorFactura') }}?factura_id=" + factura_id;
+
+            $.get(url, function (data) {
+                otSelect.empty().append('<option value="">Seleccione OT...</option>');
+                if (Array.isArray(data)) {
+                    data.forEach(ot => {
+                        otSelect.append(`<option value="${ot.id}">OT ${ot.nro_ot} - Peso: ${ot.peso_total}</option>`);
+                    });
+                }
+                fila.find('.producto_id').html('<option value="">Seleccione producto...</option>');
+            });
+        });
+        // Cuando se selecciona OT en el modal
+        $('#select-ot').on('change', function () {
+            const ot_id = $(this).val();
+            const productoSelect = $('#select-producto');
+
+            productoSelect.html('<option value="">Cargando productos...</option>');
+
+            if (!ot_id) {
+                productoSelect.html('<option value="">Seleccione producto...</option>');
+                return;
+            }
+
+            let url = '/procesos/productos-aprobados/' + ot_id;
+            $.get(url, function (productos) {
+                productoSelect.empty().append('<option value="">Seleccione producto...</option>');
+                productos.forEach(p => {
+                    productoSelect.append(`<option value="${p.id}">${p.nombre}</option>`);
+                });
+            });
+        });
+        $('#select-factura').on('change', function () {
+            const factura_id = $(this).val();
+            const otSelect = $('#select-ot');
+            otSelect.html('<option value="">Cargando OTs...</option>');
+
+            if (!factura_id) {
+                otSelect.html('<option value="">Seleccione OT...</option>');
+                $('#select-producto').html('<option value="">Seleccione producto...</option>');
+                return;
+            }
+
+            $.get('/procesos/ots-por-factura', { factura_id }, function (data) {
+                otSelect.empty().append('<option value="">Seleccione OT...</option>');
+                data.forEach(ot => {
+                    otSelect.append(`<option value="${ot.id}">OT ${ot.nro_ot} - Peso: ${ot.peso_total}</option>`);
+                });
+                $('#select-producto').html('<option value="">Seleccione producto...</option>');
+            });
+        });
+
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -333,79 +401,6 @@
             });
         }
 
-        function modalNuevaLavanderiaConMaquinaria(maquinaria_id) {
-            $.post("{{ route('procesos.infoMaquinaria') }}", { id: maquinaria_id }, function (res) {
-                if (res.estado_maquina === "NO DISPONIBLE") {
-                    Swal.fire('No disponible', 'Esta máquina ya tiene 3 procesos activos.', 'warning');
-                    return;
-                }
-
-                // Limpiar formulario
-                $('#id').val(0);
-
-
-                $('#order_trabajo_id_lavanderia').val('');
-                $('#producto_id_lavanderia').val('');
-
-                $('#tipo_proceso_id').val('');
-                $('#fecha_ingreso').val('');
-                $('#fecha_salida').val('');
-                $('#tiempo').val('');
-                $('#temperatura').val('');
-                $('#ph').val('');
-                $('#rb').val('');
-                $('#descripcion').val('');
-                $('#estado').val('PENDIENTE');
-
-                $('#maquinaria_id').val(maquinaria_id);
-                cargarProductosLavanderia();
-                cargarTiposProceso();
-                cargarOTs('order_trabajo_id_lavanderia', function (ot_id) {
-                    // Cada vez que se seleccione una OT, cargar los productos aprobados en el repeater
-                    cargarProductosPorOT(ot_id);
-                });
-                $('#modalLavanderia').modal('show');
-
-
-
-            });
-        }
-
-
-        function cargarTiposProceso() {
-            $.get("{{ route('procesos.listaTiposProceso') }}", function (data) {
-                let select = $("#tipo_proceso_id");
-                select.empty();
-                select.append('<option value="">Seleccione...</option>');
-                data.forEach(item => select.append(`<option value="${item.id}">${item.nombre}</option>`));
-            });
-        }
-
-
-        // Cuando cambia la factura, cargar las OTs correspondientes
-        $(document).on('change', '.factura_id', function () {
-            let fila = $(this).closest('[data-repeater-item]');
-            let factura_id = $(this).val();
-            let otSelect = fila.find('.order_trabajo_id');
-            let productoSelect = fila.find('.producto_id');
-
-            otSelect.html('<option value="">Cargando...</option>');
-            productoSelect.html('<option value="">Seleccione producto...</option>');
-
-            if (!factura_id) {
-                otSelect.html('<option value="">Seleccione OT...</option>');
-                return;
-            }
-
-            $.get("{{ route('procesos.listaOTsPorFactura') }}", { factura_id: factura_id }, function (data) {
-                otSelect.empty().append('<option value="">Seleccione OT...</option>');
-                if (data.length) {
-                    data.forEach(ot => otSelect.append(`<option value="${ot.id}">OT ${ot.nro_ot}</option>`));
-                } else {
-                    otSelect.append('<option value="">No hay OTs para esta factura</option>');
-                }
-            });
-        });
 
 
 
@@ -476,7 +471,7 @@
             }
 
             $.ajax({
-                url: "{{ route('procesos.guardar') }}",
+                url: "{{ route('procesos.guardarListado') }}",
                 method: "POST",
                 data: datos,
                 success: function (res) {
@@ -533,7 +528,11 @@
         function cargarProductosLavanderia(ot_id) {
             if (!ot_id) return;
 
-            $.get("{{ route('procesos.productosSolicitudesAceptadas') }}", { ot_id: ot_id }, function (data) {
+            // Construir la URL reemplazando :ot_id
+            let url = "{{ route('procesos.productosAprobadosPorOT', ['ot_id' => ':ot_id']) }}";
+            url = url.replace(':ot_id', ot_id);
+
+            $.get(url, function (data) {
                 console.log("Productos Lavandería para OT", ot_id, data);
                 let select = $("#producto_id_lavanderia");
                 select.empty();
@@ -544,68 +543,60 @@
 
 
 
-        $('#order_trabajo_id_lavanderia').on('change', function () {
-            let ot_id = $(this).val();
-            cargarProductosLavanderia(ot_id);
-        });
 
 
+        function cargarProductosPorOT(ot_id, fila) {
+            let productoSelect = fila.find('.producto_id'); // fila específica del repeater
 
+            if (!ot_id) {
+                productoSelect.html('<option value="">Seleccione producto...</option>');
+                return;
+            }
 
-        function cargarProductosPorOT(ot_id) {
-            $.get("{{ route('procesos.productosSolicitudesAceptadas') }}", { ot_id: ot_id }, function (data) {
-                let repeaterContainer = $("#kt_docs_repeater_advanced [data-repeater-list]");
-                repeaterContainer.empty();
+            let urlProductos = "{{ route('procesos.productosAprobadosPorOT', ['ot_id' => ':ot_id']) }}";
+            urlProductos = urlProductos.replace(':ot_id', ot_id);
 
-                data.forEach(producto => {
-                    repeaterContainer.append(`
-                                                                                                                                        <div data-repeater-item>
-                                                                                                                                            <div class="form-group row mb-5">
-                                                                                                                                                <div class="col-md-4">
-                                                                                                                                                    <label class="form-label">Producto</label>
-                                                                                                                                                    <input type="text" class="form-control" value="${producto.nombre}" readonly />
-                                                                                                                                                    <input type="hidden" name="producto_id" value="${producto.id}" />
-                                                                                                                                                </div>
-                                                                                                                                                <div class="col-md-3">
-                                                                                                                                                    <label class="form-label">Tipo Proceso</label>
-                                                                                                                                                    <select class="form-select" name="tipo_proceso_id">
-                                                                                                                                                        <option value="">Seleccione...</option>
-                                                                                                                                                    </select>
-                                                                                                                                                </div>
-                                                                                                                                                <div class="col-md-2">
-                                                                                                                                                    <label class="form-label">Fecha Ingreso</label>
-                                                                                                                                                    <input type="datetime-local" class="form-control" name="fecha_ingreso" />
-                                                                                                                                                </div>
-                                                                                                                                                <div class="col-md-2">
-                                                                                                                                                    <label class="form-label">Fecha Salida</label>
-                                                                                                                                                    <input type="datetime-local" class="form-control" name="fecha_salida" />
-                                                                                                                                                </div>
-                                                                                                                                                <div class="col-md-2 mt-5">
-                                                                                                                                                    <a href="javascript:;" data-repeater-delete class="btn btn-sm btn-light-danger">
-                                                                                                                                                        <i class="ki-duotone ki-trash fs-3"></i> Eliminar
-                                                                                                                                                    </a>
-                                                                                                                                                </div>
-                                                                                                                                            </div>
-                                                                                                                                        </div>
-                                                                                                                                    `);
+            $.get(urlProductos, function (productos) {
+                productoSelect.empty().append('<option value="">Seleccione producto...</option>');
+                productos.forEach(p => {
+                    productoSelect.append(`<option value="${p.id}">${p.nombre}</option>`);
                 });
-
-                // Inicializa repeater **solo si la librería ya está disponible**
-                if (typeof $.fn.repeater === "function" && !$('#kt_docs_repeater_advanced').data('repeater-initialized')) {
-                    $('#kt_docs_repeater_advanced').repeater({
-                        initEmpty: false,
-                        show: function () { $(this).slideDown(); },
-                        hide: function (deleteElement) {
-                            $(this).slideUp(deleteElement);
-                        }
-                    });
-                    $('#kt_docs_repeater_advanced').data('repeater-initialized', true);
-                } else if (typeof $.fn.repeater !== "function") {
-                    console.error("jQuery Repeater no está cargado");
-                }
             });
         }
 
+
+
+
+        function inicializarRepeater() {
+            if (!$('#kt_docs_repeater_advanced').data('repeater')) {
+                $('#kt_docs_repeater_advanced').repeater({
+                    initEmpty: false,
+                    show: function () { $(this).slideDown(); },
+                    hide: function (deleteElement) {
+                        $(this).slideUp(deleteElement);
+                    }
+                });
+            }
+        }
+
+        function cargarTiposProcesoEnRepeater() {
+            $.get("{{ route('procesos.listaTiposProceso') }}", function (data) {
+                $('.tipo_proceso_id').each(function () {
+                    let select = $(this);
+                    select.empty().append('<option value="">Seleccione...</option>');
+                    data.forEach(tp => {
+                        select.append(`<option value="${tp.id}">${tp.nombre}</option>`);
+                    });
+                });
+            });
+        }
+        function cargarTiposProcesoEnFila(fila) {
+            let tipoSelect = fila.find('.tipo_proceso_id');
+            $.get("{{ route('procesos.listaTiposProceso') }}", function (tipos) {
+                tipoSelect.empty().append('<option value="">Seleccione...</option>');
+                tipos.forEach(tp => tipoSelect.append(`<option value="${tp.id}">${tp.nombre}</option>`));
+            });
+        }
 
         //ororo
 
@@ -624,36 +615,26 @@
                 console.error("jQuery Repeater no está cargado");
             }
 
-            // Cada vez que se selecciona una OT en cualquier fila
-
-            // Cuando cambia la OT → cargar productos de esa OT
             $(document).on('change', '.order_trabajo_id', function () {
                 let fila = $(this).closest('[data-repeater-item]');
                 let ot_id = $(this).val();
                 let productoSelect = fila.find('.producto_id');
-                let tipoSelect = fila.find('.tipo_proceso_id');
 
-                productoSelect.html('<option value="">Cargando...</option>');
-                tipoSelect.html('<option value="">Cargando...</option>');
+                productoSelect.html('<option value="">Cargando productos...</option>');
 
                 if (!ot_id) {
                     productoSelect.html('<option value="">Seleccione producto...</option>');
-                    tipoSelect.html('<option value="">Seleccione...</option>');
                     return;
                 }
 
-                // Productos aprobados por OT
-                $.get("{{ route('procesos.productosSolicitudesAceptadas') }}", { ot_id: ot_id }, function (data) {
+                let urlProductos = "{{ route('procesos.productosAprobadosPorOT', ['ot_id' => ':ot_id']) }}".replace(':ot_id', ot_id);
+                $.get(urlProductos, function (productos) {
                     productoSelect.empty().append('<option value="">Seleccione producto...</option>');
-                    data.forEach(p => productoSelect.append(`<option value="${p.id}">${p.nombre}</option>`));
-                });
-
-                // Tipos de proceso
-                $.get("{{ route('procesos.listaTiposProceso') }}", function (tipos) {
-                    tipoSelect.empty().append('<option value="">Seleccione...</option>');
-                    tipos.forEach(t => tipoSelect.append(`<option value="${t.id}">${t.nombre}</option>`));
+                    productos.forEach(p => productoSelect.append(`<option value="${p.id}">${p.nombre}</option>`));
                 });
             });
+
+
 
             // Guardar procesos
             $('#guardarProcesosBtn').click(function () {
@@ -683,7 +664,7 @@
                     }
 
                     $.ajax({
-                        url: "{{ route('procesos.guardar') }}",
+                        url: "{{ route('procesos.guardarListado') }}",
                         method: "POST",
                         data: datos,
                         async: false,
@@ -713,6 +694,244 @@
         });
 
 
+        //procesos
+
+        let listadoProcesos = [];
+
+        $('#agregarAlListado').click(function () {
+            agregarProcesoAlListado();
+        });
+
+        function cargarFacturas() {
+            $.ajax({
+                url: "{{ route('factura.estadoNull') }}",
+                type: 'GET',
+                dataType: 'json',
+                success: function (facturas) {
+                    let options = '<option value="">Seleccione factura...</option>';
+                    facturas.forEach(f => {
+                        options += `<option value="${f.id}">${f.numero_factura} </option>`;
+                    });
+                    $('#factura_id').html(options);
+                },
+                error: function (err) {
+                    console.error('Error al cargar facturas:', err);
+                    alert('No se pudieron cargar las facturas.');
+                }
+            });
+        }
+
+        $('#factura_id').on('change', function () {
+            let facturaId = $(this).val();
+
+            if (!facturaId) {
+                $('#order_trabajo_id_lavanderia').html('<option value="">Seleccione OT...</option>');
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('factura.obtenerOTs') }}", // Creamos ruta Laravel
+                type: 'GET',
+                data: { factura_id: facturaId },
+                dataType: 'json',
+                success: function (ots) {
+                    let options = '<option value="">Seleccione OT...</option>';
+                    ots.forEach(ot => {
+                        options += `<option value="${ot.id}">OT: ${ot.nro_ot} - Prendas: ${ot.cantidad}</option>`;
+                    });
+                    $('#order_trabajo_id_lavanderia').html(options);
+                },
+                error: function (err) {
+                    console.error('Error al cargar OTs:', err);
+                    alert('No se pudieron cargar las OTs.');
+                }
+            });
+        });
+
+
+
+        function modalNuevaLavanderiaConMaquinaria(maquinaria_id) {
+
+            // Limpiar formulario
+            $('#id').val(0);
+            $('#order_trabajo_id_lavanderia').val('');
+            $('#producto_id_lavanderia').html('<option value="">Seleccione producto...</option>');
+            $('#tipo_proceso_id').val('');
+            $('#fecha_ingreso').val('');
+            $('#fecha_salida').val('');
+            $('#tiempo').val('');
+            $('#temperatura').val('');
+            $('#ph').val('');
+            $('#rb').val('');
+            $('#descripcion').val('');
+            $('#estado').val('PENDIENTE');
+            $('#maquinaria_id').val(maquinaria_id);
+
+            $('#order_trabajo_id_lavanderia').html('<option value="">Seleccione OT...</option>');
+            $('#producto_id_lavanderia').html('<option value="">Seleccione producto...</option>');
+            // Cargar tipos de proceso
+            cargarTiposProceso();
+            cargarFacturas();
+
+            // Vaciar selects de OT y Producto
+
+
+            // Mostrar modal
+            $('#modalLavanderia').modal('show');
+        }
+
+        function cargarTiposProceso() {
+            $.get("{{ route('procesos.listaTiposProceso') }}", function (data) {
+                let select = $("#tipo_proceso_id");
+                select.empty();
+                select.append('<option value="">Seleccione...</option>');
+                data.forEach(item => select.append(`<option value="${item.id}">${item.nombre}</option>`));
+            });
+        }
+
+
+
+
+
+        $('#order_trabajo_id_lavanderia').change(function () {
+            let orderTrabajoId = $(this).val();
+            let select = $('#producto_id_lavanderia');
+
+            select.html('<option value="">Cargando productos...</option>');
+
+            if (orderTrabajoId) {
+                $.get("{{ route('factura.productos') }}", { order_trabajo_id: orderTrabajoId }, function (data) {
+                    select.empty();
+                    select.append('<option value="">Seleccione producto...</option>');
+                    data.forEach(p => {
+                        select.append(`<option value="${p.id}">${p.nombre} - ${p.tipo}</option>`);
+                    });
+                }).fail(function (err) {
+                    console.error('Error al cargar productos:', err);
+                    select.html('<option value="">Error al cargar productos</option>');
+                });
+            } else {
+                select.html('<option value="">Seleccione OT primero</option>');
+            }
+        });
+
+        function agregarProcesoAlListado() {
+            let proceso = {
+                order_trabajo_id: $('#order_trabajo_id_lavanderia').val(),
+                producto_id: $('#producto_id_lavanderia').val(),
+                maquinaria_id: $('#maquinaria_id').val(),
+                tipo_proceso_id: $('#tipo_proceso_id').val(),
+                fecha_ingreso: $('#fecha_ingreso').val(),
+                fecha_salida: $('#fecha_salida').val(),
+                cantidad: $('#cantidad').val() || null,
+                porcentaje: $('#porcentaje').val() || null,
+                gr_litro: $('#gr_litro').val() || null,
+                tiempo: $('#tiempo').val() || null,
+                temperatura: $('#temperatura').val() || null,
+                ph: $('#ph').val() || null,
+                rb: $('#rb').val() || null,
+                descripcion: $('#descripcion').val(),
+                estado: 'TRABAJANDO'
+            };
+
+            // Validaciones básicas
+            if (!proceso.order_trabajo_id || !proceso.producto_id || !proceso.tipo_proceso_id) {
+                alert("Debe seleccionar OT, producto y tipo de proceso.");
+                return;
+            }
+
+            listadoProcesos.push(proceso);
+            mostrarListadoTemporal();
+            limpiarFormularioModal();
+        }
+
+        function mostrarListadoTemporal() {
+            let tbody = $('#tablaListadoTemporal tbody'); // corregido
+            tbody.empty();
+
+            listadoProcesos.forEach((p, index) => {
+                tbody.append(`
+                                    <tr>
+                                        <td>${$('#factura_id option:selected').text()}</td>
+                                        <td>${$('#order_trabajo_id_lavanderia option:selected').text()}</td>
+                                        <td>${$('#producto_id_lavanderia option:selected').text()}</td>
+                                        <td>${$('#tipo_proceso_id option:selected').text()}</td>
+                                        <td>${p.fecha_ingreso}</td>
+                                        <td>${p.fecha_salida}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
+                                        </td>
+                                    </tr>
+                                `);
+            });
+        }
+
+
+        function eliminarProceso(index) {
+            listadoProcesos.splice(index, 1);
+            mostrarListadoTemporal();
+        }
+
+        $('#guardarListado').click(function () {
+            guardarListadoProcesos();
+        });
+
+        function guardarListadoProcesos() {
+            if (listadoProcesos.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: 'No hay procesos para guardar.'
+                });
+                return;
+            }
+
+            $.ajax({
+                url: "{{ route('procesos.guardarListado') }}",
+                type: 'POST',
+                data: { procesos: listadoProcesos },
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                success: function (response) {
+                    if (response.estado) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: response.mensaje,
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        // Limpiar listado temporal
+                        ajaxListado();
+                        listadoProcesos = [];
+                        mostrarListadoTemporal();
+                        $('#modalLavanderia').modal('hide');
+                    } else {
+                        alert('No se guardaron los procesos.');
+                    }
+                },
+                error: function (err) {
+                    console.error('Error al guardar procesos:', err);
+                    alert('Ocurrió un error al guardar los procesos.');
+                }
+            });
+        }
+
+
+
+        function limpiarFormularioModal() {
+            $('#order_trabajo_id_lavanderia').val('');
+            $('#producto_id_lavanderia').val('');
+            $('#tipo_proceso_id').val('');
+            $('#fecha_ingreso').val('');
+            $('#fecha_salida').val('');
+            $('#tiempo').val('');
+            $('#temperatura').val('');
+            $('#ph').val('');
+            $('#rb').val('');
+            $('#descripcion').val('');
+        }
+
+
 
 
 
@@ -725,54 +944,86 @@
         // FACTURA → OTs
         $('#factura_id_solicitud').on('change', function () {
             let facturaId = $(this).val();
-            if (!facturaId) return;
+            let select = $('#ot_agrupada');
+            select.html('<option value="">Cargando...</option>');
+            otSeleccionada = null;
 
-            $('#ot_agrupada').html('<option value="">Cargando...</option>');
+            if (!facturaId) {
+                select.html('<option value="">Seleccione OT...</option>');
+                return;
+            }
 
             $.get("{{ route('solicitudes.otsPorFactura', ':id') }}".replace(':id', facturaId), function (data) {
-                let select = $('#ot_agrupada');
-                select.empty();
-                select.append('<option value="">Seleccione OT...</option>');
+                select.empty().append('<option value="">Seleccione OT...</option>');
                 data.forEach(ot => {
-                    select.append(`<option value='${ot.ids}'>OT ${ot.nro_ot} (Peso: ${ot.peso_total})</option>`);
+                    select.append(`<option 
+                                                                                                                                                                data-ids='${JSON.stringify(ot.ids)}' 
+                                                                                                                                                                data-peso='${ot.peso_total}'>
+                                                                                                                                                                OT ${ot.nro_ot} (Peso: ${ot.peso_total})
+                                                                                                                                                            </option>`);
                 });
             });
         });
 
 
+
+
         // OT → actualizar cantidad (suma de OT)
+        // $('#ot_agrupada').on('change', function () {
+        //     let selected = $(this).find('option:selected');
+        //     let otIds = selected.val() ? selected.val().split(',').map(Number) : [];
+        //     otSeleccionada = otIds;
+
+        //     let pesoMatch = selected.text().match(/\(Peso: ([\d\.]+)\)/);
+        //     let peso = pesoMatch ? parseFloat(pesoMatch[1]) : 0;
+        //     $('#cantidad_solicitada').val(peso);
+
+        //     // Cargar códigos de compra según las OT seleccionadas
+        //     if (otIds.length) {
+        //         $.get("{{ route('solicitudes.codigosCompra') }}", { orden_trabajo_id: otIds }, function (data) {
+        //             let select = $('#codigo_compra');
+        //             select.empty().append('<option value="">Seleccione código...</option>');
+        //             data.forEach(c => select.append(`<option value="${c.codigo_compra}">${c.codigo_compra} (Stock: ${c.stock})</option>`));
+        //         });
+        //     }
+        // });
+
         $('#ot_agrupada').on('change', function () {
             let selected = $(this).find('option:selected');
-            let otIds = selected.val() ? selected.val().split(',').map(Number) : [];
-            otSeleccionada = otIds;
-
-            let pesoMatch = selected.text().match(/\(Peso: ([\d\.]+)\)/);
-            let peso = pesoMatch ? parseFloat(pesoMatch[1]) : 0;
-            $('#cantidad_solicitada').val(peso);
-
-            // Cargar códigos de compra según las OT seleccionadas
-            if (otIds.length) {
-                $.get("{{ route('solicitudes.codigosCompra') }}", { orden_trabajo_id: otIds }, function (data) {
-                    let select = $('#codigo_compra');
-                    select.empty().append('<option value="">Seleccione código...</option>');
-                    data.forEach(c => select.append(`<option value="${c.codigo_compra}">${c.codigo_compra} (Stock: ${c.stock})</option>`));
-                });
+            if (!selected.val()) {
+                otSeleccionada = null;
+                $('#cantidad_solicitada').val('');
+                return;
             }
+
+            otSeleccionada = {
+                ids: JSON.parse(selected.attr('data-ids')),
+                peso_total: parseFloat(selected.attr('data-peso'))
+            };
+
+            $('#cantidad_solicitada').val(otSeleccionada.peso_total);
         });
+
+
 
         // CÓDIGO → Productos con stock
         $('#codigo_compra').on('change', function () {
             let codigo = $(this).val();
-            $('#producto_id_solicitud').html('<option value="">Cargando...</option>');
+            let select = $('#producto_id_solicitud');
+            select.html('<option value="">Cargando...</option>');
 
             if (!codigo) return;
 
             $.get("{{ route('solicitudes.productosConStock') }}", { codigo_compra: codigo }, function (data) {
-                let select = $('#producto_id_solicitud');
                 select.empty().append('<option value="">Seleccione producto...</option>');
-                data.forEach(p => select.append(`<option value="${p.producto_id}">${p.nombre} (Stock: ${p.stock})</option>`));
+                data.forEach(p => {
+                    select.append(`<option value="${p.producto_id}">${p.nombre} (Stock: ${p.stock})</option>`);
+                });
             });
         });
+
+
+
 
         // Agregar producto al listado temporal
         function agregarProductoTemporal() {
@@ -783,18 +1034,18 @@
             let cantidadTotal = parseFloat($('#cantidad_solicitada').val());
             let porcentaje = parseFloat($('#porcentaje_solicitado').val()) || 0;
 
-            if (!productoId || !codigoCompra || !otSeleccionada.length || !cantidadTotal || !porcentaje) {
+            if (!productoId || !codigoCompra || !otSeleccionada || !cantidadTotal || !porcentaje) {
                 Swal.fire('Error', 'Complete todos los campos antes de agregar', 'warning');
                 return;
             }
 
-            // Calculamos la cantidad según el porcentaje
             let cantidadCalculada = (cantidadTotal * porcentaje) / 100;
 
             solicitudTemporal.push({
                 producto_id: productoId,
+                producto_nombre: productoTexto,
                 codigo_compra: codigoCompra,
-                orden_trabajo_id: otSeleccionada,
+                orden_trabajo_ids: otSeleccionada.ids,
                 cantidad: cantidadCalculada,
                 porcentaje: porcentaje
             });
@@ -803,27 +1054,28 @@
         }
 
 
+
         // Actualizar tabla temporal
         function actualizarTablaTemporal() {
             let tbody = $('#tabla_solicitud_temporal tbody');
             tbody.empty();
 
             solicitudTemporal.forEach((item, index) => {
-                let productoNombre = $('#producto_id_solicitud option:selected').text();
                 tbody.append(`
-                                                            <tr>
-                                                                <td>${productoNombre}</td>
-                                                                <td>${item.codigo_compra}</td>
-                                                                <td>${item.orden_trabajo_id.join(', ')}</td>
-                                                                <td>${item.porcentaje}%</td>
-                                                                <td>${item.cantidad.toFixed(2)}</td>
-                                                                <td>
-                                                                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProductoTemporal(${index})">Eliminar</button>
-                                                                </td>
-                                                            </tr>
-                                                        `);
+                                                                                                                                            <tr>
+                                                                                                                                                <td>${item.producto_nombre}</td>
+                                                                                                                                                <td>${item.codigo_compra}</td>
+                                                                                                                                                <td>${item.orden_trabajo_ids.join(', ')}</td>
+                                                                                                                                                <td>${item.porcentaje}%</td>
+                                                                                                                                                <td>${item.cantidad.toFixed(2)}</td>
+                                                                                                                                                <td>
+                                                                                                                                                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProductoTemporal(${index})">Eliminar</button>
+                                                                                                                                                </td>
+                                                                                                                                            </tr>
+                                                                                                                                        `);
             });
         }
+
 
         // Eliminar producto temporal
         function eliminarProductoTemporal(index) {
@@ -852,11 +1104,49 @@
             });
         }
 
+        function cargarCodigosCompra() {
+            $.get("{{ route('solicitudes.codigosCompra') }}", function (data) {
+                let select = $('#codigo_compra');
+                select.empty().append('<option value="">Seleccione código...</option>');
+                data.forEach(c => {
+                    select.append(`<option value="${c.codigo_compra}">${c.codigo_compra} (Stock: ${c.stock})</option>`);
+                });
+            });
+        }
+
+        // Llamar al cargar modal
+        cargarCodigosCompra();
+
+
+
         function abrirModalSolicitud() {
             // Si estás usando Bootstrap 5
             let modal = new bootstrap.Modal(document.getElementById('modalSolicitudProductos'));
             modal.show();
         }
+
+        function actualizarTablaTemporal() {
+            let tbody = $('#tabla_solicitud_temporal tbody');
+            tbody.empty();
+
+            solicitudTemporal.forEach((item, index) => {
+                tbody.append(`
+                                                                                                                                            <tr>
+                                                                                                                                                <td>${item.producto_nombre}</td>
+                                                                                                                                                <td>${item.codigo_compra}</td>
+                                                                                                                                                <td>${item.orden_trabajo_ids.join(', ')}</td>
+                                                                                                                                                <td>${item.porcentaje}%</td>
+                                                                                                                                                <td>${item.cantidad.toFixed(2)}</td>
+                                                                                                                                                <td>
+                                                                                                                                                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProductoTemporal(${index})">Eliminar</button>
+                                                                                                                                                </td>
+                                                                                                                                            </tr>
+                                                                                                                                        `);
+            });
+        }
+
+
+
 
     </script>
 
@@ -882,6 +1172,9 @@
 
     <script>
         $(document).ready(function () {
+            $('#agregarAlListado').click(function () {
+                agregarProcesoAlListado();
+            });
 
             // Inicializar Repeater
             if (typeof $.fn.repeater === "function") {
