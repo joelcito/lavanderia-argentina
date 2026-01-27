@@ -73,6 +73,7 @@
                         <td>
                             <button title="Editar Estado Orden Trabajo" class="btn btn-sm btn-icon btn-warning btn-circle" onclick="editarEstadoOrdenTrabajo({{ $ordenTrabajo->nro_ot }}, '{{ $ordenTrabajo->estado }}')"><i class="fa fa-edit"></i></button>
                             <button title="Agregar Laser" class="btn btn-sm btn-icon btn-primary btn-circle" onclick="modalAgregarLaser({{ $ordenTrabajo->id }}, '{{ $ordenTrabajo->nro_ot }}' , '{{ $ordenTrabajo->observacion }}', '{{ $ordenTrabajo->cantidad }}')"><i class="fa fa-pray"></i></button>
+                            <button title="Ver listado de Laser" class="btn btn-sm btn-icon btn-dark btn-circle" onclick="ajaxListadoLaser({{ $ordenTrabajo->id }})"> <i class="fa fa-star" aria-hidden="true"></i> </button>
                         </td>
                     @endif
                 </tr>

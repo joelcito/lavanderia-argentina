@@ -1,5 +1,5 @@
 <form id="formularioLaser">
-    <input type="hidden" name="orden_trabajo_id" id="orden_trabajo_id" value="{{ $ordenTrabajo }}">
+    <input type="hidden" name="orden_trabajo_id" id="orden_trabajo_id" value="{{ $ordenTrabajo->id }}">
     @foreach ( $ordenesTrabajos as $key => $ordenTrabajo)
         <div class="row">
             <div class="col-md-6">
@@ -53,26 +53,30 @@
                             <th >Pos. 4</th>
                             <th >Pre. x Mesa</th>
                             <th >Seg/Pre</th>
-                            <th >Pre Min</th>
+                            <th >Pre Pronostico</th>
+                            <th >Pre Base</th>
+                            <th >Pre Cliente</th>
                             <th >Sub total</th>
                             <th >Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><input name="talla_laser[1]" type="text" style="width: 100%;"></td>
-                            <td><input name="cantidad_laser[1]" type="text" style="width: 100%;"></td>
-                            <td><input name="intensidad_laser[1]" type="text" style="width: 100%;"></td>
-                            <td><input name="altura_laser[1]" type="text" style="width: 100%;"></td>
-                            <td><input name="dpi_laser[1]" type="text" style="width: 100%;"></td>
-                            <td><input name="pos_1_laser[1]" id="pos_1_laser_1" onkeyup="sumaTimepos(1)" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
-                            <td><input name="pos_2_laser[1]" id="pos_2_laser_1" onkeyup="sumaTimepos(1)" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
-                            <td><input name="pos_3_laser[1]" id="pos_3_laser_1" onkeyup="sumaTimepos(1)" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
-                            <td><input name="pos_4_laser[1]" id="pos_4_laser_1" onkeyup="sumaTimepos(1)" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
-                            <td><input name="prenda_x_mesa_laser[1]" id="prenda_x_mesa_laser_1" onkeyup="sumaTimepos(1)" onclick="this.select()" value="1" type="text" style="width: 100%;"></td>
-                            <td><input name="tiempo_total_laser[1]" id="tiempo_total_laser_1" type="text" style="width: 100%;" readonly></td>
-                            <td><input class="precioMinutosValor" name="precio_minuto_valor[1]" id="precio_minuto_valor_1" type="text" style="width: 100%" value="6" onchange="calculapreciominutototal(1)"></td>
-                            <td><input type="text" style="width: 100%" value="0" name="valor_laser[1]" id="valor_laser_1"></td>
+                        <tr id="fila_laser_1">
+                            <td><input autocomplete="off" name="talla_laser[1]" type="text" style="width: 100%;"></td>
+                            <td><input autocomplete="off" name="cantidad_laser[1]" id="cantidad_laser_1" type="number" style="width: 100%;"></td>
+                            <td><input autocomplete="off" name="intensidad_laser[1]" type="number" style="width: 100%;"></td>
+                            <td><input autocomplete="off" name="altura_laser[1]" type="number" style="width: 100%;"></td>
+                            <td><input autocomplete="off" name="dpi_laser[1]" type="number" style="width: 100%;"></td>
+                            <td><input autocomplete="off" name="pos_1_laser[1]" id="pos_1_laser_1" onkeyup="sumaTimepos(1)" value="0" onclick="this.select()" type="number" step="0.001" style="width: 100%;"></td>
+                            <td><input autocomplete="off" name="pos_2_laser[1]" id="pos_2_laser_1" onkeyup="sumaTimepos(1)" value="0" onclick="this.select()" type="number" step="0.001" style="width: 100%;"></td>
+                            <td><input autocomplete="off" name="pos_3_laser[1]" id="pos_3_laser_1" onkeyup="sumaTimepos(1)" value="0" onclick="this.select()" type="number" step="0.001" style="width: 100%;"></td>
+                            <td><input autocomplete="off" name="pos_4_laser[1]" id="pos_4_laser_1" onkeyup="sumaTimepos(1)" value="0" onclick="this.select()" type="number" step="0.001" style="width: 100%;"></td>
+                            <td><input autocomplete="off" name="prenda_x_mesa_laser[1]" id="prenda_x_mesa_laser_1" onkeyup="sumaTimepos(1)" onclick="this.select()" value="1" type="text" style="width: 100%;"></td>
+                            <td><input autocomplete="off" name="tiempo_total_laser[1]" id="tiempo_total_laser_1" type="text" style="width: 100%;" readonly></td>
+                            <td><input autocomplete="off" name="precio_pronosticado[1]" id="precio_pronosticado_1" type="number" style="width: 100%;"></td>
+                            <td><input autocomplete="off" class="precioMinutosValor" name="precio_minuto_valor[1]" id="precio_minuto_valor_1" type="text" style="width: 100%" value="6" onchange="calculapreciominutototal(1)"></td>
+                            <td><input autocomplete="off" type="number" style="width: 100%" value="0" name="precio_cliente[1]" id="precio_cliente_1" onkeyup="calcularPrecioFinal(1)"></td>
+                            <td><input autocomplete="off" type="number" style="width: 100%" value="0" name="valor_laser[1]" id="valor_laser_1"></td>
                             <td><button title="Duplicar Debajo" onclick="duplicarDebajo(1)" class="btn btn-success btn-icon btn-sm btn-circle" type="button"><i class="fa fa-plus"></i></button></td>
                         </tr>
                     </tbody>

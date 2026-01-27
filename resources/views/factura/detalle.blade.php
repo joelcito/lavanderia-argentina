@@ -13,7 +13,7 @@
 
 <!--begin::Modal - Add task-->
 <div class="modal fade" id="modalAgregarLaser" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 80%">
         <div class="modal-content">
             <div class="modal-header" id="kt_modal_add_user_header">
                 <h3 class="fw-bold">FORMULARIO DE LASER</h3>
@@ -21,6 +21,31 @@
             </div>
             <div class="modal-body scroll-y">
                 <div id="formulario-laser-bloque"></div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-sm w-100 btn-success" onclick="guardarLaser()">Guardar Laser</button>
+                    </div>
+                </div>
+            </div>
+            <!--end::Modal body-->
+        </div>
+    </div>
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modal - Add task-->
+
+<!--begin::Modal - Add task-->
+<div class="modal fade" id="modalListadoLaser" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 80%">
+        <div class="modal-content">
+            <div class="modal-header" id="kt_modal_add_user_header">
+                <h3 class="fw-bold">LISTADO DE LASER</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body scroll-y">
+                <div id="listado-laser-bloque"></div>
             </div>
             <div class="modal-footer">
                 <div class="row">
@@ -364,7 +389,7 @@
                                 </div>
                                 <!--end::Item-->
 
-                                <!--begin::Item-->
+                                {{-- <!--begin::Item-->
                                 <div class="mb-5">
                                     <!--begin::Header-->
                                     <div class="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_3_item_2">
@@ -382,9 +407,9 @@
                                     </div>
                                     <!--end::Body-->
                                 </div>
-                                <!--end::Item-->
+                                <!--end::Item--> --}}
 
-                                <!--begin::Item-->
+                                {{-- <!--begin::Item-->
                                 <div class="mb-5">
                                     <!--begin::Header-->
                                     <div class="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_3_item_3">
@@ -402,7 +427,7 @@
                                     </div>
                                     <!--end::Body-->
                                 </div>
-                                <!--end::Item-->
+                                <!--end::Item--> --}}
                             </div>
                             <!--end::Accordion-->
 
@@ -568,8 +593,8 @@
 
         $(document).ready(function() {
             ajaxListadoOrdenTrabajos();
-            ajaxListadoOjales();
-            ajaxListadoLaser();
+            // ajaxListadoOjales();
+            // ajaxListadoLaser();
         });
 
         function ajaxListadoOrdenTrabajos(){
@@ -598,15 +623,17 @@
             })
         }
 
-        function ajaxListadoLaser(){
-            let datos = {factura:{{ $factura->id }}};
+        function ajaxListadoLaser(ot){
+            let datos = {factura:{{ $factura->id }}, ot:ot};
             $.ajax({
                 url: "{{ route('ordenTrabajo.ajaxListadoLaser') }}",
                 method: "POST",
                 data: datos,
                 success: function(resultado) {
-                    if (resultado.estado)
-                        $('#tabla-lasers').html(resultado.data.listado)
+                    if (resultado.estado){
+                        $('#listado-laser-bloque').html(resultado.data.listado)
+                        $('#modalListadoLaser').modal('show')
+                    }
                 }
             })
         }
@@ -646,20 +673,24 @@
             filaTableLaser++;
 
             let nuevaFila = `
-                <tr>
-                    <td><input name="talla_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
-                    <td><input name="cantidad_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
-                    <td><input name="intensidad_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
-                    <td><input name="altura_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
-                    <td><input name="dpi_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
-                    <td><input name="pos_1_laser[${filaTableLaser}]" id="pos_1_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
-                    <td><input name="pos_2_laser[${filaTableLaser}]" id="pos_2_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
-                    <td><input name="pos_3_laser[${filaTableLaser}]" id="pos_3_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
-                    <td><input name="pos_4_laser[${filaTableLaser}]" id="pos_4_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
-                    <td><input name="prenda_x_mesa_laser[${filaTableLaser}]" id="prenda_x_mesa_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="1" type="text" style="width: 100%;"></td>
-                    <td><input name="tiempo_total_laser[${filaTableLaser}]" id="tiempo_total_laser_${filaTableLaser}" type="text" style="width: 100%;"></td>
-                    <td><input class="precioMinutosValor" name="precio_minuto_valor[${filaTableLaser}]" id="precio_minuto_valor_${filaTableLaser}" type="text" style="width: 100%" value="6" onchange="calculapreciominutototal(${filaTableLaser})"></td>
-                    <td><input type="text" style="width: 100%" name="valor_laser[${filaTableLaser}]" value="0" name="valor_laser_${filaTableLaser}" id="valor_laser_${filaTableLaser}"></td>
+                <tr id="fila_laser_${filaTableLaser}">
+
+                    <td><input autocomplete="off" name="talla_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td><input autocomplete="off" name="cantidad_laser[${filaTableLaser}]" id="cantidad_laser_${filaTableLaser}" type="number" style="width: 100%;"></td>
+                    <td><input autocomplete="off" name="intensidad_laser[${filaTableLaser}]" type="number" style="width: 100%;"></td>
+                    <td><input autocomplete="off" name="altura_laser[${filaTableLaser}]" type="number" style="width: 100%;"></td>
+                    <td><input autocomplete="off" name="dpi_laser[${filaTableLaser}]" type="number" style="width: 100%;"></td>
+                    <td><input autocomplete="off" name="pos_1_laser[${filaTableLaser}]" id="pos_1_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="number" step="0.001" style="width: 100%;"></td>
+                    <td><input autocomplete="off" name="pos_2_laser[${filaTableLaser}]" id="pos_2_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="number" step="0.001" style="width: 100%;"></td>
+                    <td><input autocomplete="off" name="pos_3_laser[${filaTableLaser}]" id="pos_3_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="number" step="0.001" style="width: 100%;"></td>
+                    <td><input autocomplete="off" name="pos_4_laser[${filaTableLaser}]" id="pos_4_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="number" step="0.001" style="width: 100%;"></td>
+                    <td><input autocomplete="off" name="prenda_x_mesa_laser[${filaTableLaser}]" id="prenda_x_mesa_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" onclick="this.select()" value="1" type="text" style="width: 100%;"></td>
+                    <td><input autocomplete="off" name="tiempo_total_laser[${filaTableLaser}]" id="tiempo_total_laser_${filaTableLaser}" type="text" style="width: 100%;" readonly></td>
+                    <td><input autocomplete="off" name="precio_pronosticado[${filaTableLaser}]" id="precio_pronosticado_${filaTableLaser}" type="number" style="width: 100%;"></td>
+                    <td><input autocomplete="off" name="precio_minuto_valor[${filaTableLaser}]" id="precio_minuto_valor_${filaTableLaser}" type="text" style="width: 100%" value="6" onchange="calculapreciominutototal(${filaTableLaser})" class="precioMinutosValor"></td>
+                    <td><input autocomplete="off" name="precio_cliente[${filaTableLaser}]" id="precio_cliente_${filaTableLaser}" type="number" style="width: 100%" value="0"  onkeyup="calcularPrecioFinal(${filaTableLaser})"></td>
+                    <td><input autocomplete="off" name="valor_laser[${filaTableLaser}]" id="valor_laser_${filaTableLaser}" type="number" style="width: 100%" value="0"></td>
+
                     <td>
                         <button title="Duplicar Debajo"
                             onclick="duplicarDebajo(${filaTableLaser})"
@@ -667,7 +698,7 @@
                             <i class="fa fa-plus"></i>
                         </button>
                         <button title="Duplicar Debajo"
-                            onclick="elimiarFila(${filaTableLaser})"
+                            onclick="elimiarFila(this)"
                             class="btn btn-danger btn-icon btn-sm btn-circle" type="button">
                             <i class="fa fa-trash"></i>
                         </button>
@@ -684,33 +715,40 @@
             filaTableLaser++;
             let filaOriginal = $("#table_laser tbody tr").eq(fila - 1);
 
-            let talla      = filaOriginal.find('input[name="talla_laser['+fila+']"]').val();
-            let cantidad   = filaOriginal.find('input[name="cantidad_laser['+fila+']"]').val();
-            let intensidad = filaOriginal.find('input[name="intensidad_laser['+fila+']"]').val();
-            let altura     = filaOriginal.find('input[name="altura_laser['+fila+']"]').val();
-            let dpi        = filaOriginal.find('input[name="dpi_laser['+fila+']"]').val();
-            let pos1       = filaOriginal.find('input[name="pos_1_laser['+fila+']"]').val();
-            let pos2       = filaOriginal.find('input[name="pos_2_laser['+fila+']"]').val();
-            let pos3       = filaOriginal.find('input[name="pos_3_laser['+fila+']"]').val();
-            let pos4       = filaOriginal.find('input[name="pos_4_laser['+fila+']"]').val();
-            let pxm        = filaOriginal.find('input[name="prenda_x_mesa_laser['+fila+']"]').val();
-            let tiempo     = filaOriginal.find('input[name="tiempo_total_laser['+fila+']"]').val();
+            let talla               = filaOriginal.find('input[name="talla_laser['+fila+']"]').val();
+            let cantidad            = filaOriginal.find('input[name="cantidad_laser['+fila+']"]').val();
+            let intensidad          = filaOriginal.find('input[name="intensidad_laser['+fila+']"]').val();
+            let altura              = filaOriginal.find('input[name="altura_laser['+fila+']"]').val();
+            let dpi                 = filaOriginal.find('input[name="dpi_laser['+fila+']"]').val();
+            let pos1                = filaOriginal.find('input[name="pos_1_laser['+fila+']"]').val();
+            let pos2                = filaOriginal.find('input[name="pos_2_laser['+fila+']"]').val();
+            let pos3                = filaOriginal.find('input[name="pos_3_laser['+fila+']"]').val();
+            let pos4                = filaOriginal.find('input[name="pos_4_laser['+fila+']"]').val();
+            let pxm                 = filaOriginal.find('input[name="prenda_x_mesa_laser['+fila+']"]').val();
+            let tiempo              = filaOriginal.find('input[name="tiempo_total_laser['+fila+']"]').val();
+            let precio_pronosticado = filaOriginal.find('input[name="precio_pronosticado['+fila+']"]').val();
+            let precio_minuto_valor = filaOriginal.find('input[name="precio_minuto_valor['+fila+']"]').val();
+            let precio_cliente      = filaOriginal.find('input[name="precio_cliente['+fila+']"]').val();
+            let valor_laser         = filaOriginal.find('input[name="valor_laser['+fila+']"]').val();
 
             let nuevaFila = `
-                <tr>
-                    <td><input name="talla_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${talla}"></td>
-                    <td><input name="cantidad_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${cantidad}"></td>
-                    <td><input name="intensidad_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${intensidad}"></td>
-                    <td><input name="altura_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${altura}"></td>
-                    <td><input name="dpi_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${dpi}"></td>
-                    <td><input name="pos_1_laser[${filaTableLaser}]" id="pos_1_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;" value="${pos1}"></td>
-                    <td><input name="pos_2_laser[${filaTableLaser}]" id="pos_2_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;" value="${pos2}"></td>
-                    <td><input name="pos_3_laser[${filaTableLaser}]" id="pos_3_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;" value="${pos3}"></td>
-                    <td><input name="pos_4_laser[${filaTableLaser}]" id="pos_4_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;" value="${pos4}"></td>
-                    <td><input name="prenda_x_mesa_laser[${filaTableLaser}]" id="prenda_x_mesa_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" type="text" style="width: 100%;" value="${pxm}"></td>
-                    <td><input name="tiempo_total_laser[${filaTableLaser}]" id="tiempo_total_laser_${filaTableLaser}" type="text" style="width: 100%;" value="${tiempo}"></td>
-                    <td><input class="precioMinutosValor" name="precio_minuto_valor[${filaTableLaser}]" id="precio_minuto_valor_${filaTableLaser}" type="text" style="width: 100%" value="6" onchange="calculapreciominutototal(${filaTableLaser})"></td>
-                    <td><input type="text" style="width: 100%" name="valor_laser[${filaTableLaser}]" value="0" name="valor_laser_${filaTableLaser}" id="valor_laser_${filaTableLaser}"></td>
+                <tr id="fila_laser_${filaTableLaser}">
+                    <td><input value="${talla}" autocomplete="off" name="talla_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                    <td><input value="${cantidad}" autocomplete="off" name="cantidad_laser[${filaTableLaser}]" id="cantidad_laser_${filaTableLaser}" type="number" style="width: 100%;"></td>
+                    <td><input value="${intensidad}" autocomplete="off" name="intensidad_laser[${filaTableLaser}]" type="number" style="width: 100%;"></td>
+                    <td><input value="${altura}" autocomplete="off" name="altura_laser[${filaTableLaser}]" type="number" style="width: 100%;"></td>
+                    <td><input value="${dpi}" autocomplete="off" name="dpi_laser[${filaTableLaser}]" type="number" style="width: 100%;"></td>
+                    <td><input value="${pos1}" autocomplete="off" name="pos_1_laser[${filaTableLaser}]" id="pos_1_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="number" step="0.001" style="width: 100%;"></td>
+                    <td><input value="${pos2}" autocomplete="off" name="pos_2_laser[${filaTableLaser}]" id="pos_2_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="number" step="0.001" style="width: 100%;"></td>
+                    <td><input value="${pos3}" autocomplete="off" name="pos_3_laser[${filaTableLaser}]" id="pos_3_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="number" step="0.001" style="width: 100%;"></td>
+                    <td><input value="${pos4}" autocomplete="off" name="pos_4_laser[${filaTableLaser}]" id="pos_4_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="number" step="0.001" style="width: 100%;"></td>
+                    <td><input value="${pxm}" autocomplete="off" name="prenda_x_mesa_laser[${filaTableLaser}]" id="prenda_x_mesa_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" onclick="this.select()" value="1" type="text" style="width: 100%;"></td>
+                    <td><input value="${tiempo}" autocomplete="off" name="tiempo_total_laser[${filaTableLaser}]" id="tiempo_total_laser_${filaTableLaser}" type="text" style="width: 100%;" readonly></td>
+                    <td><input value="${precio_pronosticado}" autocomplete="off" name="precio_pronosticado[${filaTableLaser}]" id="precio_pronosticado_${filaTableLaser}" type="number" style="width: 100%;"></td>
+                    <td><input value="${precio_minuto_valor}" autocomplete="off" name="precio_minuto_valor[${filaTableLaser}]" id="precio_minuto_valor_${filaTableLaser}" type="text" style="width: 100%" value="6" onchange="calculapreciominutototal(${filaTableLaser})" class="precioMinutosValor"></td>
+                    <td><input value="${precio_cliente}" autocomplete="off" name="precio_cliente[${filaTableLaser}]" id="precio_cliente_${filaTableLaser}" type="number" style="width: 100%" value="0"  onkeyup="calcularPrecioFinal(${filaTableLaser})"></td>
+                    <td><input value="${valor_laser}" autocomplete="off" name="valor_laser[${filaTableLaser}]" id="valor_laser_${filaTableLaser}" type="number" style="width: 100%" value="0"></td>
+
                     <td>
                         <button title="Duplicar Debajo"
                             onclick="duplicarDebajo(${filaTableLaser})"
@@ -718,7 +756,7 @@
                             <i class="fa fa-plus"></i>
                         </button>
                         <button title="Duplicar Debajo"
-                            onclick="elimiarFila(${filaTableLaser})"
+                            onclick="elimiarFila(this)"
                             class="btn btn-danger btn-icon btn-sm btn-circle" type="button">
                             <i class="fa fa-trash"></i>
                         </button>
@@ -730,9 +768,8 @@
 
         }
 
-        function elimiarFila(fila){
-            let filaEliminar = $("#table_laser tbody tr").eq(fila - 1);
-            filaEliminar.remove();
+        function elimiarFila(btn){
+            $(btn).closest('tr').remove();
         }
 
         function guardarLaser(){
@@ -757,32 +794,36 @@
 
         function sumaTimepos(fila){
 
-            let timempo1 = $('#pos_1_laser_'+fila).val();
-            let timempo2 = $('#pos_2_laser_'+fila).val();
-            let timempo3 = $('#pos_3_laser_'+fila).val();
-            let timempo4 = $('#pos_4_laser_'+fila).val();
-            let cantidadMesa = $('#prenda_x_mesa_laser_'+fila).val()
+            let timempo1     = $('#pos_1_laser_'+fila).val();
+            let timempo2     = $('#pos_2_laser_'+fila).val();
+            let timempo3     = $('#pos_3_laser_'+fila).val();
+            let timempo4     = $('#pos_4_laser_'+fila).val();
+            let cantidadMesa = $('#prenda_x_mesa_laser_'+fila).val();
 
             let sumTotalTiempo = parseFloat(timempo1) + parseFloat(timempo2) + parseFloat(timempo3) + parseFloat(timempo4);
 
-            let resultado = sumTotalTiempo / cantidadMesa;
-            $('#tiempo_total_laser_' + fila).val(resultado.toFixed(2));
+            let resultado = (sumTotalTiempo / cantidadMesa).toFixed(3);
+            $('#tiempo_total_laser_' + fila).val(resultado);
 
             // AHORA CALCULAMOS LOS MINUTOS TOTALES
             let minTotal = parseFloat($('#minutos_totales').val());
             $('#minutos_totales').val(minTotal + sumTotalTiempo)
 
+            // AHORA VEMOS PARA EL PRECIO PRONOSTICADO
+            let precio_minuto = $('#precio_minuto_valor_1').val()
+            let pronostico = ((resultado * precio_minuto) / 60).toFixed(3);
+            $('#precio_pronosticado_' + fila).val(pronostico);
 
-            calcularPrecio(fila)
+            // calcularPrecio(fila)
 
         }
 
-        function calcularPrecio(item){
-            let precio = $('#tiempo_total_laser_'+item).val();
-            let precioMinuto = $('#precio_minuto_valor_'+item).val();
-            let calculo = parseFloat(precio) * parseFloat(precioMinuto);
-            $('#valor_laser_'+item).val(calculo);
-        }
+        // function calcularPrecio(item){
+        //     let precio = $('#tiempo_total_laser_'+item).val();
+        //     let precioMinuto = $('#precio_minuto_valor_'+item).val();
+        //     let calculo = parseFloat(precio) * parseFloat(precioMinuto);
+        //     $('#valor_laser_'+item).val(calculo);
+        // }
 
         function cambiarPrecioMinuto(){
 
@@ -791,10 +832,13 @@
         }
 
         function calculapreciominutototal(dato){
-            let valor = $('#precio_minuto_valor_'+dato).val();
-            let totalMin = $('#tiempo_total_laser_'+dato).val();
 
-            $('#valor_laser_'+dato).val(parseFloat(valor) * parseFloat(totalMin));
+            console.log("HACER ALGO !!!");
+
+            // let valor = $('#precio_minuto_valor_'+dato).val();
+            // let totalMin = $('#tiempo_total_laser_'+dato).val();
+
+            // $('#valor_laser_'+dato).val(parseFloat(valor) * parseFloat(totalMin));
         }
 
         function ajaxFormularioEditarOrdenTrabajo(orden){
@@ -982,6 +1026,15 @@
                     }
                 }
             })
+        }
+
+        function calcularPrecioFinal(fila){
+
+            let precioCliente = $('#precio_cliente_'+fila).val();
+            let cantidad = $('#cantidad_laser_'+fila).val();
+
+            $('#valor_laser_'+fila).val(precioCliente * cantidad);
+
         }
    </script>
 @endsection

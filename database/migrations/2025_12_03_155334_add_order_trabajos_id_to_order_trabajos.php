@@ -15,17 +15,19 @@ return new class extends Migration
             $table->unsignedBigInteger('order_trabajos_id')->nullable()->after('usuario_eliminador_id');;
             $table->foreign('order_trabajos_id')->references('id')->on('order_trabajos');
 
-            $table->decimal('posicion_1', 12, 2)->nullable()->after('tipo');
-            $table->decimal('posicion_2', 12, 2)->nullable()->after('posicion_1');
-            $table->decimal('posicion_3', 12, 2)->nullable()->after('posicion_2');
-            $table->decimal('posicion_4', 12, 2)->nullable()->after('posicion_3');
-            $table->decimal('nro_prenda_mesa', 12, 2)->nullable()->after('posicion_4');
+            $table->decimal('posicion_1', 12, 3)->nullable()->after('tipo');
+            $table->decimal('posicion_2', 12, 3)->nullable()->after('posicion_1');
+            $table->decimal('posicion_3', 12, 3)->nullable()->after('posicion_2');
+            $table->decimal('posicion_4', 12, 3)->nullable()->after('posicion_3');
+            $table->decimal('nro_prenda_mesa', 12, 3)->nullable()->after('posicion_4');
             $table->string('intensidad', 45)->nullable()->after('nro_prenda_mesa');
-            $table->decimal('tiempo', 12, 2)->nullable()->after('intensidad');
+            $table->decimal('tiempo', 12, 3)->nullable()->after('intensidad');
             $table->string('disenio', 45)->nullable()->after('tiempo');
             $table->string('talla', 45)->nullable()->after('disenio');
             $table->string('altura', 45)->nullable()->after('talla');
             $table->string('dpi', 45)->nullable()->after('altura');
+            $table->decimal('precio_pronosticado', 12,3)->nullable()->after('dpi');
+            $table->json('orden_trabajos')->nullable()->after('precio_pronosticado');
         });
     }
 
