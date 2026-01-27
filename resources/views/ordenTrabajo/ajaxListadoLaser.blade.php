@@ -13,7 +13,11 @@
                 <th>Pos. 3</th>
                 <th>Pos. 4</th>
                 <th>Pre x Mesa</th>
-                <th>Tie. Total</th>
+                <th>Seg/Pre</th>
+                <th>Pre Pronostico</th>
+                <th>Precio Base</th>
+                <th>Precio Cliente</th>
+                <th>Sub Total</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -31,6 +35,10 @@
                     <td>{{ $ordenTrabajo->posicion_4 }}</td>
                     <td>{{ $ordenTrabajo->nro_prenda_mesa }}</td>
                     <td>{{ $ordenTrabajo->tiempo }}</td>
+                    <td>{{ $ordenTrabajo->precio_pronosticado }}</td>
+                    <td>{{ $ordenTrabajo->precio_minuto }}</td>
+                    <td>{{ $ordenTrabajo->precio }}</td>
+                    <td>{{ $ordenTrabajo->subtotal }}</td>
                     <td>
                         {{-- <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar rol" onclick="editarRol({{ json_encode($rol) }})"><i class="fa fa-edit"></i></button>
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar rol" onclick="eliminarRol('{{ $rol->id }}',  '{{ $rol->nombre }}')"><i class="fa fa-trash"></i></button> --}}
