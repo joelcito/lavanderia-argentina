@@ -217,15 +217,14 @@ Route::middleware('auth')->group(function () {
         //  Route::get('/ots-por-factura', [ProcesosController::class, 'listaOTsPorFactura'])->name('procesos.listaOTsPorFactura');
         Route::get('/ots-por-factura', [ProcesosController::class, 'otsPorFactura'])->name('procesos.otsPorFactura');
 
-        Route::get(
-            '/productos-aprobados-por-ot/{ot_id}',
-            [ProcesosController::class, 'productosAprobadosPorOT']
-        )->name('procesos.productosAprobadosPorOT');
+        Route::get('/productos-aprobados-por-ot/{ot_id}', [ProcesosController::class, 'productosAprobadosPorOT'])->name('procesos.productosAprobadosPorOT');
         //////////////////
 // Procesos
         Route::post('/guardar-listado', [ProcesosController::class, 'guardarListado'])->name('procesos.guardarListado');
 
+        Route::get('/obtener-ot/{id}', [ProcesosController::class, 'obtenerOT'])->name('procesos.obtenerOT')->middleware('auth');
 
+        Route::post('/guardar-proceso-ot', [ProcesosController::class, 'guardarProcesoOT'])->name('procesos.guardarProcesoOT');
 
     });
 

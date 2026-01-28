@@ -27,6 +27,8 @@ class Order_trabajo extends Model
         'descripcion',
         'nro_ot',
         'estado',
+        'cantidad_focalizado',
+        'cantidad_planchado',
         'deleted_at',
     ];
 

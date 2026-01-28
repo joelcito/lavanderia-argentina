@@ -530,6 +530,59 @@ class ProcesosController extends Controller
         return response()->json($productosData);
     }
 
+    //planchado y focalizado
+
+    public function obtenerOT($id)
+    {
+        return Order_Trabajo::select('id', 'cantidad')
+            ->where('id', $id)
+            ->firstOrFail();
+    }
+
+
+
+
+    public function guardarProcesoOT(Request $request)
+    {
+        try {
+            $request->validate([
+                'ot_id' => 'required|exists:order_trabajos,id',
+                'tipo' => 'required|in:focalizado,planchado',
+                'cantidad' => 'required|numeric|min:0'
+            ]);
+
+            $ot = Order_Trabajo::findOrFail($request->ot_id);
+
+
+            if (strtoupper($ot->estado) === 'FINALIZADO') {
+                return response()->json([
+                    'estado' => false,
+                    'mensaje' => 'No se puede modificar, la OT ya está finalizada.'
+                ], 422);
+            }
+
+            if ($request->tipo === 'focalizado') {
+                $ot->cantidad_focalizado = (int) $request->cantidad;
+            } else {
+                $ot->cantidad_planchado = (int) $request->cantidad;
+            }
+
+            $ot->save();
+
+            return response()->json([
+                'estado' => true,
+                'mensaje' => 'Cantidad guardada correctamente'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'estado' => false,
+                'mensaje' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 
 
 
