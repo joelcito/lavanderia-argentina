@@ -39,9 +39,6 @@
                     <td>
                         @if (is_null($fac->estado))
                             <a href="{{route('factura.detalleCliente', [$fac->id])}}" class="btn btn-sm btn-icon tamanio_boton btn-info" title="Ver Detelles"><i class="fa fa-eye"></i></a>
-                            <button class="btn btn-primary btn-sm btn-icon tamanio_boton" title="Imprime Recibo"
-                                onclick="imprimeREcibo('{{ $fac->id }}')"><i
-                                    class="fa fa-file-pdf"></i></button>
                         @endif
                     </td>
                 </tr>

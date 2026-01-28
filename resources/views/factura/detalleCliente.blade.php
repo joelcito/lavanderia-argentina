@@ -173,18 +173,6 @@
                             </div>
                         </div>
                         <!--end::Item-->
-                        <!--begin::Item-->
-                        <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
-                            <span class="mr-4">
-                                <i class="fas fa-file-pdf" style="font-size: 30px; margin-right: 5px;"></i>
-                            </span>
-                            <div class="d-flex flex-column text-dark-75">
-                                <span class="font-weight-bolder font-size-sm text-primary">NOTA VENTA</span>
-                                <a target="_blank" href="{{ url('factura/recibo') }}/{{ $factura->id }}" class="btn btn-danger btn-sm btn-icon w-100"><i class="fa fa-file-pdf"></i></a>
-                                {{-- <h5>{{ $ejemplar->tipo }}</h5> --}}
-                            </div>
-                        </div>
-                        <!--end::Item-->
                     </div>
                     <!--begin::Items-->
                 </div>
@@ -227,45 +215,6 @@
                                 </div>
                                 <!--end::Item-->
 
-                                <!--begin::Item-->
-                                <div class="mb-5">
-                                    <!--begin::Header-->
-                                    <div class="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_3_item_2">
-                                        <span class="accordion-icon">
-                                        <i class="ki-duotone ki-plus-square fs-3 accordion-icon-off"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-                                        <i class="ki-duotone ki-minus-square fs-3 accordion-icon-on"><span class="path1"></span><span class="path2"></span></i>
-                                        </span>
-                                        <h3 class="fs-4 fw-semibold mb-0 ms-4">REGISTRO OJALES</h3>
-                                    </div>
-                                    <!--end::Header-->
-
-                                    <!--begin::Body-->
-                                    <div id="kt_accordion_3_item_2" class="collapse fs-6 ps-10" data-bs-parent="#kt_accordion_3">
-                                        <div id="tabla-ojales"></div>
-                                    </div>
-                                    <!--end::Body-->
-                                </div>
-                                <!--end::Item-->
-
-                                <!--begin::Item-->
-                                <div class="mb-5">
-                                    <!--begin::Header-->
-                                    <div class="accordion-header py-3 d-flex collapsed" data-bs-toggle="collapse" data-bs-target="#kt_accordion_3_item_3">
-                                        <span class="accordion-icon">
-                                        <i class="ki-duotone ki-plus-square fs-3 accordion-icon-off"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-                                        <i class="ki-duotone ki-minus-square fs-3 accordion-icon-on"><span class="path1"></span><span class="path2"></span></i>
-                                        </span>
-                                        <h3 class="fs-4 fw-semibold mb-0 ms-4">REGISTRO DE LASER</h3>
-                                    </div>
-                                    <!--end::Header-->
-
-                                    <!--begin::Body-->
-                                    <div id="kt_accordion_3_item_3" class="collapse fs-6 ps-10" data-bs-parent="#kt_accordion_3">
-                                        <div id="tabla-lasers"></div>
-                                    </div>
-                                    <!--end::Body-->
-                                </div>
-                                <!--end::Item-->
                             </div>
                             <!--end::Accordion-->
 
@@ -276,142 +225,6 @@
         </div>
     </div>
 </div>
-
-{{-- <div class="row">
-    <div class="col-md-12">
-        <!--begin::Content wrapper-->
-        <div class="d-flex flex-column flex-column-fluid">
-            <div id="kt_app_content" class="app-content flex-column-fluid">
-                <!--begin::Content container-->
-                <div id="kt_app_content_container" class="app-container container-xxlg">
-                    <!--begin::Card-->
-                    <div class="card">
-                        <div class="card-header flex-wrap bg-light py-4">
-                            <div id="kt_app_toolbar_container" class="app-container container-xxlg d-flex flex-stack">
-                                <!--begin::Page title-->
-                                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                                    <!--begin::Title-->
-                                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Registros Biometricos</h1>
-                                    <!--end::Title-->
-                                </div>
-                                <!--end::Page title-->
-                            </div>
-                        </div>
-                        <div class="card-body py-4">
-                            <div id="tabla_biometrias"></div>
-                        </div>
-                    </div>
-                    <!--end::Card-->
-                </div>
-                <!--end::Content container-->
-            </div>
-            <!--end::Content-->
-        </div>
-        <!--end::Content wrapper-->
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        <!--begin::Content wrapper-->
-        <div class="d-flex flex-column flex-column-fluid">
-            <div id="kt_app_content" class="app-content flex-column-fluid">
-                <!--begin::Content container-->
-                <div id="kt_app_content_container" class="app-container container-xxlg">
-                    <!--begin::Card-->
-                    <div class="card">
-                        <div class="card-header flex-wrap bg-light py-4">
-                            <div id="kt_app_toolbar_container" class="app-container container-xxlg d-flex flex-stack">
-                                <!--begin::Page title-->
-                                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                                    <!--begin::Title-->
-                                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Registros Morfologicos</h1>
-                                    <!--end::Title-->
-                                </div>
-                                <!--end::Page title-->
-                            </div>
-                        </div>
-                        <div class="card-body py-4">
-                            <div id="tabla_morfilogicos"></div>
-                        </div>
-                    </div>
-                    <!--end::Card-->
-                </div>
-                <!--end::Content container-->
-            </div>
-            <!--end::Content-->
-        </div>
-        <!--end::Content wrapper-->
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        <!--begin::Content wrapper-->
-        <div class="d-flex flex-column flex-column-fluid">
-            <div id="kt_app_content" class="app-content flex-column-fluid">
-                <!--begin::Content container-->
-                <div id="kt_app_content_container" class="app-container container-xxlg">
-                    <!--begin::Card-->
-                    <div class="card">
-                        <div class="card-header flex-wrap bg-light py-4">
-                            <div id="kt_app_toolbar_container" class="app-container container-xxlg d-flex flex-stack">
-                                <!--begin::Page title-->
-                                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                                    <!--begin::Title-->
-                                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Registros Fibras</h1>
-                                    <!--end::Title-->
-                                </div>
-                                <!--end::Page title-->
-                            </div>
-                        </div>
-                        <div class="card-body py-4">
-                            <div id="tabla_analisis_fibras"></div>
-                        </div>
-                    </div>
-                    <!--end::Card-->
-                </div>
-                <!--end::Content container-->
-            </div>
-            <!--end::Content-->
-        </div>
-        <!--end::Content wrapper-->
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        <!--begin::Content wrapper-->
-        <div class="d-flex flex-column flex-column-fluid">
-            <div id="kt_app_content" class="app-content flex-column-fluid">
-                <!--begin::Content container-->
-                <div id="kt_app_content_container" class="app-container container-xxlg">
-                    <!--begin::Card-->
-                    <div class="card">
-                        <div class="card-header flex-wrap bg-light py-4">
-                            <div id="kt_app_toolbar_container" class="app-container container-xxlg d-flex flex-stack">
-                                <!--begin::Page title-->
-                                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                                    <!--begin::Title-->
-                                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">GENERACIONES DEL EJEMPLAR</h1>
-                                    <!--end::Title-->
-                                </div>
-                                <!--end::Page title-->
-                            </div>
-                        </div>
-                        <div class="card-body py-4">
-                            <div id="chart-container"></div>
-                        </div>
-                    </div>
-                    <!--end::Card-->
-                </div>
-                <!--end::Content container-->
-            </div>
-            <!--end::Content-->
-        </div>
-        <!--end::Content wrapper-->
-    </div>
-</div> --}}
 
 @stop()
 
@@ -431,14 +244,12 @@
 
         $(document).ready(function() {
             ajaxListadoOrdenTrabajos();
-            ajaxListadoOjales();
-            ajaxListadoLaser();
         });
 
         function ajaxListadoOrdenTrabajos(){
             let datos = {factura:{{ $factura->id }}};
             $.ajax({
-                url: "{{ route('ordenTrabajo.ajaxListadoOrdenTrabajos') }}",
+                url: "{{ route('ordenTrabajo.ajaxListadoOrdenTrabajosCliente') }}",
                 method: "POST",
                 data: datos,
                 success: function(resultado) {

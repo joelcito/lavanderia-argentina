@@ -47,13 +47,38 @@
             <div class="modal-body scroll-y">
                 <div id="listado-laser-bloque"></div>
             </div>
-            <div class="modal-footer">
+            {{-- <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-12">
                         <button class="btn btn-sm w-100 btn-success" onclick="guardarLaser()">Guardar Laser</button>
                     </div>
                 </div>
+            </div> --}}
+            <!--end::Modal body-->
+        </div>
+    </div>
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modal - Add task-->
+
+<!--begin::Modal - Add task-->
+<div class="modal fade" id="modalListadoOjales" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 80%">
+        <div class="modal-content">
+            <div class="modal-header" id="kt_modal_add_user_header">
+                <h3 class="fw-bold">LISTADO DE OJALES</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+            <div class="modal-body scroll-y">
+                <div id="listado-ojales-bloque"></div>
+            </div>
+            {{-- <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-sm w-100 btn-success" onclick="guardarLaser()">Guardar Laser</button>
+                    </div>
+                </div>
+            </div> --}}
             <!--end::Modal body-->
         </div>
     </div>
@@ -610,15 +635,17 @@
             })
         }
 
-        function ajaxListadoOjales(){
-            let datos = {factura:{{ $factura->id }}};
+        function ajaxListadoOjales(ot){
+            let datos = {factura:{{ $factura->id }}, ot:ot};
             $.ajax({
                 url: "{{ route('ordenTrabajo.ajaxListadoOjales') }}",
                 method: "POST",
                 data: datos,
                 success: function(resultado) {
-                    if (resultado.estado)
-                        $('#tabla-ojales').html(resultado.data.listado)
+                    if (resultado.estado){
+                        $('#listado-ojales-bloque').html(resultado.data.listado)
+                        $('#modalListadoOjales').modal('show')
+                    }
                 }
             })
         }

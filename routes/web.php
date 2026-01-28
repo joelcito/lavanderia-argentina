@@ -253,6 +253,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/ordenTrabajo')->group(function () {
         // Route::get('/formulario', [ReporteController::class, 'formulario'])->name('reporte.formulario');
         Route::post('/ajaxListadoOrdenTrabajos', [OrdenTrabajoController::class, 'ajaxListadoOrdenTrabajos'])->name('ordenTrabajo.ajaxListadoOrdenTrabajos');
+        Route::post('/ajaxListadoOrdenTrabajosCliente', [OrdenTrabajoController::class, 'ajaxListadoOrdenTrabajosCliente'])->name('ordenTrabajo.ajaxListadoOrdenTrabajosCliente');
         Route::post('/ajaxListadoOjales', [OrdenTrabajoController::class, 'ajaxListadoOjales'])->name('ordenTrabajo.ajaxListadoOjales');
         Route::post('/ajaxListadoLaser', [OrdenTrabajoController::class, 'ajaxListadoLaser'])->name('ordenTrabajo.ajaxListadoLaser');
         Route::post('/guardarLaser', [OrdenTrabajoController::class, 'guardarLaser'])->name('ordenTrabajo.guardarLaser');

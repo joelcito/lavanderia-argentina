@@ -44,15 +44,38 @@ class OrdenTrabajoController extends Controller
         return $data;
     }
 
-    public function ajaxListadoOjales(Request $request)
-    {
+    public function ajaxListadoOrdenTrabajosCliente(Request $request){
         if ($request->ajax()) {
 
             $factura_id = $request->input('factura');
 
+            $ordem_trabajos = Order_trabajo::with('factura')
+                                            ->where('factura_id', $factura_id)
+                                            ->where('tipo', 'ORDEN_TRABAJO')
+                                            ->get();
+
+            $valores = [
+                'listado' => view('ordenTrabajo.ajaxListadoOrdenTrabajosCliente')->with(compact('ordem_trabajos'))->render()
+            ];
+
+            $data = Respuesta::success($valores, "Datos Obtenidos correctamente");
+        } else {
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+    }
+
+    public function ajaxListadoOjales(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $factura_id       = $request->input('factura');
+            $orden_trabajo_id = $request->input('ot');
+
             $ordem_trabajos = Order_trabajo::where('factura_id', $factura_id)
-                ->where('tipo', 'OJAL')
-                ->get();
+                                            ->where('order_trabajos_id', $orden_trabajo_id)
+                                            ->where('tipo', 'OJAL')
+                                            ->get();
 
             $valores = [
                 'listado' => view('ordenTrabajo.ajaxListadoOjales')->with(compact('ordem_trabajos'))->render()
