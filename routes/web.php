@@ -240,6 +240,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/proceso', [ReporteController::class, 'formularioProceso'])->name('reporte.proceso.formulario');
         Route::get('/proceso/ots/{factura_id}', [ReporteController::class, 'obtenerOTs'])->name('reporte.proceso.obtenerOTs');
         Route::post('/proceso/pdf', [ReporteController::class, 'procesoPdf'])->name('reporte.proceso.pdf');
+
+        Route::get('/stockCompra', [ReporteController::class, 'formularioStockCompra'])->name('reporte.stockCompra.formulario');
+        Route::post('/stock-compra/pdf', [ReporteController::class, 'reporteStockCompraPdf'])->name('reporte.stockCompra.pdf');
+
+
+
         Route::get('/prueba-ot', function () {
             $facturas = App\Models\Factura::all();
             return view('reporte.prueba_ot', compact('facturas'));

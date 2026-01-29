@@ -34,6 +34,22 @@ class ReporteController extends Controller
         return view('reporte.stock_formulario_proceso', compact('facturas'));
     }
 
+    public function formularioStockCompra()
+    {
+        $sucursales = DB::table('sucursales')->get();
+
+        $codigosCompra = DB::table('movimientos')
+            ->select('codigo_compra')
+            ->distinct()
+            ->orderBy('codigo_compra')
+            ->get();
+
+        return view('reporte.stock_formulario_compra', compact(
+            'sucursales',
+            'codigosCompra'
+        ));
+    }
+
 
     public function obtenerOTs($factura_id)
     {
@@ -260,6 +276,93 @@ class ReporteController extends Controller
         return $pdf->stream('stock_historico.pdf');
     }
 
+    //compra
+
+
+    public function reporteStockCompraPdf(Request $request)
+    {
+        $request->validate([
+            'sucursal_id' => 'required',
+            'codigo_compra' => 'required',
+            'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date',
+        ]);
+
+        $fechaInicio = Carbon::parse($request->fecha_inicio)->startOfDay();
+        $fechaFin = Carbon::parse($request->fecha_fin)->endOfDay();
+        $sucursalId = $request->sucursal_id;
+        $codigoCompra = $request->codigo_compra;
+
+
+        $productos = DB::table('movimientos')
+            ->join('productos', 'productos.id', '=', 'movimientos.producto_id')
+            ->where('movimientos.sucursal_id', $sucursalId)
+            ->where('movimientos.codigo_compra', $codigoCompra)
+            ->select('productos.id', 'productos.nombre')
+            ->distinct()
+            ->get();
+
+        $reporte = [];
+
+        foreach ($productos as $producto) {
+
+            $movimientos = DB::table('movimientos')
+                ->where('producto_id', $producto->id)
+                ->where('sucursal_id', $sucursalId)
+                ->where('codigo_compra', $codigoCompra)
+                ->whereBetween('fecha', [$fechaInicio, $fechaFin])
+                ->select(
+                    DB::raw('DATE(fecha) as fecha'),
+                    DB::raw('SUM(ingreso) as ingreso'),
+                    DB::raw('SUM(salida) as salida')
+                )
+                ->groupBy(DB::raw('DATE(fecha)'))
+                ->orderBy('fecha')
+                ->get()
+                ->keyBy('fecha');
+
+
+            $stockInicial = DB::table('movimientos')
+                ->where('producto_id', $producto->id)
+                ->where('sucursal_id', $sucursalId)
+                ->where('codigo_compra', $codigoCompra)
+                ->where('fecha', '<', $fechaInicio)
+                ->select(DB::raw('SUM(ingreso - salida) as stock'))
+                ->value('stock') ?? 0;
+
+            $saldo = $stockInicial;
+            $detalle = [];
+
+            for ($fecha = $fechaInicio->copy(); $fecha <= $fechaFin; $fecha->addDay()) {
+                $f = $fecha->format('Y-m-d');
+                $ingreso = $movimientos[$f]->ingreso ?? 0;
+                $salida = $movimientos[$f]->salida ?? 0;
+
+                $detalle[] = [
+                    'fecha' => $fecha->format('d/m/Y'),
+                    'inicio' => round($saldo, 4),
+                    'ingreso' => round($ingreso, 4),
+                    'salida' => round($salida, 4),
+                    'saldo' => round($saldo + $ingreso - $salida, 4),
+                ];
+
+                $saldo += $ingreso - $salida;
+            }
+
+            $reporte[] = [
+                'producto' => $producto->nombre,
+                'detalle' => $detalle
+            ];
+        }
+
+        $sucursal = DB::table('sucursales')->where('id', $request->sucursal_id)->value('nombre');
+        $codigoCompra = $request->codigo_compra;
+
+        $pdf = Pdf::loadView('reporte.pdf.compra_pdf', compact('reporte', 'fechaInicio', 'fechaFin', 'codigoCompra', 'sucursal'))
+            ->setPaper('A4', 'portrait');
+
+        return $pdf->stream('stock_compra.pdf');
+    }
 
 
 
