@@ -573,7 +573,7 @@ class FacturaController extends Controller
         // Obtener los productos aprobados según la OT
         $productos = DB::table('solicitudes')
             ->join('productos', 'solicitudes.producto_id', '=', 'productos.id')
-            ->whereJsonContains('solicitudes.orden_trabajo_id', (string) $orderTrabajoId)
+            ->whereJsonContains('solicitudes.ordenes_trabajo', (string) $orderTrabajoId)
             ->where('solicitudes.estado', 'APROBADO')
             ->select('productos.id', 'productos.nombre', 'productos.tipo', 'productos.codigo')
             ->get();

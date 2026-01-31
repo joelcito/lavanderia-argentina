@@ -40,9 +40,7 @@
                     </td>
                 </tr>
             @empty
-                <tr>
-                    <td colspan="3" class="text-center">No hay OTs registradas</td>
-                </tr>
+                <span class="text-danger">No hay OTs registradas</span>
             @endforelse
         </tbody>
     </table>
