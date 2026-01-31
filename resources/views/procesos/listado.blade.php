@@ -954,10 +954,10 @@
                 select.empty().append('<option value="">Seleccione OT...</option>');
                 data.forEach(ot => {
                     select.append(`<option
-                                                                                                                                                                data-ids='${JSON.stringify(ot.ids)}'
-                                                                                                                                                                data-peso='${ot.peso_total}'>
-                                                                                                                                                                OT ${ot.nro_ot} (Peso: ${ot.peso_total})
-                                                                                                                                                            </option>`);
+                                    data-ids='${JSON.stringify(ot.ids)}'
+                                    data-peso='${ot.peso_total}'>
+                                    OT ${ot.nro_ot} (Peso: ${ot.peso_total})
+                                </option>`);
                 });
             });
         });

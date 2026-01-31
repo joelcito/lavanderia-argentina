@@ -32,6 +32,10 @@ class Movimiento extends Model
 
     ];
 
+    protected $casts = [
+        'ordenes_trabajo' => 'array',
+    ];
+
     public function producto()
     {
         return $this->belongsTo('App\Models\Producto', 'producto_id');

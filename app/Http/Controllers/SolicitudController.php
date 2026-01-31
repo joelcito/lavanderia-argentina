@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Input\Input;
 
 class SolicitudController extends Controller
 {
@@ -36,30 +37,37 @@ class SolicitudController extends Controller
 
     public function ajaxListado(Request $request)
     {
-        $solicitudes = Solicitud::with(['producto', 'usuarioCreador'])->get();
 
-        // Aplanamos todos los arrays de OT y agrupamos por OT individual
-        $ots = $solicitudes->flatMap(fn($s) => collect($s->ordenes_trabajo))
-            ->groupBy(fn($id) => $id);
+        if($request->ajax()){
 
-        $html = view('solicitudes.ajaxListado', compact('ots'))->render();
+            $facturasSolicitadas = Solicitud::join('order_trabajos as ot', function ($join) {
+                                        $join->whereRaw('JSON_CONTAINS(solicitudes.ordenes_trabajo, CAST(ot.id AS JSON))');
+                                    })
+                                    ->join('facturas as f', 'f.id', '=', 'ot.factura_id')
+                                    ->select('ot.factura_id', 'solicitudes.usuario_creador_id', 'f.numero_factura')
+                                    ->groupBy('ot.factura_id', 'solicitudes.usuario_creador_id', 'f.numero_factura')
+                                    ->get();
 
-        return response()->json([
-            'estado' => true,
-            'data' => ['listado' => $html]
-        ]);
+            $valores = [
+                'listado' => view('solicitudes.ajaxListado', compact('facturasSolicitadas'))->render()
+            ];
+
+            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
+
+        }else{
+
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+
+
 
         // $solicitudes = Solicitud::with(['producto', 'usuarioCreador'])->get();
 
         // // Aplanamos todos los arrays de OT y agrupamos por OT individual
-        // $ots = $solicitudes
-        //     ->flatMap(
-        //         fn($s) => collect((array) $s->ordenes_trabajo)
-        //             ->mapWithKeys(fn($otId) => [$otId => $s])
-        //     )
-        //     ->groupBy(fn($s) => key($s));
+        // $ots = $solicitudes->flatMap(fn($s) => collect($s->ordenes_trabajo))
+        //     ->groupBy(fn($id) => $id);
 
-        // // Renderizamos el HTML como antes
         // $html = view('solicitudes.ajaxListado', compact('ots'))->render();
 
         // return response()->json([
@@ -70,7 +78,6 @@ class SolicitudController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
 
         DB::beginTransaction();
 
@@ -80,7 +87,7 @@ class SolicitudController extends Controller
                 $solicitud                     = new Solicitud();
                 $solicitud->usuario_creador_id = auth()->id();
                 $solicitud->producto_id        = $item['producto_id'];
-                $solicitud->ordenes_trabajo    = $item['orden_trabajo_ids'];  // 👈 AQUÍ
+                $solicitud->ordenes_trabajo    = array_map('intval', $item['orden_trabajo_ids']);
                 $solicitud->cantidad           = $item['cantidad'];
                 $solicitud->porcentaje         = $item['porcentaje'];
                 $solicitud->estado             = 'EN PROCESO';
@@ -120,15 +127,26 @@ class SolicitudController extends Controller
 
     public function accionProducto(Request $request)
     {
+
         $s = Solicitud::find($request->solicitud_id);
         if (!$s) {
             return response()->json(['estado' => false, 'mensaje' => 'Solicitud no encontrada']);
         }
 
+        $ingreso = $request->input('ingreso');
+
         // Calcular stock disponible
         $stock = DB::table('movimientos')
-            ->where('producto_id', $s->producto_id)
-            ->sum('ingreso') - DB::table('movimientos')->where('producto_id', $s->producto_id)->sum('salida');
+                    ->where('producto_id', $s->producto_id)
+                    ->where('id', $ingreso)
+                    ->sum('ingreso')
+                -
+                DB::table('movimientos')
+                    ->where('producto_id', $s->producto_id)
+                    ->where('movimiento_id', $ingreso)
+                    ->sum('salida');
+
+                    // dd($stock, $s->cantidad);
 
         DB::beginTransaction();
         try {
@@ -139,15 +157,14 @@ class SolicitudController extends Controller
 
                 // Insertar registro de salida en movimientos
                 DB::table('movimientos')->insert([
-                    'producto_id' => $s->producto_id,
-                    'salida' => $s->cantidad,
-                    'ingreso' => 0,
-                    'fecha' => now(),
-                    'descripcion' => 'Salida por aprobación de solicitud #' . $s->id,
-                    'estado' => 'ACTIVO',
+                    'producto_id'        => $s->producto_id,
+                    'salida'             => $s->cantidad,
+                    'ingreso'            => 0,
+                    'ordenes_trabajo'    => json_encode($s->ordenes_trabajo),
+                    'fecha'              => now(),
+                    'descripcion'        => 'Salida por aprobación de solicitud #' . $s->id,
                     'usuario_creador_id' => Auth::id(),
-                    'created_at' => now(),
-                    'updated_at' => now()
+                    'movimiento_id'      => $ingreso
                 ]);
 
                 // Cambiar estado de la solicitud
@@ -280,6 +297,92 @@ class SolicitudController extends Controller
         return response()->json($productos);
     }
 
+    public function verDetalleSolicitud(Request $request){
+
+        if($request->ajax()){
+
+            // dd($request->all());
+
+            $factura_id = $request->input('factura');
+
+            $facturasSolicitadas = Solicitud::join('order_trabajos as ot', function ($join) {
+                                        $join->whereRaw('JSON_CONTAINS(solicitudes.ordenes_trabajo, CAST(ot.id AS JSON))');
+                                    })
+                                    ->select('solicitudes.*')
+                                    ->where('ot.factura_id', $factura_id)
+                                    ->groupBy('solicitudes.id')
+                                    ->get();
+
+                                    // dd($facturasSolicitadas);
+
+            $data = $facturasSolicitadas->map(function($s) {
+
+                // SACAMOS PARA EL NUMERO DE OT
+                $primerOtId = $s->ordenes_trabajo[0] ?? null;
+                $nro_ot = null;
+                if ($primerOtId) {
+                    $ot = Order_trabajo::find($primerOtId);
+                    $nro_ot = $ot->nro_ot ?? null;
+                }
+
+                // SACAMOS EL STOCK E INGRESOS DE CADA PRODCUTO SOLICITADO
+                $queryIngreso = Movimiento::where('ingreso', '>', 0)
+                                        ->where('salida',0)
+                                        ->whereNotNull('codigo_compra')
+                                        ->whereNotNull('precio')
+                                        ->where('producto_id', $s->producto_id);
+                                        // ->get();
+
+                $ingresos    = $queryIngreso->get();
+
+                $stock = [];
+
+                foreach ($ingresos as $key => $ingreso) {
+                    $querySalida = Movimiento::where('salida', '>', 0)
+                                        ->where('ingreso',0)
+                                        ->whereNull('codigo_compra')
+                                        ->whereNull('precio')
+                                        ->where('producto_id', $s->producto_id)
+                                        ->where('movimiento_id', $ingreso->id)
+                                        ->sum('salida');
+
+                    $stockProducto = $ingreso->ingreso - $querySalida;
+
+                    if($stockProducto > 0){
+                        $stock[] = [
+                            'ID'            => $ingreso->id,
+                            'CODIGO_COMPRA' => $ingreso->codigo_compra,
+                            'STOCK'         => $ingreso->ingreso - $querySalida,
+                        ];
+                    }
+                }
+
+                return [
+                    'id'       => $s->id,
+                    'producto' => $s->producto->nombre ?? '-',
+                    'cantidad' => $s->cantidad,
+                    'estado'   => $s->estado,
+                    'usuario'  => $s->usuarioCreador->name ?? '-',
+                    'nro_ot'   => $nro_ot,
+                    'stock'    => $stock
+                ];
+            });
+
+            $valores = [
+                'solicitudes' => $data
+            ];
+
+            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
+
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+
+    }
+
 
 
 }
+

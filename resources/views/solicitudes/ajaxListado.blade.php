@@ -5,15 +5,22 @@
         <thead>
             <tr>
                 <th>Fac/Orden Recepcion</th>
-                <th>OT</th>
-                <th>Cantidad de solicitudes</th>
+                <th>Usuario Solicitante</th>
+                {{-- <th>Cantidad de solicitudes</th>--}}
                 <th>Acción</th>
             </tr>
         </thead>
         <tbody>
-            {{-- @dd($ots) --}}
-            @foreach($ots as $otId => $sols)
-                {{-- @dd($sols, $otId) --}}
+            @foreach ($facturasSolicitadas as $factura)
+                <tr>
+                    <td>{{ $factura->numero_factura }}</td>
+                    <td>{{ $factura->usuarioCreador->nombres." ".$factura->usuarioCreador->ap_paterno." ".$factura->usuarioCreador->ap_materno }}</td>
+                    <td>
+                        <button class="btn btn-icon btn-sm btn-info" onclick="verDetalleSolicitud('{{ $factura->factura_id }}', '{{ $factura->numero_factura }}')"><i class="fa fa-eye"></i></button>
+                    </td>
+                </tr>
+            @endforeach
+            {{-- @foreach($ots as $otId => $sols)
                 <tr>
                     <td></td>
                     <td>{{ $otId }}</td>
@@ -24,7 +31,7 @@
                         </button>
                     </td>
                 </tr>
-            @endforeach
+            @endforeach --}}
         </tbody>
     </table>
     <!--end::Table-->

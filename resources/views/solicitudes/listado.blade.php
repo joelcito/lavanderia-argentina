@@ -56,7 +56,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title">Detalle de Solicitud</h5>
+                        <h5 class="modal-title">Detalle de Solicitud para la Factura/Orden Recepcion <span class="text-white" id="numero_recepcion_texto"></span></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body" id="detalleSolicitudBody">
@@ -105,49 +105,146 @@
             }
 
             // Función opcional para abrir modal de detalle
-            function verDetalleSolicitud(id) {
-                $.get("/solicitud/detalle/" + id, function (data) {
-                    $('#detalleSolicitudBody').html(data);
-                    $('#modalDetalleSolicitud').modal('show');
-                });
+            // function verDetalleSolicitud(id) {
+            //     $.get("/solicitud/detalle/" + id, function (data) {
+            //         $('#detalleSolicitudBody').html(data);
+            //         $('#modalDetalleSolicitud').modal('show');
+            //     });
+            // }
+
+            // function abrirModalOT(otId) {
+            //     $.ajax({
+            //         url: "{{ route('solicitudes.ajaxDetalleOT') }}",
+            //         method: "POST",
+            //         data: { ot_id: otId },
+            //         headers: {
+            //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            //         },
+            //         success: function (res) {
+            //             if (res.estado) {
+            //                 let html = `<table class="table table-bordered table-striped">
+            //                                                                 <thead>
+            //                                                                     <tr>
+            //                                                                         <th>Producto</th>
+            //                                                                         <th>Cantidad</th>
+            //                                                                         <th>Estado</th>
+            //                                                                         <th>Usuario</th>
+            //                                                                     </tr>
+            //                                                                 </thead>
+            //                                                                 <tbody>`;
+            //                 res.data.solicitudes.forEach(s => {
+            //                     html += `<tr>
+            //                                                             <td>${s.producto}</td>
+            //                                                             <td>${s.cantidad}</td>
+            //                                                             <td>${s.estado}</td>
+            //                                                             <td>${s.usuario}</td>
+            //                                                            <td>
+            //                     ${s.estado === 'EN PROCESO' ? `
+            //                         <button class="btn btn-success btn-sm" onclick="accionSolicitud(${s.id}, 'aprobar')">Aprobar</button>
+            //                         <button class="btn btn-danger btn-sm" onclick="accionSolicitud(${s.id}, 'rechazar')">Rechazar</button>
+            //                     ` : ''}
+            //                 </td>
+            //                                                         </tr>`;
+            //                 });
+            //                 html += `</tbody></table>`;
+
+            //                 $('#detalleSolicitudBody').html(html);
+            //                 $('#modalDetalleSolicitud').modal('show');
+            //             } else {
+            //                 Swal.fire('Error', 'No se pudieron cargar las solicitudes', 'error');
+            //             }
+            //         },
+            //         error: function () {
+            //             Swal.fire('Error', 'No se pudo cargar el detalle de la OT', 'error');
+            //         }
+            //     });
+            // }
+
+            function accionSolicitud(solicitudId, accion) {
+                let f = $('#ingresos_'+solicitudId).val();
+                if(f != null && f != ""){
+                    $.ajax({
+                        url: "{{ route('solicitudes.accionProducto') }}",
+                        type: "POST",
+                        data: {
+                            solicitud_id: solicitudId,
+                            accion      : accion,
+                            ingreso     : f
+                        },
+                        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                        success: function (res) {
+                            if (res.estado) {
+                                Swal.fire('OK', 'Solicitud ' + accion, 'success');
+                                cargarSolicitudes();
+                                $('#modalDetalleSolicitud').modal('hide');
+                            } else {
+                                Swal.fire('Error', res.mensaje, 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'No se pudo procesar la solicitud', 'error');
+                        }
+                    });
+                }else{
+                    Swal.fire('Error', 'Debe seleccionar un ingreso del prodcuto para el descuento del inventario', 'error');
+                }
             }
 
-            function abrirModalOT(otId) {
+            function verDetalleSolicitud(factura, numero){
+
                 $.ajax({
-                    url: "{{ route('solicitudes.ajaxDetalleOT') }}",
-                    method: "POST",
-                    data: { ot_id: otId },
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    url: "{{ route('solicitudes.verDetalleSolicitud') }}",
+                    type: "POST",
+                    data: {
+                        factura: factura
                     },
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                     success: function (res) {
                         if (res.estado) {
+
                             let html = `<table class="table table-bordered table-striped">
                                                                             <thead>
                                                                                 <tr>
                                                                                     <th>Producto</th>
+                                                                                    <th>Ingreso</th>
+                                                                                    <th>N Ot</th>
                                                                                     <th>Cantidad</th>
                                                                                     <th>Estado</th>
                                                                                     <th>Usuario</th>
+                                                                                    <th></th>
                                                                                 </tr>
                                                                             </thead>
                                                                             <tbody>`;
                             res.data.solicitudes.forEach(s => {
+
+                                let selectIni = '<select id="ingresos_'+s.id+'">';
+                                let opctionS  = '<option value="">Seleccione un Ingreso</option>'
+                                let selectFin = '</select>';
+                                let stockPro  = s.stock;
+
+                                stockPro.forEach(hg =>{
+                                    opctionS = opctionS+'<option value="'+hg.ID+'">'+hg.CODIGO_COMPRA+' ( Stock: '+hg.STOCK+' )</option>';
+                                })
+
+                                let todoSelect = selectIni+opctionS+selectFin;
+
                                 html += `<tr>
-                                                                        <td>${s.producto}</td>
-                                                                        <td>${s.cantidad}</td>
-                                                                        <td>${s.estado}</td>
-                                                                        <td>${s.usuario}</td>
-                                                                       <td>
-                                ${s.estado === 'EN PROCESO' ? `
-                                    <button class="btn btn-success btn-sm" onclick="accionSolicitud(${s.id}, 'aprobar')">Aprobar</button>
-                                    <button class="btn btn-danger btn-sm" onclick="accionSolicitud(${s.id}, 'rechazar')">Rechazar</button>
-                                ` : ''}
-                            </td>
-                                                                    </tr>`;
+                                            <td>${s.producto}</td>
+                                            <td>${todoSelect}</td>
+                                            <td>${s.nro_ot}</td>
+                                            <td>${s.cantidad}</td>
+                                            <td>${s.estado}</td>
+                                            <td>${s.usuario}</td>
+                                            <td>
+                                                ${s.estado === 'EN PROCESO' ? `
+                                                    <button class="btn btn-success btn-sm" onclick="accionSolicitud(${s.id}, 'aprobar')">Aprobar</button>
+                                                    <button class="btn btn-danger btn-sm" onclick="accionSolicitud(${s.id}, 'rechazar')">Rechazar</button>
+                                                ` : ''}
+                                            </td>
+                                        </tr>`;
                             });
                             html += `</tbody></table>`;
-
+                            $('#numero_recepcion_texto').text("N "+numero)
                             $('#detalleSolicitudBody').html(html);
                             $('#modalDetalleSolicitud').modal('show');
                         } else {
@@ -155,33 +252,10 @@
                         }
                     },
                     error: function () {
-                        Swal.fire('Error', 'No se pudo cargar el detalle de la OT', 'error');
-                    }
-                });
-            }
-
-            function accionSolicitud(solicitudId, accion) {
-                $.ajax({
-                    url: "{{ route('solicitudes.accionProducto') }}",
-                    type: "POST",
-                    data: {
-                        solicitud_id: solicitudId,
-                        accion: accion
-                    },
-                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                    success: function (res) {
-                        if (res.estado) {
-                            Swal.fire('OK', 'Solicitud ' + accion, 'success');
-                            cargarSolicitudes();
-                            $('#modalDetalleSolicitud').modal('hide');
-                        } else {
-                            Swal.fire('Error', res.mensaje, 'error');
-                        }
-                    },
-                    error: function () {
                         Swal.fire('Error', 'No se pudo procesar la solicitud', 'error');
                     }
                 });
+
             }
         </script>
     @endsection

@@ -28,7 +28,7 @@ return new class extends Migration
             //foranea proceso
             // $table->foreign('proceso_id')->references('id')->on('procesos');
             // $table->unsignedBigInteger('proceso_id')->nullable();
-
+            $table->json('ordenes_trabajo')->nullable();
             $table->decimal('ingreso',12,2)->nullable();
             $table->decimal('salida',12,2)->nullable();
             $table->dateTime('fecha')->nullable();
