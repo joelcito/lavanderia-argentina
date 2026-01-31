@@ -45,7 +45,7 @@
                     <td>{{ $ordenTrabajo->tipoTela?->nombre }}</td>
                     <td>{{ $ordenTrabajo->colorTela?->nombre }}</td>
                     <td>{{ $ordenTrabajo->caracteristicaTela?->nombre }}</td>
-                    <td>{{ $ordenTrabajo->preso }}</td>
+                    <td>{{ $ordenTrabajo->peso }}</td>
                     <td>{{ $ordenTrabajo->precio }}</td>
                     <td>{{ $ordenTrabajo->subtotal }}</td>
                     <td>{{ $ordenTrabajo->observacion }}</td>

@@ -50,38 +50,22 @@ class SolicitudController extends Controller
         ]);
     }
 
-    // public function store(Request $request)
-    // {
-    //     $data = $request->input('solicitudes');
-
-    //     foreach ($data as $item) {
-    //         $solicitud = new Solicitud();
-    //         $solicitud->usuario_creador_id = auth()->id();
-    //         $solicitud->producto_id = $item['producto_id'];
-    //         $solicitud->orden_trabajo_id = json_encode($item['orden_trabajo_id']); // guardamos array como JSON
-    //         $solicitud->cantidad = $item['cantidad']; // ya calculada según porcentaje
-    //         $solicitud->porcentaje = $item['porcentaje']; // nuevo campo
-    //         $solicitud->estado = 'EN PROCESO';
-    //         $solicitud->save();
-    //     }
-
-    //     return response()->json(['estado' => true, 'mensaje' => 'Solicitudes guardadas correctamente']);
-    // }
-
     public function store(Request $request)
     {
+        dd($request->all());
+
         DB::beginTransaction();
 
         try {
             foreach ($request->solicitudes as $item) {
 
-                $solicitud = new Solicitud();
+                $solicitud                     = new Solicitud();
                 $solicitud->usuario_creador_id = auth()->id();
-                $solicitud->producto_id = $item['producto_id'];
-                $solicitud->orden_trabajo_id = json_encode($item['orden_trabajo_ids']); // 👈 AQUÍ
-                $solicitud->cantidad = $item['cantidad'];
-                $solicitud->porcentaje = $item['porcentaje'];
-                $solicitud->estado = 'EN PROCESO';
+                $solicitud->producto_id        = $item['producto_id'];
+                $solicitud->orden_trabajo_id   = json_encode($item['orden_trabajo_ids']);  // 👈 AQUÍ
+                $solicitud->cantidad           = $item['cantidad'];
+                $solicitud->porcentaje         = $item['porcentaje'];
+                $solicitud->estado             = 'EN PROCESO';
                 $solicitud->save();
             }
 

@@ -20,8 +20,6 @@ use Illuminate\Support\Facades\Auth;
 class ProcesosController extends Controller
 {
 
-
-
     public function listado()
     {
         $maquinarias = Maquinaria::all();

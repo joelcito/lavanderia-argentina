@@ -212,45 +212,53 @@
 
             <div class="modal-body">
 
-                <!-- FACTURA -->
-                <div class="mb-3">
-                    <label>Factura</label>
-                    <select id="factura_id_solicitud" class="form-select">
-                        <option value="">Seleccione factura...</option>
-                        @foreach($facturas as $factura)
-                            <option value="{{ $factura->id }}">{{ $factura->numero_factura }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                <div class="row">
+                    <div class="col-md-6">
 
-                <!-- ORDEN DE TRABAJO -->
-                <div class="mb-3">
-                    <label>Orden de Trabajo (OT agrupadas)</label>
-                    <select id="ot_agrupada" class="form-select">
-                        <option value="">Seleccione OT...</option>
-                    </select>
-                </div>
+                        <!-- FACTURA -->
+                        <div class="mb-3">
+                            <label>Factura</label>
+                            <select id="factura_id_solicitud" class="form-select" data-dropdown-parent="#modalSolicitudProductos">
+                                <option value="">Seleccione factura...</option>
+                                @foreach($facturas as $factura)
+                                    <option value="{{ $factura->id }}">{{ $factura->numero_factura }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                <!-- CÓDIGO DE COMPRA -->
-                <div class="mb-3">
-                    <label>Código de Compra</label>
-                    <select id="codigo_compra" class="form-select">
-                        <option value="">Seleccione código...</option>
-                    </select>
-                </div>
+                    </div>
+                    <div class="col-md-6">
 
-                <!-- PRODUCTO -->
-                <div class="mb-3">
-                    <label>Producto (con stock)</label>
-                    <select id="producto_id_solicitud" class="form-select">
-                        <option value="">Seleccione producto...</option>
-                    </select>
-                </div>
+                        <!-- ORDEN DE TRABAJO -->
+                        <div class="mb-3">
+                            <label>Orden de Trabajo (OT agrupadas)</label>
+                            <select id="ot_agrupada" class="form-select">
+                                <option value="">Seleccione OT...</option>
+                            </select>
+                        </div>
 
-                <div class="mb-3">
-                    <label>Porcentaje (%)</label>
-                    <input type="number" step="0.01" id="porcentaje_solicitado" class="form-control"
-                        placeholder="Ej: 3">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- PRODUCTO -->
+                        <div class="mb-3">
+                            <label>Producto (con stock)</label>
+                            <select id="producto_id_solicitud" class="form-select"  data-dropdown-parent="#modalSolicitudProductos">
+                                <option value="">Seleccione producto...</option>
+                                @foreach ($productos as $producto)
+                                    <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label>Porcentaje (%)</label>
+                            <input type="number" step="0.01" id="porcentaje_solicitado" class="form-control"
+                                placeholder="Ej: 3">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- CANTIDAD -->
@@ -270,7 +278,7 @@
                     <thead>
                         <tr>
                             <th>Producto</th>
-                            <th>Código Compra</th>
+                            {{-- <th>Código Compra</th> --}}
                             <th>OT(s)</th>
                             <th>Porcentaje (%)</th>
                             <th>Cantidad</th>
@@ -296,20 +304,115 @@
 @stop
 
 @section('js')
-
-
-    <!-- jQuery (si no está en el layout, de lo contrario omítelo) -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-    <!-- jQuery Repeater -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
-
-    <!-- SweetAlert y Datatables -->
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $(document).ready(function () {
+            ajaxListado();
+            actualizarTemporizadores(); // iniciar temporizador
+
+            $('#factura_id_solicitud, #producto_id_solicitud').select2()
+
+
+            // // Inicializar Repeater
+            // if (typeof $.fn.repeater === "function") {
+            //     $('#kt_docs_repeater_advanced').repeater({
+            //         initEmpty: false,
+            //         show: function () { $(this).slideDown(); },
+            //         hide: function (deleteElement) {
+            //             $(this).slideUp(deleteElement);
+            //         }
+            //     });
+            // } else {
+            //     console.error("jQuery Repeater no está cargado");
+            // }
+
+            $(document).on('change', '.order_trabajo_id', function () {
+                let fila = $(this).closest('[data-repeater-item]');
+                let ot_id = $(this).val();
+                let productoSelect = fila.find('.producto_id');
+
+                productoSelect.html('<option value="">Cargando productos...</option>');
+
+                if (!ot_id) {
+                    productoSelect.html('<option value="">Seleccione producto...</option>');
+                    return;
+                }
+
+                let urlProductos = "{{ route('procesos.productosAprobadosPorOT', ['ot_id' => ':ot_id']) }}".replace(':ot_id', ot_id);
+                $.get(urlProductos, function (productos) {
+                    productoSelect.empty().append('<option value="">Seleccione producto...</option>');
+                    productos.forEach(p => productoSelect.append(`<option value="${p.id}">${p.nombre}</option>`));
+                });
+            });
+
+
+
+            // Guardar procesos
+            $('#guardarProcesosBtn').click(function () {
+                let filas = $('#kt_docs_repeater_advanced [data-repeater-item]').filter(':visible');
+                let errores = false;
+
+                filas.each(function () {
+                    let fila = $(this);
+                    let datos = {
+                        order_trabajo_id: fila.find('.order_trabajo_id').val(),
+                        producto_id: fila.find('.producto_id').val(),
+                        tipo_proceso_id: fila.find('.tipo_proceso_id').val(),
+                        fecha_ingreso: fila.find('.fecha_ingreso').val(),
+                        fecha_salida: fila.find('.fecha_salida').val(),
+                        tiempo: fila.find('.tiempo').val(),
+                        temperatura: fila.find('.temperatura').val(),
+                        ph: fila.find('.ph').val(),
+                        rb: fila.find('.rb').val(),
+                        descripcion: fila.find('.descripcion').val(),
+                        maquinaria_id: $('#maquinaria_id').val(),
+                        estado: 'PENDIENTE'
+                    };
+
+                    if (!datos.order_trabajo_id || !datos.producto_id || !datos.tipo_proceso_id || !datos.fecha_ingreso) {
+                        errores = true;
+                        return false;
+                    }
+
+                    $.ajax({
+                        url: "{{ route('procesos.guardarListado') }}",
+                        method: "POST",
+                        data: datos,
+                        async: false,
+                        success: function (res) {
+                            if (!res.estado) Swal.fire('Error', res.mensaje, 'error');
+                        },
+                        error: function (xhr) { console.error(xhr.responseJSON); }
+                    });
+                });
+
+                if (errores) {
+                    Swal.fire('Error', 'Complete todos los campos obligatorios', 'warning');
+                } else {
+                    Swal.fire('OK', 'Procesos guardados correctamente', 'success');
+                    $('#modalLavanderia').modal('hide');
+                    recargarListado();
+                }
+            });
+
+            function recargarListado() {
+                $.get("{{ route('procesos.ajaxListado') }}", function (res) {
+                    if (res.estado) $('#table_listado').html(res.data.listado);
+                    else $('#table_listado').html('<p class="text-danger text-center">Error al cargar los procesos</p>');
+                });
+            }
+
+
+
+
+        });
 
         $(document).on('change', '.factura_id', function () {
             let fila = $(this).closest('[data-repeater-item]');
@@ -335,6 +438,7 @@
                 }
                 fila.find('.producto_id').html('<option value="">Seleccione producto...</option>');
             });
+
         });
         // Cuando se selecciona OT en el modal
         $('#select-ot').on('change', function () {
@@ -356,6 +460,7 @@
                 });
             });
         });
+
         $('#select-factura').on('change', function () {
             const factura_id = $(this).val();
             const otSelect = $('#select-ot');
@@ -376,18 +481,6 @@
             });
         });
 
-
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        $(document).ready(function () {
-            ajaxListado();
-            actualizarTemporizadores(); // iniciar temporizador
-        });
-
         function ajaxListado() {
             $.ajax({
                 url: "{{ route('procesos.ajaxListado') }}",
@@ -400,11 +493,6 @@
                 }
             });
         }
-
-
-
-
-
 
         function cargarOTs(selectId) {
             $.ajax({
@@ -600,98 +688,7 @@
 
         //ororo
 
-        $(document).ready(function () {
 
-            // Inicializar Repeater
-            if (typeof $.fn.repeater === "function") {
-                $('#kt_docs_repeater_advanced').repeater({
-                    initEmpty: false,
-                    show: function () { $(this).slideDown(); },
-                    hide: function (deleteElement) {
-                        $(this).slideUp(deleteElement);
-                    }
-                });
-            } else {
-                console.error("jQuery Repeater no está cargado");
-            }
-
-            $(document).on('change', '.order_trabajo_id', function () {
-                let fila = $(this).closest('[data-repeater-item]');
-                let ot_id = $(this).val();
-                let productoSelect = fila.find('.producto_id');
-
-                productoSelect.html('<option value="">Cargando productos...</option>');
-
-                if (!ot_id) {
-                    productoSelect.html('<option value="">Seleccione producto...</option>');
-                    return;
-                }
-
-                let urlProductos = "{{ route('procesos.productosAprobadosPorOT', ['ot_id' => ':ot_id']) }}".replace(':ot_id', ot_id);
-                $.get(urlProductos, function (productos) {
-                    productoSelect.empty().append('<option value="">Seleccione producto...</option>');
-                    productos.forEach(p => productoSelect.append(`<option value="${p.id}">${p.nombre}</option>`));
-                });
-            });
-
-
-
-            // Guardar procesos
-            $('#guardarProcesosBtn').click(function () {
-                let filas = $('#kt_docs_repeater_advanced [data-repeater-item]').filter(':visible');
-                let errores = false;
-
-                filas.each(function () {
-                    let fila = $(this);
-                    let datos = {
-                        order_trabajo_id: fila.find('.order_trabajo_id').val(),
-                        producto_id: fila.find('.producto_id').val(),
-                        tipo_proceso_id: fila.find('.tipo_proceso_id').val(),
-                        fecha_ingreso: fila.find('.fecha_ingreso').val(),
-                        fecha_salida: fila.find('.fecha_salida').val(),
-                        tiempo: fila.find('.tiempo').val(),
-                        temperatura: fila.find('.temperatura').val(),
-                        ph: fila.find('.ph').val(),
-                        rb: fila.find('.rb').val(),
-                        descripcion: fila.find('.descripcion').val(),
-                        maquinaria_id: $('#maquinaria_id').val(),
-                        estado: 'PENDIENTE'
-                    };
-
-                    if (!datos.order_trabajo_id || !datos.producto_id || !datos.tipo_proceso_id || !datos.fecha_ingreso) {
-                        errores = true;
-                        return false;
-                    }
-
-                    $.ajax({
-                        url: "{{ route('procesos.guardarListado') }}",
-                        method: "POST",
-                        data: datos,
-                        async: false,
-                        success: function (res) {
-                            if (!res.estado) Swal.fire('Error', res.mensaje, 'error');
-                        },
-                        error: function (xhr) { console.error(xhr.responseJSON); }
-                    });
-                });
-
-                if (errores) {
-                    Swal.fire('Error', 'Complete todos los campos obligatorios', 'warning');
-                } else {
-                    Swal.fire('OK', 'Procesos guardados correctamente', 'success');
-                    $('#modalLavanderia').modal('hide');
-                    recargarListado();
-                }
-            });
-
-            function recargarListado() {
-                $.get("{{ route('procesos.ajaxListado') }}", function (res) {
-                    if (res.estado) $('#table_listado').html(res.data.listado);
-                    else $('#table_listado').html('<p class="text-danger text-center">Error al cargar los procesos</p>');
-                });
-            }
-
-        });
 
 
         //procesos
@@ -956,8 +953,8 @@
             $.get("{{ route('solicitudes.otsPorFactura', ':id') }}".replace(':id', facturaId), function (data) {
                 select.empty().append('<option value="">Seleccione OT...</option>');
                 data.forEach(ot => {
-                    select.append(`<option 
-                                                                                                                                                                data-ids='${JSON.stringify(ot.ids)}' 
+                    select.append(`<option
+                                                                                                                                                                data-ids='${JSON.stringify(ot.ids)}'
                                                                                                                                                                 data-peso='${ot.peso_total}'>
                                                                                                                                                                 OT ${ot.nro_ot} (Peso: ${ot.peso_total})
                                                                                                                                                             </option>`);
@@ -989,7 +986,10 @@
         // });
 
         $('#ot_agrupada').on('change', function () {
+
+
             let selected = $(this).find('option:selected');
+
             if (!selected.val()) {
                 otSeleccionada = null;
                 $('#cantidad_solicitada').val('');
@@ -1027,14 +1027,16 @@
 
         // Agregar producto al listado temporal
         function agregarProductoTemporal() {
-            let productoId = $('#producto_id_solicitud').val();
+
+            let productoId    = $('#producto_id_solicitud').val();
             let productoTexto = $('#producto_id_solicitud option:selected').text();
-            let codigoCompra = $('#codigo_compra').val();
 
+            // let codigoCompra  = $('#codigo_compra').val();
             let cantidadTotal = parseFloat($('#cantidad_solicitada').val());
-            let porcentaje = parseFloat($('#porcentaje_solicitado').val()) || 0;
+            let porcentaje    = parseFloat($('#porcentaje_solicitado').val()) || 0;
 
-            if (!productoId || !codigoCompra || !otSeleccionada || !cantidadTotal || !porcentaje) {
+            // if (!productoId || !codigoCompra || !otSeleccionada || !cantidadTotal || !porcentaje) {
+            if (!productoId || !otSeleccionada || !cantidadTotal || !porcentaje) {
                 Swal.fire('Error', 'Complete todos los campos antes de agregar', 'warning');
                 return;
             }
@@ -1044,7 +1046,7 @@
             solicitudTemporal.push({
                 producto_id: productoId,
                 producto_nombre: productoTexto,
-                codigo_compra: codigoCompra,
+                // codigo_compra: codigoCompra,
                 orden_trabajo_ids: otSeleccionada.ids,
                 cantidad: cantidadCalculada,
                 porcentaje: porcentaje
@@ -1059,20 +1061,21 @@
         function actualizarTablaTemporal() {
             let tbody = $('#tabla_solicitud_temporal tbody');
             tbody.empty();
-
+            let ordenesTrabasjo = @json($ordenes);
             solicitudTemporal.forEach((item, index) => {
+                let nroOtes = item.orden_trabajo_ids[0];
+                let f = ordenesTrabasjo.find(o => o.id == nroOtes);
                 tbody.append(`
-                                                                                                                                            <tr>
-                                                                                                                                                <td>${item.producto_nombre}</td>
-                                                                                                                                                <td>${item.codigo_compra}</td>
-                                                                                                                                                <td>${item.orden_trabajo_ids.join(', ')}</td>
-                                                                                                                                                <td>${item.porcentaje}%</td>
-                                                                                                                                                <td>${item.cantidad.toFixed(2)}</td>
-                                                                                                                                                <td>
-                                                                                                                                                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProductoTemporal(${index})">Eliminar</button>
-                                                                                                                                                </td>
-                                                                                                                                            </tr>
-                                                                                                                                        `);
+                                <tr>
+                                    <td>${item.producto_nombre}</td>
+                                    <td>N° ${f.nro_ot}</td>
+                                    <td>${item.porcentaje}%</td>
+                                    <td>${item.cantidad.toFixed(2)}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProductoTemporal(${index})">Eliminar</button>
+                                    </td>
+                                </tr>
+                            `);
             });
         }
 
@@ -1125,73 +1128,5 @@
             modal.show();
         }
 
-        function actualizarTablaTemporal() {
-            let tbody = $('#tabla_solicitud_temporal tbody');
-            tbody.empty();
-
-            solicitudTemporal.forEach((item, index) => {
-                tbody.append(`
-                                                                                                                                            <tr>
-                                                                                                                                                <td>${item.producto_nombre}</td>
-                                                                                                                                                <td>${item.codigo_compra}</td>
-                                                                                                                                                <td>${item.orden_trabajo_ids.join(', ')}</td>
-                                                                                                                                                <td>${item.porcentaje}%</td>
-                                                                                                                                                <td>${item.cantidad.toFixed(2)}</td>
-                                                                                                                                                <td>
-                                                                                                                                                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProductoTemporal(${index})">Eliminar</button>
-                                                                                                                                                </td>
-                                                                                                                                            </tr>
-                                                                                                                                        `);
-            });
-        }
-
-
-
-
-    </script>
-
-
-
-
-
-
-    </script>
-@endsection
-
-@section('js')
-    <!-- jQuery (solo si no está en tu layout) -->
-    {{--
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> --}}
-
-    <!-- jQuery Repeater -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js"></script>
-
-    <!-- SweetAlert y Datatables -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
-
-    <script>
-        $(document).ready(function () {
-            $('#agregarAlListado').click(function () {
-                agregarProcesoAlListado();
-            });
-
-            // Inicializar Repeater
-            if (typeof $.fn.repeater === "function") {
-                $('#kt_docs_repeater_advanced').repeater({
-                    initEmpty: true,
-                    show: function () { $(this).slideDown(); },
-                    hide: function (deleteElement) {
-                        $(this).slideUp(deleteElement);
-                    }
-                });
-            } else {
-                console.error("jQuery Repeater no está cargado");
-            }
-
-            // Aquí van todas tus funciones AJAX y eventos
-            ajaxListado();
-            actualizarTemporizadores();
-        });
     </script>
 @endsection
