@@ -39,7 +39,7 @@ class SolicitudController extends Controller
         $solicitudes = Solicitud::with(['producto', 'usuarioCreador'])->get();
 
         // Aplanamos todos los arrays de OT y agrupamos por OT individual
-        $ots = $solicitudes->flatMap(fn($s) => collect($s->orden_trabajo_id))
+        $ots = $solicitudes->flatMap(fn($s) => collect($s->ordenes_trabajo))
             ->groupBy(fn($id) => $id);
 
         $html = view('solicitudes.ajaxListado', compact('ots'))->render();
@@ -48,6 +48,24 @@ class SolicitudController extends Controller
             'estado' => true,
             'data' => ['listado' => $html]
         ]);
+
+        // $solicitudes = Solicitud::with(['producto', 'usuarioCreador'])->get();
+
+        // // Aplanamos todos los arrays de OT y agrupamos por OT individual
+        // $ots = $solicitudes
+        //     ->flatMap(
+        //         fn($s) => collect((array) $s->ordenes_trabajo)
+        //             ->mapWithKeys(fn($otId) => [$otId => $s])
+        //     )
+        //     ->groupBy(fn($s) => key($s));
+
+        // // Renderizamos el HTML como antes
+        // $html = view('solicitudes.ajaxListado', compact('ots'))->render();
+
+        // return response()->json([
+        //     'estado' => true,
+        //     'data' => ['listado' => $html]
+        // ]);
     }
 
     public function store(Request $request)
@@ -62,7 +80,7 @@ class SolicitudController extends Controller
                 $solicitud                     = new Solicitud();
                 $solicitud->usuario_creador_id = auth()->id();
                 $solicitud->producto_id        = $item['producto_id'];
-                $solicitud->orden_trabajo_id   = json_encode($item['orden_trabajo_ids']);  // 👈 AQUÍ
+                $solicitud->ordenes_trabajo    = $item['orden_trabajo_ids'];  // 👈 AQUÍ
                 $solicitud->cantidad           = $item['cantidad'];
                 $solicitud->porcentaje         = $item['porcentaje'];
                 $solicitud->estado             = 'EN PROCESO';
@@ -86,7 +104,7 @@ class SolicitudController extends Controller
     public function ajaxDetalleOT(Request $request)
     {
         $solicitudes = Solicitud::with(['producto', 'usuarioCreador'])
-            ->whereJsonContains('orden_trabajo_id', $request->ot_id)
+            ->whereJsonContains('ordenes_trabajo', $request->ot_id)
             ->get();
 
         $data = $solicitudes->map(fn($s) => [
@@ -99,47 +117,6 @@ class SolicitudController extends Controller
 
         return response()->json(['estado' => true, 'data' => ['solicitudes' => $data]]);
     }
-
-    // Aprobar o rechazar solicitud
-    // public function accionProducto(Request $request)
-    // {
-    //     $s = Solicitud::find($request->solicitud_id);
-    //     if (!$s) {
-    //         return response()->json(['estado' => false, 'mensaje' => 'Solicitud no encontrada']);
-    //     }
-
-    //     $stock = DB::table('movimientos')
-    //         ->where('producto_id', $s->producto_id)
-    //         ->sum('ingreso') - DB::table('movimientos')->where('producto_id', $s->producto_id)->sum('salida');
-
-    //     if ($request->accion == 'aprobar') {
-    //         if ($stock < $s->cantidad) {
-    //             return response()->json(['estado' => false, 'mensaje' => 'No hay suficiente stock']);
-    //         }
-
-    //         DB::table('movimientos')->insert([
-    //             'producto_id' => $s->producto_id,
-    //             'orden_trabajo_id' => json_encode($s->orden_trabajo_id), // guardamos array
-    //             'salida' => $s->cantidad,
-    //             'ingreso' => 0,
-    //             'fecha' => now(),
-    //             'descripcion' => 'Salida por aprobación de solicitud #' . $s->id,
-    //             'estado' => 'ACTIVO',
-    //             'usuario_creador_id' => Auth::id(),
-    //             'created_at' => now(),
-    //             'updated_at' => now()
-    //         ]);
-
-    //         $s->estado = 'APROBADO';
-    //     } else {
-    //         $s->estado = 'RECHAZADO';
-    //     }
-
-    //     $s->save();
-
-    //     return response()->json(['estado' => true, 'mensaje' => 'Solicitud actualizada']);
-    // }
-
 
     public function accionProducto(Request $request)
     {
@@ -163,7 +140,6 @@ class SolicitudController extends Controller
                 // Insertar registro de salida en movimientos
                 DB::table('movimientos')->insert([
                     'producto_id' => $s->producto_id,
-                    // 'orden_trabajo_id' => json_encode($s->orden_trabajo_id), // Guardar array como JSON
                     'salida' => $s->cantidad,
                     'ingreso' => 0,
                     'fecha' => now(),

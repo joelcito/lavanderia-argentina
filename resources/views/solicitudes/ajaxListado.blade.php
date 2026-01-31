@@ -4,14 +4,18 @@
 
         <thead>
             <tr>
+                <th>Fac/Orden Recepcion</th>
                 <th>OT</th>
                 <th>Cantidad de solicitudes</th>
                 <th>Acción</th>
             </tr>
         </thead>
         <tbody>
+            {{-- @dd($ots) --}}
             @foreach($ots as $otId => $sols)
+                {{-- @dd($sols, $otId) --}}
                 <tr>
+                    <td></td>
                     <td>{{ $otId }}</td>
                     <td>{{ count($sols) }}</td>
                     <td>
