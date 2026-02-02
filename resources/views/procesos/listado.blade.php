@@ -6,12 +6,19 @@
             font-size: 6px;
         }
 
-        .maquina-container {
+        /* .maquina-container {
             cursor: pointer;
             padding: 10px;
             border-radius: 5px;
             text-align: center;
             margin: 0 10px;
+        } */
+
+        .maquina-container {
+            width: 220px;
+            margin: 10px;
+            text-align: center;
+            cursor: pointer;
         }
 
         .maquina-container img {
@@ -33,7 +40,8 @@
         <div id="kt_app_content_container" class="app-container container-xxlg">
 
             <h3 class="fw-bold mb-3">Maquinarias Disponibles</h3>
-            <div class="d-flex mb-4 overflow-auto">
+            {{-- <div class="d-flex mb-4 overflow-auto"> --}}
+            <div class="d-flex flex-wrap mb-4">
                 @foreach ($maquinarias as $m)
                     <div class="maquina-container"
                         style="border:2px solid {{ $m->estado_maquina == 'DISPONIBLE' ? '#28a745' : '#dc3545' }};"
@@ -210,24 +218,6 @@
             <!-- Body -->
             <div class="modal-body">
 
-                <!-- Selección de Producto y porcentaje -->
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label>Producto (con stock)</label>
-                        <select id="producto_id_solicitud" class="form-select">
-                            <option value="">Seleccione producto...</option>
-                            @foreach ($productos as $producto)
-                                <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label>Porcentaje (%)</label>
-                        <input type="number" step="0.01" id="porcentaje_solicitado" class="form-control"
-                            placeholder="Ej: 3">
-                    </div>
-                </div>
-
                 <!-- Selección de Facturas -->
                 <div class="mb-3">
                     <label>Facturas / Orden Recibo (puede seleccionar varias)</label>
@@ -247,6 +237,24 @@
                 <div class="mb-3">
                     <label>Cantidad total (peso de todas las OTs)</label>
                     <input type="number" step="0.01" id="cantidad_solicitada" class="form-control" readonly>
+                </div>
+
+                <!-- Selección de Producto y porcentaje -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label>Producto (con stock)</label>
+                        <select id="producto_id_solicitud" class="form-select">
+                            <option value="">Seleccione producto...</option>
+                            @foreach ($productos as $producto)
+                                <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Porcentaje (%)</label>
+                        <input type="number" step="0.01" id="porcentaje_solicitado" class="form-control"
+                            placeholder="Ej: 3">
+                    </div>
                 </div>
 
                 <!-- Botón agregar al listado -->

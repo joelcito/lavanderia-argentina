@@ -82,8 +82,6 @@ class SolicitudController extends Controller
 
         DB::beginTransaction();
 
-        // dd($request->all());
-
         try {
             foreach ($request->solicitudes as $item) {
 
