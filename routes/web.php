@@ -175,7 +175,7 @@ Route::middleware('auth')->group(function () {
         //
         Route::get('/facturas-estado-null', [FacturaController::class, 'getFacturasNull'])->name('factura.estadoNull');
         Route::get('/ots', [FacturaController::class, 'getOTs'])->name('factura.obtenerOTs');
-        Route::get('/productos', [FacturaController::class, 'getProductosAprobados'])->name('factura.productos');
+        Route::post('/obtenerProductosAprobados', [FacturaController::class, 'obtenerProductosAprobados'])->name('factura.obtenerProductosAprobados');
 
     });
 

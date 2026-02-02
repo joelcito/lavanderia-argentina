@@ -95,7 +95,7 @@
     <div class="modal-dialog modal-xl"> <!-- modal más ancho -->
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalLavanderiaLabel">Nueva Lavandería</h5>
+                <h5 class="modal-title" id="modalLavanderiaLabel">Nuevo Proceso</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
 
@@ -104,45 +104,50 @@
                 <form id="formLavanderia" class="row g-3">
                     <input type="hidden" id="id">
                     <input type="hidden" id="maquinaria_id">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label for="factura_id" class="form-label">Factura</label>
+                            <select id="factura_id" class="form-select">
+                                <option value="">Seleccione factura...</option>
+                            </select>
+                        </div>
 
-                    <div class="col-md-4">
-                        <label for="factura_id" class="form-label">Factura</label>
-                        <select id="factura_id" class="form-select">
-                            <option value="">Seleccione factura...</option>
-                        </select>
+                        <div class="col-md-3">
+                            <label for="order_trabajo_id_lavanderia" class="form-label">OT</label>
+                            <select id="order_trabajo_id_lavanderia" class="form-select" onchange="obtenerSolcitudProductoAprobado()">
+                                <option value="">Seleccione OT...</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-7">
+                            <label for="" class="form-label">Solicitud Aprobadas</label>
+                            <textarea class="form-control form-control-sm" name="texto-solicitud" id="" cols="30" rows="5" readonly></textarea>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <label for="producto_id_lavanderia" class="form-label">Produto</label>
+                            <select id="producto_id_lavanderia" class="form-control">
+                                <option value="">Seleccione tipo de proceso...</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="tipo_proceso_id" class="form-label">Tipo de Proceso</label>
+                            <select id="tipo_proceso_id" class="form-control">
+                                <option value="">Seleccione tipo de proceso...</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fecha_ingreso" class="form-label">Fecha Ingreso</label>
+                            <input type="datetime-local" id="fecha_ingreso" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fecha_salida" class="form-label">Fecha Salida</label>
+                            <input type="datetime-local" id="fecha_salida" class="form-control">
+                        </div>
                     </div>
 
-                    <div class="col-md-4">
-                        <label for="order_trabajo_id_lavanderia" class="form-label">OT</label>
-                        <select id="order_trabajo_id_lavanderia" class="form-select">
-                            <option value="">Seleccione OT...</option>
-                        </select>
-                    </div>
 
-                    <div class="col-md-4">
-                        <label for="producto_id_lavanderia" class="form-label">Producto</label>
-                        <select id="producto_id_lavanderia" class="form-select">
-                            <option value="">Seleccione producto...</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="tipo_proceso_id" class="form-label">Tipo de Proceso</label>
-                        <select id="tipo_proceso_id" class="form-control">
-                            <option value="">Seleccione tipo de proceso...</option>
-                        </select>
-                    </div>
-
-
-                    <div class="col-md-4">
-                        <label for="fecha_ingreso" class="form-label">Fecha Ingreso</label>
-                        <input type="datetime-local" id="fecha_ingreso" class="form-control">
-                    </div>
-
-                    <div class="col-md-4">
-                        <label for="fecha_salida" class="form-label">Fecha Salida</label>
-                        <input type="datetime-local" id="fecha_salida" class="form-control">
-                    </div>
 
                     <div class="col-md-3">
                         <label for="tiempo" class="form-label">Tiempo</label>
@@ -600,26 +605,21 @@
             }, 1000);
         }
 
+        // function cargarProductosLavanderia(ot_id) {
+        //     if (!ot_id) return;
 
-        function cargarProductosLavanderia(ot_id) {
-            if (!ot_id) return;
+        //     // Construir la URL reemplazando :ot_id
+        //     let url = "{{ route('procesos.productosAprobadosPorOT', ['ot_id' => ':ot_id']) }}";
+        //     url = url.replace(':ot_id', ot_id);
 
-            // Construir la URL reemplazando :ot_id
-            let url = "{{ route('procesos.productosAprobadosPorOT', ['ot_id' => ':ot_id']) }}";
-            url = url.replace(':ot_id', ot_id);
-
-            $.get(url, function (data) {
-                console.log("Productos Lavandería para OT", ot_id, data);
-                let select = $("#producto_id_lavanderia");
-                select.empty();
-                select.append('<option value="">Seleccione...</option>');
-                data.forEach(item => select.append(`<option value="${item.id}">${item.nombre}</option>`));
-            });
-        }
-
-
-
-
+        //     $.get(url, function (data) {
+        //         console.log("Productos Lavandería para OT", ot_id, data);
+        //         let select = $("#producto_id_lavanderia");
+        //         select.empty();
+        //         select.append('<option value="">Seleccione...</option>');
+        //         data.forEach(item => select.append(`<option value="${item.id}">${item.nombre}</option>`));
+        //     });
+        // }
 
         function cargarProductosPorOT(ot_id, fila) {
             let productoSelect = fila.find('.producto_id'); // fila específica del repeater
@@ -774,17 +774,13 @@
             });
         }
 
-
-
-
-
-        $('#order_trabajo_id_lavanderia').change(function () {
-            let orderTrabajoId = $(this).val();
+        function obtenerSolcitudProductoAprobado(){
+            let orderTrabajoId = $('#order_trabajo_id_lavanderia').val();
             let select = $('#producto_id_lavanderia');
-
             select.html('<option value="">Cargando productos...</option>');
 
             if (orderTrabajoId) {
+                {{--
                 $.get("{{ route('factura.productos') }}", { order_trabajo_id: orderTrabajoId }, function (data) {
                     select.empty();
                     select.append('<option value="">Seleccione producto...</option>');
@@ -795,28 +791,52 @@
                     console.error('Error al cargar productos:', err);
                     select.html('<option value="">Error al cargar productos</option>');
                 });
+                 --}}
+
+                $.ajax({
+                    url: "{{ route('factura.obtenerProductosAprobados') }}", // Creamos ruta Laravel
+                    type: 'POST',
+                    data: { orderTrabajoId: orderTrabajoId },
+                    dataType: 'json',
+                    success: function (ots) {
+
+                        console.log("###################################################");
+                        console.log(ots);
+                        console.log("###################################################");
+
+                        // let options = '<option value="">Seleccione OT...</option>';
+                        // ots.forEach(ot => {
+                        //     options += `<option value="${ot.id}">OT: ${ot.nro_ot} - Prendas: ${ot.cantidad}</option>`;
+                        // });
+                        // $('#order_trabajo_id_lavanderia').html(options);
+                    },
+                    error: function (err) {
+                        console.error('Error al cargar OTs:', err);
+                        alert('No se pudieron cargar las OTs.');
+                    }
+                });
             } else {
                 select.html('<option value="">Seleccione OT primero</option>');
             }
-        });
+        }
 
         function agregarProcesoAlListado() {
             let proceso = {
                 order_trabajo_id: $('#order_trabajo_id_lavanderia').val(),
-                producto_id: $('#producto_id_lavanderia').val(),
-                maquinaria_id: $('#maquinaria_id').val(),
-                tipo_proceso_id: $('#tipo_proceso_id').val(),
-                fecha_ingreso: $('#fecha_ingreso').val(),
-                fecha_salida: $('#fecha_salida').val(),
-                cantidad: $('#cantidad').val() || null,
-                porcentaje: $('#porcentaje').val() || null,
-                gr_litro: $('#gr_litro').val() || null,
-                tiempo: $('#tiempo').val() || null,
-                temperatura: $('#temperatura').val() || null,
-                ph: $('#ph').val() || null,
-                rb: $('#rb').val() || null,
-                descripcion: $('#descripcion').val(),
-                estado: 'TRABAJANDO'
+                producto_id     : $('#producto_id_lavanderia').val(),
+                maquinaria_id   : $('#maquinaria_id').val(),
+                tipo_proceso_id : $('#tipo_proceso_id').val(),
+                fecha_ingreso   : $('#fecha_ingreso').val(),
+                fecha_salida    : $('#fecha_salida').val(),
+                cantidad        : $('#cantidad').val() || null,
+                porcentaje      : $('#porcentaje').val() || null,
+                gr_litro        : $('#gr_litro').val() || null,
+                tiempo          : $('#tiempo').val() || null,
+                temperatura     : $('#temperatura').val() || null,
+                ph              : $('#ph').val() || null,
+                rb              : $('#rb').val() || null,
+                descripcion     : $('#descripcion').val(),
+                estado          : 'TRABAJANDO'
             };
 
             // Validaciones básicas
@@ -836,18 +856,18 @@
 
             listadoProcesos.forEach((p, index) => {
                 tbody.append(`
-                                                                                                                                                                                                        <tr>
-                                                                                                                                                                                                            <td>${$('#factura_id option:selected').text()}</td>
-                                                                                                                                                                                                            <td>${$('#order_trabajo_id_lavanderia option:selected').text()}</td>
-                                                                                                                                                                                                            <td>${$('#producto_id_lavanderia option:selected').text()}</td>
-                                                                                                                                                                                                            <td>${$('#tipo_proceso_id option:selected').text()}</td>
-                                                                                                                                                                                                            <td>${p.fecha_ingreso}</td>
-                                                                                                                                                                                                            <td>${p.fecha_salida}</td>
-                                                                                                                                                                                                            <td>
-                                                                                                                                                                                                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
-                                                                                                                                                                                                            </td>
-                                                                                                                                                                                                        </tr>
-                                                                                                                                                                                                    `);
+                    <tr>
+                        <td>${$('#factura_id option:selected').text()}</td>
+                        <td>${$('#order_trabajo_id_lavanderia option:selected').text()}</td>
+                        <td>${$('#producto_id_lavanderia option:selected').text()}</td>
+                        <td>${$('#tipo_proceso_id option:selected').text()}</td>
+                        <td>${p.fecha_ingreso}</td>
+                        <td>${p.fecha_salida}</td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
+                        </td>
+                    </tr>
+                `);
             });
         }
 

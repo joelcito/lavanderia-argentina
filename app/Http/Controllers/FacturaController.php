@@ -562,23 +562,73 @@ class FacturaController extends Controller
 
     }
 
-    public function getProductosAprobados(Request $request)
-    {
-        $orderTrabajoId = $request->get('order_trabajo_id');
+    // public function getProductosAprobados(Request $request)
+    // {
+    //     $orderTrabajoId = $request->get('order_trabajo_id');
 
-        if (!$orderTrabajoId) {
-            return response()->json([]);
+    //     if (!$orderTrabajoId) {
+    //         return response()->json([]);
+    //     }
+
+    //     // Obtener los productos aprobados según la OT
+    //     $productos = DB::table('solicitudes')
+    //         ->join('productos', 'solicitudes.producto_id', '=', 'productos.id')
+    //         ->whereJsonContains('solicitudes.ordenes_trabajo', (string) $orderTrabajoId)
+    //         ->where('solicitudes.estado', 'APROBADO')
+    //         ->select('productos.id', 'productos.nombre', 'productos.tipo', 'productos.codigo')
+    //         ->get();
+
+    //     return response()->json($productos);
+    // }
+
+    public function obtenerProductosAprobados(Request $request){
+
+        if($request->ajax()){
+
+            $orderTrabajoId  = $request->input('orderTrabajoId');
+            $ordenTrabajo    = Order_trabajo::find($orderTrabajoId);
+            $factura         = $ordenTrabajo->factura;
+            $ordenesTrabajos = Order_trabajo::where('factura_id', $factura->id)->get();
+
+            $solicitudes = Solicitud::with(['producto'])
+                                    ->whereJsonContains(
+                                        'ordenes_trabajo',
+                                        [
+                                            'factura_id' => $factura->id,
+                                            'ots' => [(int) $ordenTrabajo->id],
+                                        ]
+                                    )->get();
+
+            $text = "";
+
+            // RECORREMOS LAS SOLICITUDES
+            foreach ($solicitudes as $key => $solicitud) {
+                $ordenesTrabajos = $solicitud->ordenes_trabajo;
+                foreach ($ordenesTrabajos as $key => $ordenTrabajo) {
+                    $text = "| Or. Rec. ".$text. $factura->nro_factura."|[";
+                    // dd($ordenTrabajo['ots']);
+                    foreach ($ordenTrabajo['ots'] as $key => $ot) {
+                        // dd($ot);
+                        $ordeTrabajoDB = Order_trabajo::find($ot);
+                        $text= $text. $ordeTrabajoDB->nro_ot." , ";
+                    }
+                }
+                $text = $text."]<br>";
+            }
+
+            $valores = [
+                'solicitudes' => $solicitudes,
+                'factura'     => $factura,
+                'ordenes'     => $ordenesTrabajos,
+                'text'        => $text
+            ];
+
+            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
+        } else {
+            $data = Respuesta::error(null, "No existe");
         }
+        return $data;
 
-        // Obtener los productos aprobados según la OT
-        $productos = DB::table('solicitudes')
-            ->join('productos', 'solicitudes.producto_id', '=', 'productos.id')
-            ->whereJsonContains('solicitudes.ordenes_trabajo', (string) $orderTrabajoId)
-            ->where('solicitudes.estado', 'APROBADO')
-            ->select('productos.id', 'productos.nombre', 'productos.tipo', 'productos.codigo')
-            ->get();
-
-        return response()->json($productos);
     }
 
 
