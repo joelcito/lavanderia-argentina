@@ -201,7 +201,7 @@
 
 
 <!-- Modal Solicitud de Productos -->
-<div class="modal fade" id="modalSolicitudProductos" tabindex="-1">
+<!-- <div class="modal fade" id="modalSolicitudProductos" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
@@ -214,8 +214,6 @@
 
                 <div class="row">
                     <div class="col-md-6">
-
-                        <!-- FACTURA -->
                         <div class="mb-3">
                             <label>Factura</label>
                             <select id="factura_id_solicitud" class="form-select" data-dropdown-parent="#modalSolicitudProductos">
@@ -225,11 +223,8 @@
                                 @endforeach
                             </select>
                         </div>
-
                     </div>
                     <div class="col-md-6">
-
-                        <!-- ORDEN DE TRABAJO -->
                         <div class="mb-3">
                             <label>Orden de Trabajo (OT agrupadas)</label>
                             <select id="ot_agrupada" class="form-select">
@@ -241,7 +236,6 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <!-- PRODUCTO -->
                         <div class="mb-3">
                             <label>Producto (con stock)</label>
                             <select id="producto_id_solicitud" class="form-select"  data-dropdown-parent="#modalSolicitudProductos">
@@ -261,24 +255,20 @@
                     </div>
                 </div>
 
-                <!-- CANTIDAD -->
                 <div class="mb-3">
                     <label>Cantidad (Peso total OT)</label>
                     <input type="number" step="0.01" id="cantidad_solicitada" class="form-control" readonly>
                 </div>
 
-                <!-- Botón Agregar al listado temporal -->
                 <div class="mb-3">
                     <button class="btn btn-success" type="button" onclick="agregarProductoTemporal()">Agregar al
                         listado</button>
                 </div>
 
-                <!-- Tabla de listado temporal -->
                 <table class="table table-bordered" id="tabla_solicitud_temporal">
                     <thead>
                         <tr>
                             <th>Producto</th>
-                            {{-- <th>Código Compra</th> --}}
                             <th>OT(s)</th>
                             <th>Porcentaje (%)</th>
                             <th>Cantidad</th>
@@ -286,7 +276,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Filas agregadas dinámicamente aquí -->
                     </tbody>
                 </table>
 
@@ -299,7 +288,92 @@
 
         </div>
     </div>
+</div> -->
+
+<!-- Modal Solicitud de Productos -->
+<div class="modal fade" id="modalSolicitudProductos" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Header -->
+            <div class="modal-header">
+                <h5 class="modal-title">Solicitud de Productos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+
+                <!-- Selección de Producto y porcentaje -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label>Producto (con stock)</label>
+                        <select id="producto_id_solicitud" class="form-select">
+                            <option value="">Seleccione producto...</option>
+                            @foreach ($productos as $producto)
+                                <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Porcentaje (%)</label>
+                        <input type="number" step="0.01" id="porcentaje_solicitado" class="form-control"
+                            placeholder="Ej: 3">
+                    </div>
+                </div>
+
+                <!-- Selección de Facturas -->
+                <div class="mb-3">
+                    <label>Facturas (puede seleccionar varias)</label>
+                    <select id="facturas_seleccionadas" class="form-select" multiple>
+                        @foreach($facturas as $factura)
+                            <option value="{{ $factura->id }}" data-nro="{{ $factura->numero_factura }}">
+                                {{ $factura->numero_factura }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Contenedor dinámico de OTs por factura -->
+                <div id="ots_por_factura_container" class="mb-3"></div>
+
+                <!-- Cantidad calculada -->
+                <div class="mb-3">
+                    <label>Cantidad total (peso de todas las OTs)</label>
+                    <input type="number" step="0.01" id="cantidad_solicitada" class="form-control" readonly>
+                </div>
+
+                <!-- Botón agregar al listado -->
+                <div class="mb-3">
+                    <button class="btn btn-success" type="button" id="btnAgregarProducto">Agregar al listado</button>
+                </div>
+
+                <!-- Tabla temporal de productos -->
+                <table class="table table-bordered" id="tabla_solicitud_temporal">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Facturas y OTs</th>
+                            <th>Porcentaje (%)</th>
+                            <th>Cantidad</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btnGuardarSolicitud">Guardar Solicitud</button>
+                <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+
+        </div>
+    </div>
 </div>
+
 
 @stop
 
@@ -848,18 +922,18 @@
 
             listadoProcesos.forEach((p, index) => {
                 tbody.append(`
-                                    <tr>
-                                        <td>${$('#factura_id option:selected').text()}</td>
-                                        <td>${$('#order_trabajo_id_lavanderia option:selected').text()}</td>
-                                        <td>${$('#producto_id_lavanderia option:selected').text()}</td>
-                                        <td>${$('#tipo_proceso_id option:selected').text()}</td>
-                                        <td>${p.fecha_ingreso}</td>
-                                        <td>${p.fecha_salida}</td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
-                                        </td>
-                                    </tr>
-                                `);
+                                                                                                                                                                                                        <tr>
+                                                                                                                                                                                                            <td>${$('#factura_id option:selected').text()}</td>
+                                                                                                                                                                                                            <td>${$('#order_trabajo_id_lavanderia option:selected').text()}</td>
+                                                                                                                                                                                                            <td>${$('#producto_id_lavanderia option:selected').text()}</td>
+                                                                                                                                                                                                            <td>${$('#tipo_proceso_id option:selected').text()}</td>
+                                                                                                                                                                                                            <td>${p.fecha_ingreso}</td>
+                                                                                                                                                                                                            <td>${p.fecha_salida}</td>
+                                                                                                                                                                                                            <td>
+                                                                                                                                                                                                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
+                                                                                                                                                                                                            </td>
+                                                                                                                                                                                                        </tr>
+                                                                                                                                                                                                    `);
             });
         }
 
@@ -935,198 +1009,338 @@
         //solicitud
 
 
-        let solicitudTemporal = [];
-        let otSeleccionada = [];
+        // let solicitudTemporal = [];
+        // let otSeleccionada = [];
+        // $('#factura_id_solicitud').on('change', function () {
+        //     let facturaId = $(this).val();
+        //     let select = $('#ot_agrupada');
+        //     select.html('<option value="">Cargando...</option>');
+        //     otSeleccionada = null;
 
-        // FACTURA → OTs
-        $('#factura_id_solicitud').on('change', function () {
-            let facturaId = $(this).val();
-            let select = $('#ot_agrupada');
-            select.html('<option value="">Cargando...</option>');
-            otSeleccionada = null;
-
-            if (!facturaId) {
-                select.html('<option value="">Seleccione OT...</option>');
-                return;
-            }
-
-            $.get("{{ route('solicitudes.otsPorFactura', ':id') }}".replace(':id', facturaId), function (data) {
-                select.empty().append('<option value="">Seleccione OT...</option>');
-                data.forEach(ot => {
-                    select.append(`<option
-                                    data-ids='${JSON.stringify(ot.ids)}'
-                                    data-peso='${ot.peso_total}'>
-                                    OT ${ot.nro_ot} (Peso: ${ot.peso_total})
-                                </option>`);
-                });
-            });
-        });
-
-
-
-
-        // OT → actualizar cantidad (suma de OT)
-        // $('#ot_agrupada').on('change', function () {
-        //     let selected = $(this).find('option:selected');
-        //     let otIds = selected.val() ? selected.val().split(',').map(Number) : [];
-        //     otSeleccionada = otIds;
-
-        //     let pesoMatch = selected.text().match(/\(Peso: ([\d\.]+)\)/);
-        //     let peso = pesoMatch ? parseFloat(pesoMatch[1]) : 0;
-        //     $('#cantidad_solicitada').val(peso);
-
-        //     // Cargar códigos de compra según las OT seleccionadas
-        //     if (otIds.length) {
-        //         $.get("{{ route('solicitudes.codigosCompra') }}", { orden_trabajo_id: otIds }, function (data) {
-        //             let select = $('#codigo_compra');
-        //             select.empty().append('<option value="">Seleccione código...</option>');
-        //             data.forEach(c => select.append(`<option value="${c.codigo_compra}">${c.codigo_compra} (Stock: ${c.stock})</option>`));
-        //         });
+        //     if (!facturaId) {
+        //         select.html('<option value="">Seleccione OT...</option>');
+        //         return;
         //     }
+
+        //     $.get("{{ route('solicitudes.otsPorFactura', ':id') }}".replace(':id', facturaId), function (data) {
+        //         select.empty().append('<option value="">Seleccione OT...</option>');
+        //         data.forEach(ot => {
+        //             select.append(`<option
+        //                             data-ids='${JSON.stringify(ot.ids)}'
+        //                             data-peso='${ot.peso_total}'>
+        //                             OT ${ot.nro_ot} (Peso: ${ot.peso_total})
+        //                         </option>`);
+        //         });
+        //     });
         // });
 
-        $('#ot_agrupada').on('change', function () {
+        // $('#ot_agrupada').on('change', function () {
 
 
-            let selected = $(this).find('option:selected');
+        //     let selected = $(this).find('option:selected');
 
-            if (!selected.val()) {
-                otSeleccionada = null;
-                $('#cantidad_solicitada').val('');
-                return;
-            }
+        //     if (!selected.val()) {
+        //         otSeleccionada = null;
+        //         $('#cantidad_solicitada').val('');
+        //         return;
+        //     }
 
-            otSeleccionada = {
-                ids: JSON.parse(selected.attr('data-ids')),
-                peso_total: parseFloat(selected.attr('data-peso'))
-            };
+        //     otSeleccionada = {
+        //         ids: JSON.parse(selected.attr('data-ids')),
+        //         peso_total: parseFloat(selected.attr('data-peso'))
+        //     };
 
-            $('#cantidad_solicitada').val(otSeleccionada.peso_total);
-        });
+        //     $('#cantidad_solicitada').val(otSeleccionada.peso_total);
+        // });
 
+        // $('#codigo_compra').on('change', function () {
+        //     let codigo = $(this).val();
+        //     let select = $('#producto_id_solicitud');
+        //     select.html('<option value="">Cargando...</option>');
 
+        //     if (!codigo) return;
 
-        // CÓDIGO → Productos con stock
-        $('#codigo_compra').on('change', function () {
-            let codigo = $(this).val();
-            let select = $('#producto_id_solicitud');
-            select.html('<option value="">Cargando...</option>');
+        //     $.get("{{ route('solicitudes.productosConStock') }}", { codigo_compra: codigo }, function (data) {
+        //         select.empty().append('<option value="">Seleccione producto...</option>');
+        //         data.forEach(p => {
+        //             select.append(`<option value="${p.producto_id}">${p.nombre} (Stock: ${p.stock})</option>`);
+        //         });
+        //     });
+        // });
 
-            if (!codigo) return;
+        // function agregarProductoTemporal() {
 
-            $.get("{{ route('solicitudes.productosConStock') }}", { codigo_compra: codigo }, function (data) {
-                select.empty().append('<option value="">Seleccione producto...</option>');
-                data.forEach(p => {
-                    select.append(`<option value="${p.producto_id}">${p.nombre} (Stock: ${p.stock})</option>`);
-                });
-            });
-        });
+        //     let productoId    = $('#producto_id_solicitud').val();
+        //     let productoTexto = $('#producto_id_solicitud option:selected').text();
+        //     let cantidadTotal = parseFloat($('#cantidad_solicitada').val());
+        //     let porcentaje    = parseFloat($('#porcentaje_solicitado').val()) || 0;
 
+        //     if (!productoId || !otSeleccionada || !cantidadTotal || !porcentaje) {
+        //         Swal.fire('Error', 'Complete todos los campos antes de agregar', 'warning');
+        //         return;
+        //     }
 
+        //     let cantidadCalculada = (cantidadTotal * porcentaje) / 100;
 
+        //     solicitudTemporal.push({
+        //         producto_id: productoId,
+        //         producto_nombre: productoTexto,
+        //         orden_trabajo_ids: otSeleccionada.ids,
+        //         cantidad: cantidadCalculada,
+        //         porcentaje: porcentaje
+        //     });
 
-        // Agregar producto al listado temporal
-        function agregarProductoTemporal() {
+        //     actualizarTablaTemporal();
+        // }
 
-            let productoId    = $('#producto_id_solicitud').val();
-            let productoTexto = $('#producto_id_solicitud option:selected').text();
+        // function actualizarTablaTemporal() {
+        //     let tbody = $('#tabla_solicitud_temporal tbody');
+        //     tbody.empty();
+        //     let ordenesTrabasjo = @json($ordenes);
+        //     solicitudTemporal.forEach((item, index) => {
+        //         let nroOtes = item.orden_trabajo_ids[0];
+        //         let f = ordenesTrabasjo.find(o => o.id == nroOtes);
+        //         tbody.append(`
+        //                         <tr>
+        //                             <td>${item.producto_nombre}</td>
+        //                             <td>N° ${f.nro_ot}</td>
+        //                             <td>${item.porcentaje}%</td>
+        //                             <td>${item.cantidad.toFixed(2)}</td>
+        //                             <td>
+        //                                 <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProductoTemporal(${index})">Eliminar</button>
+        //                             </td>
+        //                         </tr>
+        //                     `);
+        //     });
+        // }
 
-            // let codigoCompra  = $('#codigo_compra').val();
-            let cantidadTotal = parseFloat($('#cantidad_solicitada').val());
-            let porcentaje    = parseFloat($('#porcentaje_solicitado').val()) || 0;
+        // function eliminarProductoTemporal(index) {
+        //     solicitudTemporal.splice(index, 1);
+        //     actualizarTablaTemporal();
+        // }
 
-            // if (!productoId || !codigoCompra || !otSeleccionada || !cantidadTotal || !porcentaje) {
-            if (!productoId || !otSeleccionada || !cantidadTotal || !porcentaje) {
-                Swal.fire('Error', 'Complete todos los campos antes de agregar', 'warning');
-                return;
-            }
+        // function guardarSolicitud() {
+        //     if (!solicitudTemporal.length) {
+        //         Swal.fire('Error', 'Agregue al menos un producto al listado', 'warning');
+        //         return;
+        //     }
 
-            let cantidadCalculada = (cantidadTotal * porcentaje) / 100;
+        //     $.post("{{ route('solicitudes.store') }}", {
+        //         _token: "{{ csrf_token() }}",
+        //         solicitudes: solicitudTemporal
+        //     }, function (res) {
+        //         Swal.fire('OK', 'Solicitudes registradas correctamente', 'success');
+        //         $('#modalSolicitudProductos').modal('hide');
+        //         solicitudTemporal = [];
+        //         actualizarTablaTemporal();
+        //     }).fail(function (xhr) {
+        //         console.error(xhr.responseJSON);
+        //         Swal.fire('Error', 'Ocurrió un error al guardar la solicitud', 'error');
+        //     });
+        // }
 
-            solicitudTemporal.push({
-                producto_id: productoId,
-                producto_nombre: productoTexto,
-                // codigo_compra: codigoCompra,
-                orden_trabajo_ids: otSeleccionada.ids,
-                cantidad: cantidadCalculada,
-                porcentaje: porcentaje
-            });
+        // function cargarCodigosCompra() {
+        //     $.get("{{ route('solicitudes.codigosCompra') }}", function (data) {
+        //         let select = $('#codigo_compra');
+        //         select.empty().append('<option value="">Seleccione código...</option>');
+        //         data.forEach(c => {
+        //             select.append(`<option value="${c.codigo_compra}">${c.codigo_compra} (Stock: ${c.stock})</option>`);
+        //         });
+        //     });
+        // }
 
-            actualizarTablaTemporal();
-        }
-
-
-
-        // Actualizar tabla temporal
-        function actualizarTablaTemporal() {
-            let tbody = $('#tabla_solicitud_temporal tbody');
-            tbody.empty();
-            let ordenesTrabasjo = @json($ordenes);
-            solicitudTemporal.forEach((item, index) => {
-                let nroOtes = item.orden_trabajo_ids[0];
-                let f = ordenesTrabasjo.find(o => o.id == nroOtes);
-                tbody.append(`
-                                <tr>
-                                    <td>${item.producto_nombre}</td>
-                                    <td>N° ${f.nro_ot}</td>
-                                    <td>${item.porcentaje}%</td>
-                                    <td>${item.cantidad.toFixed(2)}</td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProductoTemporal(${index})">Eliminar</button>
-                                    </td>
-                                </tr>
-                            `);
-            });
-        }
-
-
-        // Eliminar producto temporal
-        function eliminarProductoTemporal(index) {
-            solicitudTemporal.splice(index, 1);
-            actualizarTablaTemporal();
-        }
-
-        // Guardar todas las solicitudes
-        function guardarSolicitud() {
-            if (!solicitudTemporal.length) {
-                Swal.fire('Error', 'Agregue al menos un producto al listado', 'warning');
-                return;
-            }
-
-            $.post("{{ route('solicitudes.store') }}", {
-                _token: "{{ csrf_token() }}",
-                solicitudes: solicitudTemporal
-            }, function (res) {
-                Swal.fire('OK', 'Solicitudes registradas correctamente', 'success');
-                $('#modalSolicitudProductos').modal('hide');
-                solicitudTemporal = [];
-                actualizarTablaTemporal();
-            }).fail(function (xhr) {
-                console.error(xhr.responseJSON);
-                Swal.fire('Error', 'Ocurrió un error al guardar la solicitud', 'error');
-            });
-        }
-
-        function cargarCodigosCompra() {
-            $.get("{{ route('solicitudes.codigosCompra') }}", function (data) {
-                let select = $('#codigo_compra');
-                select.empty().append('<option value="">Seleccione código...</option>');
-                data.forEach(c => {
-                    select.append(`<option value="${c.codigo_compra}">${c.codigo_compra} (Stock: ${c.stock})</option>`);
-                });
-            });
-        }
-
-        // Llamar al cargar modal
-        cargarCodigosCompra();
-
-
+        // cargarCodigosCompra();
 
         function abrirModalSolicitud() {
-            // Si estás usando Bootstrap 5
             let modal = new bootstrap.Modal(document.getElementById('modalSolicitudProductos'));
             modal.show();
         }
+
+
+
+
+        let productosTemporal = [];
+        let otSeleccionadasPorFactura = {}; // Para almacenar OTs por factura
+
+        $(document).ready(function () {
+
+            // Inicializar Select2
+            $('#facturas_seleccionadas, #producto_id_solicitud').select2();
+
+            // Cambiar selección de facturas
+            $('#facturas_seleccionadas').on('change', function () {
+                const facturas = $(this).val() || [];
+                const container = $('#ots_por_factura_container');
+                container.html('');
+                otSeleccionadasPorFactura = {};
+
+                facturas.forEach(function (facturaId) {
+                    const nroFactura = $('#facturas_seleccionadas option[value="' + facturaId + '"]').data('nro');
+
+                    // Contenedor de OTs para esta factura
+                    const div = $('<div class="mb-2"><strong>Factura ' + nroFactura + ':</strong></div>');
+                    container.append(div);
+
+                    // Traer OTs de la factura vía Ajax
+                    let url = "{{ route('solicitudes.otsPorFactura', ':id') }}".replace(':id', facturaId);
+                    $.get(url, function (data) {
+                        data.forEach(function (ot) {
+                            const wrapper = $('<div class="form-check form-check-inline"></div>');
+                            const input = $('<input class="form-check-input" type="checkbox">')
+                                .attr('data-ot-id', ot.ids[0])
+                                .attr('data-nro-ot', ot.nro_ot)
+                                .attr('data-peso', ot.peso_total)
+                                .attr('data-factura-id', facturaId);
+                            const label = $('<label class="form-check-label"></label>')
+                                .text('OT ' + ot.nro_ot + ' (Peso: ' + ot.peso_total + ')');
+
+                            wrapper.append(input).append(label);
+                            console.log('oororo', ot);
+                            div.append(wrapper);
+                        });
+                    });
+                });
+            });
+
+            // Recalcular cantidad cada vez que se cambie porcentaje u OTs
+            $('#porcentaje_solicitado').on('input', calcularCantidadTotal);
+            $(document).on('change', '#ots_por_factura_container input[type="checkbox"]', calcularCantidadTotal);
+
+            // Agregar producto temporal
+
+            $('#btnAgregarProducto').on('click', function () {
+                const productoId = $('#producto_id_solicitud').val();
+                const productoNombre = $('#producto_id_solicitud option:selected').text();
+                const porcentaje = parseFloat($('#porcentaje_solicitado').val()) || 0;
+
+                if (!productoId || porcentaje <= 0) {
+                    Swal.fire('Error', 'Seleccione un producto y un porcentaje válido', 'warning');
+                    return;
+                }
+
+                let facturas = [];
+
+                $('#ots_por_factura_container > div').each(function () {
+                    const facturaLabel = $(this).find('strong').text();
+                    const nroFactura = parseInt(facturaLabel.replace('Factura ', ''));
+                    const ots = [];
+                    let facturaId = null;
+
+                    // Recorrer solo los checkboxes seleccionados dentro de esta factura
+                    $(this).find('input[type="checkbox"]:checked').each(function () {
+                        const otId = $(this).attr('data-ot-id');
+
+                        const peso = $(this).attr('data-peso');
+
+                        if (!facturaId) {
+                            facturaId = $(this).attr('data-factura-id'); // tomar facturaId del primer OT marcado
+                        }
+
+                        if (otId) {
+                            ots.push(parseInt(otId));
+                        }
+
+                        console.log('OT seleccionada:', otId, 'Peso:', peso, 'FacturaId:', facturaId);
+                    });
+
+                    if (ots.length > 0 && facturaId) {
+                        facturas.push({
+                            factura_id: parseInt(facturaId),
+                            nro_factura: nroFactura,
+                            ots: ots
+                        });
+                    }
+                });
+
+                if (facturas.length === 0) {
+                    Swal.fire('Error', 'Seleccione al menos una OT', 'warning');
+                    return;
+                }
+
+                const cantidadTotal = calcularCantidadTotal();
+
+                productosTemporal.push({
+                    producto_id: parseInt(productoId),
+                    producto_nombre: productoNombre,
+                    porcentaje: porcentaje,
+                    cantidad: cantidadTotal,
+                    estado: "EN ESPERA",
+                    facturas: facturas
+                });
+
+                console.log("Producto agregado:", productosTemporal);
+
+                // Reset campos
+                $('#producto_id_solicitud').val('').trigger('change');
+                $('#porcentaje_solicitado').val('');
+                $('#cantidad_solicitada').val('');
+                $('#facturas_seleccionadas').val([]).trigger('change');
+                $('#ots_por_factura_container').html('');
+
+                actualizarTablaTemporal();
+            });
+
+            // Guardar solicitudes al backend
+            $('#btnGuardarSolicitud').on('click', function () {
+                if (productosTemporal.length === 0) {
+                    Swal.fire('Error', 'Agregue al menos un producto', 'warning');
+                    return;
+                }
+
+                $.post("{{ route('solicitudes.store') }}", {
+                    _token: "{{ csrf_token() }}",
+                    solicitudes: productosTemporal
+                }, function (res) {
+                    Swal.fire('OK', 'Solicitudes guardadas correctamente', 'success');
+                    $('#modalSolicitudProductos').modal('hide');
+                    productosTemporal = [];
+                    actualizarTablaTemporal();
+                }).fail(function (xhr) {
+                    console.error(xhr.responseJSON);
+                    Swal.fire('Error', 'Ocurrió un error al guardar la solicitud', 'error');
+                });
+            });
+
+            // Función para calcular cantidad total
+            function calcularCantidadTotal() {
+                let totalPeso = 0;
+                $('#ots_por_factura_container input[type="checkbox"]:checked').each(function () {
+                    totalPeso += parseFloat($(this).data('peso'));
+                });
+
+                const porcentaje = parseFloat($('#porcentaje_solicitado').val()) || 0;
+                const cantidadFinal = (totalPeso * porcentaje) / 100;
+                $('#cantidad_solicitada').val(cantidadFinal.toFixed(2));
+                return cantidadFinal;
+            }
+
+            // Función para actualizar tabla temporal
+            function actualizarTablaTemporal() {
+                const tbody = $('#tabla_solicitud_temporal tbody');
+                tbody.empty();
+                productosTemporal.forEach(function (item, index) {
+                    tbody.append(
+                        '<tr>' +
+                        '<td>' + item.producto_nombre + '</td>' +
+                        '<td>' + item.facturas.map(f => 'Factura ' + f.nro_factura + ' → [' + f.ots.join(',') + ']').join(' | ') + '</td>' +
+                        '<td>' + item.porcentaje + '%</td>' +
+                        '<td>' + item.cantidad.toFixed(2) + '</td>' +
+                        '<td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarProducto(' + index + ')">Eliminar</button></td>' +
+                        '</tr>'
+                    );
+                });
+            }
+
+            // Función para eliminar producto temporal
+            window.eliminarProducto = function (index) {
+                productosTemporal.splice(index, 1);
+                actualizarTablaTemporal();
+            };
+
+        }); // document ready
+
+
+
 
     </script>
 @endsection

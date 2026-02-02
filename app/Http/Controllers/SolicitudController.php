@@ -10,6 +10,7 @@ use App\Models\Order_trabajo;
 use App\Utils\Respuesta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Arr;
 
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Console\Input\Input;
@@ -38,15 +39,15 @@ class SolicitudController extends Controller
     public function ajaxListado(Request $request)
     {
 
-        if($request->ajax()){
+        if ($request->ajax()) {
 
             $facturasSolicitadas = Solicitud::join('order_trabajos as ot', function ($join) {
-                                        $join->whereRaw('JSON_CONTAINS(solicitudes.ordenes_trabajo, CAST(ot.id AS JSON))');
-                                    })
-                                    ->join('facturas as f', 'f.id', '=', 'ot.factura_id')
-                                    ->select('ot.factura_id', 'solicitudes.usuario_creador_id', 'f.numero_factura')
-                                    ->groupBy('ot.factura_id', 'solicitudes.usuario_creador_id', 'f.numero_factura')
-                                    ->get();
+                $join->whereRaw('JSON_CONTAINS(solicitudes.ordenes_trabajo, CAST(ot.id AS JSON))');
+            })
+                ->join('facturas as f', 'f.id', '=', 'ot.factura_id')
+                ->select('ot.factura_id', 'solicitudes.usuario_creador_id', 'f.numero_factura')
+                ->groupBy('ot.factura_id', 'solicitudes.usuario_creador_id', 'f.numero_factura')
+                ->get();
 
             $valores = [
                 'listado' => view('solicitudes.ajaxListado', compact('facturasSolicitadas'))->render()
@@ -54,7 +55,7 @@ class SolicitudController extends Controller
 
             $data = Respuesta::success($valores, "Datos obtenidos correctamente");
 
-        }else{
+        } else {
 
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
@@ -84,14 +85,15 @@ class SolicitudController extends Controller
         try {
             foreach ($request->solicitudes as $item) {
 
-                $solicitud                     = new Solicitud();
+                $solicitud = new Solicitud();
                 $solicitud->usuario_creador_id = auth()->id();
-                $solicitud->producto_id        = $item['producto_id'];
-                $solicitud->ordenes_trabajo    = array_map('intval', $item['orden_trabajo_ids']);
-                $solicitud->cantidad           = $item['cantidad'];
-                $solicitud->porcentaje         = $item['porcentaje'];
-                $solicitud->estado             = 'EN PROCESO';
+                $solicitud->producto_id = $item['producto_id'];
+                $solicitud->orden_trabajo_id = json_encode($item['facturas']);
+                $solicitud->cantidad = $item['cantidad'];
+                $solicitud->porcentaje = $item['porcentaje'];
+                $solicitud->estado = 'EN PROCESO';
                 $solicitud->save();
+
             }
 
             DB::commit();
@@ -137,16 +139,16 @@ class SolicitudController extends Controller
 
         // Calcular stock disponible
         $stock = DB::table('movimientos')
-                    ->where('producto_id', $s->producto_id)
-                    ->where('id', $ingreso)
-                    ->sum('ingreso')
-                -
-                DB::table('movimientos')
-                    ->where('producto_id', $s->producto_id)
-                    ->where('movimiento_id', $ingreso)
-                    ->sum('salida');
+            ->where('producto_id', $s->producto_id)
+            ->where('id', $ingreso)
+            ->sum('ingreso')
+            -
+            DB::table('movimientos')
+                ->where('producto_id', $s->producto_id)
+                ->where('movimiento_id', $ingreso)
+                ->sum('salida');
 
-                    // dd($stock, $s->cantidad);
+        // dd($stock, $s->cantidad);
 
         DB::beginTransaction();
         try {
@@ -157,14 +159,14 @@ class SolicitudController extends Controller
 
                 // Insertar registro de salida en movimientos
                 DB::table('movimientos')->insert([
-                    'producto_id'        => $s->producto_id,
-                    'salida'             => $s->cantidad,
-                    'ingreso'            => 0,
-                    'ordenes_trabajo'    => json_encode($s->ordenes_trabajo),
-                    'fecha'              => now(),
-                    'descripcion'        => 'Salida por aprobación de solicitud #' . $s->id,
+                    'producto_id' => $s->producto_id,
+                    'salida' => $s->cantidad,
+                    'ingreso' => 0,
+                    'ordenes_trabajo' => json_encode($s->ordenes_trabajo),
+                    'fecha' => now(),
+                    'descripcion' => 'Salida por aprobación de solicitud #' . $s->id,
                     'usuario_creador_id' => Auth::id(),
-                    'movimiento_id'      => $ingreso
+                    'movimiento_id' => $ingreso
                 ]);
 
                 // Cambiar estado de la solicitud
@@ -297,25 +299,26 @@ class SolicitudController extends Controller
         return response()->json($productos);
     }
 
-    public function verDetalleSolicitud(Request $request){
+    public function verDetalleSolicitud(Request $request)
+    {
 
-        if($request->ajax()){
+        if ($request->ajax()) {
 
             // dd($request->all());
 
             $factura_id = $request->input('factura');
 
             $facturasSolicitadas = Solicitud::join('order_trabajos as ot', function ($join) {
-                                        $join->whereRaw('JSON_CONTAINS(solicitudes.ordenes_trabajo, CAST(ot.id AS JSON))');
-                                    })
-                                    ->select('solicitudes.*')
-                                    ->where('ot.factura_id', $factura_id)
-                                    ->groupBy('solicitudes.id')
-                                    ->get();
+                $join->whereRaw('JSON_CONTAINS(solicitudes.ordenes_trabajo, CAST(ot.id AS JSON))');
+            })
+                ->select('solicitudes.*')
+                ->where('ot.factura_id', $factura_id)
+                ->groupBy('solicitudes.id')
+                ->get();
 
-                                    // dd($facturasSolicitadas);
+            // dd($facturasSolicitadas);
 
-            $data = $facturasSolicitadas->map(function($s) {
+            $data = $facturasSolicitadas->map(function ($s) {
 
                 // SACAMOS PARA EL NUMERO DE OT
                 $primerOtId = $s->ordenes_trabajo[0] ?? null;
@@ -327,44 +330,44 @@ class SolicitudController extends Controller
 
                 // SACAMOS EL STOCK E INGRESOS DE CADA PRODCUTO SOLICITADO
                 $queryIngreso = Movimiento::where('ingreso', '>', 0)
-                                        ->where('salida',0)
-                                        ->whereNotNull('codigo_compra')
-                                        ->whereNotNull('precio')
-                                        ->where('producto_id', $s->producto_id);
-                                        // ->get();
+                    ->where('salida', 0)
+                    ->whereNotNull('codigo_compra')
+                    ->whereNotNull('precio')
+                    ->where('producto_id', $s->producto_id);
+                // ->get();
 
-                $ingresos    = $queryIngreso->get();
+                $ingresos = $queryIngreso->get();
 
                 $stock = [];
 
                 foreach ($ingresos as $key => $ingreso) {
                     $querySalida = Movimiento::where('salida', '>', 0)
-                                        ->where('ingreso',0)
-                                        ->whereNull('codigo_compra')
-                                        ->whereNull('precio')
-                                        ->where('producto_id', $s->producto_id)
-                                        ->where('movimiento_id', $ingreso->id)
-                                        ->sum('salida');
+                        ->where('ingreso', 0)
+                        ->whereNull('codigo_compra')
+                        ->whereNull('precio')
+                        ->where('producto_id', $s->producto_id)
+                        ->where('movimiento_id', $ingreso->id)
+                        ->sum('salida');
 
                     $stockProducto = $ingreso->ingreso - $querySalida;
 
-                    if($stockProducto > 0){
+                    if ($stockProducto > 0) {
                         $stock[] = [
-                            'ID'            => $ingreso->id,
+                            'ID' => $ingreso->id,
                             'CODIGO_COMPRA' => $ingreso->codigo_compra,
-                            'STOCK'         => $ingreso->ingreso - $querySalida,
+                            'STOCK' => $ingreso->ingreso - $querySalida,
                         ];
                     }
                 }
 
                 return [
-                    'id'       => $s->id,
+                    'id' => $s->id,
                     'producto' => $s->producto->nombre ?? '-',
                     'cantidad' => $s->cantidad,
-                    'estado'   => $s->estado,
-                    'usuario'  => $s->usuarioCreador->name ?? '-',
-                    'nro_ot'   => $nro_ot,
-                    'stock'    => $stock
+                    'estado' => $s->estado,
+                    'usuario' => $s->usuarioCreador->name ?? '-',
+                    'nro_ot' => $nro_ot,
+                    'stock' => $stock
                 ];
             });
 
@@ -375,7 +378,7 @@ class SolicitudController extends Controller
             $data = Respuesta::success($valores, "Datos obtenidos correctamente");
 
 
-        }else{
+        } else {
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
         return $data;
