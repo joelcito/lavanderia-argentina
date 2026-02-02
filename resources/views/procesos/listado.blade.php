@@ -196,100 +196,6 @@
     </div> <!-- modal-dialog -->
 </div>
 
-
-
-
-
-<!-- Modal Solicitud de Productos -->
-<!-- <div class="modal fade" id="modalSolicitudProductos" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title">Solicitud de Productos</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label>Factura</label>
-                            <select id="factura_id_solicitud" class="form-select" data-dropdown-parent="#modalSolicitudProductos">
-                                <option value="">Seleccione factura...</option>
-                                @foreach($facturas as $factura)
-                                    <option value="{{ $factura->id }}">{{ $factura->numero_factura }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label>Orden de Trabajo (OT agrupadas)</label>
-                            <select id="ot_agrupada" class="form-select">
-                                <option value="">Seleccione OT...</option>
-                            </select>
-                        </div>
-
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label>Producto (con stock)</label>
-                            <select id="producto_id_solicitud" class="form-select"  data-dropdown-parent="#modalSolicitudProductos">
-                                <option value="">Seleccione producto...</option>
-                                @foreach ($productos as $producto)
-                                    <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label>Porcentaje (%)</label>
-                            <input type="number" step="0.01" id="porcentaje_solicitado" class="form-control"
-                                placeholder="Ej: 3">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label>Cantidad (Peso total OT)</label>
-                    <input type="number" step="0.01" id="cantidad_solicitada" class="form-control" readonly>
-                </div>
-
-                <div class="mb-3">
-                    <button class="btn btn-success" type="button" onclick="agregarProductoTemporal()">Agregar al
-                        listado</button>
-                </div>
-
-                <table class="table table-bordered" id="tabla_solicitud_temporal">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>OT(s)</th>
-                            <th>Porcentaje (%)</th>
-                            <th>Cantidad</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-primary" onclick="guardarSolicitud()">Guardar Solicitud</button>
-                <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-            </div>
-
-        </div>
-    </div>
-</div> -->
-
 <!-- Modal Solicitud de Productos -->
 <div class="modal fade" id="modalSolicitudProductos" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -324,7 +230,7 @@
 
                 <!-- Selección de Facturas -->
                 <div class="mb-3">
-                    <label>Facturas (puede seleccionar varias)</label>
+                    <label>Facturas / Orden Recibo (puede seleccionar varias)</label>
                     <select id="facturas_seleccionadas" class="form-select" multiple>
                         @foreach($facturas as $factura)
                             <option value="{{ $factura->id }}" data-nro="{{ $factura->numero_factura }}">

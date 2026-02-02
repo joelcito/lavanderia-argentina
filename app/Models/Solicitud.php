@@ -17,7 +17,7 @@ class Solicitud extends Model
         'usuario_modificador_id',
         'usuario_eliminador_id',
         'producto_id',
-        'orden_trabajo_id',
+        'ordenes_trabajo',
         'cantidad',
         'estado',
         'deleted_at'
@@ -32,11 +32,11 @@ class Solicitud extends Model
         return $this->belongsTo('App\Models\Producto', 'producto_id', 'id');
     }
 
-    public function ordenTrabajo()
-    {
-        // return $this->belongsTo('App\Models\Order_trabajo', 'orden_trabajo_id');
-        return $this->belongsTo(Order_trabajo::class, 'orden_trabajo_id');
-    }
+    // public function ordenTrabajo()
+    // {
+    //     // return $this->belongsTo('App\Models\Order_trabajo', 'orden_trabajo_id');
+    //     return $this->belongsTo(Order_trabajo::class, 'orden_trabajo_id');
+    // }
 
     public function usuarioCreador()
     {

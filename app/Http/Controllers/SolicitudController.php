@@ -82,16 +82,26 @@ class SolicitudController extends Controller
 
         DB::beginTransaction();
 
+        // dd($request->all());
+
         try {
             foreach ($request->solicitudes as $item) {
 
-                $solicitud = new Solicitud();
+                $solicitud                     = new Solicitud();
                 $solicitud->usuario_creador_id = auth()->id();
-                $solicitud->producto_id = $item['producto_id'];
-                $solicitud->orden_trabajo_id = json_encode($item['facturas']);
-                $solicitud->cantidad = $item['cantidad'];
-                $solicitud->porcentaje = $item['porcentaje'];
-                $solicitud->estado = 'EN PROCESO';
+                $solicitud->producto_id        = $item['producto_id'];
+
+                $facturas = $item['facturas'];
+                foreach ($facturas as &$f) {
+                    $f['factura_id']  = (int) $f['factura_id'];
+                    $f['nro_factura'] = (int) $f['nro_factura'];
+                    $f['ots']         = array_map('intval', $f['ots']);
+                }
+                $solicitud->ordenes_trabajo = $facturas;
+
+                $solicitud->cantidad           = $item['cantidad'];
+                $solicitud->porcentaje         = $item['porcentaje'];
+                $solicitud->estado             = 'EN PROCESO';
                 $solicitud->save();
 
             }
