@@ -56,7 +56,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title">Detalle de Solicitud para la Factura/Orden Recepcion <span class="text-white" id="numero_recepcion_texto"></span></h5>
+                        <h5 class="modal-title">Detalle de Solicitud</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body" id="detalleSolicitudBody">
@@ -72,6 +72,8 @@
         </div>
 
 @endsection
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     @section('js')
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -161,15 +163,44 @@
             // }
 
             function accionSolicitud(solicitudId, accion) {
-                let f = $('#ingresos_'+solicitudId).val();
-                if(f != null && f != ""){
+                // let f = $('#ingresos_' + solicitudId).val();
+                // if (f != null && f != "") {
+                //     $.ajax({
+                //         url: "{{ route('solicitudes.accionProducto') }}",
+                //         type: "POST",
+                //         data: {
+                //             solicitud_id: solicitudId,
+                //             accion: accion,
+                //             ingreso: f
+                //         },
+                //         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                //         success: function (res) {
+                //             if (res.estado) {
+                //                 Swal.fire('OK', 'Solicitud ' + accion, 'success');
+                //                 cargarSolicitudes();
+                //                 $('#modalDetalleSolicitud').modal('hide');
+                //             } else {
+                //                 Swal.fire('Error', res.mensaje, 'error');
+                //             }
+                //         },
+                //         error: function () {
+                //             Swal.fire('Error', 'No se pudo procesar la solicitud', 'error');
+                //         }
+                //     });
+                // } else {
+                //     Swal.fire('Error', 'Debe seleccionar un ingreso del prodcuto para el descuento del inventario', 'error');
+                //}
+
+                let f = $('#ingresos_' + solicitudId).val(); // ahora es un array de ids
+
+                if (f != null && f.length > 0) {
                     $.ajax({
                         url: "{{ route('solicitudes.accionProducto') }}",
                         type: "POST",
                         data: {
                             solicitud_id: solicitudId,
-                            accion      : accion,
-                            ingreso     : f
+                            accion: accion,
+                            ingreso: f
                         },
                         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                         success: function (res) {
@@ -185,77 +216,156 @@
                             Swal.fire('Error', 'No se pudo procesar la solicitud', 'error');
                         }
                     });
-                }else{
-                    Swal.fire('Error', 'Debe seleccionar un ingreso del prodcuto para el descuento del inventario', 'error');
+                } else {
+                    Swal.fire('Error', 'Debe seleccionar al menos un ingreso del producto', 'error');
                 }
             }
 
-            function verDetalleSolicitud(factura, numero){
-
+            function verDetalleSolicitud(factura, numero) {
                 $.ajax({
                     url: "{{ route('solicitudes.verDetalleSolicitud') }}",
                     type: "POST",
-                    data: {
-                        factura: factura
-                    },
+                    data: { factura: factura },
                     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                     success: function (res) {
-                        if (res.estado) {
-
-                            let html = `<table class="table table-bordered table-striped">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>Producto</th>
-                                                                                    <th>Ingreso</th>
-                                                                                    <th>N Ot</th>
-                                                                                    <th>Cantidad</th>
-                                                                                    <th>Estado</th>
-                                                                                    <th>Usuario</th>
-                                                                                    <th></th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>`;
-                            res.data.solicitudes.forEach(s => {
-
-                                let selectIni = '<select id="ingresos_'+s.id+'">';
-                                let opctionS  = '<option value="">Seleccione un Ingreso</option>'
-                                let selectFin = '</select>';
-                                let stockPro  = s.stock;
-
-                                stockPro.forEach(hg =>{
-                                    opctionS = opctionS+'<option value="'+hg.ID+'">'+hg.CODIGO_COMPRA+' ( Stock: '+hg.STOCK+' )</option>';
-                                })
-
-                                let todoSelect = selectIni+opctionS+selectFin;
-
-                                html += `<tr>
-                                            <td>${s.producto}</td>
-                                            <td>${todoSelect}</td>
-                                            <td>${s.nro_ot}</td>
-                                            <td>${s.cantidad}</td>
-                                            <td>${s.estado}</td>
-                                            <td>${s.usuario}</td>
-                                            <td>
-                                                ${s.estado === 'EN PROCESO' ? `
-                                                    <button class="btn btn-success btn-sm" onclick="accionSolicitud(${s.id}, 'aprobar')">Aprobar</button>
-                                                    <button class="btn btn-danger btn-sm" onclick="accionSolicitud(${s.id}, 'rechazar')">Rechazar</button>
-                                                ` : ''}
-                                            </td>
-                                        </tr>`;
-                            });
-                            html += `</tbody></table>`;
-                            $('#numero_recepcion_texto').text("N "+numero)
-                            $('#detalleSolicitudBody').html(html);
-                            $('#modalDetalleSolicitud').modal('show');
-                        } else {
+                        if (!res.estado) {
                             Swal.fire('Error', 'No se pudieron cargar las solicitudes', 'error');
+                            return;
                         }
+
+                        let html = `<table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Ingreso</th>
+                                <th>NºOt</th>
+                                <th>Cantidad</th>
+                                <th>Estado</th>
+                                <th>Usuario</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                        res.data.solicitudes.forEach(s => {
+                            let opciones = '';
+                            s.stock.forEach(hg => {
+                                opciones += `<option value="${hg.INGRESO_ID}">
+                                ${hg.CODIGO_COMPRA} ( Stock: ${hg.STOCK} )
+                            </option>`;
+                            });
+
+                            let selectIngreso = `
+                            <select id="ingresos_${s.id}" class="form-control select2-ingresos" multiple="multiple" style="width:100%;">
+                                ${opciones}
+                            </select>
+                        `;
+
+                            html += `<tr>
+                            <td>${s.producto}</td>
+                            <td>${selectIngreso}</td>
+                            <td>${s.nro_ot}</td>
+                            <td>${s.cantidad}</td>
+                            <td>${s.estado}</td>
+                            <td>${s.usuario}</td>
+                            <td>
+                                ${s.estado === 'EN PROCESO' ? `
+                                    <button class="btn btn-success btn-sm" title='aprobar' onclick="accionSolicitud(${s.id}, 'aprobar')">
+                                        <i class="fa fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" title='rechazar' onclick="accionSolicitud(${s.id}, 'rechazar')">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                ` : ''}
+                            </td>
+                        </tr>`;
+                        });
+
+                        html += `</tbody></table>`;
+                        $('#numero_recepcion_texto').text("N " + numero);
+                        $('#detalleSolicitudBody').html(html);
+                        $('.select2-ingresos').select2({
+                            placeholder: "Seleccione ingresos",
+                            allowClear: true
+                        });
+
+                        $('#modalDetalleSolicitud').modal('show');
                     },
                     error: function () {
                         Swal.fire('Error', 'No se pudo procesar la solicitud', 'error');
                     }
                 });
-
             }
+
+
+
+
+            // function verDetalleSolicitud(factura, numero){
+
+            //     $.ajax({
+            //         url: "{{ route('solicitudes.verDetalleSolicitud') }}",
+            //         type: "POST",
+            //         data: {
+            //             factura: factura
+            //         },
+            //         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            //         success: function (res) {
+            //             if (res.estado) {
+
+            //                 let html = `<table class="table table-bordered table-striped">
+            //                                                                 <thead>
+            //                                                                     <tr>
+            //                                                                         <th>Producto</th>
+            //                                                                         <th>Ingreso</th>
+            //                                                                         <th>N Ot</th>
+            //                                                                         <th>Cantidad</th>
+            //                                                                         <th>Estado</th>
+            //                                                                         <th>Usuario</th>
+            //                                                                         <th></th>
+            //                                                                     </tr>
+            //                                                                 </thead>
+            //                                                                 <tbody>`;
+            //                 res.data.solicitudes.forEach(s => {
+
+            //                     let selectIni = '<select id="ingresos_'+s.id+'">';
+            //                     let opctionS  = '<option value="">Seleccione un Ingreso</option>'
+            //                     let selectFin = '</select>';
+            //                     let stockPro  = s.stock;
+
+            //                     stockPro.forEach(hg =>{
+            //                         opctionS = opctionS+'<option value="'+hg.ID+'">'+hg.CODIGO_COMPRA+' ( Stock: '+hg.STOCK+' )</option>';
+            //                     })
+
+            //                     let todoSelect = selectIni+opctionS+selectFin;
+
+            //                     html += `<tr>
+            //                                 <td>${s.producto}</td>
+            //                                 <td>${todoSelect}</td>
+            //                                 <td>${s.nro_ot}</td>
+            //                                 <td>${s.cantidad}</td>
+            //                                 <td>${s.estado}</td>
+            //                                 <td>${s.usuario}</td>
+            //                                 <td>
+            //                                     ${s.estado === 'EN PROCESO' ? `
+            //                                         <button class="btn btn-success btn-sm" onclick="accionSolicitud(${s.id}, 'aprobar')">Aprobar</button>
+            //                                         <button class="btn btn-danger btn-sm" onclick="accionSolicitud(${s.id}, 'rechazar')">Rechazar</button>
+            //                                     ` : ''}
+            //                                 </td>
+            //                             </tr>`;
+            //                 });
+            //                 html += `</tbody></table>`;
+            //                 $('#numero_recepcion_texto').text("N "+numero)
+            //                 $('#detalleSolicitudBody').html(html);
+            //                 $('#modalDetalleSolicitud').modal('show');
+            //             } else {
+            //                 Swal.fire('Error', 'No se pudieron cargar las solicitudes', 'error');
+            //             }
+            //         },
+            //         error: function () {
+            //             Swal.fire('Error', 'No se pudo procesar la solicitud', 'error');
+            //         }
+            //     });
+
+            // }
         </script>
     @endsection
