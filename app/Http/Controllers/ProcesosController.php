@@ -175,6 +175,8 @@ class ProcesosController extends Controller
 
     public function guardarListado(Request $request)
     {
+        // dd($request->all());
+
         $procesos = $request->input('procesos', []); // array de procesos del listado
 
         if (empty($procesos)) {
@@ -189,7 +191,7 @@ class ProcesosController extends Controller
         foreach ($procesos as $item) {
             // Validar campos mínimos por cada proceso
             $validator = \Validator::make($item, [
-                'order_trabajo_id' => 'required|exists:order_trabajos,id',
+                // 'order_trabajo_id' => 'required|exists:order_trabajos,id',
                 'tipo_proceso_id' => 'required|exists:tipo_procesos,id',
                 'fecha_ingreso' => 'required|date',
                 'producto_id' => 'nullable|exists:productos,id',
@@ -203,32 +205,44 @@ class ProcesosController extends Controller
 
             $maquinaria = Maquinaria::find($item['maquinaria_id']);
 
-            $proceso = Proceso::create([
-                'order_trabajo_id' => $item['order_trabajo_id'],
-                'producto_id' => $item['producto_id'] ?? null,
-                'maquinaria_id' => $item['maquinaria_id'],
-                'tipo_proceso_id' => $item['tipo_proceso_id'],
-                'fecha_ingreso' => $item['fecha_ingreso'],
-                'fecha_salida' => $item['fecha_salida'] ?? null,
-                'tiempo' => $item['tiempo'] ?? null,
-                'temperatura' => $item['temperatura'] ?? null,
-                'ph' => $item['ph'] ?? null,
-                'rb' => $item['rb'] ?? null,
-                'descripcion' => $item['descripcion'] ?? null,
-                'estado' => 'TRABAJANDO',
-            ]);
+            // SACAMOS LA SOLICITUD
+            $solicitud = Solicitud::find($item['ordenes_trabajos_solicitudes_aprobados']);
+            $ordenesTrabajo = $solicitud->ordenes_trabajo;
+            foreach ($ordenesTrabajo as $key => $ordeTrabajo) {
+                $ots = $ordeTrabajo['ots'];
+                foreach ($ots as $key => $ot) {
+                    $proceso = Proceso::create([
+                        'order_trabajo_id' => $ot,
+                        'producto_id'      => $item['producto_id'] ?? null,
+                        'solicitud_id'     => $solicitud->id,
+                        'maquinaria_id'    => $item['maquinaria_id'],
+                        'tipo_proceso_id'  => $item['tipo_proceso_id'],
+                        'fecha_ingreso'    => $item['fecha_ingreso'],
+                        'fecha_salida'     => $item['fecha_salida'] ?? null,
+                        'tiempo'           => $item['tiempo'] ?? null,
+                        'temperatura'      => $item['temperatura'] ?? null,
+                        'ph'               => $item['ph'] ?? null,
+                        'rb'               => $item['rb'] ?? null,
+                        'descripcion'      => $item['descripcion'] ?? null,
+                        'estado'           => 'TRABAJANDO',
+                    ]);
+
+                    // Cambiar estado de la OT a TRABAJANDO si aplica
+                    $orderTrabajo = Order_trabajo::find($ot);
+                    if ($orderTrabajo && !in_array($orderTrabajo->estado, ['FINALIZADO', 'ENTREGADO'])) {
+                        $orderTrabajo->estado = 'TRABAJANDO';
+                        $orderTrabajo->save();
+                    }
+                }
+            }
+
+            $solicitud->estado = "UTILIZADO";
+            $solicitud->save();
 
             // Cambiar estado de la maquinaria a EN PROCESO
             if ($maquinaria) {
                 $maquinaria->estado_maquina = 'EN PROCESO';
                 $maquinaria->save();
-            }
-
-            // Cambiar estado de la OT a TRABAJANDO si aplica
-            $orderTrabajo = Order_trabajo::find($item['order_trabajo_id']);
-            if ($orderTrabajo && !in_array($orderTrabajo->estado, ['FINALIZADO', 'ENTREGADO'])) {
-                $orderTrabajo->estado = 'TRABAJANDO';
-                $orderTrabajo->save();
             }
 
             $resultados[] = $proceso;

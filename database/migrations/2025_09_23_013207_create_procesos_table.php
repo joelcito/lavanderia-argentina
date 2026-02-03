@@ -34,6 +34,8 @@ return new class extends Migration
             //foranea tipo proceso
             $table->foreign('tipo_proceso_id')->references('id')->on('tipo_procesos');
             $table->unsignedBigInteger('tipo_proceso_id')->nullable();
+            $table->foreign('solicitud_id')->references('id')->on('solicitudes');
+            $table->unsignedBigInteger('solicitud_id')->nullable();
 
             $table->dateTime('fecha_ingreso')->nullable();
             $table->dateTime('fecha_salida')->nullable();

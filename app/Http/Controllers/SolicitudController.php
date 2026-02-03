@@ -643,6 +643,76 @@ class SolicitudController extends Controller
         ], "Datos obtenidos correctamente");
     }
 
+    public function ajaxProductoSolicitud(Request $request){
+
+        if($request->ajax()){
+
+            $solicitudes = Solicitud::with(['producto'])
+                                    ->select('producto_id')
+                                    ->where('estado', 'APROBADO')
+                                    ->groupBy('producto_id')
+                                    ->get();
+
+            // dd($solicitudes);
+
+            $valores = [
+                'solicitudes' => $solicitudes
+            ];
+
+            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
+
+        } else {
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+    }
+
+    public function buscarSolicitudesProducto(Request $request){
+
+        if($request->ajax()){
+
+            $producto_id = $request->input('productoId');
+
+            $solicitudes = Solicitud::where('producto_id', $producto_id)
+                                    ->where('estado', 'APROBADO')
+                                    ->get();
+            $fac = "";
+
+            $solicitudArray = [];
+
+            foreach ($solicitudes as $key => $solicitud) {
+                $ordenesTrabajo = $solicitud->ordenes_trabajo;
+                $fac = "";
+                foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
+                    $fac = $fac." | Fac/Or-Re ".$ordenTrabajo['nro_factura']." : [";
+                    $ots = $ordenTrabajo['ots'];
+                    foreach ($ots as $key => $ot) {
+                        $ordenTrabajoBuscado = Order_trabajo::find($ot);
+                        $fac = $fac." OT:".$ordenTrabajoBuscado->nro_ot;
+                        if((count($ots)-1) == $key)
+                            $fac =$fac."]";
+                        else
+                            $fac =$fac." - ";
+                    }
+                }
+
+                $solicitudArray[$solicitud->id] = $fac;
+            }
+
+            $valores = [
+                'solicitudes' => $solicitudes,
+                'fac' => $solicitudArray
+            ];
+
+            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+
+    }
+
 
 
 

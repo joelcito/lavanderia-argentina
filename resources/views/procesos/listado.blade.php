@@ -105,6 +105,20 @@
                     <input type="hidden" id="id">
                     <input type="hidden" id="maquinaria_id">
                     <div class="row">
+                        <div class="col-md-4">
+                            <label for="producto_solicitud_aprobado" class="form-label">Producto Aprobados</label>
+                            <select name="producto_solicitud_aprobado" id="producto_solicitud_aprobado" class="form-select form-select-sm" onchange="buscarSolicitudesProducto()">
+                                <option value="">Seleccione producto...</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="producto_solicitud_aprobado" class="form-label">Ordenes Trabajos</label>
+                            <select name="ordenes_trabajos_solicitudes_aprobados" id="ordenes_trabajos_solicitudes_aprobados" class="form-select form-select-sm">
+                                <option value="">Seleccione solicitud...</option>
+                            </select>
+                        </div>
+                    </div>
+                    {{-- <div class="row">
                         <div class="col-md-2">
                             <label for="factura_id" class="form-label">Factura</label>
                             <select id="factura_id" class="form-select">
@@ -123,14 +137,14 @@
                             <label for="" class="form-label">Solicitud Aprobadas</label>
                             <textarea class="form-control form-control-sm" name="texto-solicitud" id="" cols="30" rows="5" readonly></textarea>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="row mt-2">
-                        <div class="col-md-4">
+                        {{-- <div class="col-md-4">
                             <label for="producto_id_lavanderia" class="form-label">Produto</label>
                             <select id="producto_id_lavanderia" class="form-control">
                                 <option value="">Seleccione tipo de proceso...</option>
                             </select>
-                        </div>
+                        </div> --}}
                         <div class="col-md-4">
                             <label for="tipo_proceso_id" class="form-label">Tipo de Proceso</label>
                             <select id="tipo_proceso_id" class="form-control">
@@ -186,8 +200,8 @@
                     <table id="tablaListadoTemporal" class="table table-striped table-bordered mt-2">
                         <thead class="table-primary">
                             <tr>
-                                <th>Factura</th>
-                                <th>OT</th>
+                                <th>Fac/Or Rec y Ots</th>
+                                {{-- <th>OT</th> --}}
                                 <th>Producto</th>
                                 <th>Proceso</th>
                                 <th>Fecha Ingreso</th>
@@ -687,24 +701,24 @@
             agregarProcesoAlListado();
         });
 
-        function cargarFacturas() {
-            $.ajax({
-                url: "{{ route('factura.estadoNull') }}",
-                type: 'GET',
-                dataType: 'json',
-                success: function (facturas) {
-                    let options = '<option value="">Seleccione factura...</option>';
-                    facturas.forEach(f => {
-                        options += `<option value="${f.id}">${f.numero_factura} </option>`;
-                    });
-                    $('#factura_id').html(options);
-                },
-                error: function (err) {
-                    console.error('Error al cargar facturas:', err);
-                    alert('No se pudieron cargar las facturas.');
-                }
-            });
-        }
+        // function cargarFacturas() {
+        //     $.ajax({
+        //         url: "{{ route('factura.estadoNull') }}",
+        //         type: 'GET',
+        //         dataType: 'json',
+        //         success: function (facturas) {
+        //             let options = '<option value="">Seleccione factura...</option>';
+        //             facturas.forEach(f => {
+        //                 options += `<option value="${f.id}">${f.numero_factura} </option>`;
+        //             });
+        //             $('#factura_id').html(options);
+        //         },
+        //         error: function (err) {
+        //             console.error('Error al cargar facturas:', err);
+        //             alert('No se pudieron cargar las facturas.');
+        //         }
+        //     });
+        // }
 
         $('#factura_id').on('change', function () {
             let facturaId = $(this).val();
@@ -737,32 +751,60 @@
 
         function modalNuevaLavanderiaConMaquinaria(maquinaria_id) {
 
-            // Limpiar formulario
-            $('#id').val(0);
-            $('#order_trabajo_id_lavanderia').val('');
-            $('#producto_id_lavanderia').html('<option value="">Seleccione producto...</option>');
-            $('#tipo_proceso_id').val('');
-            $('#fecha_ingreso').val('');
-            $('#fecha_salida').val('');
-            $('#tiempo').val('');
-            $('#temperatura').val('');
-            $('#ph').val('');
-            $('#rb').val('');
-            $('#descripcion').val('');
-            $('#estado').val('PENDIENTE');
-            $('#maquinaria_id').val(maquinaria_id);
+            $.ajax({
+                url: "{{ route('solicitudes.ajaxProductoSolicitud') }}",
+                type: 'POST',
+                dataType: 'json',
+                success: function (respuesta) {
+                    console.log(respuesta);
 
-            $('#order_trabajo_id_lavanderia').html('<option value="">Seleccione OT...</option>');
-            $('#producto_id_lavanderia').html('<option value="">Seleccione producto...</option>');
-            // Cargar tipos de proceso
-            cargarTiposProceso();
-            cargarFacturas();
+                    let select = $('#producto_solicitud_aprobado');
+                    select.empty();
+                    select.append('<option value="">Seleccione producto...</option>');
 
-            // Vaciar selects de OT y Producto
+                    let datos = respuesta.data.solicitudes;
+
+                    datos.forEach(e => {
+                        select.append(`<option value="${e.producto_id}">${e.producto.nombre}</option>`)
+                    })
+
+                     // Limpiar formulario
+                    $('#id').val(0);
+                    $('#order_trabajo_id_lavanderia').val('');
+                    $('#producto_id_lavanderia').html('<option value="">Seleccione producto...</option>');
+                    $('#tipo_proceso_id').val('');
+                    $('#fecha_ingreso').val('');
+                    $('#fecha_salida').val('');
+                    $('#tiempo').val('');
+                    $('#temperatura').val('');
+                    $('#ph').val('');
+                    $('#rb').val('');
+                    $('#descripcion').val('');
+                    $('#estado').val('PENDIENTE');
+                    $('#maquinaria_id').val(maquinaria_id);
+
+                    $('#order_trabajo_id_lavanderia').html('<option value="">Seleccione OT...</option>');
+                    $('#producto_id_lavanderia').html('<option value="">Seleccione producto...</option>');
+                    // Cargar tipos de proceso
+                    cargarTiposProceso();
+                    // cargarFacturas();
+
+                    // Vaciar selects de OT y Producto
 
 
-            // Mostrar modal
-            $('#modalLavanderia').modal('show');
+                    // Mostrar modal
+                    $('#modalLavanderia').modal('show');
+
+
+                },
+                error: function (err) {
+                    console.error('Error al cargar facturas:', err);
+                    alert('No se pudieron cargar las facturas.');
+                }
+            });
+
+
+
         }
 
         function cargarTiposProceso() {
@@ -822,25 +864,28 @@
 
         function agregarProcesoAlListado() {
             let proceso = {
-                order_trabajo_id: $('#order_trabajo_id_lavanderia').val(),
-                producto_id     : $('#producto_id_lavanderia').val(),
-                maquinaria_id   : $('#maquinaria_id').val(),
-                tipo_proceso_id : $('#tipo_proceso_id').val(),
-                fecha_ingreso   : $('#fecha_ingreso').val(),
-                fecha_salida    : $('#fecha_salida').val(),
-                cantidad        : $('#cantidad').val() || null,
-                porcentaje      : $('#porcentaje').val() || null,
-                gr_litro        : $('#gr_litro').val() || null,
-                tiempo          : $('#tiempo').val() || null,
-                temperatura     : $('#temperatura').val() || null,
-                ph              : $('#ph').val() || null,
-                rb              : $('#rb').val() || null,
-                descripcion     : $('#descripcion').val(),
-                estado          : 'TRABAJANDO'
+                order_trabajo_id                      : $('#order_trabajo_id_lavanderia').val(),
+                producto_id                           : $('#producto_solicitud_aprobado').val(),
+                maquinaria_id                         : $('#maquinaria_id').val(),
+                tipo_proceso_id                       : $('#tipo_proceso_id').val(),
+                fecha_ingreso                         : $('#fecha_ingreso').val(),
+                fecha_salida                          : $('#fecha_salida').val(),
+                cantidad                              : $('#cantidad').val() || null,
+                porcentaje                            : $('#porcentaje').val() || null,
+                gr_litro                              : $('#gr_litro').val() || null,
+                tiempo                                : $('#tiempo').val() || null,
+                temperatura                           : $('#temperatura').val() || null,
+                ph                                    : $('#ph').val() || null,
+                rb                                    : $('#rb').val() || null,
+                descripcion                           : $('#descripcion').val(),
+                estado                                : 'TRABAJANDO',
+                producto_solicitud_aprobado           : $('#producto_solicitud_aprobado').val(),
+                ordenes_trabajos_solicitudes_aprobados: $('#ordenes_trabajos_solicitudes_aprobados').val()
             };
 
             // Validaciones básicas
-            if (!proceso.order_trabajo_id || !proceso.producto_id || !proceso.tipo_proceso_id) {
+            // if (!proceso.order_trabajo_id || !proceso.producto_id || !proceso.tipo_proceso_id) {
+            if (!proceso.producto_id || !proceso.tipo_proceso_id) {
                 alert("Debe seleccionar OT, producto y tipo de proceso.");
                 return;
             }
@@ -857,9 +902,8 @@
             listadoProcesos.forEach((p, index) => {
                 tbody.append(`
                     <tr>
-                        <td>${$('#factura_id option:selected').text()}</td>
-                        <td>${$('#order_trabajo_id_lavanderia option:selected').text()}</td>
-                        <td>${$('#producto_id_lavanderia option:selected').text()}</td>
+                        <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
+                        <td>${$('#producto_solicitud_aprobado option:selected').text()}</td>
                         <td>${$('#tipo_proceso_id option:selected').text()}</td>
                         <td>${p.fecha_ingreso}</td>
                         <td>${p.fecha_salida}</td>
@@ -1273,8 +1317,35 @@
 
         }); // document ready
 
+        function buscarSolicitudesProducto(){
+            let productoId = $('#producto_solicitud_aprobado').val()
 
+            $.ajax({
+                url: "{{ route('solicitudes.buscarSolicitudesProducto') }}",
+                type: 'POST',
+                dataType: 'json',
+                data:{productoId:productoId},
+                success: function (respuesta) {
 
+                    let select = $('#ordenes_trabajos_solicitudes_aprobados')
+                    select.empty();
+                    select.append('<option value="">Seleccione solicitud...</option>');
+
+                    let fac = respuesta.data.fac;
+
+                    Object.entries(fac).forEach(([key, value]) => {
+                        select.append(
+                            `<option value="${key}">${value}</option>`
+                        );
+                    });
+
+                },
+                error: function (err) {
+                    console.error('Error al cargar facturas:', err);
+                    alert('No se pudieron cargar las facturas.');
+                }
+            });
+        }
 
     </script>
 @endsection

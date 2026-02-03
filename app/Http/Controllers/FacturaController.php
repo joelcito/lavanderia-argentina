@@ -591,6 +591,7 @@ class FacturaController extends Controller
             $ordenesTrabajos = Order_trabajo::where('factura_id', $factura->id)->get();
 
             $solicitudes = Solicitud::with(['producto'])
+                                    ->where('estado','APROBADO')
                                     ->whereJsonContains(
                                         'ordenes_trabajo',
                                         [

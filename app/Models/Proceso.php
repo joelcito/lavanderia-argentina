@@ -22,6 +22,7 @@ class Proceso extends Model
         'producto_id',
         'maquinaria_id',
         'tipo_proceso_id',
+        'solicitud_id',
         'fecha_ingreso',
         'fecha_salida',
         'cantida',
