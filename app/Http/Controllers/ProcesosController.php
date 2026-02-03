@@ -538,8 +538,6 @@ class ProcesosController extends Controller
     }
 
 
-
-
     public function guardarProcesoOT(Request $request)
     {
         try {
