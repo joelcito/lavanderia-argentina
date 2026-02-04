@@ -191,7 +191,7 @@ class ProcesosController extends Controller
         foreach ($procesos as $item) {
             // Validar campos mínimos por cada proceso
             $validator = \Validator::make($item, [
-                // 'order_trabajo_id' => 'required|exists:order_trabajos,id',
+                'order_trabajo_id' => 'required|exists:order_trabajos,id',
                 'tipo_proceso_id' => 'required|exists:tipo_procesos,id',
                 'fecha_ingreso' => 'required|date',
                 'producto_id' => 'nullable|exists:productos,id',
@@ -212,19 +212,19 @@ class ProcesosController extends Controller
                 $ots = $ordeTrabajo['ots'];
                 foreach ($ots as $key => $ot) {
                     $proceso = Proceso::create([
-                        'order_trabajo_id' => $ot,
-                        'producto_id'      => $item['producto_id'] ?? null,
-                        'solicitud_id'     => $solicitud->id,
-                        'maquinaria_id'    => $item['maquinaria_id'],
-                        'tipo_proceso_id'  => $item['tipo_proceso_id'],
-                        'fecha_ingreso'    => $item['fecha_ingreso'],
-                        'fecha_salida'     => $item['fecha_salida'] ?? null,
-                        'tiempo'           => $item['tiempo'] ?? null,
-                        'temperatura'      => $item['temperatura'] ?? null,
-                        'ph'               => $item['ph'] ?? null,
-                        'rb'               => $item['rb'] ?? null,
-                        'descripcion'      => $item['descripcion'] ?? null,
-                        'estado'           => 'TRABAJANDO',
+                        // 'order_trabajo_id' => $ot,
+                        'producto_id' => $item['producto_id'] ?? null,
+                        'solicitud_id' => $solicitud->id,
+                        'maquinaria_id' => $item['maquinaria_id'],
+                        'tipo_proceso_id' => $item['tipo_proceso_id'],
+                        'fecha_ingreso' => $item['fecha_ingreso'],
+                        'fecha_salida' => $item['fecha_salida'] ?? null,
+                        'tiempo' => $item['tiempo'] ?? null,
+                        'temperatura' => $item['temperatura'] ?? null,
+                        'ph' => $item['ph'] ?? null,
+                        'rb' => $item['rb'] ?? null,
+                        'descripcion' => $item['descripcion'] ?? null,
+                        'estado' => 'TRABAJANDO',
                     ]);
 
                     // Cambiar estado de la OT a TRABAJANDO si aplica

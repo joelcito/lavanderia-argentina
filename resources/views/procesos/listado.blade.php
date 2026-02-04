@@ -7,12 +7,12 @@
         }
 
         /* .maquina-container {
-                                                                                                                    cursor: pointer;
-                                                                                                                    padding: 10px;
-                                                                                                                    border-radius: 5px;
-                                                                                                                    text-align: center;
-                                                                                                                    margin: 0 10px;
-                                                                                                                } */
+                                                                                                                                                            cursor: pointer;
+                                                                                                                                                            padding: 10px;
+                                                                                                                                                            border-radius: 5px;
+                                                                                                                                                            text-align: center;
+                                                                                                                                                            margin: 0 10px;
+                                                                                                                                                        } */
 
         .maquina-container {
             width: 220px;
@@ -100,69 +100,72 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
 
-            <div class="modal-body">
-                <!-- Formulario -->
-                <form id="formLavanderia" class="row g-3">
-                    <input type="hidden" id="id">
-                    <input type="hidden" id="maquinaria_id">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label for="producto_solicitud_aprobado" class="form-label">Producto Aprobados</label>
-                            <select name="producto_solicitud_aprobado" id="producto_solicitud_aprobado" class="form-select form-select-sm" onchange="buscarSolicitudesProducto()">
-                                <option value="">Seleccione producto...</option>
-                            </select>
+                <div class="modal-body">
+                    <!-- Formulario -->
+                    <form id="formLavanderia" class="row g-3">
+                        <input type="hidden" id="id">
+                        <input type="hidden" id="maquinaria_id">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="producto_solicitud_aprobado" class="form-label">Producto Aprobados</label>
+                                <select name="producto_solicitud_aprobado" id="producto_solicitud_aprobado"
+                                    class="form-select form-select-sm" onchange="buscarSolicitudesProducto()">
+                                    <option value="">Seleccione producto...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <label for="producto_solicitud_aprobado" class="form-label">Ordenes Trabajos</label>
+                                <select name="ordenes_trabajos_solicitudes_aprobados"
+                                    id="ordenes_trabajos_solicitudes_aprobados" class="form-select form-select-sm">
+                                    <option value="">Seleccione solicitud...</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-8">
-                            <label for="producto_solicitud_aprobado" class="form-label">Ordenes Trabajos</label>
-                            <select name="ordenes_trabajos_solicitudes_aprobados" id="ordenes_trabajos_solicitudes_aprobados" class="form-select form-select-sm">
-                                <option value="">Seleccione solicitud...</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col-md-4">
-                            <label for="tipo_proceso_id" class="form-label">Tipo de Proceso</label>
-                            <select id="tipo_proceso_id" class="form-control">
-                                <option value="">Seleccione tipo de proceso...</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="fecha_ingreso" class="form-label">Fecha Ingreso</label>
-                            <input type="datetime-local" id="fecha_ingreso" class="form-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="fecha_salida" class="form-label">Fecha Salida</label>
-                            <input type="datetime-local" id="fecha_salida" class="form-control">
-                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-4">
+                                <label for="tipo_proceso_id" class="form-label">Tipo de Proceso</label>
+                                <select id="tipo_proceso_id" class="form-control">
+                                    <option value="">Seleccione tipo de proceso...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="fecha_ingreso" class="form-label">Fecha Ingreso</label>
+                                <input type="datetime-local" id="fecha_ingreso" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="fecha_salida" class="form-label">Fecha Salida</label>
+                                <input type="datetime-local" id="fecha_salida" class="form-control">
+                            </div>
 
-                        <div class="col-md-3">
-                            <label for="tiempo" class="form-label">Tiempo</label>
-                            <input type="text" id="tiempo" class="form-control">
-                        </div>
+                            <div class="col-md-3">
+                                <label for="tiempo" class="form-label">Tiempo</label>
+                                <input type="text" id="tiempo" class="form-control">
+                            </div>
 
-                        <div class="col-md-3">
-                            <label for="temperatura" class="form-label">Temperatura</label>
-                            <input type="text" id="temperatura" class="form-control">
-                        </div>
+                            <div class="col-md-3">
+                                <label for="temperatura" class="form-label">Temperatura</label>
+                                <input type="text" id="temperatura" class="form-control">
+                            </div>
 
-                        <div class="col-md-3">
-                            <label for="ph" class="form-label">PH</label>
-                            <input type="text" id="ph" class="form-control">
-                        </div>
+                            <div class="col-md-3">
+                                <label for="ph" class="form-label">PH</label>
+                                <input type="text" id="ph" class="form-control">
+                            </div>
 
-                        <div class="col-md-3">
-                            <label for="rb" class="form-label">RB</label>
-                            <input type="text" id="rb" class="form-control">
-                        </div>
+                            <div class="col-md-3">
+                                <label for="rb" class="form-label">RB</label>
+                                <input type="text" id="rb" class="form-control">
+                            </div>
 
-                        <div class="col-12">
-                            <label for="descripcion" class="form-label">Descripción</label>
-                            <textarea id="descripcion" class="form-control" rows="2"></textarea>
-                        </div>
+                            <div class="col-12">
+                                <label for="descripcion" class="form-label">Descripción</label>
+                                <textarea id="descripcion" class="form-control" rows="2"></textarea>
+                            </div>
 
-                        <div class="col-12 text-end">
-                            <button type="button" class="btn btn-primary" id="agregarAlListado">Agregar al listado</button>
-                        </div>
+                            <div class="col-12 text-end">
+                                <button type="button" class="btn btn-primary" id="agregarAlListado">Agregar al
+                                    listado</button>
+                            </div>
                     </form>
 
                     <hr>
@@ -193,6 +196,7 @@
             </div> <!-- modal-content -->
         </div> <!-- modal-dialog -->
     </div>
+
 
     <!-- Modal Solicitud de Productos -->
     <div class="modal fade" id="modalSolicitudProductos" tabindex="-1">
@@ -292,13 +296,11 @@
                 }
             });
 
-            let listadoProcesos = [];
-
             $(document).ready(function () {
                 ajaxListado();
                 actualizarTemporizadores(); // iniciar temporizador
 
-                $('#factura_id_solicitud, #producto_id_solicitud').select2()
+                $('#facturas_seleccionadas, #producto_id_solicitud').select2()
 
 
                 // // Inicializar Repeater
@@ -497,6 +499,163 @@
                 });
             }
 
+
+            function guardarLavanderia() {
+                let datos = {
+                    id: $('#id').val(),
+                    order_trabajo_id: $('#order_trabajo_id').val(),
+                    producto_id: $('#producto_id').val(),
+                    maquinaria_id: $('#maquinaria_id').val(),
+                    tipo_proceso_id: $('#tipo_proceso_id').val(),
+                    fecha_ingreso: $('#fecha_ingreso').val(),
+                    fecha_salida: $('#fecha_salida').val(),
+                    tiempo: $('#tiempo').val(),
+                    temperatura: $('#temperatura').val(),
+                    ph: $('#ph').val(),
+                    rb: $('#rb').val(),
+                    descripcion: $('#descripcion').val(),
+                    estado: $('#estado').val()
+                };
+
+                console.log("Datos enviados:", datos); // <-- depuración rápida
+
+                // Validación mínima antes de enviar
+                if (!datos.order_trabajo_id) {
+                    Swal.fire('Error', 'Debe seleccionar una Orden de Trabajo', 'error');
+                    return;
+                }
+                // if (!datos.producto_id) {
+                //     Swal.fire('Error', 'Debe seleccionar un producto', 'error');
+                //     return;
+                // }
+                if (!datos.tipo_proceso_id) {
+                    Swal.fire('Error', 'Debe seleccionar un tipo de proceso', 'error');
+                    return;
+                }
+                if (!datos.maquinaria_id) {
+                    Swal.fire('Error', 'Maquinaria no seleccionada', 'error');
+                    return;
+                }
+                if (!datos.fecha_ingreso) {
+                    Swal.fire('Error', 'Debe indicar la fecha de ingreso', 'error');
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ route('procesos.guardarListado') }}",
+                    method: "POST",
+                    data: datos,
+                    success: function (res) {
+                        if (res.estado) {
+                            Swal.fire('Correcto', res.mensaje, 'success');
+                            $('#modalLavanderia').modal('hide');
+                            ajaxListado();
+                        } else {
+                            Swal.fire('Error', res.mensaje, 'error');
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log("Error detalle:", xhr.responseJSON);
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let mensaje = '';
+                            for (let key in errors) mensaje += errors[key] + '\n';
+                            Swal.fire('Error de validación', mensaje, 'error');
+                        } else {
+                            Swal.fire('Error', 'Ocurrió un error en el servidor', 'error');
+                        }
+                    }
+                });
+            }
+
+
+            // ================== TEMPORIZADOR ==================
+            function actualizarTemporizadores() {
+                setInterval(function () {
+                    $('.countdown').each(function () {
+                        let fin = $(this).data('fin');
+                        if (!fin) return;
+
+                        let now = new Date().getTime();
+                        let end = new Date(fin).getTime();
+                        let diff = end - now;
+
+                        if (diff <= 0) {
+                            $(this).html("Finalizado");
+
+                            // actualizar estados de procesos y máquinas
+                            $.post("{{ route('procesos.actualizarEstados') }}");
+                            return;
+                        }
+
+                        let m = Math.floor(diff / 1000 / 60);
+                        let s = Math.floor((diff / 1000) % 60);
+                        $(this).html(m + "m " + s + "s");
+                    });
+                }, 1000);
+            }
+
+            // function cargarProductosLavanderia(ot_id) {
+            //     if (!ot_id) return;
+
+            //     // Construir la URL reemplazando :ot_id
+            //     let url = "{{ route('procesos.productosAprobadosPorOT', ['ot_id' => ':ot_id']) }}";
+            //     url = url.replace(':ot_id', ot_id);
+
+            //     $.get(url, function (data) {
+            //         console.log("Productos Lavandería para OT", ot_id, data);
+            //         let select = $("#producto_id_lavanderia");
+            //         select.empty();
+            //         select.append('<option value="">Seleccione...</option>');
+            //         data.forEach(item => select.append(`<option value="${item.id}">${item.nombre}</option>`));
+            //     });
+            // }
+
+            function cargarProductosPorOT(ot_id, fila) {
+                let productoSelect = fila.find('.producto_id'); // fila específica del repeater
+
+                if (!ot_id) {
+                    productoSelect.html('<option value="">Seleccione producto...</option>');
+                    return;
+                }
+
+                let urlProductos = "{{ route('procesos.productosAprobadosPorOT', ['ot_id' => ':ot_id']) }}";
+                urlProductos = urlProductos.replace(':ot_id', ot_id);
+
+                $.get(urlProductos, function (productos) {
+                    productoSelect.empty().append('<option value="">Seleccione producto...</option>');
+                    productos.forEach(p => {
+                        productoSelect.append(`<option value="${p.id}">${p.nombre}</option>`);
+                    });
+                });
+            }
+
+
+
+
+            function inicializarRepeater() {
+                if (!$('#kt_docs_repeater_advanced').data('repeater')) {
+                    $('#kt_docs_repeater_advanced').repeater({
+                        initEmpty: false,
+                        show: function () { $(this).slideDown(); },
+                        hide: function (deleteElement) {
+                            $(this).slideUp(deleteElement);
+                        }
+                    });
+                }
+            }
+
+            function cargarTiposProcesoEnRepeater() {
+                $.get("{{ route('procesos.listaTiposProceso') }}", function (data) {
+                    $('.tipo_proceso_id').each(function () {
+                        let select = $(this);
+                        select.empty().append('<option value="">Seleccione...</option>');
+                        data.forEach(tp => {
+                            select.append(`<option value="${tp.id}">${tp.nombre}</option>`);
+                        });
+                    });
+                });
+            }
             function cargarTiposProcesoEnFila(fila) {
                 let tipoSelect = fila.find('.tipo_proceso_id');
                 $.get("{{ route('procesos.listaTiposProceso') }}", function (tipos) {
@@ -505,477 +664,325 @@
                 });
             }
 
+            //ororo
 
 
-        $('#agregarAlListado').click(function () {
-            agregarProcesoAlListado();
-        });
-
-        $('#factura_id').on('change', function () {
-            let facturaId = $(this).val();
-
-            if (!facturaId) {
-                $('#order_trabajo_id_lavanderia').html('<option value="">Seleccione OT...</option>');
-                return;
-            }
-
-            $.ajax({
-                url: "{{ route('factura.obtenerOTs') }}", // Creamos ruta Laravel
-                type: 'GET',
-                data: { factura_id: facturaId },
-                dataType: 'json',
-                success: function (ots) {
-                    let options = '<option value="">Seleccione OT...</option>';
-                    ots.forEach(ot => {
-                        options += `<option value="${ot.id}">OT: ${ot.nro_ot} - Prendas: ${ot.cantidad}</option>`;
-                    });
-                    $('#order_trabajo_id_lavanderia').html(options);
-                },
-                error: function (err) {
-                    console.error('Error al cargar OTs:', err);
-                    alert('No se pudieron cargar las OTs.');
-                }
-            });
-        });
 
 
-        function guardarLavanderia() {
-            let datos = {
-                id: $('#id').val(),
-                order_trabajo_id: $('#order_trabajo_id').val(),
-                producto_id: $('#producto_id').val(),
-                maquinaria_id: $('#maquinaria_id').val(),
-                tipo_proceso_id: $('#tipo_proceso_id').val(),
-                fecha_ingreso: $('#fecha_ingreso').val(),
-                fecha_salida: $('#fecha_salida').val(),
-                tiempo: $('#tiempo').val(),
-                temperatura: $('#temperatura').val(),
-                ph: $('#ph').val(),
-                rb: $('#rb').val(),
-                descripcion: $('#descripcion').val(),
-                estado: $('#estado').val()
-            };
+            //procesos
 
-            console.log("Datos enviados:", datos); // <-- depuración rápida
+            let listadoProcesos = [];
 
-            // Validación mínima antes de enviar
-            if (!datos.order_trabajo_id) {
-                Swal.fire('Error', 'Debe seleccionar una Orden de Trabajo', 'error');
-                return;
-            }
-            // if (!datos.producto_id) {
-            //     Swal.fire('Error', 'Debe seleccionar un producto', 'error');
-            //     return;
-            // }
-            if (!datos.tipo_proceso_id) {
-                Swal.fire('Error', 'Debe seleccionar un tipo de proceso', 'error');
-                return;
-            }
-            if (!datos.maquinaria_id) {
-                Swal.fire('Error', 'Maquinaria no seleccionada', 'error');
-                return;
-            }
-            if (!datos.fecha_ingreso) {
-                Swal.fire('Error', 'Debe indicar la fecha de ingreso', 'error');
-                return;
-            }
-
-            $.ajax({
-                url: "{{ route('procesos.guardarListado') }}",
-                method: "POST",
-                data: datos,
-                success: function (res) {
-                    if (res.estado) {
-                        Swal.fire('Correcto', res.mensaje, 'success');
-                        $('#modalLavanderia').modal('hide');
-                        ajaxListado();
-                    } else {
-                        Swal.fire('Error', res.mensaje, 'error');
-                    }
-                },
-                error: function (xhr) {
-                    console.log("Error detalle:", xhr.responseJSON);
-                    if (xhr.status === 422) {
-                        let errors = xhr.responseJSON.errors;
-                        let mensaje = '';
-                        for (let key in errors) mensaje += errors[key] + '\n';
-                        Swal.fire('Error de validación', mensaje, 'error');
-                    } else {
-                        Swal.fire('Error', 'Ocurrió un error en el servidor', 'error');
-                    }
-                }
-            });
-        }
-
-        function modalNuevaLavanderiaConMaquinaria(maquinaria_id) {
-
-            $.ajax({
-                url: "{{ route('solicitudes.ajaxProductoSolicitud') }}",
-                type: 'POST',
-                dataType: 'json',
-                success: function (respuesta) {
-                    console.log(respuesta);
-
-                    let select = $('#producto_solicitud_aprobado');
-                    select.empty();
-                    select.append('<option value="">Seleccione producto...</option>');
-
-                    let datos = respuesta.data.solicitudes;
-
-                    datos.forEach(e => {
-                        select.append(`<option value="${e.producto_id}">${e.producto.nombre}</option>`)
-                    })
-
-                     // Limpiar formulario
-                    $('#id').val(0);
-                    $('#order_trabajo_id_lavanderia').val('');
-                    $('#producto_id_lavanderia').html('<option value="">Seleccione producto...</option>');
-                    $('#tipo_proceso_id').val('');
-                    $('#fecha_ingreso').val('');
-                    $('#fecha_salida').val('');
-                    $('#tiempo').val('');
-                    $('#temperatura').val('');
-                    $('#ph').val('');
-                    $('#rb').val('');
-                    $('#descripcion').val('');
-                    $('#estado').val('PENDIENTE');
-                    $('#maquinaria_id').val(maquinaria_id);
-
-                    $('#order_trabajo_id_lavanderia').html('<option value="">Seleccione OT...</option>');
-                    $('#producto_id_lavanderia').html('<option value="">Seleccione producto...</option>');
-                    // Cargar tipos de proceso
-                    cargarTiposProceso();
-                    // cargarFacturas();
-
-                    // Mostrar modal
-                    $('#modalLavanderia').modal('show');
-
-                },
-                error: function (err) {
-                    console.error('Error al cargar facturas:', err);
-                    alert('No se pudieron cargar las facturas.');
-                }
+            $('#agregarAlListado').click(function () {
+                agregarProcesoAlListado();
             });
 
-        }
-
-        function cargarTiposProceso() {
-            $.get("{{ route('procesos.listaTiposProceso') }}", function (data) {
-                let select = $("#tipo_proceso_id");
-                select.empty();
-                select.append('<option value="">Seleccione...</option>');
-                data.forEach(item => select.append(`<option value="${item.id}">${item.nombre}</option>`));
-            });
-        }
-
-        // ================== TEMPORIZADOR ==================
-        function actualizarTemporizadores() {
-            setInterval(function () {
-                $('.countdown').each(function () {
-                    let fin = $(this).data('fin');
-                    if (!fin) return;
-
-                    let now = new Date().getTime();
-                    let end = new Date(fin).getTime();
-                    let diff = end - now;
-
-                    if (diff <= 0) {
-                        $(this).html("Finalizado");
-
-                        // actualizar estados de procesos y máquinas
-                        $.post("{{ route('procesos.actualizarEstados') }}");
-                        return;
-                    }
-
-                    let m = Math.floor(diff / 1000 / 60);
-                    let s = Math.floor((diff / 1000) % 60);
-                    $(this).html(m + "m " + s + "s");
-                });
-            }, 1000);
-        }
-
-        function cargarProductosPorOT(ot_id, fila) {
-            let productoSelect = fila.find('.producto_id'); // fila específica del repeater
-
-            if (!ot_id) {
-                productoSelect.html('<option value="">Seleccione producto...</option>');
-                return;
-            }
-
-            let urlProductos = "{{ route('procesos.productosAprobadosPorOT', ['ot_id' => ':ot_id']) }}";
-            urlProductos = urlProductos.replace(':ot_id', ot_id);
-
-            $.get(urlProductos, function (productos) {
-                productoSelect.empty().append('<option value="">Seleccione producto...</option>');
-                productos.forEach(p => {
-                    productoSelect.append(`<option value="${p.id}">${p.nombre}</option>`);
-                });
-            });
-        }
-
-        function inicializarRepeater() {
-            if (!$('#kt_docs_repeater_advanced').data('repeater')) {
-                $('#kt_docs_repeater_advanced').repeater({
-                    initEmpty: false,
-                    show: function () { $(this).slideDown(); },
-                    hide: function (deleteElement) {
-                        $(this).slideUp(deleteElement);
-                    }
-                });
-            }
-        }
-
-        function cargarTiposProcesoEnRepeater() {
-            $.get("{{ route('procesos.listaTiposProceso') }}", function (data) {
-                $('.tipo_proceso_id').each(function () {
-                    let select = $(this);
-                    select.empty().append('<option value="">Seleccione...</option>');
-                    data.forEach(tp => {
-                        select.append(`<option value="${tp.id}">${tp.nombre}</option>`);
-                    });
-                });
-            });
-        }
-        function cargarTiposProcesoEnFila(fila) {
-            let tipoSelect = fila.find('.tipo_proceso_id');
-            $.get("{{ route('procesos.listaTiposProceso') }}", function (tipos) {
-                tipoSelect.empty().append('<option value="">Seleccione...</option>');
-                tipos.forEach(tp => tipoSelect.append(`<option value="${tp.id}">${tp.nombre}</option>`));
-            });
-        }
-
-        $('#agregarAlListado').click(function () {
-            agregarProcesoAlListado();
-        });
-
-        function cargarFacturas() {
-            $.ajax({
-                url: "{{ route('factura.estadoNull') }}",
-                type: 'GET',
-                dataType: 'json',
-                success: function (facturas) {
-                    let options = '<option value="">Seleccione factura...</option>';
-                    facturas.forEach(f => {
-                        options += `<option value="${f.id}">${f.numero_factura} </option>`;
-                    });
-                    $('#factura_id').html(options);
-                },
-                error: function (err) {
-                    console.error('Error al cargar facturas:', err);
-                    alert('No se pudieron cargar las facturas.');
-                }
-            });
-        }
-
-
-
-        function agregarProcesoAlListado() {
-            let proceso = {
-                order_trabajo_id                      : $('#order_trabajo_id_lavanderia').val(),
-                producto_id                           : $('#producto_solicitud_aprobado').val(),
-                maquinaria_id                         : $('#maquinaria_id').val(),
-                tipo_proceso_id                       : $('#tipo_proceso_id').val(),
-                fecha_ingreso                         : $('#fecha_ingreso').val(),
-                fecha_salida                          : $('#fecha_salida').val(),
-                cantidad                              : $('#cantidad').val() || null,
-                porcentaje                            : $('#porcentaje').val() || null,
-                gr_litro                              : $('#gr_litro').val() || null,
-                tiempo                                : $('#tiempo').val() || null,
-                temperatura                           : $('#temperatura').val() || null,
-                ph                                    : $('#ph').val() || null,
-                rb                                    : $('#rb').val() || null,
-                descripcion                           : $('#descripcion').val(),
-                estado                                : 'TRABAJANDO',
-                producto_solicitud_aprobado           : $('#producto_solicitud_aprobado').val(),
-                ordenes_trabajos_solicitudes_aprobados: $('#ordenes_trabajos_solicitudes_aprobados').val()
-            };
-
-            // Validaciones básicas
-            // if (!proceso.order_trabajo_id || !proceso.producto_id || !proceso.tipo_proceso_id) {
-            if (!proceso.producto_id || !proceso.tipo_proceso_id) {
-                alert("Debe seleccionar OT, producto y tipo de proceso.");
-                return;
-            }
-
-            listadoProcesos.push(proceso);
-            mostrarListadoTemporal();
-            limpiarFormularioModal();
-        }
-
-        function mostrarListadoTemporal() {
-            let tbody = $('#tablaListadoTemporal tbody'); // corregido
-            tbody.empty();
-
-            listadoProcesos.forEach((p, index) => {
-                tbody.append(`
-                    <tr>
-                        <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
-                        <td>${$('#producto_solicitud_aprobado option:selected').text()}</td>
-                        <td>${$('#tipo_proceso_id option:selected').text()}</td>
-                        <td>${p.fecha_ingreso}</td>
-                        <td>${p.fecha_salida}</td>
-                        <td>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
-                        </td>
-                    </tr>
-                `);
-            });
-        }
-
-        function cargarTiposProceso() {
-            $.get("{{ route('procesos.listaTiposProceso') }}", function (data) {
-                let select = $("#tipo_proceso_id");
-                select.empty();
-                select.append('<option value="">Seleccione...</option>');
-                data.forEach(item => select.append(`<option value="${item.id}">${item.nombre}</option>`));
-            });
-        }
-
-
-
-        function agregarProcesoAlListado() {
-            let proceso = {
-                order_trabajo_id: $('#order_trabajo_id_lavanderia').val(),
-                producto_id: $('#producto_id_lavanderia').val(),
-                maquinaria_id: $('#maquinaria_id').val(),
-                tipo_proceso_id: $('#tipo_proceso_id').val(),
-                fecha_ingreso: $('#fecha_ingreso').val(),
-                fecha_salida: $('#fecha_salida').val(),
-                cantidad: $('#cantidad').val() || null,
-                porcentaje: $('#porcentaje').val() || null,
-                gr_litro: $('#gr_litro').val() || null,
-                tiempo: $('#tiempo').val() || null,
-                temperatura: $('#temperatura').val() || null,
-                ph: $('#ph').val() || null,
-                rb: $('#rb').val() || null,
-                descripcion: $('#descripcion').val(),
-                estado: 'TRABAJANDO'
-            };
-
-            // Validaciones básicas
-            if (!proceso.order_trabajo_id || !proceso.producto_id || !proceso.tipo_proceso_id) {
-                alert("Debe seleccionar OT, producto y tipo de proceso.");
-                return;
-            }
-
-            listadoProcesos.push(proceso);
-            mostrarListadoTemporal();
-            limpiarFormularioModal();
-        }
-
-        function mostrarListadoTemporal() {
-            let tbody = $('#tablaListadoTemporal tbody'); // corregido
-            tbody.empty();
-
-            listadoProcesos.forEach((p, index) => {
-                tbody.append(`
-                    <tr>
-                        <td>${$('#factura_id option:selected').text()}</td>
-                        <td>${$('#order_trabajo_id_lavanderia option:selected').text()}</td>
-                        <td>${$('#producto_id_lavanderia option:selected').text()}</td>
-                        <td>${$('#tipo_proceso_id option:selected').text()}</td>
-                        <td>${p.fecha_ingreso}</td>
-                        <td>${p.fecha_salida}</td>
-                        <td>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
-                        </td>
-                    </tr>
-                `);
-            });
-        }
-
-
-        function eliminarProceso(index) {
-            listadoProcesos.splice(index, 1);
-            mostrarListadoTemporal();
-        }
-
-        $('#guardarListado').click(function () {
-            guardarListadoProcesos();
-        });
-
-        function guardarListadoProcesos() {
-            if (listadoProcesos.length === 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Atención',
-                    text: 'No hay procesos para guardar.'
-                });
-                return;
-            }
-
-            $.ajax({
-                url: "{{ route('procesos.guardarListado') }}",
-                type: 'POST',
-                data: { procesos: listadoProcesos },
-                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                success: function (response) {
-                    if (response.estado) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Éxito',
-                            text: response.mensaje,
-                            timer: 2000,
-                            showConfirmButton: false
+            function cargarFacturas() {
+                $.ajax({
+                    url: "{{ route('factura.estadoNull') }}",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (facturas) {
+                        let options = '<option value="">Seleccione factura...</option>';
+                        facturas.forEach(f => {
+                            options += `<option value="${f.id}">${f.numero_factura} </option>`;
                         });
-                        // Limpiar listado temporal
-                        ajaxListado();
-                        listadoProcesos = [];
-                        mostrarListadoTemporal();
-                        $('#modalLavanderia').modal('hide');
-                    } else {
-                        alert('No se guardaron los procesos.');
+                        $('#factura_id').html(options);
+                    },
+                    error: function (err) {
+                        console.error('Error al cargar facturas:', err);
+                        alert('No se pudieron cargar las facturas.');
                     }
-                },
-                error: function (err) {
-                    console.error('Error al guardar procesos:', err);
-                    alert('Ocurrió un error al guardar los procesos.');
+                });
+            }
+
+            $('#factura_id').on('change', function () {
+                let facturaId = $(this).val();
+
+                if (!facturaId) {
+                    $('#order_trabajo_id_lavanderia').html('<option value="">Seleccione OT...</option>');
+                    return;
                 }
+
+                $.ajax({
+                    url: "{{ route('factura.obtenerOTs') }}", // Creamos ruta Laravel
+                    type: 'GET',
+                    data: { factura_id: facturaId },
+                    dataType: 'json',
+                    success: function (ots) {
+                        let options = '<option value="">Seleccione OT...</option>';
+                        ots.forEach(ot => {
+                            options += `<option value="${ot.id}">OT: ${ot.nro_ot} - Prendas: ${ot.cantidad}</option>`;
+                        });
+                        $('#order_trabajo_id_lavanderia').html(options);
+                    },
+                    error: function (err) {
+                        console.error('Error al cargar OTs:', err);
+                        alert('No se pudieron cargar las OTs.');
+                    }
+                });
             });
-        }
 
-        function limpiarFormularioModal() {
-            $('#order_trabajo_id_lavanderia').val('');
-            $('#producto_id_lavanderia').val('');
-            $('#tipo_proceso_id').val('');
-            $('#fecha_ingreso').val('');
-            $('#fecha_salida').val('');
-            $('#tiempo').val('');
-            $('#temperatura').val('');
-            $('#ph').val('');
-            $('#rb').val('');
-            $('#descripcion').val('');
-        }
 
-        function buscarSolicitudesProducto(){
-            let productoId = $('#producto_solicitud_aprobado').val()
 
-            $.ajax({
-                url: "{{ route('solicitudes.buscarSolicitudesProducto') }}",
-                type: 'POST',
-                dataType: 'json',
-                data:{productoId:productoId},
-                success: function (respuesta) {
+            function modalNuevaLavanderiaConMaquinaria(maquinaria_id) {
 
-                    let select = $('#ordenes_trabajos_solicitudes_aprobados')
+                $.ajax({
+                    url: "{{ route('solicitudes.ajaxProductoSolicitud') }}",
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (respuesta) {
+                        console.log(respuesta);
+
+                        let select = $('#producto_solicitud_aprobado');
+                        select.empty();
+                        select.append('<option value="">Seleccione producto...</option>');
+
+                        let datos = respuesta.data.solicitudes;
+
+                        datos.forEach(e => {
+                            select.append(`<option value="${e.producto_id}">${e.producto.nombre}</option>`)
+                        })
+
+                        // Limpiar formulario
+                        $('#id').val(0);
+                        $('#order_trabajo_id_lavanderia').val('');
+                        $('#producto_id_lavanderia').html('<option value="">Seleccione producto...</option>');
+                        $('#tipo_proceso_id').val('');
+                        $('#fecha_ingreso').val('');
+                        $('#fecha_salida').val('');
+                        $('#tiempo').val('');
+                        $('#temperatura').val('');
+                        $('#ph').val('');
+                        $('#rb').val('');
+                        $('#descripcion').val('');
+                        $('#estado').val('PENDIENTE');
+                        $('#maquinaria_id').val(maquinaria_id);
+
+                        $('#order_trabajo_id_lavanderia').html('<option value="">Seleccione OT...</option>');
+                        $('#producto_id_lavanderia').html('<option value="">Seleccione producto...</option>');
+                        // Cargar tipos de proceso
+                        cargarTiposProceso();
+                        // cargarFacturas();
+
+                        // Mostrar modal
+                        $('#modalLavanderia').modal('show');
+
+                    },
+                    error: function (err) {
+                        console.error('Error al cargar facturas:', err);
+                        alert('No se pudieron cargar las facturas.');
+                    }
+                });
+
+            }
+
+            function cargarTiposProceso() {
+                $.get("{{ route('procesos.listaTiposProceso') }}", function (data) {
+                    let select = $("#tipo_proceso_id");
                     select.empty();
-                    select.append('<option value="">Seleccione solicitud...</option>');
+                    select.append('<option value="">Seleccione...</option>');
+                    data.forEach(item => select.append(`<option value="${item.id}">${item.nombre}</option>`));
+                });
+            }
 
-                    let fac = respuesta.data.fac;
+            function obtenerSolcitudProductoAprobado() {
+                let orderTrabajoId = $('#order_trabajo_id_lavanderia').val();
+                let select = $('#producto_id_lavanderia');
+                select.html('<option value="">Cargando productos...</option>');
 
-                    Object.entries(fac).forEach(([key, value]) => {
-                        select.append(
-                            `<option value="${key}">${value}</option>`
-                        );
+                if (orderTrabajoId) {
+                    // {
+                    //     {
+                    //         --
+                    //             $.get("{{ route('factura.obtenerProductosAprobados') }}", { order_trabajo_id: orderTrabajoId }, function (data) {
+                    //                 select.empty();
+                    //                 select.append('<option value="">Seleccione producto...</option>');
+                    //                 data.forEach(p => {
+                    //                     select.append(`<option value="${p.id}">${p.nombre} - ${p.tipo}</option>`);
+                    //                 });
+                    //             }).fail(function (err) {
+                    //                 console.error('Error al cargar productos:', err);
+                    //                 select.html('<option value="">Error al cargar productos</option>');
+                    //             });
+                    //         --}
+                    // }
+
+                    $.ajax({
+                        url: "{{ route('factura.obtenerProductosAprobados') }}", // Creamos ruta Laravel
+                        type: 'POST',
+                        data: { orderTrabajoId: orderTrabajoId },
+                        dataType: 'json',
+                        success: function (ots) {
+
+                            console.log("###################################################");
+                            console.log(ots);
+                            console.log("###################################################");
+
+                            // let options = '<option value="">Seleccione OT...</option>';
+                            // ots.forEach(ot => {
+                            //     options += `<option value="${ot.id}">OT: ${ot.nro_ot} - Prendas: ${ot.cantidad}</option>`;
+                            // });
+                            // $('#order_trabajo_id_lavanderia').html(options);
+                        },
+                        error: function (err) {
+                            console.error('Error al cargar OTs:', err);
+                            alert('No se pudieron cargar las OTs.');
+                        }
                     });
-
-                },
-                error: function (err) {
-                    console.error('Error al cargar facturas:', err);
-                    alert('No se pudieron cargar las facturas.');
+                } else {
+                    select.html('<option value="">Seleccione OT primero</option>');
                 }
+            }
+
+            function agregarProcesoAlListado() {
+                let proceso = {
+                    order_trabajo_id: $('#order_trabajo_id_lavanderia').val(),
+                    producto_id: $('#producto_solicitud_aprobado').val(),
+                    maquinaria_id: $('#maquinaria_id').val(),
+                    tipo_proceso_id: $('#tipo_proceso_id').val(),
+                    fecha_ingreso: $('#fecha_ingreso').val(),
+                    fecha_salida: $('#fecha_salida').val(),
+                    cantidad: $('#cantidad').val() || null,
+                    porcentaje: $('#porcentaje').val() || null,
+                    gr_litro: $('#gr_litro').val() || null,
+                    tiempo: $('#tiempo').val() || null,
+                    temperatura: $('#temperatura').val() || null,
+                    ph: $('#ph').val() || null,
+                    rb: $('#rb').val() || null,
+                    descripcion: $('#descripcion').val(),
+                    estado: 'TRABAJANDO',
+                    producto_solicitud_aprobado: $('#producto_solicitud_aprobado').val(),
+                    ordenes_trabajos_solicitudes_aprobados: $('#ordenes_trabajos_solicitudes_aprobados').val()
+                };
+
+                // Validaciones básicas
+                // if (!proceso.order_trabajo_id || !proceso.producto_id || !proceso.tipo_proceso_id) {
+                if (!proceso.producto_id || !proceso.tipo_proceso_id) {
+                    alert("Debe seleccionar OT, producto y tipo de proceso.");
+                    return;
+                }
+
+                listadoProcesos.push(proceso);
+                mostrarListadoTemporal();
+                limpiarFormularioModal();
+            }
+
+            function mostrarListadoTemporal() {
+                let tbody = $('#tablaListadoTemporal tbody'); // corregido
+                tbody.empty();
+
+                listadoProcesos.forEach((p, index) => {
+                    tbody.append(`
+                                                    <tr>
+                                                        <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
+                                                        <td>${$('#producto_solicitud_aprobado option:selected').text()}</td>
+                                                        <td>${$('#tipo_proceso_id option:selected').text()}</td>
+                                                        <td>${p.fecha_ingreso}</td>
+                                                        <td>${p.fecha_salida}</td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
+                                                        </td>
+                                                    </tr>
+                                                `);
+                });
+            }
+
+
+            function eliminarProceso(index) {
+                listadoProcesos.splice(index, 1);
+                mostrarListadoTemporal();
+            }
+
+            $('#guardarListado').click(function () {
+                guardarListadoProcesos();
             });
-        }
+
+            function guardarListadoProcesos() {
+                if (listadoProcesos.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Atención',
+                        text: 'No hay procesos para guardar.'
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ route('procesos.guardarListado') }}",
+                    type: 'POST',
+                    data: { procesos: listadoProcesos },
+                    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    success: function (response) {
+                        if (response.estado) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Éxito',
+                                text: response.mensaje,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            // Limpiar listado temporal
+                            ajaxListado();
+                            listadoProcesos = [];
+                            mostrarListadoTemporal();
+                            $('#modalLavanderia').modal('hide');
+                        } else {
+                            alert('No se guardaron los procesos.');
+                        }
+                    },
+                    error: function (err) {
+                        console.error('Error al guardar procesos:', err);
+                        alert('Ocurrió un error al guardar los procesos.');
+                    }
+                });
+            }
+
+
+
+            function limpiarFormularioModal() {
+                $('#order_trabajo_id_lavanderia').val('');
+                $('#producto_id_lavanderia').val('');
+                $('#tipo_proceso_id').val('');
+                $('#fecha_ingreso').val('');
+                $('#fecha_salida').val('');
+                $('#tiempo').val('');
+                $('#temperatura').val('');
+                $('#ph').val('');
+                $('#rb').val('');
+                $('#descripcion').val('');
+            }
+
+            function buscarSolicitudesProducto() {
+                let productoId = $('#producto_solicitud_aprobado').val()
+
+                $.ajax({
+                    url: "{{ route('solicitudes.buscarSolicitudesProducto') }}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { productoId: productoId },
+                    success: function (respuesta) {
+
+                        let select = $('#ordenes_trabajos_solicitudes_aprobados')
+                        select.empty();
+                        select.append('<option value="">Seleccione solicitud...</option>');
+
+                        let fac = respuesta.data.fac;
+
+                        Object.entries(fac).forEach(([key, value]) => {
+                            select.append(
+                                `<option value="${key}">${value}</option>`
+                            );
+                        });
+
+                    },
+                    error: function (err) {
+                        console.error('Error al cargar facturas:', err);
+                        alert('No se pudieron cargar las facturas.');
+                    }
+                });
+            }
+
 
 
             //solicitud
