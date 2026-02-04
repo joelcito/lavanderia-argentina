@@ -7,12 +7,12 @@
         }
 
         /* .maquina-container {
-                                                                                                                                                            cursor: pointer;
-                                                                                                                                                            padding: 10px;
-                                                                                                                                                            border-radius: 5px;
-                                                                                                                                                            text-align: center;
-                                                                                                                                                            margin: 0 10px;
-                                                                                                                                                        } */
+                                                                                                                                                                cursor: pointer;
+                                                                                                                                                                padding: 10px;
+                                                                                                                                                                border-radius: 5px;
+                                                                                                                                                                text-align: center;
+                                                                                                                                                                margin: 0 10px;
+                                                                                                                                                            } */
 
         .maquina-container {
             width: 220px;
@@ -166,6 +166,7 @@
                                 <button type="button" class="btn btn-primary" id="agregarAlListado">Agregar al
                                     listado</button>
                             </div>
+                        </div>
                     </form>
 
                     <hr>
@@ -874,17 +875,17 @@
 
                 listadoProcesos.forEach((p, index) => {
                     tbody.append(`
-                                                    <tr>
-                                                        <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
-                                                        <td>${$('#producto_solicitud_aprobado option:selected').text()}</td>
-                                                        <td>${$('#tipo_proceso_id option:selected').text()}</td>
-                                                        <td>${p.fecha_ingreso}</td>
-                                                        <td>${p.fecha_salida}</td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
-                                                        </td>
-                                                    </tr>
-                                                `);
+                                                        <tr>
+                                                            <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
+                                                            <td>${$('#producto_solicitud_aprobado option:selected').text()}</td>
+                                                            <td>${$('#tipo_proceso_id option:selected').text()}</td>
+                                                            <td>${p.fecha_ingreso}</td>
+                                                            <td>${p.fecha_salida}</td>
+                                                            <td>
+                                                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
+                                                            </td>
+                                                        </tr>
+                                                    `);
                 });
             }
 
