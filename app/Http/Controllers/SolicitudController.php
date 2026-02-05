@@ -37,91 +37,67 @@ class SolicitudController extends Controller
     }
 
 
+    // public function ajaxListado(Request $request)
+    // {
+    //     if (!$request->ajax()) {
+    //         return Respuesta::error(null, "Petición no válida");
+    //     }
+
+    //     $solicitudes = Solicitud::with('usuarioCreador')
+    //         ->whereNull('deleted_at')
+    //         ->get();
+
+    //     $facturasSolicitadas = collect();
+
+    //     foreach ($solicitudes as $solicitud) {
+
+    //         if (!is_array($solicitud->ordenes_trabajo)) {
+    //             continue;
+    //         }
+
+    //         foreach ($solicitud->ordenes_trabajo as $item) {
+
+    //             // 🔒 PROTECCIÓN CONTRA DATOS VIEJOS
+    //             if (!is_array($item) || !isset($item['factura_id'])) {
+    //                 continue;
+    //             }
+
+    //             $facturasSolicitadas->push((object) [
+    //                 'factura_id' => $item['factura_id'],
+    //                 'numero_factura' => $item['nro_factura'] ?? '',
+    //                 'usuarioCreador' => $solicitud->usuarioCreador,
+    //                 'ots' => $item['ots'] ?? [],
+    //             ]);
+    //         }
+    //     }
+
+    //     return Respuesta::success([
+    //         'listado' => view(
+    //             'solicitudes.ajaxListado',
+    //             compact('facturasSolicitadas')
+    //         )->render()
+    //     ], "Datos obtenidos correctamente");
+    // }
+
+
     public function ajaxListado(Request $request)
     {
         if (!$request->ajax()) {
             return Respuesta::error(null, "Petición no válida");
         }
 
-        $solicitudes = Solicitud::with('usuarioCreador')
+        $solicitudes = Solicitud::with(['producto', 'usuarioCreador'])
             ->whereNull('deleted_at')
+            ->orderBy('created_at', 'desc')
             ->get();
-
-        $facturasSolicitadas = collect();
-
-        foreach ($solicitudes as $solicitud) {
-
-            if (!is_array($solicitud->ordenes_trabajo)) {
-                continue;
-            }
-
-            foreach ($solicitud->ordenes_trabajo as $item) {
-
-                // 🔒 PROTECCIÓN CONTRA DATOS VIEJOS
-                if (!is_array($item) || !isset($item['factura_id'])) {
-                    continue;
-                }
-
-                $facturasSolicitadas->push((object) [
-                    'factura_id' => $item['factura_id'],
-                    'numero_factura' => $item['nro_factura'] ?? '',
-                    'usuarioCreador' => $solicitud->usuarioCreador,
-                    'ots' => $item['ots'] ?? [],
-                ]);
-            }
-        }
 
         return Respuesta::success([
             'listado' => view(
                 'solicitudes.ajaxListado',
-                compact('facturasSolicitadas')
+                compact('solicitudes')
             )->render()
         ], "Datos obtenidos correctamente");
     }
-
-
-
-
-    // public function ajaxListado(Request $request)
-    // {
-
-    //     if ($request->ajax()) {
-
-    //         $facturasSolicitadas = Solicitud::join('order_trabajos as ot', function ($join) {
-    //             $join->whereRaw('JSON_CONTAINS(solicitudes.ordenes_trabajo, CAST(ot.id AS JSON))');
-    //         })
-    //             ->join('facturas as f', 'f.id', '=', 'ot.factura_id')
-    //             ->select('ot.factura_id', 'solicitudes.usuario_creador_id', 'f.numero_factura')
-    //             ->groupBy('ot.factura_id', 'solicitudes.usuario_creador_id', 'f.numero_factura')
-    //             ->get();
-
-    //         $valores = [
-    //             'listado' => view('solicitudes.ajaxListado', compact('facturasSolicitadas'))->render()
-    //         ];
-
-    //         $data = Respuesta::success($valores, "Datos obtenidos correctamente");
-
-    //     } else {
-
-    //         $data = Respuesta::error(null, "Error al obtener los datos");
-    //     }
-    //     return $data;
-
-
-
-    //     // $solicitudes = Solicitud::with(['producto', 'usuarioCreador'])->get();
-
-    //     // // Aplanamos todos los arrays de OT y agrupamos por OT individual
-    //     // $ots = $solicitudes->flatMap(fn($s) => collect($s->ordenes_trabajo))
-    //     //     ->groupBy(fn($id) => $id);
-
-    //     // $html = view('solicitudes.ajaxListado', compact('ots'))->render();
-
-    //     // return response()->json([
-    //     //     'estado' => true,
-    //     //     'data' => ['listado' => $html]
-    //     // ]);
-    // }
 
     public function store(Request $request)
     {
@@ -162,8 +138,6 @@ class SolicitudController extends Controller
         }
     }
 
-
-    // Detalle de OT
     public function ajaxDetalleOT(Request $request)
     {
         $solicitudes = Solicitud::with(['producto', 'usuarioCreador'])
@@ -402,10 +376,6 @@ class SolicitudController extends Controller
         }
     }
 
-
-
-
-
     public function listaOTsPorFactura(Request $request)
     {
         $factura_id = $request->factura_id;
@@ -418,10 +388,6 @@ class SolicitudController extends Controller
         return response()->json($ots);
     }
 
-
-
-
-    // Códigos de compra según producto
     public function codigosCompra()
     {
         $codigos = Movimiento::whereNotNull('codigo_compra')
@@ -433,9 +399,6 @@ class SolicitudController extends Controller
         return response()->json($codigos);
     }
 
-
-
-    // Obtener productos con stock según el código de compra
     public function productosConStock(Request $request)
     {
         $codigo = $request->codigo_compra;
@@ -460,90 +423,101 @@ class SolicitudController extends Controller
         return response()->json($productos);
     }
 
+
     // public function verDetalleSolicitud(Request $request)
     // {
+    //     if (!$request->ajax()) {
+    //         return Respuesta::error(null, "Error al obtener los datos");
+    //     }
 
-    //     if ($request->ajax()) {
+    //     $factura_id = $request->input('factura');
 
-    //         // dd($request->all());
 
-    //         $factura_id = $request->input('factura');
+    //     $solicitudes = Solicitud::with(['producto', 'usuarioCreador'])
+    //         ->whereNull('deleted_at')
+    //         ->get();
 
-    //         $facturasSolicitadas = Solicitud::join('order_trabajos as ot', function ($join) {
-    //             $join->whereRaw('JSON_CONTAINS(solicitudes.ordenes_trabajo, CAST(ot.id AS JSON))');
-    //         })
-    //             ->select('solicitudes.*')
-    //             ->where('ot.factura_id', $factura_id)
-    //             ->groupBy('solicitudes.id')
+    //     $facturasSolicitadas = collect();
+
+    //     foreach ($solicitudes as $s) {
+
+    //         if (!is_array($s->ordenes_trabajo))
+    //             continue;
+    //         $pertenceFactura = false;
+    //         foreach ($s->ordenes_trabajo as $item) {
+    //             if (isset($item['factura_id']) && $item['factura_id'] == $factura_id) {
+    //                 $pertenceFactura = true;
+    //                 break;
+    //             }
+    //         }
+    //         if (!$pertenceFactura)
+    //             continue;
+
+
+    //         $primerOtId = $s->ordenes_trabajo[0]['ots'][0] ?? null;
+    //         $nro_ot = null;
+    //         if ($primerOtId) {
+    //             $ot = Order_trabajo::find($primerOtId);
+    //             $nro_ot = $ot->nro_ot ?? null;
+    //         }
+
+    //         $movimientos = Movimiento::where('producto_id', $s->producto_id)
+    //             ->whereNull('deleted_at')
+    //             ->orderBy('created_at', 'asc')
     //             ->get();
 
-    //         // dd($facturasSolicitadas);
+    //         $codigos = $movimientos
+    //             ->pluck('codigo_compra')
+    //             ->filter()
+    //             ->unique();
 
-    //         $data = $facturasSolicitadas->map(function ($s) {
+    //         $stock = [];
 
-    //             // SACAMOS PARA EL NUMERO DE OT
-    //             $primerOtId = $s->ordenes_trabajo[0] ?? null;
-    //             $nro_ot = null;
-    //             if ($primerOtId) {
-    //                 $ot = Order_trabajo::find($primerOtId);
-    //                 $nro_ot = $ot->nro_ot ?? null;
+    //         foreach ($codigos as $codigo) {
+
+
+    //             $ultimoIngreso = $movimientos
+    //                 ->where('codigo_compra', $codigo)
+    //                 ->where('ingreso', '>', 0)
+    //                 ->sortByDesc('created_at')
+    //                 ->first();
+
+    //             if (!$ultimoIngreso)
+    //                 continue;
+
+
+    //             $ultimaSalida = $movimientos
+    //                 ->where('codigo_compra', $codigo)
+    //                 ->where('salida', '>', 0)
+    //                 ->sortByDesc('created_at')
+    //                 ->first();
+
+    //             $stockDisponible = ($ultimoIngreso->ingreso ?? 0) - ($ultimaSalida->salida ?? 0);
+
+    //             if ($stockDisponible > 0) {
+    //                 $stock[] = [
+    //                     'INGRESO_ID' => $ultimoIngreso->id,
+    //                     'CODIGO_COMPRA' => $codigo,
+    //                     'STOCK' => $stockDisponible
+    //                 ];
     //             }
+    //         }
 
-    //             // SACAMOS EL STOCK E INGRESOS DE CADA PRODCUTO SOLICITADO
-    //             $queryIngreso = Movimiento::where('ingreso', '>', 0)
-    //                 ->where('salida', 0)
-    //                 ->whereNotNull('codigo_compra')
-    //                 ->whereNotNull('precio')
-    //                 ->where('producto_id', $s->producto_id);
-    //             // ->get();
-
-    //             $ingresos = $queryIngreso->get();
-
-    //             $stock = [];
-
-    //             foreach ($ingresos as $key => $ingreso) {
-    //                 $querySalida = Movimiento::where('salida', '>', 0)
-    //                     ->where('ingreso', 0)
-    //                     ->whereNull('codigo_compra')
-    //                     ->whereNull('precio')
-    //                     ->where('producto_id', $s->producto_id)
-    //                     ->where('movimiento_id', $ingreso->id)
-    //                     ->sum('salida');
-
-    //                 $stockProducto = $ingreso->ingreso - $querySalida;
-
-    //                 if ($stockProducto > 0) {
-    //                     $stock[] = [
-    //                         'ID' => $ingreso->id,
-    //                         'CODIGO_COMPRA' => $ingreso->codigo_compra,
-    //                         'STOCK' => $ingreso->ingreso - $querySalida,
-    //                     ];
-    //                 }
-    //             }
-
-    //             return [
-    //                 'id' => $s->id,
-    //                 'producto' => $s->producto->nombre ?? '-',
-    //                 'cantidad' => $s->cantidad,
-    //                 'estado' => $s->estado,
-    //                 'usuario' => $s->usuarioCreador->name ?? '-',
-    //                 'nro_ot' => $nro_ot,
-    //                 'stock' => $stock
-    //             ];
-    //         });
-
-    //         $valores = [
-    //             'solicitudes' => $data
-    //         ];
-
-    //         $data = Respuesta::success($valores, "Datos obtenidos correctamente");
-
-
-    //     } else {
-    //         $data = Respuesta::error(null, "Error al obtener los datos");
+    //         $facturasSolicitadas->push([
+    //             'id' => $s->id,
+    //             'producto_id' => $s->producto_id,
+    //             'producto' => $s->producto->nombre ?? '-',
+    //             'cantidad' => $s->cantidad,
+    //             'estado' => $s->estado,
+    //             'usuario' => $s->usuarioCreador->name ?? '-',
+    //             'nro_ot' => $nro_ot,
+    //             'stock' => $stock,
+    //         ]);
     //     }
-    //     return $data;
 
+    //     return Respuesta::success([
+    //         'solicitudes' => $facturasSolicitadas
+    //     ], "Datos obtenidos correctamente");
     // }
 
 
@@ -553,105 +527,71 @@ class SolicitudController extends Controller
             return Respuesta::error(null, "Error al obtener los datos");
         }
 
-        $factura_id = $request->input('factura');
+        $solicitud = Solicitud::with(['producto', 'usuarioCreador'])
+            ->find($request->solicitud_id);
 
+        if (!$solicitud) {
+            return Respuesta::error(null, "Solicitud no encontrada");
+        }
 
-        $solicitudes = Solicitud::with(['producto', 'usuarioCreador'])
-            ->whereNull('deleted_at')
-            ->get();
-
-        $facturasSolicitadas = collect();
-
-        foreach ($solicitudes as $s) {
-
-            if (!is_array($s->ordenes_trabajo))
-                continue;
-            $pertenceFactura = false;
-            foreach ($s->ordenes_trabajo as $item) {
-                if (isset($item['factura_id']) && $item['factura_id'] == $factura_id) {
-                    $pertenceFactura = true;
-                    break;
-                }
-            }
-            if (!$pertenceFactura)
-                continue;
-
-
-            $primerOtId = $s->ordenes_trabajo[0]['ots'][0] ?? null;
-            $nro_ot = null;
+        // 🔹 Obtener nro_ot (primer OT referencial)
+        $nro_ot = null;
+        if (is_array($solicitud->ordenes_trabajo)) {
+            $primerOtId = $solicitud->ordenes_trabajo[0]['ots'][0] ?? null;
             if ($primerOtId) {
                 $ot = Order_trabajo::find($primerOtId);
                 $nro_ot = $ot->nro_ot ?? null;
             }
+        }
 
-            $movimientos = Movimiento::where('producto_id', $s->producto_id)
-                ->whereNull('deleted_at')
-                ->orderBy('created_at', 'asc')
-                ->get();
+        // 🔹 Stock disponible
+        $movimientos = Movimiento::where('producto_id', $solicitud->producto_id)
+            ->orderBy('created_at', 'asc')
+            ->get();
 
-            $codigos = $movimientos
-                ->pluck('codigo_compra')
-                ->filter()
-                ->unique();
+        $stock = [];
 
-            $stock = [];
+        foreach ($movimientos->groupBy('codigo_compra') as $codigo => $movs) {
 
-            foreach ($codigos as $codigo) {
+            $ingreso = $movs->where('ingreso', '>', 0)->last();
+            $salida = $movs->where('salida', '>', 0)->last();
 
+            $disponible = ($ingreso->ingreso ?? 0) - ($salida->salida ?? 0);
 
-                $ultimoIngreso = $movimientos
-                    ->where('codigo_compra', $codigo)
-                    ->where('ingreso', '>', 0)
-                    ->sortByDesc('created_at')
-                    ->first();
-
-                if (!$ultimoIngreso)
-                    continue;
-
-
-                $ultimaSalida = $movimientos
-                    ->where('codigo_compra', $codigo)
-                    ->where('salida', '>', 0)
-                    ->sortByDesc('created_at')
-                    ->first();
-
-                $stockDisponible = ($ultimoIngreso->ingreso ?? 0) - ($ultimaSalida->salida ?? 0);
-
-                if ($stockDisponible > 0) {
-                    $stock[] = [
-                        'INGRESO_ID' => $ultimoIngreso->id,
-                        'CODIGO_COMPRA' => $codigo,
-                        'STOCK' => $stockDisponible
-                    ];
-                }
+            if ($disponible > 0) {
+                $stock[] = [
+                    'INGRESO_ID' => $ingreso->id,
+                    'CODIGO_COMPRA' => $codigo,
+                    'STOCK' => $disponible
+                ];
             }
-
-            $facturasSolicitadas->push([
-                'id' => $s->id,
-                'producto_id' => $s->producto_id,
-                'producto' => $s->producto->nombre ?? '-',
-                'cantidad' => $s->cantidad,
-                'estado' => $s->estado,
-                'usuario' => $s->usuarioCreador->name ?? '-',
-                'nro_ot' => $nro_ot,
-                'stock' => $stock,
-            ]);
         }
 
         return Respuesta::success([
-            'solicitudes' => $facturasSolicitadas
-        ], "Datos obtenidos correctamente");
+            'solicitudes' => [
+                [
+                    'id' => $solicitud->id,
+                    'producto' => $solicitud->producto->nombre ?? '-',
+                    'cantidad' => $solicitud->cantidad,
+                    'estado' => $solicitud->estado,
+                    'usuario' => $solicitud->usuarioCreador->name ?? '-',
+                    'nro_ot' => $nro_ot,
+                    'stock' => $stock
+                ]
+            ]
+        ]);
     }
 
-    public function ajaxProductoSolicitud(Request $request){
+    public function ajaxProductoSolicitud(Request $request)
+    {
 
-        if($request->ajax()){
+        if ($request->ajax()) {
 
             $solicitudes = Solicitud::with(['producto'])
-                                    ->select('producto_id')
-                                    ->where('estado', 'APROBADO')
-                                    ->groupBy('producto_id')
-                                    ->get();
+                ->select('producto_id')
+                ->where('estado', 'APROBADO')
+                ->groupBy('producto_id')
+                ->get();
 
             // dd($solicitudes);
 
@@ -667,15 +607,16 @@ class SolicitudController extends Controller
         return $data;
     }
 
-    public function buscarSolicitudesProducto(Request $request){
+    public function buscarSolicitudesProducto(Request $request)
+    {
 
-        if($request->ajax()){
+        if ($request->ajax()) {
 
             $producto_id = $request->input('productoId');
 
             $solicitudes = Solicitud::where('producto_id', $producto_id)
-                                    ->where('estado', 'APROBADO')
-                                    ->get();
+                ->where('estado', 'APROBADO')
+                ->get();
             $fac = "";
 
             $solicitudArray = [];
@@ -684,15 +625,15 @@ class SolicitudController extends Controller
                 $ordenesTrabajo = $solicitud->ordenes_trabajo;
                 $fac = "";
                 foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
-                    $fac = $fac." | Fac/Or-Re ".$ordenTrabajo['nro_factura']." : [";
+                    $fac = $fac . " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
                     $ots = $ordenTrabajo['ots'];
                     foreach ($ots as $key => $ot) {
                         $ordenTrabajoBuscado = Order_trabajo::find($ot);
-                        $fac = $fac." OT:".$ordenTrabajoBuscado->nro_ot;
-                        if((count($ots)-1) == $key)
-                            $fac =$fac."]";
+                        $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
+                        if ((count($ots) - 1) == $key)
+                            $fac = $fac . "]";
                         else
-                            $fac =$fac." - ";
+                            $fac = $fac . " - ";
                     }
                 }
 
@@ -706,7 +647,7 @@ class SolicitudController extends Controller
 
             $data = Respuesta::success($valores, "Datos obtenidos correctamente");
 
-        }else{
+        } else {
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
         return $data;

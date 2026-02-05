@@ -1,68 +1,68 @@
 <div style="overflow-x: auto;">
-    <!--begin::Table-->
-    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_aprobacion">
 
+    <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_aprobacion">
         <thead>
             <tr>
-                <th>Fac/Orden Recepcion</th>
-                <th>Ordenes de trabajo</th>
-                <th>Usuario Solicitante</th>
-                {{-- <th>Cantidad de solicitudes</th>--}}
-                <th>Acción</th>
+                <th>#</th>
+                <th>Producto</th>
+                <th>Facturas</th>
+                <th>OTs</th>
+                <th>Usuario</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-
-            @foreach ($facturasSolicitadas as $factura)
+            @forelse ($solicitudes as $solicitud)
                 <tr>
-                    <td>
-                        Factura {{ $factura->numero_factura }}
+                    <td>{{ $solicitud->id }}</td>
 
-                    </td>
-                    <td>
-                        OTs: {{ implode(',', $factura->ots) }}
-                    </td>
+                    <td>{{ $solicitud->producto->nombre ?? '-' }}</td>
 
                     <td>
-                        {{ $factura->usuarioCreador->nombres }}
-                        {{ $factura->usuarioCreador->ap_paterno }}
+                        @if(is_array($solicitud->ordenes_trabajo))
+                            @foreach($solicitud->ordenes_trabajo as $item)
+                                <span class="badge bg-success">
+                                    {{ $item['nro_factura'] ?? 'S/N' }}
+                                </span>
+                            @endforeach
+                        @endif
                     </td>
+
+                    <td>
+                        @if(is_array($solicitud->ordenes_trabajo))
+                            @foreach($solicitud->ordenes_trabajo as $item)
+                                @foreach($item['ots'] ?? [] as $ot)
+                                    <span class="badge bg-secondary">
+                                        {{ $ot }}
+                                    </span>
+                                @endforeach
+                            @endforeach
+                        @endif
+                    </td>
+
+                    <td>{{ $solicitud->usuarioCreador->name ?? '-' }}</td>
+
+                    <td>{{ $solicitud->created_at->format('d/m/Y') }}</td>
 
                     <td>
                         <button class="btn btn-icon btn-sm btn-info" title="Ver Detalle"
-                            onclick="verDetalleSolicitud('{{ $factura->factura_id }}')">
+                            onclick="verDetalleSolicitud({{ $solicitud->id }})">
                             <i class="fa fa-eye"></i>
                         </button>
                     </td>
                 </tr>
-            @endforeach
-
-
-
-            <!-- @foreach ($facturasSolicitadas as $factura)
+            @empty
                 <tr>
-                    <td>{{ $factura->numero_factura }}</td>
-                    <td>{{ $factura->usuarioCreador->nombres." ".$factura->usuarioCreador->ap_paterno." ".$factura->usuarioCreador->ap_materno }}</td>
-                    <td>
-                        <button class="btn btn-icon btn-sm btn-info" onclick="verDetalleSolicitud('{{ $factura->factura_id }}', '{{ $factura->numero_factura }}')"><i class="fa fa-eye"></i></button>
+                    <td colspan="6" class="text-center text-danger">
+                        No hay solicitudes
                     </td>
                 </tr>
-            @endforeach -->
-            {{-- @foreach($ots as $otId => $sols)
-            <tr>
-                <td></td>
-                <td>{{ $otId }}</td>
-                <td>{{ count($sols) }}</td>
-                <td>
-                    <button class="btn btn-primary btn-sm" onclick="abrirModalOT({{ $otId }})">
-                        Aprobar OT
-                    </button>
-                </td>
-            </tr>
-            @endforeach --}}
+            @endforelse
+
         </tbody>
     </table>
-    <!--end::Table-->
+
 </div>
 
 <script>
@@ -83,7 +83,7 @@
                 emptyTable: 'No hay datos disponibles'
             },
             order: [],
-            //  searching: true,
+
             responsive: true
         });
 
