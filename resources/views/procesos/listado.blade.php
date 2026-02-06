@@ -7,12 +7,12 @@
         }
 
         /* .maquina-container {
-                                                                                                                                                                cursor: pointer;
-                                                                                                                                                                padding: 10px;
-                                                                                                                                                                border-radius: 5px;
-                                                                                                                                                                text-align: center;
-                                                                                                                                                                margin: 0 10px;
-                                                                                                                                                            } */
+                            cursor: pointer;
+                            padding: 10px;
+                            border-radius: 5px;
+                            text-align: center;
+                            margin: 0 10px;
+                        } */
 
         .maquina-container {
             width: 220px;
@@ -204,16 +204,12 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
 
-                <!-- Header -->
                 <div class="modal-header">
                     <h5 class="modal-title">Solicitud de Productos</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <!-- Body -->
                 <div class="modal-body">
-
-                    <!-- Selección de Facturas -->
                     <div class="mb-3">
                         <label>Facturas / Orden Recibo (puede seleccionar varias)</label>
                         <select id="facturas_seleccionadas" class="form-select" multiple>
@@ -224,41 +220,47 @@
                             @endforeach
                         </select>
                     </div>
-
-                    <!-- Contenedor dinámico de OTs por factura -->
                     <div id="ots_por_factura_container" class="mb-3"></div>
-
-                    <!-- Cantidad calculada -->
                     <div class="mb-3">
-                        <label>Cantidad total (peso de todas las OTs)</label>
-                        <input type="number" step="0.01" id="cantidad_solicitada" class="form-control" readonly>
-                    </div>
 
-                    <!-- Selección de Producto y porcentaje -->
+                        <label>Producto (con stock)</label>
+                        <select id="producto_id_solicitud" class="form-select">
+                            <option value="">Seleccione producto...</option>
+                            @foreach ($productos as $producto)
+                                <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label>Producto (con stock)</label>
-                            <select id="producto_id_solicitud" class="form-select">
-                                <option value="">Seleccione producto...</option>
-                                @foreach ($productos as $producto)
-                                    <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
-                                @endforeach
-                            </select>
+                        <!-- <div class="col-md-6">
+                            <label>Cantidad total (peso de todas las OTs)</label>
+                            <input type="number" step="0.01" id="cantidad_solicitada" class="form-control" readonly>
                         </div>
                         <div class="col-md-6">
                             <label>Porcentaje (%)</label>
                             <input type="number" step="0.01" id="porcentaje_solicitado" class="form-control"
                                 placeholder="Ej: 3">
+                        </div> -->
+
+                        <div class="col-md-4">
+                            <label>Peso total seleccionado (kg)</label>
+                            <input type="number" id="peso_total_ot" class="form-control" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Cantidad solicitada (kg)</label>
+                            <input type="number" step="0.01" id="cantidad_solicitada" class="form-control">
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>Porcentaje (%)</label>
+                            <input type="number" step="0.01" id="porcentaje_solicitado" class="form-control">
                         </div>
                     </div>
-
-                    <!-- Botón agregar al listado -->
                     <div class="mb-3">
                         <button class="btn btn-success" type="button" id="btnAgregarProducto">Agregar al
                             listado</button>
                     </div>
-
-                    <!-- Tabla temporal de productos -->
                     <table class="table table-bordered" id="tabla_solicitud_temporal">
                         <thead>
                             <tr>
@@ -273,8 +275,6 @@
                     </table>
 
                 </div>
-
-                <!-- Footer -->
                 <div class="modal-footer">
                     <button class="btn btn-primary" id="btnGuardarSolicitud">Guardar Solicitud</button>
                     <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
@@ -296,6 +296,9 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
+
+
 
             $(document).ready(function () {
                 ajaxListado();
@@ -875,17 +878,17 @@
 
                 listadoProcesos.forEach((p, index) => {
                     tbody.append(`
-                                                        <tr>
-                                                            <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
-                                                            <td>${$('#producto_solicitud_aprobado option:selected').text()}</td>
-                                                            <td>${$('#tipo_proceso_id option:selected').text()}</td>
-                                                            <td>${p.fecha_ingreso}</td>
-                                                            <td>${p.fecha_salida}</td>
-                                                            <td>
-                                                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
-                                                            </td>
-                                                        </tr>
-                                                    `);
+                                                                        <tr>
+                                                                            <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
+                                                                            <td>${$('#producto_solicitud_aprobado option:selected').text()}</td>
+                                                                            <td>${$('#tipo_proceso_id option:selected').text()}</td>
+                                                                            <td>${p.fecha_ingreso}</td>
+                                                                            <td>${p.fecha_salida}</td>
+                                                                            <td>
+                                                                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    `);
                 });
             }
 
@@ -1140,14 +1143,19 @@
 
 
             let productosTemporal = [];
-            let otSeleccionadasPorFactura = {}; // Para almacenar OTs por factura
+            let otSeleccionadasPorFactura = {};
+
+            let editandoCantidad = false;
+            let editandoPorcentaje = false;
 
             $(document).ready(function () {
 
                 // Inicializar Select2
-                $('#facturas_seleccionadas, #producto_id_solicitud').select2();
+                $('#facturas_seleccionadas, #producto_id_solicitud').select2({
+                    dropdownParent: $('#modalSolicitudProductos')
+                });
 
-                // Cambiar selección de facturas
+
                 $('#facturas_seleccionadas').on('change', function () {
                     const facturas = $(this).val() || [];
                     const container = $('#ots_por_factura_container');
@@ -1157,70 +1165,82 @@
                     facturas.forEach(function (facturaId) {
                         const nroFactura = $('#facturas_seleccionadas option[value="' + facturaId + '"]').data('nro');
 
-                        // Contenedor de OTs para esta factura
                         const div = $('<div class="mb-2"><strong>Factura ' + nroFactura + ':</strong></div>');
                         container.append(div);
 
-                        // Traer OTs de la factura vía Ajax
                         let url = "{{ route('solicitudes.otsPorFactura', ':id') }}".replace(':id', facturaId);
+
                         $.get(url, function (data) {
                             data.forEach(function (ot) {
+
                                 const wrapper = $('<div class="form-check form-check-inline"></div>');
+
                                 const input = $('<input class="form-check-input" type="checkbox">')
                                     .attr('data-ot-id', ot.ids[0])
                                     .attr('data-nro-ot', ot.nro_ot)
                                     .attr('data-peso', ot.peso_total)
                                     .attr('data-factura-id', facturaId);
+
                                 const label = $('<label class="form-check-label"></label>')
                                     .text('OT ' + ot.nro_ot + ' (Peso: ' + ot.peso_total + ')');
 
                                 wrapper.append(input).append(label);
-                                console.log('oororo', ot);
                                 div.append(wrapper);
                             });
                         });
                     });
                 });
 
-                // Recalcular cantidad cada vez que se cambie porcentaje u OTs
-                $('#porcentaje_solicitado').on('input', calcularCantidadTotal);
-                $(document).on('change', '#ots_por_factura_container input[type="checkbox"]', calcularCantidadTotal);
 
-                // Agregar producto temporal
+                $('#porcentaje_solicitado').on('input', function () {
+                    if (editandoCantidad) return;
+                    editandoPorcentaje = true;
+                    calcularCantidadDesdePorcentaje();
+                    editandoPorcentaje = false;
+                });
+
+                $('#cantidad_solicitada').on('input', function () {
+                    if (editandoPorcentaje) return;
+                    editandoCantidad = true;
+                    calcularPorcentajeDesdeCantidad();
+                    editandoCantidad = false;
+                });
+
+                $(document).on('change', '#ots_por_factura_container input[type="checkbox"]', function () {
+                    calcularCantidadDesdePorcentaje();
+                });
+
 
                 $('#btnAgregarProducto').on('click', function () {
+
                     const productoId = $('#producto_id_solicitud').val();
                     const productoNombre = $('#producto_id_solicitud option:selected').text();
+
+                    const cantidad = parseFloat($('#cantidad_solicitada').val()) || 0;
                     const porcentaje = parseFloat($('#porcentaje_solicitado').val()) || 0;
 
-                    if (!productoId || porcentaje <= 0) {
-                        Swal.fire('Error', 'Seleccione un producto y un porcentaje válido', 'warning');
+                    if (!productoId || cantidad <= 0 || porcentaje <= 0) {
+                        Swal.fire('Error', 'Ingrese un producto, cantidad o porcentaje válido', 'warning');
                         return;
                     }
 
                     let facturas = [];
 
                     $('#ots_por_factura_container > div').each(function () {
+
                         const facturaLabel = $(this).find('strong').text();
                         const nroFactura = parseInt(facturaLabel.replace('Factura ', ''));
                         const ots = [];
                         let facturaId = null;
 
-                        // Recorrer solo los checkboxes seleccionados dentro de esta factura
                         $(this).find('input[type="checkbox"]:checked').each(function () {
-                            const otId = $(this).attr('data-ot-id');
 
-                            const peso = $(this).attr('data-peso');
-
-                            const nroOt = $(this).attr('data-nro-ot');
+                            const otId = $(this).data('ot-id');
+                            const nroOt = $(this).data('nro-ot');
 
                             if (!facturaId) {
-                                facturaId = $(this).attr('data-factura-id'); // tomar facturaId del primer OT marcado
+                                facturaId = $(this).data('factura-id');
                             }
-
-                            // if (otId) {
-                            //     ots.push(parseInt(otId));
-                            // }
 
                             if (otId && nroOt) {
                                 ots.push({
@@ -1228,8 +1248,6 @@
                                     nro_ot: parseInt(nroOt)
                                 });
                             }
-
-                            console.log('OT seleccionada:', otId, 'Peso:', peso, 'FacturaId:', facturaId);
                         });
 
                         if (ots.length > 0 && facturaId) {
@@ -1246,20 +1264,16 @@
                         return;
                     }
 
-                    const cantidadTotal = calcularCantidadTotal();
-
                     productosTemporal.push({
                         producto_id: parseInt(productoId),
                         producto_nombre: productoNombre,
                         porcentaje: porcentaje,
-                        cantidad: cantidadTotal,
+                        cantidad: cantidad,
                         estado: "EN ESPERA",
                         facturas: facturas
                     });
 
-                    console.log("Producto agregado:", productosTemporal);
-
-                    // Reset campos
+                    // RESET
                     $('#producto_id_solicitud').val('').trigger('change');
                     $('#porcentaje_solicitado').val('');
                     $('#cantidad_solicitada').val('');
@@ -1269,8 +1283,9 @@
                     actualizarTablaTemporal();
                 });
 
-                // Guardar solicitudes al backend
+
                 $('#btnGuardarSolicitud').on('click', function () {
+
                     if (productosTemporal.length === 0) {
                         Swal.fire('Error', 'Agregue al menos un producto', 'warning');
                         return;
@@ -1284,66 +1299,80 @@
                         facturas: p.facturas.map(f => ({
                             factura_id: f.factura_id,
                             nro_factura: f.nro_factura,
-                            ots: f.ots.map(ot => ot.id) // 👈 SOLO IDS
+                            ots: f.ots.map(ot => ot.id)
                         }))
                     }));
 
                     $.post("{{ route('solicitudes.store') }}", {
                         _token: "{{ csrf_token() }}",
                         solicitudes: solicitudesPayload
-                    }, function (res) {
+                    }, function () {
                         Swal.fire('OK', 'Solicitudes guardadas correctamente', 'success');
                         $('#modalSolicitudProductos').modal('hide');
                         productosTemporal = [];
                         actualizarTablaTemporal();
-                    }).fail(function (xhr) {
-                        console.error(xhr.responseJSON);
-                        Swal.fire('Error', 'Ocurrió un error al guardar la solicitud', 'error');
+                    }).fail(function () {
+                        Swal.fire('Error', 'Error al guardar la solicitud', 'error');
                     });
                 });
 
-                // Función para calcular cantidad total
-                function calcularCantidadTotal() {
-                    let totalPeso = 0;
-                    $('#ots_por_factura_container input[type="checkbox"]:checked').each(function () {
-                        totalPeso += parseFloat($(this).data('peso'));
-                    });
-
-                    const porcentaje = parseFloat($('#porcentaje_solicitado').val()) || 0;
-                    const cantidadFinal = (totalPeso * porcentaje) / 100;
-                    $('#cantidad_solicitada').val(cantidadFinal.toFixed(2));
-                    return cantidadFinal;
-                }
-
-                // Función para actualizar tabla temporal
-                function actualizarTablaTemporal() {
-                    const tbody = $('#tabla_solicitud_temporal tbody');
-                    tbody.empty();
-                    productosTemporal.forEach(function (item, index) {
-                        tbody.append(
-                            '<tr>' +
-                            '<td>' + item.producto_nombre + '</td>' +
-                            //'<td>' + item.facturas.map(f => 'Factura ' + f.nro_factura + ' → [' + f.ots.join(',') + ']').join(' | ') + '</td>' +
-                            '<td>' + item.facturas.map(f => 'Factura ' + f.nro_factura + ' → [' + f.ots.map(ot => ot.nro_ot).join(', ') + ']').join(' | ') + '</td>' +
-                            '<td>' + item.porcentaje + '%</td>' +
-                            '<td>' + item.cantidad.toFixed(2) + '</td>' +
-                            '<td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarProducto(' + index + ')">Eliminar</button></td>' +
-                            '</tr>'
-                        );
-                    });
-                }
+            });
 
 
+            function calcularPesoTotalOT() {
+                let total = 0;
+                $('#ots_por_factura_container input[type="checkbox"]:checked').each(function () {
+                    total += parseFloat($(this).data('peso')) || 0;
+                });
 
-                // Función para eliminar producto temporal
-                window.eliminarProducto = function (index) {
-                    productosTemporal.splice(index, 1);
-                    actualizarTablaTemporal();
-                };
+                $('#peso_total_ot').val(total.toFixed(2));
 
-            }); // document ready
+                return total;
+            }
 
+            function calcularCantidadDesdePorcentaje() {
+                const pesoTotal = calcularPesoTotalOT();
+                const porcentaje = parseFloat($('#porcentaje_solicitado').val()) || 0;
+                if (pesoTotal <= 0) return;
 
+                const cantidad = (pesoTotal * porcentaje) / 100;
+                $('#cantidad_solicitada').val(cantidad.toFixed(2));
+            }
+
+            function calcularPorcentajeDesdeCantidad() {
+                const pesoTotal = calcularPesoTotalOT();
+                const cantidad = parseFloat($('#cantidad_solicitada').val()) || 0;
+                if (pesoTotal <= 0) return;
+
+                const porcentaje = (cantidad * 100) / pesoTotal;
+                $('#porcentaje_solicitado').val(porcentaje.toFixed(2));
+            }
+
+            function actualizarTablaTemporal() {
+                const tbody = $('#tabla_solicitud_temporal tbody');
+                tbody.empty();
+
+                productosTemporal.forEach(function (item, index) {
+                    tbody.append(`
+                            <tr>
+                                <td>${item.producto_nombre}</td>
+                                <td>${item.facturas.map(f => 'Factura ' + f.nro_factura + ' → [' + f.ots.map(o => o.nro_ot).join(', ') + ']').join(' | ')}</td>
+                                <td>${item.porcentaje}%</td>
+                                <td>${item.cantidad.toFixed(2)}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${index})">
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        `);
+                });
+            }
+
+            function eliminarProducto(index) {
+                productosTemporal.splice(index, 1);
+                actualizarTablaTemporal();
+            }
 
 
         </script>
