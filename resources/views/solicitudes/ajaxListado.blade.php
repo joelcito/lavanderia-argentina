@@ -30,17 +30,27 @@
                         @endif
                     </td>
 
+                    <!-- <td>
+                                @if(is_array($solicitud->ordenes_trabajo))
+                                    @foreach($solicitud->ordenes_trabajo as $item)
+                                        @foreach($item['ots'] ?? [] as $ot)
+                                            <span class="badge bg-secondary">
+                                                {{ $ot }}
+                                            </span>
+                                        @endforeach
+                                    @endforeach
+                                @endif
+                            </td> -->
+
                     <td>
-                        @if(is_array($solicitud->ordenes_trabajo))
-                            @foreach($solicitud->ordenes_trabajo as $item)
-                                @foreach($item['ots'] ?? [] as $ot)
-                                    <span class="badge bg-secondary">
-                                        {{ $ot }}
-                                    </span>
-                                @endforeach
-                            @endforeach
-                        @endif
+                        @foreach($solicitud->nros_ot as $nro_ot)
+                            <span class="badge bg-primary">
+                                {{ $nro_ot }}
+                            </span>
+                        @endforeach
                     </td>
+
+
 
                     <td>{{ $solicitud->usuarioCreador->name ?? '-' }}</td>
 

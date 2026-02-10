@@ -82,6 +82,21 @@ class SolicitudController extends Controller
 
     public function ajaxListado(Request $request)
     {
+        // if (!$request->ajax()) {
+        //     return Respuesta::error(null, "Petición no válida");
+        // }
+
+        // $solicitudes = Solicitud::with(['producto', 'usuarioCreador'])
+        //     ->whereNull('deleted_at')
+        //     ->orderBy('created_at', 'desc')
+        //     ->get();
+
+        // return Respuesta::success([
+        //     'listado' => view(
+        //         'solicitudes.ajaxListado',
+        //         compact('solicitudes')
+        //     )->render()
+        // ], "Datos obtenidos correctamente");
         if (!$request->ajax()) {
             return Respuesta::error(null, "Petición no válida");
         }
@@ -90,6 +105,24 @@ class SolicitudController extends Controller
             ->whereNull('deleted_at')
             ->orderBy('created_at', 'desc')
             ->get();
+
+        // 🔹 AQUÍ ES DONDE VA TODO
+        foreach ($solicitudes as $solicitud) {
+
+            $otsIds = [];
+
+            if (is_array($solicitud->ordenes_trabajo)) {
+                foreach ($solicitud->ordenes_trabajo as $item) {
+                    if (!empty($item['ots'])) {
+                        $otsIds = array_merge($otsIds, $item['ots']);
+                    }
+                }
+            }
+
+            // Buscar nro_ot según IDs
+            $solicitud->nros_ot = Order_trabajo::whereIn('id', $otsIds)
+                ->pluck('nro_ot'); // colección de nro_ot
+        }
 
         return Respuesta::success([
             'listado' => view(
@@ -534,15 +567,35 @@ class SolicitudController extends Controller
             return Respuesta::error(null, "Solicitud no encontrada");
         }
 
-        // 🔹 Obtener nro_ot (primer OT referencial)
-        $nro_ot = null;
+        //🔹 Obtener nro_ot (primer OT referencial)
+        // $nro_ot = null;
+        // if (is_array($solicitud->ordenes_trabajo)) {
+        //     $primerOtId = $solicitud->ordenes_trabajo[0]['ots'][0] ?? null;
+        //     if ($primerOtId) {
+        //         $ot = Order_trabajo::find($primerOtId);
+        //         $nro_ot = $ot->nro_ot ?? null;
+        //     }
+        // }
+        $nros_ot = [];
+
         if (is_array($solicitud->ordenes_trabajo)) {
-            $primerOtId = $solicitud->ordenes_trabajo[0]['ots'][0] ?? null;
-            if ($primerOtId) {
-                $ot = Order_trabajo::find($primerOtId);
-                $nro_ot = $ot->nro_ot ?? null;
+
+            $otsIds = [];
+
+            foreach ($solicitud->ordenes_trabajo as $item) {
+                if (!empty($item['ots'])) {
+                    $otsIds = array_merge($otsIds, $item['ots']);
+                }
+            }
+
+            if (!empty($otsIds)) {
+                $nros_ot = Order_trabajo::whereIn('id', $otsIds)
+                    ->pluck('nro_ot')
+                    ->toArray();
             }
         }
+
+
 
         // 🔹 Stock disponible
         $movimientos = Movimiento::where('producto_id', $solicitud->producto_id)
@@ -575,7 +628,7 @@ class SolicitudController extends Controller
                     'cantidad' => $solicitud->cantidad,
                     'estado' => $solicitud->estado,
                     'usuario' => $solicitud->usuarioCreador->name ?? '-',
-                    'nro_ot' => $nro_ot,
+                    'nro_ot' => $nros_ot,
                     'stock' => $stock
                 ]
             ]

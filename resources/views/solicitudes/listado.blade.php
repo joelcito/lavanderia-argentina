@@ -310,55 +310,62 @@
                         }
 
                         let html = `<table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>Ingreso</th>
-                                    <th>Nº OT</th>
-                                    <th>Cantidad</th>
-                                    <th>Estado</th>
-                                    <th>Usuario</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Ingreso</th>
+                                                <th>Nº OT</th>
+                                                <th>Cantidad</th>
+                                                <th>Estado</th>
+                                                <th>Usuario</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>`;
 
                         res.data.solicitudes.forEach(s => {
 
                             let opciones = '';
                             s.stock.forEach(hg => {
                                 opciones += `<option value="${hg.INGRESO_ID}">
-                                    ${hg.CODIGO_COMPRA} (Stock: ${hg.STOCK})
-                                </option>`;
+                                                ${hg.CODIGO_COMPRA} (Stock: ${hg.STOCK})
+                                            </option>`;
                             });
 
                             let selectIngreso = `
-                                <select id="ingresos_${s.id}"
-                                    class="form-control select2-ingresos"
-                                    multiple style="width:100%;">
-                                    ${opciones}
-                                </select>`;
+                                            <select id="ingresos_${s.id}"
+                                                class="form-control select2-ingresos"
+                                                multiple style="width:100%;">
+                                                ${opciones}
+                                            </select>`;
 
                             html += `<tr>
-                                <td>${s.producto}</td>
-                                <td>${selectIngreso}</td>
-                                <td>${s.nro_ot ?? '-'}</td>
-                                <td>${s.cantidad}</td>
-                                <td>${s.estado}</td>
-                                <td>${s.usuario}</td>
-                                <td>
-                                    ${s.estado === 'EN PROCESO' ? `
-                                        <button class="btn btn-success btn-sm"
-                                            onclick="accionSolicitud(${s.id}, 'aprobar')">
-                                            <i class="fa fa-check"></i>
-                                        </button>
-                                        <button class="btn btn-danger btn-sm"
-                                            onclick="accionSolicitud(${s.id}, 'rechazar')">
-                                            <i class="fa fa-times"></i>
-                                        </button>
-                                    ` : ''}
-                                </td>
-                            </tr>`;
+                                            <td>${s.producto}</td>
+                                            <td>${selectIngreso}</td>
+                                            <td>
+                ${Array.isArray(s.nro_ot) && s.nro_ot.length
+                                    ? s.nro_ot.map(ot =>
+                                        `<span class="badge me-1">${ot}</span>`
+                                    ).join('')
+                                    : '-'
+                                }
+            </td>
+                                            <td>${s.cantidad}</td>
+                                            <td>${s.estado}</td>
+                                            <td>${s.usuario}</td>
+                                            <td>
+                                                ${s.estado === 'EN PROCESO' ? `
+                                                    <button class="btn btn-success btn-sm"
+                                                        onclick="accionSolicitud(${s.id}, 'aprobar')">
+                                                        <i class="fa fa-check"></i>
+                                                    </button>
+                                                    <button class="btn btn-danger btn-sm"
+                                                        onclick="accionSolicitud(${s.id}, 'rechazar')">
+                                                        <i class="fa fa-times"></i>
+                                                    </button>
+                                                ` : ''}
+                                            </td>
+                                        </tr>`;
                         });
 
                         html += `</tbody></table>`;
