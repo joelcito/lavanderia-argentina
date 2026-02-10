@@ -9,6 +9,7 @@
                 <th>OTs</th>
                 <th>Usuario</th>
                 <th>Fecha</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -44,6 +45,22 @@
                     <td>{{ $solicitud->usuarioCreador->name ?? '-' }}</td>
 
                     <td>{{ $solicitud->created_at->format('d/m/Y') }}</td>
+
+                    <td>
+                        @php
+                            $estado = $solicitud->estado;
+                            $clase = match ($estado) {
+                                'APROBADO' => 'bg-success',
+                                'RECHAZADO' => 'bg-danger',
+                                'EN PROCESO' => 'bg-warning text-dark',
+                                default => 'bg-secondary'
+                            };
+                        @endphp
+
+                        <span class="badge {{ $clase }}">
+                            {{ $estado }}
+                        </span>
+                    </td>
 
                     <td>
                         <button class="btn btn-icon btn-sm btn-info" title="Ver Detalle"
