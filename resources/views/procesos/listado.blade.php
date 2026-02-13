@@ -106,14 +106,25 @@
                         <input type="hidden" id="id">
                         <input type="hidden" id="maquinaria_id">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
+                                <label for="tipo_proceso_id" class="form-label">Tipo de Proceso</label>
+                                <select id="tipo_proceso_id"
+                                        class="form-select"
+                                        data-control="select2"
+                                        data-dropdown-parent="#modalLavanderia"
+                                        data-placeholder="Seleccione tipo de proceso..."
+                                        onchange="verificaTipoProceso()">
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
                                 <label for="producto_solicitud_aprobado" class="form-label">Producto Aprobados</label>
                                 <select name="producto_solicitud_aprobado" id="producto_solicitud_aprobado"
                                     class="form-select form-select-sm" onchange="buscarSolicitudesProducto()">
                                     <option value="">Seleccione producto...</option>
                                 </select>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <label for="producto_solicitud_aprobado" class="form-label">Ordenes Trabajos</label>
                                 <select name="ordenes_trabajos_solicitudes_aprobados"
                                     id="ordenes_trabajos_solicitudes_aprobados" class="form-select form-select-sm">
@@ -123,10 +134,7 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-4">
-                                <label for="tipo_proceso_id" class="form-label">Tipo de Proceso</label>
-                                <select id="tipo_proceso_id" class="form-control">
-                                    <option value="">Seleccione tipo de proceso...</option>
-                                </select>
+
                             </div>
                             <div class="col-md-4">
                                 <label for="fecha_ingreso" class="form-label">Fecha Ingreso</label>
@@ -297,28 +305,11 @@
                 }
             });
 
-
-
-
             $(document).ready(function () {
                 ajaxListado();
                 actualizarTemporizadores(); // iniciar temporizador
 
                 $('#facturas_seleccionadas, #producto_id_solicitud').select2()
-
-
-                // // Inicializar Repeater
-                // if (typeof $.fn.repeater === "function") {
-                //     $('#kt_docs_repeater_advanced').repeater({
-                //         initEmpty: false,
-                //         show: function () { $(this).slideDown(); },
-                //         hide: function (deleteElement) {
-                //             $(this).slideUp(deleteElement);
-                //         }
-                //     });
-                // } else {
-                //     console.error("jQuery Repeater no está cargado");
-                // }
 
                 $(document).on('change', '.order_trabajo_id', function () {
                     let fila = $(this).closest('[data-repeater-item]');
@@ -338,8 +329,6 @@
                         productos.forEach(p => productoSelect.append(`<option value="${p.id}">${p.nombre}</option>`));
                     });
                 });
-
-
 
                 // Guardar procesos
                 $('#guardarProcesosBtn').click(function () {
@@ -878,17 +867,17 @@
 
                 listadoProcesos.forEach((p, index) => {
                     tbody.append(`
-                                                                                <tr>
-                                                                                    <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
-                                                                                    <td>${$('#producto_solicitud_aprobado option:selected').text()}</td>
-                                                                                    <td>${$('#tipo_proceso_id option:selected').text()}</td>
-                                                                                    <td>${p.fecha_ingreso}</td>
-                                                                                    <td>${p.fecha_salida}</td>
-                                                                                    <td>
-                                                                                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            `);
+                        <tr>
+                            <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
+                            <td>${$('#producto_solicitud_aprobado option:selected').text()}</td>
+                            <td>${$('#tipo_proceso_id option:selected').text()}</td>
+                            <td>${p.fecha_ingreso}</td>
+                            <td>${p.fecha_salida}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
+                            </td>
+                        </tr>
+                    `);
                 });
             }
 
@@ -1373,6 +1362,25 @@
             function eliminarProducto(index) {
                 productosTemporal.splice(index, 1);
                 actualizarTablaTemporal();
+            }
+
+            function verificaTipoProceso(){
+
+                let   tipo_proceso_id = parseInt($('#tipo_proceso_id').val())
+                const IDS_SOLO_AGUA = @json(config('configuracion.ids_solo_agua'));
+                const IDS_SIN_AGUA  = @json(config('configuracion.ids_sin_agua'));
+                const IDS_AVECES    = @json(config('configuracion.ids_aveces_producto_aveses_no'));
+
+                if (IDS_SOLO_AGUA.includes(tipo_proceso_id)) {
+                    // console.log("SOLO AGUA");
+
+                }else if (IDS_SIN_AGUA.includes(tipo_proceso_id)) {
+                    console.log("👉 SIN AGUA");
+                }else if(IDS_AVECES.includes(tipo_proceso_id)) {
+                    console.log("👉 AVECES PRODUCTO");
+                }else{
+                    console.log("SI O SI PIDE");
+                }
             }
 
 
