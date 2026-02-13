@@ -15,7 +15,7 @@
                                 } */
 
         .maquina-container {
-            width: 220px;
+            width: 100px;
             margin: 10px;
             text-align: center;
             cursor: pointer;
@@ -43,32 +43,39 @@
             {{-- <div class="d-flex mb-4 overflow-auto"> --}}
                 <div class="d-flex flex-wrap mb-4">
                     @foreach ($maquinarias as $m)
-                        <div class="maquina-container"
-                            style="border:2px solid {{ $m->estado_maquina == 'DISPONIBLE' ? '#28a745' : '#dc3545' }};"
-                            onclick="modalNuevaLavanderiaConMaquinaria({{ $m->id }})">
-                            <div class="fw-bold">{{ ucfirst($m->tipo) }}</div>
+                        <div class="maquina-container" style="border:2px solid {{ $m->estado_maquina == 'DISPONIBLE' ? '#28a745' : '#dc3545' }};" >
+                            <div onclick="modalNuevaLavanderiaConMaquinaria({{ $m->id }})">
+                                <div class="fw-bold">{{ ucfirst($m->tipo) }}</div>
+                                <div class="text-muted small">
+                                    Equipo N° {{ $m->numero}}
+                                </div>
+                                <!-- Estado -->
+                                <span class="badge {{ $m->estado_maquina == 'DISPONIBLE' ? 'bg-success' : 'bg-danger' }}">
+                                    {{ $m->estado_maquina }}
+                                </span>
+                                <br>
 
-                            <div class="text-muted small">
-                                Equipo N° {{ $m->numero}}
+                                <!-- OTs activas -->
+                                <span class="badge bg-primary mt-1">
+                                    OTs activas: {{ $m->procesos_activos }}
+                                </span>
+                                <br>
+                                <!-- Imagen -->
+                                @if ($m->tipo == 'lavadora')
+                                    <img src="{{ asset('assets/img/lavadora.jpg') }}" alt="Lavadora">
+                                @else
+                                    <img src="{{ asset('assets/img/secadora.png') }}" alt="Secadora">
+                                @endif
                             </div>
-                            <!-- Estado -->
-                            <span class="badge {{ $m->estado_maquina == 'DISPONIBLE' ? 'bg-success' : 'bg-danger' }}">
-                                {{ $m->estado_maquina }}
-                            </span>
-                            <br>
 
-                            <!-- OTs activas -->
-                            <span class="badge bg-primary mt-1">
-                                OTs activas: {{ $m->procesos_activos }}
-                            </span>
-                            <br>
-
-                            <!-- Imagen -->
-                            @if ($m->tipo == 'lavadora')
-                                <img src="{{ asset('assets/img/lavadora.jpg') }}" alt="Lavadora">
-                            @else
-                                <img src="{{ asset('assets/img/secadora.png') }}" alt="Secadora">
-                            @endif
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-icon btn-sm btn-info" onclick="verProcesoEnMarchaMaquina({{$m->id}})"><i class="fa fa-eye"></i></button>
+                                </div>
+                                <div class="col-md-6">
+                                    {{-- <button class="btn btn-icon btn-sm btn-info"><i class="fa fa-eye"></i></button> --}}
+                                </div>
+                            </div>
                         </div>
                     @endforeach
                 </div>
@@ -206,7 +213,6 @@
         </div> <!-- modal-dialog -->
     </div>
 
-
     <!-- Modal Solicitud de Productos -->
     <div class="modal fade" id="modalSolicitudProductos" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -281,6 +287,26 @@
                         </thead>
                         <tbody></tbody>
                     </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="btnGuardarSolicitud">Guardar Solicitud</button>
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Solicitud de Productos -->
+    <div class="modal fade" id="modalSolicitudProductos" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ots en Maquinaria</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
 
                 </div>
                 <div class="modal-footer">
@@ -976,160 +1002,10 @@
                 });
             }
 
-
-
-            //solicitud
-
-
-            // let solicitudTemporal = [];
-            // let otSeleccionada = [];
-            // $('#factura_id_solicitud').on('change', function () {
-            //     let facturaId = $(this).val();
-            //     let select = $('#ot_agrupada');
-            //     select.html('<option value="">Cargando...</option>');
-            //     otSeleccionada = null;
-
-            //     if (!facturaId) {
-            //         select.html('<option value="">Seleccione OT...</option>');
-            //         return;
-            //     }
-
-            //     $.get("{{ route('solicitudes.otsPorFactura', ':id') }}".replace(':id', facturaId), function (data) {
-            //         select.empty().append('<option value="">Seleccione OT...</option>');
-            //         data.forEach(ot => {
-            //             select.append(`<option
-            //                             data-ids='${JSON.stringify(ot.ids)}'
-            //                             data-peso='${ot.peso_total}'>
-            //                             OT ${ot.nro_ot} (Peso: ${ot.peso_total})
-            //                         </option>`);
-            //         });
-            //     });
-            // });
-
-            // $('#ot_agrupada').on('change', function () {
-
-
-            //     let selected = $(this).find('option:selected');
-
-            //     if (!selected.val()) {
-            //         otSeleccionada = null;
-            //         $('#cantidad_solicitada').val('');
-            //         return;
-            //     }
-
-            //     otSeleccionada = {
-            //         ids: JSON.parse(selected.attr('data-ids')),
-            //         peso_total: parseFloat(selected.attr('data-peso'))
-            //     };
-
-            //     $('#cantidad_solicitada').val(otSeleccionada.peso_total);
-            // });
-
-            // $('#codigo_compra').on('change', function () {
-            //     let codigo = $(this).val();
-            //     let select = $('#producto_id_solicitud');
-            //     select.html('<option value="">Cargando...</option>');
-
-            //     if (!codigo) return;
-
-            //     $.get("{{ route('solicitudes.productosConStock') }}", { codigo_compra: codigo }, function (data) {
-            //         select.empty().append('<option value="">Seleccione producto...</option>');
-            //         data.forEach(p => {
-            //             select.append(`<option value="${p.producto_id}">${p.nombre} (Stock: ${p.stock})</option>`);
-            //         });
-            //     });
-            // });
-
-            // function agregarProductoTemporal() {
-
-            //     let productoId    = $('#producto_id_solicitud').val();
-            //     let productoTexto = $('#producto_id_solicitud option:selected').text();
-            //     let cantidadTotal = parseFloat($('#cantidad_solicitada').val());
-            //     let porcentaje    = parseFloat($('#porcentaje_solicitado').val()) || 0;
-
-            //     if (!productoId || !otSeleccionada || !cantidadTotal || !porcentaje) {
-            //         Swal.fire('Error', 'Complete todos los campos antes de agregar', 'warning');
-            //         return;
-            //     }
-
-            //     let cantidadCalculada = (cantidadTotal * porcentaje) / 100;
-
-            //     solicitudTemporal.push({
-            //         producto_id: productoId,
-            //         producto_nombre: productoTexto,
-            //         orden_trabajo_ids: otSeleccionada.ids,
-            //         cantidad: cantidadCalculada,
-            //         porcentaje: porcentaje
-            //     });
-
-            //     actualizarTablaTemporal();
-            // }
-
-            // function actualizarTablaTemporal() {
-            //     let tbody = $('#tabla_solicitud_temporal tbody');
-            //     tbody.empty();
-            //     let ordenesTrabasjo = @json($ordenes);
-            //     solicitudTemporal.forEach((item, index) => {
-            //         let nroOtes = item.orden_trabajo_ids[0];
-            //         let f = ordenesTrabasjo.find(o => o.id == nroOtes);
-            //         tbody.append(`
-            //                         <tr>
-            //                             <td>${item.producto_nombre}</td>
-            //                             <td>N° ${f.nro_ot}</td>
-            //                             <td>${item.porcentaje}%</td>
-            //                             <td>${item.cantidad.toFixed(2)}</td>
-            //                             <td>
-            //                                 <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProductoTemporal(${index})">Eliminar</button>
-            //                             </td>
-            //                         </tr>
-            //                     `);
-            //     });
-            // }
-
-            // function eliminarProductoTemporal(index) {
-            //     solicitudTemporal.splice(index, 1);
-            //     actualizarTablaTemporal();
-            // }
-
-            // function guardarSolicitud() {
-            //     if (!solicitudTemporal.length) {
-            //         Swal.fire('Error', 'Agregue al menos un producto al listado', 'warning');
-            //         return;
-            //     }
-
-            //     $.post("{{ route('solicitudes.store') }}", {
-            //         _token: "{{ csrf_token() }}",
-            //         solicitudes: solicitudTemporal
-            //     }, function (res) {
-            //         Swal.fire('OK', 'Solicitudes registradas correctamente', 'success');
-            //         $('#modalSolicitudProductos').modal('hide');
-            //         solicitudTemporal = [];
-            //         actualizarTablaTemporal();
-            //     }).fail(function (xhr) {
-            //         console.error(xhr.responseJSON);
-            //         Swal.fire('Error', 'Ocurrió un error al guardar la solicitud', 'error');
-            //     });
-            // }
-
-            // function cargarCodigosCompra() {
-            //     $.get("{{ route('solicitudes.codigosCompra') }}", function (data) {
-            //         let select = $('#codigo_compra');
-            //         select.empty().append('<option value="">Seleccione código...</option>');
-            //         data.forEach(c => {
-            //             select.append(`<option value="${c.codigo_compra}">${c.codigo_compra} (Stock: ${c.stock})</option>`);
-            //         });
-            //     });
-            // }
-
-            // cargarCodigosCompra();
-
             function abrirModalSolicitud() {
                 let modal = new bootstrap.Modal(document.getElementById('modalSolicitudProductos'));
                 modal.show();
             }
-
-
-
 
             let productosTemporal = [];
             let otSeleccionadasPorFactura = {};
@@ -1372,8 +1248,31 @@
                 const IDS_AVECES    = @json(config('configuracion.ids_aveces_producto_aveses_no'));
 
                 if (IDS_SOLO_AGUA.includes(tipo_proceso_id)) {
-                    // console.log("SOLO AGUA");
+                    $.ajax({
+                        url: "{{ route('solicitudes.buscarSolicitudesProducto') }}",
+                        type: 'POST',
+                        dataType: 'json',
+                        data: { productoId: productoId },
+                        success: function (respuesta) {
 
+                            let select = $('#ordenes_trabajos_solicitudes_aprobados')
+                            select.empty();
+                            select.append('<option value="">Seleccione solicitud...</option>');
+
+                            let fac = respuesta.data.fac;
+
+                            Object.entries(fac).forEach(([key, value]) => {
+                                select.append(
+                                    `<option value="${key}">${value}</option>`
+                                );
+                            });
+
+                        },
+                        error: function (err) {
+                            console.error('Error al cargar facturas:', err);
+                            alert('No se pudieron cargar las facturas.');
+                        }
+                    });
                 }else if (IDS_SIN_AGUA.includes(tipo_proceso_id)) {
                     console.log("👉 SIN AGUA");
                 }else if(IDS_AVECES.includes(tipo_proceso_id)) {
@@ -1381,6 +1280,36 @@
                 }else{
                     console.log("SI O SI PIDE");
                 }
+            }
+
+            function verProcesoEnMarchaMaquina(maquina){
+
+                $.ajax({
+                    url: "{{ route('procesos.verProcesoEnMarchaMaquina') }}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { maquina: maquina },
+                    success: function (respuesta) {
+
+                        // let select = $('#ordenes_trabajos_solicitudes_aprobados')
+                        // select.empty();
+                        // select.append('<option value="">Seleccione solicitud...</option>');
+
+                        // let fac = respuesta.data.fac;
+
+                        // Object.entries(fac).forEach(([key, value]) => {
+                        //     select.append(
+                        //         `<option value="${key}">${value}</option>`
+                        //     );
+                        // });
+
+                    },
+                    error: function (err) {
+                        console.error('Error al cargar facturas:', err);
+                        alert('No se pudieron cargar las facturas.');
+                    }
+                });
+
             }
 
 

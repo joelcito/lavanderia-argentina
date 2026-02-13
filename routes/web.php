@@ -219,12 +219,11 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/productos-aprobados-por-ot/{ot_id}', [ProcesosController::class, 'productosAprobadosPorOT'])->name('procesos.productosAprobadosPorOT');
         //////////////////
-// Procesos
         Route::post('/guardar-listado', [ProcesosController::class, 'guardarListado'])->name('procesos.guardarListado');
-
         Route::get('/obtener-ot/{id}', [ProcesosController::class, 'obtenerOT'])->name('procesos.obtenerOT')->middleware('auth');
-
         Route::post('/guardar-proceso-ot', [ProcesosController::class, 'guardarProcesoOT'])->name('procesos.guardarProcesoOT');
+
+        Route::post('/verProcesoEnMarchaMaquina', [ProcesosController::class, 'verProcesoEnMarchaMaquina'])->name('procesos.verProcesoEnMarchaMaquina');
 
     });
 

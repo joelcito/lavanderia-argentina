@@ -225,17 +225,19 @@ class SolicitudController extends Controller
 
 
                     DB::table('movimientos')->insert([
-                        'producto_id' => $s->producto_id,
-                        'salida' => $cantidadASalir,
-                        'ingreso' => 0,
-                        'codigo_compra' => $ingresoMovimiento->codigo_compra,
-                        'fecha' => now(),
-                        'descripcion' => 'Salida por aprobación de solicitud #' . $s->id,
+                        'producto_id'        => $s->producto_id,
+                        'salida'             => $cantidadASalir,
+                        'sucursal_id'        => $ingresoMovimiento->sucursal_id,
+                        'solicitud_id'       => $s->id,
+                        'ingreso'            => 0,
+                        'codigo_compra'      => $ingresoMovimiento->codigo_compra,
+                        'fecha'              => now(),
+                        'descripcion'        => 'Salida por aprobación de solicitud #' . $s->id,
                         'usuario_creador_id' => Auth::id(),
-                        'movimiento_id' => $ingresoId,
-                        'estado' => 'ACTIVO',
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'movimiento_id'      => $ingresoId,
+                        'estado'             => 'ACTIVO',
+                        'created_at'         => now(),
+                        'updated_at'         => now(),
                     ]);
 
                     $cantidadRestante -= $cantidadASalir;
@@ -670,8 +672,8 @@ class SolicitudController extends Controller
             $solicitudes = Solicitud::where('producto_id', $producto_id)
                 ->where('estado', 'APROBADO')
                 ->get();
-            $fac = "";
 
+            $fac = "";
             $solicitudArray = [];
 
             foreach ($solicitudes as $key => $solicitud) {
