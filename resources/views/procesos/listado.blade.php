@@ -141,33 +141,30 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-4">
-
-                            </div>
-                            <div class="col-md-4">
                                 <label for="fecha_ingreso" class="form-label">Fecha Ingreso</label>
                                 <input type="datetime-local" id="fecha_ingreso" class="form-control">
                             </div>
                             <div class="col-md-4">
+                                <label for="tiempo" class="form-label">Tiempo (Minutos)</label>
+                                <input type="number" id="tiempo" class="form-control" onkeyup="calcularTiempoFinal()">
+                            </div>
+                            <div class="col-md-4">
                                 <label for="fecha_salida" class="form-label">Fecha Salida</label>
-                                <input type="datetime-local" id="fecha_salida" class="form-control">
+                                <input readonly type="datetime-local" id="fecha_salida" class="form-control">
                             </div>
-
-                            <div class="col-md-3">
-                                <label for="tiempo" class="form-label">Tiempo</label>
-                                <input type="text" id="tiempo" class="form-control">
-                            </div>
-
-                            <div class="col-md-3">
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-4">
                                 <label for="temperatura" class="form-label">Temperatura</label>
                                 <input type="text" id="temperatura" class="form-control">
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="ph" class="form-label">PH</label>
                                 <input type="text" id="ph" class="form-control">
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label for="rb" class="form-label">RB</label>
                                 <input type="text" id="rb" class="form-control">
                             </div>
@@ -224,73 +221,91 @@
                 </div>
 
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label>Facturas / Orden Recibo (puede seleccionar varias)</label>
-                        <select id="facturas_seleccionadas" class="form-select" multiple>
-                            @foreach($facturas as $factura)
-                                <option value="{{ $factura->id }}" data-nro="{{ $factura->numero_factura }}">
-                                    {{ $factura->numero_factura }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div id="ots_por_factura_container" class="mb-3"></div>
-                    <div class="mb-3">
 
-                        <label>Producto (con stock)</label>
-                        <select id="producto_id_solicitud" class="form-select">
-                            <option value="">Seleccione producto...</option>
-                            @foreach ($productos as $producto)
-                                <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="row mb-3">
-                        <!-- <div class="col-md-6">
-                            <label>Cantidad total (peso de todas las OTs)</label>
-                            <input type="number" step="0.01" id="cantidad_solicitada" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Porcentaje (%)</label>
-                            <input type="number" step="0.01" id="porcentaje_solicitado" class="form-control"
-                                placeholder="Ej: 3">
-                        </div> -->
 
-                        <div class="col-md-4">
-                            <label>Peso total seleccionado (kg)</label>
-                            <input type="number" id="peso_total_ot" class="form-control" readonly>
-                        </div>
 
-                        <div class="col-md-4">
-                            <label>Cantidad solicitada (kg)</label>
-                            <input type="number" step="0.01" id="cantidad_solicitada" class="form-control">
-                        </div>
+                    <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#kt_tab_pane_7">NUEVA SOLICITUD</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_8">SOLICITUD PARA AGRUPADOS</a>
+                        </li>
+                    </ul>
 
-                        <div class="col-md-4">
-                            <label>Porcentaje (%)</label>
-                            <input type="number" step="0.01" id="porcentaje_solicitado" class="form-control">
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="kt_tab_pane_7" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label>Facturas / Orden Recibo (puede seleccionar varias)</label>
+                                        <select id="facturas_seleccionadas" class="form-select" multiple>
+                                            @foreach($facturas as $factura)
+                                                <option value="{{ $factura->id }}" data-nro="{{ $factura->numero_factura }}">
+                                                    {{ $factura->numero_factura }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div id="ots_por_factura_container" class="mb-3"></div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-3">
+                                            <label>Producto (con stock)</label>
+                                            <select id="producto_id_solicitud" class="form-select">
+                                                <option value="">Seleccione producto...</option>
+                                                @foreach ($productos as $producto)
+                                                    <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Pe. Tot. seleccionado (kg)</label>
+                                            <input type="number" id="peso_total_ot" class="form-control" readonly>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label>Cantidad solicitada (g)</label>
+                                            <input type="number" step="0.01" id="cantidad_solicitada" class="form-control">
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label>Porcentaje (%)</label>
+                                            <input type="number" step="0.01" id="porcentaje_solicitado" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <button class="btn btn-success btn-sm w-100" type="button" id="btnAgregarProducto"><i class="fa fa-down-long"></i>Agregar al listado</button>
+                                    </div>
+                                    <table class="table table-bordered" id="tabla_solicitud_temporal">
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Facturas y OTs</th>
+                                                <th>Porcentaje (%)</th>
+                                                <th>Cantidad</th>
+                                                <th>Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button type="button" class="btn btn-primary btn-sm w-100" id="btnGuardarSolicitud"><i class="fa fa-save"></i>Guardar Solicitud</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="kt_tab_pane_8" role="tabpanel">
+                            ...
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <button class="btn btn-success" type="button" id="btnAgregarProducto">Agregar al
-                            listado</button>
-                    </div>
-                    <table class="table table-bordered" id="tabla_solicitud_temporal">
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Facturas y OTs</th>
-                                <th>Porcentaje (%)</th>
-                                <th>Cantidad</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+
+
+
 
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" id="btnGuardarSolicitud">Guardar Solicitud</button>
                     <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
                 </div>
 
@@ -299,18 +314,18 @@
     </div>
 
     <!-- Modal Solicitud de Productos -->
-    <div class="modal fade" id="modalSolicitudProductos" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade" id="modalProcesosMaquina" tabindex="-1">
+        <div class="modal-dialog" style="max-width: 60%">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Ots en Maquinaria</h5>
+                    <h5 class="modal-title">Ots en Maquinaria <span class="text-info" id="texto-maquina-proceso"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-
+                    <div id="table_procesos_maquina"></div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" id="btnGuardarSolicitud">Guardar Solicitud</button>
+                    {{-- <button class="btn btn-primary" id="btnGuardarSolicitud">Guardar Solicitud</button> --}}
                     <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
                 </div>
 
@@ -1041,7 +1056,8 @@
                                 const wrapper = $('<div class="form-check form-check-inline"></div>');
 
                                 const input = $('<input class="form-check-input" type="checkbox">')
-                                    .attr('data-ot-id', ot.ids[0])
+                                    // .attr('data-ot-id', ot.ids[0])
+                                    .attr('data-ot-id', ot.ids)
                                     .attr('data-nro-ot', ot.nro_ot)
                                     .attr('data-peso', ot.peso_total)
                                     .attr('data-factura-id', facturaId);
@@ -1108,10 +1124,18 @@
                             }
 
                             if (otId && nroOt) {
-                                ots.push({
-                                    id: parseInt(otId),
-                                    nro_ot: parseInt(nroOt)
+                                const otIdsArray = otId.toString().split(',');
+                                otIdsArray.forEach(id => {
+                                    ots.push({
+                                        id: parseInt(id.trim()),
+                                        nro_ot: parseInt(nroOt)
+                                    });
                                 });
+
+                                // ots.push({
+                                //     id: parseInt(otId),
+                                //     nro_ot: parseInt(nroOt)
+                                // });
                             }
                         });
 
@@ -1128,6 +1152,10 @@
                         Swal.fire('Error', 'Seleccione al menos una OT', 'warning');
                         return;
                     }
+
+                    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                    console.log(facturas);
+                    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 
                     productosTemporal.push({
                         producto_id: parseInt(productoId),
@@ -1155,6 +1183,10 @@
                         Swal.fire('Error', 'Agregue al menos un producto', 'warning');
                         return;
                     }
+
+                    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                    console.log(productosTemporal);
+                    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
                     const solicitudesPayload = productosTemporal.map(p => ({
                         producto_id: p.producto_id,
@@ -1291,6 +1323,17 @@
                     data: { maquina: maquina },
                     success: function (respuesta) {
 
+                        if(respuesta.estado){
+
+                            console.log(respuesta);
+
+                            $('#texto-maquina-proceso').text(respuesta.data.dato)
+                            $('#table_procesos_maquina').html(respuesta.data.listado)
+                            $('#modalProcesosMaquina').modal('show')
+                        }else{
+
+                        }
+
                         // let select = $('#ordenes_trabajos_solicitudes_aprobados')
                         // select.empty();
                         // select.append('<option value="">Seleccione solicitud...</option>');
@@ -1306,10 +1349,25 @@
                     },
                     error: function (err) {
                         console.error('Error al cargar facturas:', err);
-                        alert('No se pudieron cargar las facturas.');
+                        // alert('No se pudieron cargar las facturas.');
                     }
                 });
 
+            }
+
+            function calcularTiempoFinal(){
+                let fechaIni = $('#fecha_ingreso').val()
+                let tiempo = $('#tiempo').val()
+                if(!fechaIni || !tiempo) return;
+                let fecha = new Date(fechaIni);
+                fecha.setMinutes(fecha.getMinutes() + parseInt(tiempo));
+                let yyyy = fecha.getFullYear();
+                let mm   = String(fecha.getMonth() + 1).padStart(2,'0');
+                let dd   = String(fecha.getDate()).padStart(2,'0');
+                let hh   = String(fecha.getHours()).padStart(2,'0');
+                let min  = String(fecha.getMinutes()).padStart(2,'0');
+                let fechaFinal = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+                $('#fecha_salida').val(fechaFinal);
             }
 
 

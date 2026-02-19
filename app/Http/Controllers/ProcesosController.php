@@ -220,18 +220,19 @@ class ProcesosController extends Controller
                 foreach ($ots as $key => $ot) {
                     $proceso = Proceso::create([
                         // 'order_trabajo_id' => $ot,
-                        'producto_id'     => $item['producto_id'] ?? null,
-                        'solicitud_id'    => $solicitud->id,
-                        'maquinaria_id'   => $item['maquinaria_id'],
-                        'tipo_proceso_id' => $item['tipo_proceso_id'],
-                        'fecha_ingreso'   => $item['fecha_ingreso'],
-                        'fecha_salida'    => $item['fecha_salida'] ?? null,
-                        'tiempo'          => $item['tiempo'] ?? null,
-                        'temperatura'     => $item['temperatura'] ?? null,
-                        'ph'              => $item['ph'] ?? null,
-                        'rb'              => $item['rb'] ?? null,
-                        'descripcion'     => $item['descripcion'] ?? null,
-                        'estado'          => 'TRABAJANDO',
+                        'producto_id'      => $item['producto_id'] ?? null,
+                        'solicitud_id'     => $solicitud->id,
+                        'maquinaria_id'    => $item['maquinaria_id'],
+                        'tipo_proceso_id'  => $item['tipo_proceso_id'],
+                        'fecha_ingreso'    => $item['fecha_ingreso'],
+                        'fecha_salida'     => $item['fecha_salida'] ?? null,
+                        'tiempo'           => $item['tiempo'] ?? null,
+                        'temperatura'      => $item['temperatura'] ?? null,
+                        'ph'               => $item['ph'] ?? null,
+                        'rb'               => $item['rb'] ?? null,
+                        'descripcion'      => $item['descripcion'] ?? null,
+                        'estado'           => 'TRABAJANDO',
+                        'order_trabajo_id' => $ot,
                     ]);
 
                     // Cambiar estado de la OT a TRABAJANDO si aplica
@@ -614,9 +615,11 @@ class ProcesosController extends Controller
 
             $maquina_id = $request->input('maquina');
 
-            $solicitudes = Proceso::select(
-                                            'solicitudes.id',
-                                            'procesos.id as preceso_id',
+            $procesos = Proceso::select(
+                                            'procesos.maquinaria_id',
+                                            'procesos.solicitud_id',
+                                            'procesos.producto_id',
+                                            'procesos.tipo_proceso_id',
                                             'procesos.fecha_ingreso',
                                             'procesos.fecha_salida',
                                             'procesos.tiempo',
@@ -624,44 +627,74 @@ class ProcesosController extends Controller
                                             'procesos.ph',
                                             'procesos.rb',
                                             'procesos.descripcion',
-                                            'procesos.descripcion',
-
+                                            'procesos.estado',
                                             )
-                                ->join('solicitudes', 'solicitudes.id','=','procesos.solicitud_id')
                                 ->where('procesos.maquinaria_id', $maquina_id)
                                 ->where('procesos.estado', 'TRABAJANDO')
-                                ->groupBy('procesos.solicitud_id')
+                                ->groupBy(
+                                        'procesos.maquinaria_id',
+                                        'procesos.solicitud_id',
+                                        'procesos.producto_id',
+                                        'procesos.tipo_proceso_id',
+                                        'procesos.fecha_ingreso',
+                                        'procesos.fecha_salida',
+                                        'procesos.tiempo',
+                                        'procesos.temperatura',
+                                        'procesos.ph',
+                                        'procesos.rb',
+                                        'procesos.descripcion',
+                                        'procesos.estado',
+                                    )
                                 ->get();
+
+            // dd($solicitudes);
 
             $fac = "";
             $solicitudArray = [];
 
-            // foreach ($solicitudes as $key => $solicitud) {
-                $soliBuscado = Solicitud::find($solicitudes->id);
+            foreach ($procesos as $key => $proceso) {
+
+                // dd($solicitud['id'] );
+
+                $soliBuscado = Solicitud::find($proceso->solicitud_id);
                 $ordenesTrabajo = $soliBuscado->ordenes_trabajo;
                 $fac = "";
                 foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
                     $fac = $fac . " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
                     $ots = $ordenTrabajo['ots'];
+                    $arrayOts = array();
                     foreach ($ots as $key => $ot) {
                         $ordenTrabajoBuscado = Order_trabajo::find($ot);
-                        $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
-                        if ((count($ots) - 1) == $key)
-                            $fac = $fac . "]";
-                        else
-                            $fac = $fac . " - ";
+                        if(!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)){
+                            $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
+                            array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
+                            if ((count($ots) - 1) == $key)
+                                $fac = $fac . "]";
+                            else
+                                $fac = $fac . " - ";
+                        }
                     }
                 }
 
-                $solicitudArray[$solicitudes->id] = $fac;
-            // }
+                $solicitudArray[$proceso->solicitud_id] = $fac;
+            }
+
+            // dd(
+            //     $solicitudArray,
+            //     $procesos,
+            //     count($procesos)
+            // );
 
             $valores = [
-                'solicitudes' => $solicitudes,
-                'fac' => $solicitudArray
+                'procesos' => $procesos,
+                'fac' => $solicitudArray,
+                'listado' => view('procesos.verProcesoEnMarchaMaquina')->with(compact('procesos', 'fac'))->render(),
+                'dato' => $fac
             ];
 
-            dd($valores);
+            // dd($valores);
+
+            return Respuesta::success($valores, "SE PROCESO CON EXITO");
 
         }else{
             $data = Respuesta::error(null, "No existe");

@@ -554,8 +554,8 @@ class FacturaController extends Controller
         $facturaId = $request->factura_id;
 
         $ots = Order_Trabajo::where('factura_id', $facturaId)
-            ->where('tipo', 'ORDEN_TRABAJO') // <-- filtramos solo tipo ORDEN_TRABAJO
-            ->get(['id', 'nro_ot', 'cantidad']); // columnas que necesitas
+                            ->where('tipo', 'ORDEN_TRABAJO') // <-- filtramos solo tipo ORDEN_TRABAJO
+                            ->get(['id', 'nro_ot', 'cantidad']); // columnas que necesitas
 
         return response()->json($ots);
 
