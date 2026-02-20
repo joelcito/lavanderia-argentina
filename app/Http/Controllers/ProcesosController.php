@@ -22,7 +22,7 @@ class ProcesosController extends Controller
 
     public function listado()
     {
-        $maquinarias = Maquinaria::all();
+        // $maquinarias = Maquinaria::all();
         $productos = Producto::all();
         $ordenes = Order_trabajo::with(['factura'])->get();
         // Pasar los datos a la vista
@@ -33,7 +33,7 @@ class ProcesosController extends Controller
             })
             ->get();
 
-        return view('procesos.listado', compact('maquinarias', 'productos', 'ordenes', 'facturas'));
+        return view('procesos.listado', compact('productos', 'ordenes', 'facturas'));
     }
 
 
@@ -694,7 +694,7 @@ class ProcesosController extends Controller
 
             // dd($valores);
 
-            return Respuesta::success($valores, "SE PROCESO CON EXITO");
+            $data = Respuesta::success($valores, "SE PROCESO CON EXITO");
 
         }else{
             $data = Respuesta::error(null, "No existe");
@@ -703,9 +703,97 @@ class ProcesosController extends Controller
 
     }
 
+    public function  finalizarProceso(Request $request){
 
+        if($request->ajax()){
 
+            $maquina_id = $request->input('maquina');
 
+            $procesos = Proceso::where('maquinaria_id', $maquina_id)
+                                ->where('estado', 'TRABAJANDO')
+                                ->get();
 
+            if($procesos){
+                foreach ($procesos as $key => $proceso) {
+                    $proceso->estado = 'EN PROCESO';
+                    $proceso->save();
+                }
+                // AHORA LA MAQUINA
+                $maquina = Maquinaria::find($maquina_id);
+                $maquina->estado_maquina = 'DISPONIBLE';
+                $maquina->save();
+
+                $data = Respuesta::success(null, "SE FINALIZO CON EXITO");
+            }else{
+                $data = Respuesta::error(null, "NO SE ENCONTRO PROCESOS EN LA MAQUINA");
+            }
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+    }
+
+    public function buscarSolicitudesProductoSoloAgua(Request $request){
+        if($request->ajax()){
+
+            // dd($request->all());
+
+            $solicitudes = Solicitud::where('estado', 'UTILIZADO')
+                                    ->get();
+
+            $fac = "";
+            $solicitudArray = [];
+
+            foreach ($solicitudes as $key => $solicitud) {
+                $ordenesTrabajo = $solicitud->ordenes_trabajo;
+                $fac = "";
+                foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
+                    $fac = $fac . " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
+                    $ots = $ordenTrabajo['ots'];
+                    $arrayOts = array();
+                    foreach ($ots as $key => $ot) {
+                        $ordenTrabajoBuscado = Order_trabajo::find($ot);
+                        if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
+                            $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
+                            array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
+                            if ((count($ots) - 1) == $key)
+                                $fac = $fac . "]";
+                            else
+                                $fac = $fac . " - ";
+                        }
+                    }
+                }
+
+                $solicitudArray[$solicitud->id] = $fac;
+            }
+
+            $valores = [
+                'solicitudes' => $solicitudes,
+                'fac' => $solicitudArray
+            ];
+
+            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+    }
+
+    public function ajaxListadoMaquinas(Request $request){
+
+        if($request->ajax()){
+            $maquinarias = Maquinaria::all();
+            $valores = [
+                'listado' => view('procesos.ajaxListadoMaquinas')->with(compact('maquinarias'))->render()
+            ];
+            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+
+    }
 
 }

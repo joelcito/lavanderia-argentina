@@ -279,26 +279,46 @@ class SolicitudController extends Controller
     public function otsPorFactura($factura_id)
     {
         try {
+
+            // dd($factura_id);
+
+            // $ots = Order_Trabajo::where('factura_id', $factura_id)
+            //                     ->where('estado', 'RECEPCIONADO')
+            //                     ->where('tipo', 'ORDEN_TRABAJO')
+            //                     ->get();
+
             $ots = Order_Trabajo::where('factura_id', $factura_id)
-                                ->where('estado', 'RECEPCIONADO')
                                 ->where('tipo', 'ORDEN_TRABAJO')
+                                ->where(function ($query) {
+                                    $query->where('estado', 'RECEPCIONADO')
+                                        ->orWhere('estado', 'TRABAJANDO');
+                                })
                                 ->get();
 
             // SACAMOS LAS SOLICITUDES CON ESE IF_FACTURA
-            $solicitudes = DB::table('solicitudes as s')
-                            ->whereRaw("
-                                    EXISTS (
-                                        SELECT 1
-                                        FROM JSON_TABLE(
-                                            s.ordenes_trabajo,
-                                            '$[*]' COLUMNS (
-                                                factura_id INT PATH '$.factura_id'
-                                            )
-                                        ) jt
-                                        WHERE jt.factura_id = ?
+            // $solicitudes = DB::table('solicitudes as s')
+            //                 ->whereRaw("
+            //                         EXISTS (
+            //                             SELECT 1
+            //                             FROM JSON_TABLE(
+            //                                 s.ordenes_trabajo,
+            //                                 '$[*]' COLUMNS (
+            //                                     factura_id INT PATH '$.factura_id'
+            //                                 )
+            //                             ) jt
+            //                             WHERE jt.factura_id = ?
+            //                         )
+            //                     ", [$factura_id])
+            //                 ->get();
+
+            $solicitudes = DB::table('solicitudes')
+                                ->whereRaw("
+                                    JSON_CONTAINS(
+                                        JSON_EXTRACT(ordenes_trabajo, '$[*].factura_id'),
+                                        ?
                                     )
                                 ", [$factura_id])
-                            ->get();
+                                ->get();
 
             $otsUsadas = collect();
             foreach ($solicitudes as $solicitud) {
@@ -311,6 +331,7 @@ class SolicitudController extends Controller
                     }
                 }
             }
+
             $otsUsadas = $otsUsadas->unique()->values();
 
             if ($ots->isEmpty()) {
@@ -319,13 +340,15 @@ class SolicitudController extends Controller
 
             $agrupadas = $ots->groupBy('nro_ot')->map(function ($grupo, $nro_ot) use ($otsUsadas) {
                 $ids = $grupo->pluck('id')->toArray();
-                $peso_total = $grupo->sum('peso'); // columna real
+                $peso_total = $grupo->sum('peso');
+
+                $coincide = collect($ids)->intersect($otsUsadas)->isNotEmpty();
 
                 return [
                     'nro_ot'     => $nro_ot,
                     'ids'        => $ids,
                     'peso_total' => $peso_total,
-                    'disabled'   => true
+                    'disabled'   => $coincide
                 ];
             })->values();
 
@@ -596,8 +619,8 @@ class SolicitudController extends Controller
             $producto_id = $request->input('productoId');
 
             $solicitudes = Solicitud::where('producto_id', $producto_id)
-                ->where('estado', 'APROBADO')
-                ->get();
+                                    ->where('estado', 'APROBADO')
+                                    ->get();
 
             $fac = "";
             $solicitudArray = [];

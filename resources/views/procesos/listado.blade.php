@@ -41,45 +41,7 @@
 
             <h3 class="fw-bold mb-3">Maquinarias Disponibles</h3>
             {{-- <div class="d-flex mb-4 overflow-auto"> --}}
-                <div class="d-flex flex-wrap mb-4">
-                    @foreach ($maquinarias as $m)
-                        <div class="maquina-container" style="border:2px solid {{ $m->estado_maquina == 'DISPONIBLE' ? '#28a745' : '#dc3545' }};" >
-                            <div onclick="modalNuevaLavanderiaConMaquinaria({{ $m->id }})">
-                                <div class="fw-bold">{{ ucfirst($m->tipo) }}</div>
-                                <div class="text-muted small">
-                                    Equipo N° {{ $m->numero}}
-                                </div>
-                                <!-- Estado -->
-                                <span class="badge {{ $m->estado_maquina == 'DISPONIBLE' ? 'bg-success' : 'bg-danger' }}">
-                                    {{ $m->estado_maquina }}
-                                </span>
-                                <br>
-
-                                <!-- OTs activas -->
-                                <span class="badge bg-primary mt-1">
-                                    OTs activas: {{ $m->procesos_activos }}
-                                </span>
-                                <br>
-                                <!-- Imagen -->
-                                @if ($m->tipo == 'lavadora')
-                                    <img src="{{ asset('assets/img/lavadora.jpg') }}" alt="Lavadora">
-                                @else
-                                    <img src="{{ asset('assets/img/secadora.png') }}" alt="Secadora">
-                                @endif
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <button type="button" class="btn btn-icon btn-sm btn-info" onclick="verProcesoEnMarchaMaquina({{$m->id}})"><i class="fa fa-eye"></i></button>
-                                </div>
-                                <div class="col-md-6">
-                                    {{-- <button class="btn btn-icon btn-sm btn-info"><i class="fa fa-eye"></i></button> --}}
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
+                <div id="bloque-mquinas"></div>
                 <button class="btn btn-sm btn-primary" onclick="abrirModalSolicitud()">
                     Solicitar productos
                 </button>
@@ -154,29 +116,28 @@
                             </div>
                         </div>
                         <div class="row mt-2">
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                                 <label for="temperatura" class="form-label">Temperatura</label>
                                 <input type="text" id="temperatura" class="form-control">
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                                 <label for="ph" class="form-label">PH</label>
                                 <input type="text" id="ph" class="form-control">
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                                 <label for="rb" class="form-label">RB</label>
                                 <input type="text" id="rb" class="form-control">
                             </div>
 
-                            <div class="col-12">
+                            <div class="col-6">
                                 <label for="descripcion" class="form-label">Descripción</label>
                                 <textarea id="descripcion" class="form-control" rows="2"></textarea>
                             </div>
 
-                            <div class="col-12 text-end">
-                                <button type="button" class="btn btn-primary" id="agregarAlListado">Agregar al
-                                    listado</button>
+                            <div class="col-12 text-end mt-5">
+                                <button type="button" class="btn btn-primary btn-sm w-100" id="agregarAlListado"><i class="fa fa-down-long"></i>Agregar al listado</button>
                             </div>
                         </div>
                     </form>
@@ -202,7 +163,7 @@
                         </table>
                     </div>
                     <div class="col-12 text-end mt-3">
-                        <button type="button" class="btn btn-success" id="guardarListado">Guardar listado</button>
+                        <button type="button" class="btn btn-success btn-sm w-100" id="guardarListado"><i class="fa fa-save"></i>Guardar listado</button>
                     </div>
 
                 </div> <!-- modal-body -->
@@ -340,6 +301,10 @@
         <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
         <script>
 
+            const IDS_SOLO_AGUA = @json(config('configuracion.ids_solo_agua'));
+            const IDS_SIN_AGUA  = @json(config('configuracion.ids_sin_agua'));
+            const IDS_AVECES    = @json(config('configuracion.ids_aveces_producto_aveses_no'));
+
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -349,6 +314,7 @@
             $(document).ready(function () {
                 ajaxListado();
                 actualizarTemporizadores(); // iniciar temporizador
+                ajaxListadoMaquinas();
 
                 $('#facturas_seleccionadas, #producto_id_solicitud').select2()
 
@@ -497,6 +463,19 @@
                     $('#select-producto').html('<option value="">Seleccione producto...</option>');
                 });
             });
+
+            function ajaxListadoMaquinas(){
+                $.ajax({
+                    url: "{{ route('procesos.ajaxListadoMaquinas') }}",
+                    method: "POST",
+                    data: {},
+                    success: function (res) {
+                        if (res.estado) {
+                            $('#bloque-mquinas').html(res.data.listado);
+                        }
+                    }
+                });
+            }
 
             function ajaxListado() {
                 $.ajax({
@@ -871,30 +850,32 @@
 
             function agregarProcesoAlListado() {
                 let proceso = {
-                    order_trabajo_id: $('#order_trabajo_id_lavanderia').val(),
-                    producto_id: $('#producto_solicitud_aprobado').val(),
-                    maquinaria_id: $('#maquinaria_id').val(),
-                    tipo_proceso_id: $('#tipo_proceso_id').val(),
-                    fecha_ingreso: $('#fecha_ingreso').val(),
-                    fecha_salida: $('#fecha_salida').val(),
-                    cantidad: $('#cantidad').val() || null,
-                    porcentaje: $('#porcentaje').val() || null,
-                    gr_litro: $('#gr_litro').val() || null,
-                    tiempo: $('#tiempo').val() || null,
-                    temperatura: $('#temperatura').val() || null,
-                    ph: $('#ph').val() || null,
-                    rb: $('#rb').val() || null,
-                    descripcion: $('#descripcion').val(),
-                    estado: 'TRABAJANDO',
-                    producto_solicitud_aprobado: $('#producto_solicitud_aprobado').val(),
+                    order_trabajo_id                      : $('#order_trabajo_id_lavanderia').val(),
+                    producto_id                           : $('#producto_solicitud_aprobado').val(),
+                    maquinaria_id                         : $('#maquinaria_id').val(),
+                    tipo_proceso_id                       : $('#tipo_proceso_id').val(),
+                    fecha_ingreso                         : $('#fecha_ingreso').val(),
+                    fecha_salida                          : $('#fecha_salida').val(),
+                    cantidad                              : $('#cantidad').val() || null,
+                    porcentaje                            : $('#porcentaje').val() || null,
+                    gr_litro                              : $('#gr_litro').val() || null,
+                    tiempo                                : $('#tiempo').val() || null,
+                    temperatura                           : $('#temperatura').val() || null,
+                    ph                                    : $('#ph').val() || null,
+                    rb                                    : $('#rb').val() || null,
+                    descripcion                           : $('#descripcion').val(),
+                    estado                                : 'TRABAJANDO',
+                    producto_solicitud_aprobado           : $('#producto_solicitud_aprobado').val(),
                     ordenes_trabajos_solicitudes_aprobados: $('#ordenes_trabajos_solicitudes_aprobados').val()
                 };
 
                 // Validaciones básicas
                 // if (!proceso.order_trabajo_id || !proceso.producto_id || !proceso.tipo_proceso_id) {
                 if (!proceso.producto_id || !proceso.tipo_proceso_id) {
-                    alert("Debe seleccionar OT, producto y tipo de proceso.");
-                    return;
+                    if(!IDS_SOLO_AGUA.includes(parseInt(proceso.tipo_proceso_id))){
+                        Swal.fire('Error', 'Debe seleccionar OT, producto y tipo de proceso.', 'warning');
+                        return;
+                    }
                 }
 
                 listadoProcesos.push(proceso);
@@ -960,6 +941,7 @@
                             ajaxListado();
                             listadoProcesos = [];
                             mostrarListadoTemporal();
+                            ajaxListadoMaquinas();
                             $('#modalLavanderia').modal('hide');
                         } else {
                             alert('No se guardaron los procesos.');
@@ -1062,8 +1044,12 @@
                                     .attr('data-peso', ot.peso_total)
                                     .attr('data-factura-id', facturaId);
 
-                                const label = $('<label class="form-check-label"></label>')
-                                    .text('OT ' + ot.nro_ot + ' (Peso: ' + ot.peso_total + ')');
+                                    if (ot.disabled) {
+                                        input.prop('disabled', true);
+                                        input.addClass('is-invalid');
+                                    }
+
+                                const label = $('<label class="form-check-label"></label>').text('OT ' + ot.nro_ot + ' (Peso: ' + ot.peso_total + ')');
 
                                 wrapper.append(input).append(label);
                                 div.append(wrapper);
@@ -1275,17 +1261,16 @@
             function verificaTipoProceso(){
 
                 let   tipo_proceso_id = parseInt($('#tipo_proceso_id').val())
-                const IDS_SOLO_AGUA = @json(config('configuracion.ids_solo_agua'));
-                const IDS_SIN_AGUA  = @json(config('configuracion.ids_sin_agua'));
-                const IDS_AVECES    = @json(config('configuracion.ids_aveces_producto_aveses_no'));
 
                 if (IDS_SOLO_AGUA.includes(tipo_proceso_id)) {
                     $.ajax({
-                        url: "{{ route('solicitudes.buscarSolicitudesProducto') }}",
+                        url: "{{ route('procesos.buscarSolicitudesProductoSoloAgua') }}",
                         type: 'POST',
                         dataType: 'json',
-                        data: { productoId: productoId },
+                        // data: { productoId: productoId },
                         success: function (respuesta) {
+
+                            console.log(respuesta);
 
                             let select = $('#ordenes_trabajos_solicitudes_aprobados')
                             select.empty();
@@ -1324,27 +1309,12 @@
                     success: function (respuesta) {
 
                         if(respuesta.estado){
-
-                            console.log(respuesta);
-
                             $('#texto-maquina-proceso').text(respuesta.data.dato)
                             $('#table_procesos_maquina').html(respuesta.data.listado)
                             $('#modalProcesosMaquina').modal('show')
                         }else{
 
                         }
-
-                        // let select = $('#ordenes_trabajos_solicitudes_aprobados')
-                        // select.empty();
-                        // select.append('<option value="">Seleccione solicitud...</option>');
-
-                        // let fac = respuesta.data.fac;
-
-                        // Object.entries(fac).forEach(([key, value]) => {
-                        //     select.append(
-                        //         `<option value="${key}">${value}</option>`
-                        //     );
-                        // });
 
                     },
                     error: function (err) {
@@ -1370,6 +1340,52 @@
                 $('#fecha_salida').val(fechaFinal);
             }
 
+            function finalizarProceso(maquina){
+
+
+                Swal.fire({
+                    title: "Esta seguro de finalizar el proceso?",
+                    text: "No podras revertir eso!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, Finalizar!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+                            url: "{{ route('procesos.finalizarProceso') }}",
+                            type: 'POST',
+                            dataType: 'json',
+                            data: { maquina: maquina },
+                            success: function (respuesta) {
+
+                                if(respuesta.estado){
+                                    $('#modalProcesosMaquina').modal('hide');
+                                    Swal.fire({
+                                        title: "FINALIZADO!",
+                                        text: "El proceos finalizo con exito.",
+                                        icon: "success"
+                                    });
+                                }else{
+                                    Swal.fire({
+                                        title: "Error!",
+                                        text: JSON.stringify(respuesta),
+                                        icon: "warning"
+                                    });
+                                }
+                            },
+                            error: function (err) {
+                                console.error('Error al cargar facturas:', err);
+                                // alert('No se pudieron cargar las facturas.');
+                            }
+                        });
+
+                    }
+                });
+
+            }
 
         </script>
     @endsection

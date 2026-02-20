@@ -224,7 +224,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/guardar-proceso-ot', [ProcesosController::class, 'guardarProcesoOT'])->name('procesos.guardarProcesoOT');
 
         Route::post('/verProcesoEnMarchaMaquina', [ProcesosController::class, 'verProcesoEnMarchaMaquina'])->name('procesos.verProcesoEnMarchaMaquina');
-
+        Route::post('/finalizarProceso', [ProcesosController::class, 'finalizarProceso'])->name('procesos.finalizarProceso');
+        Route::post('/buscarSolicitudesProductoSoloAgua', [ProcesosController::class, 'buscarSolicitudesProductoSoloAgua'])->name('procesos.buscarSolicitudesProductoSoloAgua');
+        Route::post('/ajaxListadoMaquinas', [ProcesosController::class, 'ajaxListadoMaquinas'])->name('procesos.ajaxListadoMaquinas');
     });
 
     // REPORTE

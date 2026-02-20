@@ -4,7 +4,6 @@
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                 <th>Maquinaria</th>
-                {{-- <th>Solicitud</th> --}}
                 <th>Producto</th>
                 <th>Tipo Proceso</th>
                 <th>Fecha Ingreso</th>
@@ -22,8 +21,7 @@
             @forelse ($procesos as $proceso)
                 <tr>
                     <td>{{ $proceso->maquinaria->tipo }}</td>
-                    {{-- <td>{{ $proceso->maquinaria->nombre }}</td> --}}
-                    <td>{{ $proceso->producto->nombre }}</td>
+                    <td>{{ $proceso->producto?->nombre }}</td>
                     <td>{{ $proceso->tipoProceso->nombre }}</td>
                     <td>{{ $proceso->fecha_ingreso }}</td>
                     <td>{{ $proceso->fecha_salida }}</td>
@@ -34,6 +32,7 @@
                     <td>{{ $proceso->descripcion }}</td>
                     <td>{{ $proceso->estado }}</td>
                     <td>
+                        <button class="btn btn-icon btn-sm btn-circle btn-dark" title="Terminar Proceso" onclick="finalizarProceso({{ $proceso->maquinaria->id }})"><i class="fa fa-stop"></i></button>
                         {{-- <button class="btn btn-icon btn-circle btn-danger btn-sm"><i class="fa fa-stop"></i></button> --}}
                     </td>
                 </tr>
