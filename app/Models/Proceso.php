@@ -53,4 +53,9 @@ class Proceso extends Model
     {
         return $this->belongsTo(Tipo_proceso::class, 'tipo_proceso_id');
     }
+
+    public function solicitud()
+    {
+        return $this->belongsTo('App\Models\Solicitud', 'solicitud_id');
+    }
 }

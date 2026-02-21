@@ -227,6 +227,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/finalizarProceso', [ProcesosController::class, 'finalizarProceso'])->name('procesos.finalizarProceso');
         Route::post('/buscarSolicitudesProductoSoloAgua', [ProcesosController::class, 'buscarSolicitudesProductoSoloAgua'])->name('procesos.buscarSolicitudesProductoSoloAgua');
         Route::post('/ajaxListadoMaquinas', [ProcesosController::class, 'ajaxListadoMaquinas'])->name('procesos.ajaxListadoMaquinas');
+        Route::post('/sacarSolicitudesAgrupados', [ProcesosController::class, 'sacarSolicitudesAgrupados'])->name('procesos.sacarSolicitudesAgrupados');
+        Route::post('/sacarPesoTotalSolicitudAgrupado', [ProcesosController::class, 'sacarPesoTotalSolicitudAgrupado'])->name('procesos.sacarPesoTotalSolicitudAgrupado');
+        Route::post('/GuardarSolicitudAgrupado', [ProcesosController::class, 'GuardarSolicitudAgrupado'])->name('procesos.GuardarSolicitudAgrupado');
+        Route::post('/guardaEdicionProceso', [ProcesosController::class, 'guardaEdicionProceso'])->name('procesos.guardaEdicionProceso');
+        Route::post('/agregarProductoAlProceso', [ProcesosController::class, 'agregarProductoAlProceso'])->name('procesos.agregarProductoAlProceso');
+        Route::post('/agregarProductoProcesoNuevo', [ProcesosController::class, 'agregarProductoProcesoNuevo'])->name('procesos.agregarProductoProcesoNuevo');
     });
 
     // REPORTE

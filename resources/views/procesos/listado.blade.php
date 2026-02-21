@@ -35,26 +35,25 @@
 
 @section('content')
 
-<div class="d-flex flex-column flex-column-fluid">
-    <div id="kt_app_content" class="app-content flex-column-fluid">
-        <div id="kt_app_content_container" class="app-container container-xxlg">
+    <div class="d-flex flex-column flex-column-fluid">
+        <div id="kt_app_content" class="app-content flex-column-fluid">
+            <div id="kt_app_content_container" class="app-container container-xxlg">
 
-            <h3 class="fw-bold mb-3">Maquinarias Disponibles</h3>
-            {{-- <div class="d-flex mb-4 overflow-auto"> --}}
-                <div id="bloque-mquinas"></div>
-                <button class="btn btn-sm btn-primary" onclick="abrirModalSolicitud()">
-                    Solicitar productos
-                </button>
+                <h3 class="fw-bold mb-3">Maquinarias Disponibles</h3>
+                    <div id="bloque-mquinas"></div>
+                    <button class="btn btn-sm btn-primary" onclick="abrirModalSolicitud()">
+                        Solicitar productos
+                    </button>
 
 
-                <div class="card shadow-sm">
-                    <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
-                        <h3 class="card-title fw-bold mb-0">Listado de Procesos de Lavandería</h3>
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
+                            <h3 class="card-title fw-bold mb-0">Listado de Procesos de Lavandería</h3>
+                        </div>
+                        <div class="card-body py-4" id="table_listado">
+                            <!-- Tabla AJAX -->
+                        </div>
                     </div>
-                    <div class="card-body py-4" id="table_listado">
-                        <!-- Tabla AJAX -->
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -182,15 +181,12 @@
                 </div>
 
                 <div class="modal-body">
-
-
-
                     <ul class="nav nav-tabs nav-line-tabs mb-5 fs-6">
                         <li class="nav-item">
                             <a class="nav-link active" data-bs-toggle="tab" href="#kt_tab_pane_7">NUEVA SOLICITUD</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_8">SOLICITUD PARA AGRUPADOS</a>
+                            <a class="nav-link" data-bs-toggle="tab" href="#kt_tab_pane_8" onclick="sacarSolicitudesAgrupados()">SOLICITUD PARA AGRUPADOS</a>
                         </li>
                     </ul>
 
@@ -258,12 +254,61 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="kt_tab_pane_8" role="tabpanel">
-                            ...
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <select onchange="sacarPesoTotalSolicitudAgrupado()" class="form-select form-select-sm" name="solicitud_agrupado_id" id="solicitud_agrupado_id"></select>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label>Producto (con stock)</label>
+                                    <select id="producto_id_solicitud_agrupado" class="form-select">
+                                        <option value="">Seleccione producto...</option>
+                                        @foreach ($productos as $producto)
+                                            <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label>Pe. Tot. seleccionado (kg)</label>
+                                    <input type="number" id="peso_total_ot_agrupado" class="form-control" readonly>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label>Cantidad solicitada (g)</label>
+                                    <input type="number" step="0.01" id="cantidad_solicitada_agrupado" class="form-control" value="0">
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label>Porcentaje (%)</label>
+                                    <input type="number" step="0.01" id="porcentaje_solicitado_agrupado" class="form-control" value="0">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <button class="btn btn-success btn-sm w-100" type="button" onclick="agregarAlListadoSolicitudAgrupado()" id="btnAgregarProducto"><i class="fa fa-down-long"></i>Agregar al listado</button>
+                            </div>
+                            <table class="table table-bordered" id="tabla_solicitud_temporal_agrupado">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Facturas y OTs</th>
+                                        <th>Porcentaje (%)</th>
+                                        <th>Cantidad</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-primary btn-sm w-100" onclick="btnGuardarSolicitudAgrupado()"><i class="fa fa-save"></i>Guardar Solicitud</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-
-
 
                 </div>
                 <div class="modal-footer">
@@ -287,6 +332,101 @@
                 </div>
                 <div class="modal-footer">
                     {{-- <button class="btn btn-primary" id="btnGuardarSolicitud">Guardar Solicitud</button> --}}
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Solicitud de Productos -->
+    <div class="modal fade" id="modalEdicionProceso" tabindex="-1">
+        <div class="modal-dialog" style="max-width: 40%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edicion de proceso <span class="text-info" id="texto-maquina-proceso"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formulario-edicion-proceso">
+                        <input type="hidden" name="maquina_id_proceso" id="maquina_id_proceso">
+                        <input type="hidden" name="producto_id_proceso" id="producto_id_proceso">
+                        <input type="hidden" name="tipo_proceso_id_proceso" id="tipo_proceso_id_proceso">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Fecha Inicio</label>
+                                <input type="datetime-local" id="fecha_ini_proceso" name="fecha_ini_proceso" class="form-control" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Tiempo (m)</label>
+                                <input type="number" id="tiempo_proceso" name="tiempo_proceso" class="form-control" onkeyup="cambioFechaFinProceso()">
+                            </div>
+                            <div class="col-md-4">
+                                <label>Fecha Fin</label>
+                                <input type="datetime-local" id="fecha_fin_proceso" name="fecha_fin_proceso" class="form-control" readonly>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-success w-100 btn-sm" onclick="guardaEdicionProceso()"><i class="fa fa-save"></i>Guardar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    {{-- <button class="btn btn-primary" id="btnGuardarSolicitud">Guardar Solicitud</button> --}}
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAgregarProductoAlProceso" tabindex="-1">
+        <div class="modal-dialog" style="max-width: 40%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edicion de proceso <span class="text-info" id="texto-maquina-proceso"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formularioAgregacionProductoProceso">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label>Producto</label>
+                                <select class="form-select form-select-sm" name="solicitud_id_agregacion_proceso" id="solicitud_id_agregacion_proceso" required></select>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Fecha Inicio</label>
+                                <input type="datetime-local" id="fecha_ini_agregacion_proceso" name="fecha_ini_agregacion_proceso" class="form-control form-control-sm" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Temperatura</label>
+                                <input type="number" id="temperatura_agregacion_proceso" name="temperatura_agregacion_proceso" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-md-3">
+                                <label>PH</label>
+                                <input type="number" id="ph_agregacion_proceso" name="ph_agregacion_proceso" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-md-4">
+                                <label>RB</label>
+                                <input type="number" id="rb_agregacion_proceso" name="rb_agregacion_proceso" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-md-8">
+                                <label>Descripcion</label>
+                                <input type="text" id="descripcion_agregacion_proceso" name="descripcion_agregacion_proceso" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row mt-5">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-sm w-100 btn-success" onclick="agregarProductoProcesoNuevo()"><i class="fa fa-save"></i>Agregar Producto</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
                     <button class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
                 </div>
 
@@ -515,19 +655,19 @@
 
             function guardarLavanderia() {
                 let datos = {
-                    id: $('#id').val(),
+                    id              : $('#id').val(),
                     order_trabajo_id: $('#order_trabajo_id').val(),
-                    producto_id: $('#producto_id').val(),
-                    maquinaria_id: $('#maquinaria_id').val(),
-                    tipo_proceso_id: $('#tipo_proceso_id').val(),
-                    fecha_ingreso: $('#fecha_ingreso').val(),
-                    fecha_salida: $('#fecha_salida').val(),
-                    tiempo: $('#tiempo').val(),
-                    temperatura: $('#temperatura').val(),
-                    ph: $('#ph').val(),
-                    rb: $('#rb').val(),
-                    descripcion: $('#descripcion').val(),
-                    estado: $('#estado').val()
+                    producto_id     : $('#producto_id').val(),
+                    maquinaria_id   : $('#maquinaria_id').val(),
+                    tipo_proceso_id : $('#tipo_proceso_id').val(),
+                    fecha_ingreso   : $('#fecha_ingreso').val(),
+                    fecha_salida    : $('#fecha_salida').val(),
+                    tiempo          : $('#tiempo').val(),
+                    temperatura     : $('#temperatura').val(),
+                    ph              : $('#ph').val(),
+                    rb              : $('#rb').val(),
+                    descripcion     : $('#descripcion').val(),
+                    estado          : $('#estado').val()
                 };
 
                 console.log("Datos enviados:", datos); // <-- depuración rápida
@@ -1005,6 +1145,7 @@
             }
 
             let productosTemporal = [];
+            let productosTemporalAgrupado = [];
             let otSeleccionadasPorFactura = {};
 
             let editandoCantidad = false;
@@ -1073,6 +1214,23 @@
                     editandoCantidad = false;
                 });
 
+
+
+
+                $('#porcentaje_solicitado_agrupado').on('input', function () {
+                    // if (editandoCantidad) return;
+                    // editandoPorcentaje = true;
+                    calcularCantidadDesdePorcentajeAgrupado();
+                    // editandoPorcentaje = false;
+                });
+
+                $('#cantidad_solicitada_agrupado').on('input', function () {
+                    // if (editandoPorcentaje) return;
+                    // editandoCantidad = true;
+                    calcularPorcentajeDesdeCantidadAgrupado();
+                    // editandoCantidad = false;
+                });
+
                 $(document).on('change', '#ots_por_factura_container input[type="checkbox"]', function () {
                     calcularCantidadDesdePorcentaje();
                 });
@@ -1139,10 +1297,6 @@
                         return;
                     }
 
-                    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-                    console.log(facturas);
-                    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-
                     productosTemporal.push({
                         producto_id: parseInt(productoId),
                         producto_nombre: productoNombre,
@@ -1162,17 +1316,12 @@
                     actualizarTablaTemporal();
                 });
 
-
                 $('#btnGuardarSolicitud').on('click', function () {
 
                     if (productosTemporal.length === 0) {
                         Swal.fire('Error', 'Agregue al menos un producto', 'warning');
                         return;
                     }
-
-                    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                    console.log(productosTemporal);
-                    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
                     const solicitudesPayload = productosTemporal.map(p => ({
                         producto_id: p.producto_id,
@@ -1200,6 +1349,52 @@
                 });
 
             });
+
+
+            function agregarAlListadoSolicitudAgrupado(){
+
+                const productoId                 = $('#producto_id_solicitud_agrupado').val();
+                const productoNombre             = $('#producto_id_solicitud_agrupado option:selected').text();
+                const cantidad                   = parseFloat($('#cantidad_solicitada_agrupado').val()) || 0;
+                const porcentaje                 = parseFloat($('#porcentaje_solicitado_agrupado').val()) || 0;
+                const solicitud_agrupado_id      = $('#solicitud_agrupado_id').val();
+                const solicitud_agrupado_id_text = $('#solicitud_agrupado_id option:selected').text();
+
+                console.log(
+                    (!productoId || cantidad <= 0 || porcentaje <= 0),
+                    productoId,
+                    cantidad,
+                    porcentaje,
+                    (!productoId),
+                    (cantidad <= 0),
+                    (porcentaje <= 0)
+                );
+
+                if (!productoId || cantidad <= 0 || porcentaje <= 0) {
+                    Swal.fire('Error', 'Ingrese un producto, cantidad o porcentaje válido', 'warning');
+                    return;
+                }
+
+                productosTemporalAgrupado.push({
+                    producto_id               : parseInt(productoId),
+                    producto_nombre           : productoNombre,
+                    porcentaje                : porcentaje,
+                    cantidad                  : cantidad,
+                    estado                    : "EN PROCESO",
+                    solicitud                 : solicitud_agrupado_id,
+                    solicitud_agrupado_id_text: solicitud_agrupado_id_text
+                });
+
+                // // RESET
+                $('#producto_id_solicitud_agrupado').val('').trigger('change');
+                $('#porcentaje_solicitado_agrupado').val(0);
+                $('#cantidad_solicitada_agrupado').val(0);
+                $('#peso_total_ot_agrupado').val(0);
+                $('#solicitud_agrupado_id').val('');
+
+                actualizarTablaTemporalAgrupado();
+
+            }
 
 
             function calcularPesoTotalOT() {
@@ -1232,6 +1427,25 @@
                 $('#porcentaje_solicitado').val(porcentaje.toFixed(2));
             }
 
+            function calcularPorcentajeDesdeCantidadAgrupado() {
+                const pesoTotal = $('#peso_total_ot_agrupado').val();
+                const cantidad = parseFloat($('#cantidad_solicitada_agrupado').val()) || 0;
+                if (pesoTotal <= 0) return;
+
+                //const porcentaje = (cantidad * 1000) / pesoTotal;
+                const porcentaje = (cantidad / (pesoTotal * 1000)) * 100;
+                $('#porcentaje_solicitado_agrupado').val(porcentaje.toFixed(2));
+            }
+
+            function calcularCantidadDesdePorcentajeAgrupado() {
+                const pesoTotal = $('#peso_total_ot_agrupado').val();
+                const porcentaje = parseFloat($('#porcentaje_solicitado_agrupado').val()) || 0;
+                if (pesoTotal <= 0) return;
+
+                const cantidad = ((pesoTotal * porcentaje) / 100) * 1000;
+                $('#cantidad_solicitada_agrupado').val(cantidad.toFixed(2));
+            }
+
             function actualizarTablaTemporal() {
                 const tbody = $('#tabla_solicitud_temporal tbody');
                 tbody.empty();
@@ -1253,9 +1467,36 @@
                 });
             }
 
+            function actualizarTablaTemporalAgrupado() {
+                const tbody = $('#tabla_solicitud_temporal_agrupado tbody');
+                tbody.empty();
+
+                productosTemporalAgrupado
+                            .forEach(function (item, index) {
+                            tbody.append(`
+                                            <tr>
+                                                <td>${item.producto_nombre}</td>
+                                                <td>${item.solicitud_agrupado_id_text}</td>
+                                                <td>${item.porcentaje}%</td>
+                                                <td>${item.cantidad.toFixed(2)}</td>
+                                                <td>
+                                                    <button class="btn btn-danger btn-sm" onclick="eliminarProductoAgrupado(${index})">
+                                                        Eliminar
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `);
+                });
+            }
+
             function eliminarProducto(index) {
                 productosTemporal.splice(index, 1);
                 actualizarTablaTemporal();
+            }
+
+            function eliminarProductoAgrupado(index){
+                productosTemporalAgrupado.splice(index, 1);
+                actualizarTablaTemporalAgrupado();
             }
 
             function verificaTipoProceso(){
@@ -1342,7 +1583,6 @@
 
             function finalizarProceso(maquina){
 
-
                 Swal.fire({
                     title: "Esta seguro de finalizar el proceso?",
                     text: "No podras revertir eso!",
@@ -1385,6 +1625,277 @@
                     }
                 });
 
+            }
+
+            function sacarSolicitudesAgrupados(){
+                $.ajax({
+                    url: "{{ route('procesos.sacarSolicitudesAgrupados') }}",
+                    method: "POST",
+                    // data: datos,
+                    success: function (res) {
+                        if (res.estado) {
+
+                            let select = $('#solicitud_agrupado_id');
+                            select.empty()
+                            select.append(`<option value="">SELECCIONE UN AGRUPADO</option>`);
+
+                            let datosRecibidos = res.data.fac;
+
+                            Object.entries(datosRecibidos).forEach(([key, value]) => {
+                                select.append(
+                                    `<option value="${key}">${value}</option>`
+                                );
+                            });
+                        } else {
+                            Swal.fire('Error', res.mensaje, 'error');
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log("Error detalle:", xhr.responseJSON);
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let mensaje = '';
+                            for (let key in errors) mensaje += errors[key] + '\n';
+                            Swal.fire('Error de validación', mensaje, 'error');
+                        } else {
+                            Swal.fire('Error', 'Ocurrió un error en el servidor', 'error');
+                        }
+                    }
+                });
+            }
+
+            function sacarPesoTotalSolicitudAgrupado(){
+
+                let dato = $('#solicitud_agrupado_id').val()
+
+                 $.ajax({
+                    url: "{{ route('procesos.sacarPesoTotalSolicitudAgrupado') }}",
+                    method: "POST",
+                    data: {dato:dato},
+                    success: function (res) {
+                        if (res.estado) {
+
+                            $('#peso_total_ot_agrupado').val(res.data.peso_total)
+                        } else {
+                            Swal.fire('Error', res.mensaje, 'error');
+                        }
+                    },
+                    error: function (xhr) {
+                        console.log("Error detalle:", xhr.responseJSON);
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            let mensaje = '';
+                            for (let key in errors) mensaje += errors[key] + '\n';
+                            Swal.fire('Error de validación', mensaje, 'error');
+                        } else {
+                            Swal.fire('Error', 'Ocurrió un error en el servidor', 'error');
+                        }
+                    }
+                });
+
+            }
+
+            function btnGuardarSolicitudAgrupado(){
+
+                if (productosTemporalAgrupado.length === 0) {
+                    Swal.fire('Error', 'Agregue al menos un producto', 'warning');
+                    return;
+                }
+
+                const solicitudesPayload = productosTemporalAgrupado.map(p => ({
+                    producto_id: p.producto_id,
+                    porcentaje : p.porcentaje,
+                    cantidad   : p.cantidad,
+                    estado     : p.estado,
+                    solicitud  : p.solicitud
+                }));
+
+                $.post("{{ route('procesos.GuardarSolicitudAgrupado') }}", {
+                    _token: "{{ csrf_token() }}",
+                    solicitudes: solicitudesPayload
+                }, function (respuesta) {
+
+                    if(respuesta.estado){
+                        productosTemporalAgrupado = [];
+                        actualizarTablaTemporalAgrupado();
+                        $('#modalSolicitudProductos').modal('hide');
+                        Swal.fire('Exito', 'Solicitudes guardadas correctamente', 'success');
+                    }else{
+                        Swal.fire('Error', 'Ocurrio algo al guardar la solicitud', 'warning');
+                    }
+                }).fail(function () {
+                    // Swal.fire('Error', 'Error al guardar la solicitud', 'error');
+                });
+
+            }
+
+            function editarTiempoProceso(proceos){
+                $('#fecha_ini_proceso').val(proceos.fecha_ingreso)
+                $('#tiempo_proceso').val(proceos.tiempo)
+                $('#fecha_fin_proceso').val(proceos.fecha_salida)
+
+                $('#maquina_id_proceso').val(proceos.maquinaria_id)
+                $('#producto_id_proceso').val(proceos.producto_id)
+                $('#tipo_proceso_id_proceso').val(proceos.tipo_proceso_id)
+
+                $('#modalEdicionProceso').modal('show')
+            }
+
+            function cambioFechaFinProceso(){
+                let fechaIni = $('#fecha_ini_proceso').val()
+                let tiempo = $('#tiempo_proceso').val()
+                if(!fechaIni || !tiempo) return;
+                let fecha = new Date(fechaIni);
+                fecha.setMinutes(fecha.getMinutes() + parseInt(tiempo));
+                let yyyy = fecha.getFullYear();
+                let mm   = String(fecha.getMonth() + 1).padStart(2,'0');
+                let dd   = String(fecha.getDate()).padStart(2,'0');
+                let hh   = String(fecha.getHours()).padStart(2,'0');
+                let min  = String(fecha.getMinutes()).padStart(2,'0');
+                let fechaFinal = `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+                $('#fecha_fin_proceso').val(fechaFinal);
+            }
+
+            function guardaEdicionProceso(){
+
+                Swal.fire({
+                    title: "Esta seguro de editar el proceso?",
+                    text: "No podras revertir eso!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, Editar!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        let datos = $('#formulario-edicion-proceso').serializeArray();
+
+                        $.ajax({
+                            url: "{{ route('procesos.guardaEdicionProceso') }}",
+                            type: 'POST',
+                            dataType: 'json',
+                            data: datos,
+                            success: function (respuesta) {
+
+                                if(respuesta.estado){
+                                    $('#modalEdicionProceso').modal('hide');
+                                    $('#modalProcesosMaquina').modal('hide');
+                                    Swal.fire({
+                                        title: "FINALIZADO!",
+                                        text: "El proceos actualizado con exito.",
+                                        icon: "success"
+                                    });
+                                }else{
+                                    Swal.fire({
+                                        title: "Error!",
+                                        text: JSON.stringify(respuesta),
+                                        icon: "warning"
+                                    });
+                                }
+                            },
+                            error: function (err) {
+                                console.error('Error al cargar facturas:', err);
+                                // alert('No se pudieron cargar las facturas.');
+                            }
+                        });
+
+                    }
+                });
+
+            }
+
+            function agregarProductoAlProceso(maquina, tipo_proceso){
+
+                $.ajax({
+                    url: "{{ route('procesos.agregarProductoAlProceso') }}",
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        maquina:maquina,
+                        tipo_proceso:tipo_proceso
+                    },
+                    success: function (respuesta) {
+
+                        if(respuesta.estado){
+                            let select = $('#solicitud_id_agregacion_proceso')
+                            select.empty();
+                            let solicitudes = respuesta.data.solicitudes;
+                            solicitudes.forEach(e => {
+                                let g = e.estado == "UTILIZADO" ? 'disabled' : '' ;
+                                select.append('<option '+g+' value="'+ e.id +'">'+ e.producto.nombre +'</option>');
+                            });
+                            let now = new Date();
+                            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                            let fechaHora = now.toISOString().slice(0,16);
+                            $('#fecha_ini_agregacion_proceso').val(fechaHora);
+                            $('#modalAgregarProductoAlProceso').modal('show')
+                        }else{
+                            Swal.fire({
+                                title: "Error!",
+                                text: JSON.stringify(respuesta),
+                                icon: "warning"
+                            });
+                        }
+                    },
+                    error: function (err) {
+                        console.error('Error al cargar facturas:', err);
+                        // alert('No se pudieron cargar las facturas.');
+                    }
+                });
+
+            }
+
+            function agregarProductoProcesoNuevo(){
+
+                if ($("#formularioAgregacionProductoProceso")[0].checkValidity()) {
+                    Swal.fire({
+                        title: "Esta seguro de agergar el producto al proceso?",
+                        text: "No podras revertir eso!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Si, Agregar!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+
+                            let datos = $('#formularioAgregacionProductoProceso').serializeArray();
+
+                            $.ajax({
+                                url: "{{ route('procesos.agregarProductoProcesoNuevo') }}",
+                                type: 'POST',
+                                dataType: 'json',
+                                data: datos,
+                                success: function (respuesta) {
+
+                                    if(respuesta.estado){
+                                        $('#modalEdicionProceso').modal('hide');
+                                        $('#modalProcesosMaquina').modal('hide');
+                                        Swal.fire({
+                                            title: "FINALIZADO!",
+                                            text: "El proceos actualizado con exito.",
+                                            icon: "success"
+                                        });
+                                    }else{
+                                        Swal.fire({
+                                            title: "Error!",
+                                            text: JSON.stringify(respuesta),
+                                            icon: "warning"
+                                        });
+                                    }
+                                },
+                                error: function (err) {
+                                    console.error('Error al cargar facturas:', err);
+                                    // alert('No se pudieron cargar las facturas.');
+                                }
+                            });
+
+                        }
+                    });
+                }else{
+                    $("#formularioAgregacionProductoProceso")[0].reportValidity();
+                }
             }
 
         </script>

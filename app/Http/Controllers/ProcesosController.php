@@ -793,6 +793,211 @@ class ProcesosController extends Controller
             $data = Respuesta::error(null, "No existe");
         }
         return $data;
+    }
+
+    public function sacarSolicitudesAgrupados(Request $request){
+
+        if($request->ajax()){
+
+            $solicitudes = Solicitud::where('estado', 'UTILIZADO')
+                ->get();
+
+            $fac = "";
+            $solicitudArray = [];
+
+            foreach ($solicitudes as $key => $solicitud) {
+                $ordenesTrabajo = $solicitud->ordenes_trabajo;
+                $fac = "";
+                foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
+                    $fac = $fac . " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
+                    $ots = $ordenTrabajo['ots'];
+                    $arrayOts = array();
+                    foreach ($ots as $key => $ot) {
+                        $ordenTrabajoBuscado = Order_trabajo::find($ot);
+                        if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
+                            $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
+                            array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
+                            if ((count($ots) - 1) == $key)
+                                $fac = $fac . "]";
+                            else
+                                $fac = $fac . " - ";
+                        }
+                    }
+                }
+
+                $solicitudArray[$solicitud->id] = $fac;
+            }
+
+            $valores = [
+                'solicitudes' => $solicitudes,
+                'fac' => $solicitudArray
+            ];
+
+            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+    }
+
+    public function sacarPesoTotalSolicitudAgrupado(Request $request){
+
+        if($request->ajax()){
+
+            // dd($request->all());
+
+            $solitud_id      = $request->input('dato');
+            $solicitud       = Solicitud::find($solitud_id);
+            $ordenes_trabajo = $solicitud->ordenes_trabajo;
+            $sumaTotalPesos  = 0;
+
+            foreach ($ordenes_trabajo as $key => $ordenTrabajo) {
+                $ots = $ordenTrabajo['ots'];
+                foreach ($ots as $key => $ot) {
+                    $otBuscado = Order_trabajo::find($ot);
+                    $sumaTotalPesos+= $otBuscado->peso;
+                }
+            }
+
+            $valores = [
+                'peso_total' => $sumaTotalPesos,
+            ];
+
+            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+
+    }
+
+    public function GuardarSolicitudAgrupado(Request $request){
+
+        if($request->ajax()){
+
+            // dd($request->all());
+
+            $solicitudes = $request->input('solicitudes');
+            $usuario     = Auth::user();
+
+            foreach ($solicitudes as $key => $solicitud) {
+
+                $solicitudBuscado = Solicitud::find($solicitud['solicitud']);
+
+                $solicitudNew                     = New Solicitud();
+                $solicitudNew->usuario_creador_id = $usuario->id;
+                $solicitudNew->producto_id        = $solicitud['producto_id'];
+                $solicitudNew->ordenes_trabajo    = $solicitudBuscado->ordenes_trabajo;
+                $solicitudNew->cantidad           = $solicitud['cantidad'];
+                $solicitudNew->porcentaje         = $solicitud['porcentaje'];
+                $solicitudNew->estado             = $solicitud['estado'];
+                $solicitudNew->save();
+
+                $data = Respuesta::success(null, "Datos obtenidos correctamente");
+            }
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+
+    }
+
+    public function guardaEdicionProceso(Request $request){
+
+        if($request->ajax()){
+
+            // dd($request->all());
+            $maquina_id_proceso      = $request->input('maquina_id_proceso');
+            $producto_id_proceso     = $request->input('producto_id_proceso');
+            $tipo_proceso_id_proceso = $request->input('tipo_proceso_id_proceso');
+            $fecha_ini_proceso       = $request->input('fecha_ini_proceso');
+            $tiempo_proceso          = $request->input('tiempo_proceso');
+            $fecha_fin_proceso       = $request->input('fecha_fin_proceso');
+
+            $procesos = Proceso::where('maquinaria_id', $maquina_id_proceso)
+                                ->where('estado', 'TRABAJANDO')
+                                ->where('tipo_proceso_id', $tipo_proceso_id_proceso)
+                                ->get();
+
+            foreach ($procesos as $key => $proceso) {
+                $proceso->tiempo       = $tiempo_proceso;
+                $proceso->fecha_salida = $fecha_fin_proceso;
+                $proceso->save();
+            }
+
+            $data = Respuesta::success(null, "Datos editados correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+
+    }
+
+    public function agregarProductoAlProceso(Request $request){
+
+        if($request->ajax()){
+
+            $maquinaria_id = $request->input('maquina');
+            $tipo_proceso_id = $request->input('tipo_proceso');
+
+            $proceso = Proceso::where('maquinaria_id', $maquinaria_id)
+                                ->where('tipo_proceso_id', $tipo_proceso_id)
+                                ->where('estado', 'TRABAJANDO')
+                                ->first();
+
+            if($proceso){
+                $solicitud = $proceso->solicitud;
+
+                // $solicitudes = Solicitud::where('ordenes_trabajo', $solicitud->ordenes_trabajo)
+                //                         ->where('estado', 'APROBADO')
+                //                         ->get();
+
+                $json = json_encode($solicitud->ordenes_trabajo);
+
+                $solicitudes = Solicitud::with('producto')->whereRaw(
+                                            'JSON_CONTAINS(ordenes_trabajo, ?)',
+                                            [$json]
+                                        )
+                                            // ->where('estado', 'APROBADO')
+                                            ->get();
+
+                // dd($solicitudes);
+
+                $valores = [
+                    'solicitudes' => $solicitudes
+                ];
+
+                $data = Respuesta::success($valores, "Datos editados correctamente");
+
+            }else{
+                $data = Respuesta::error(null, "No existe datos");
+            }
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+    }
+
+    public function agregarProductoProcesoNuevo(Request $request) {
+
+        if($request->ajax()){
+
+            // dd($request->all());
+            $solicitud_id_agregacion_proceso = $request->input('solicitud_id_agregacion_proceso');
+            $fecha_ini_agregacion_proceso    = $request->input('fecha_ini_agregacion_proceso');
+            $temperatura_agregacion_proceso  = $request->input('temperatura_agregacion_proceso');
+            $ph_agregacion_proceso           = $request->input('ph_agregacion_proceso');
+            $rb_agregacion_proceso           = $request->input('rb_agregacion_proceso');
+            $descripcion_agregacion_proceso  = $request->input('descripcion_agregacion_proceso');
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
 
     }
 
