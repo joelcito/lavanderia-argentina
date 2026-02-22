@@ -987,12 +987,56 @@ class ProcesosController extends Controller
         if($request->ajax()){
 
             // dd($request->all());
-            $solicitud_id_agregacion_proceso = $request->input('solicitud_id_agregacion_proceso');
-            $fecha_ini_agregacion_proceso    = $request->input('fecha_ini_agregacion_proceso');
-            $temperatura_agregacion_proceso  = $request->input('temperatura_agregacion_proceso');
-            $ph_agregacion_proceso           = $request->input('ph_agregacion_proceso');
-            $rb_agregacion_proceso           = $request->input('rb_agregacion_proceso');
-            $descripcion_agregacion_proceso  = $request->input('descripcion_agregacion_proceso');
+            $solicitud_id_agregacion_proceso   = $request->input('solicitud_id_agregacion_proceso');
+            $fecha_ini_agregacion_proceso      = $request->input('fecha_ini_agregacion_proceso');
+            $temperatura_agregacion_proceso    = $request->input('temperatura_agregacion_proceso');
+            $ph_agregacion_proceso             = $request->input('ph_agregacion_proceso');
+            $rb_agregacion_proceso             = $request->input('rb_agregacion_proceso');
+            $descripcion_agregacion_proceso    = $request->input('descripcion_agregacion_proceso');
+            $maquina_idagregacion_proceso      = $request->input('maquina_idagregacion_proceso');
+            $tipo_proceso_idagregacion_proceso = $request->input('tipo_proceso_idagregacion_proceso');
+
+            $solicitud = Solicitud::find($solicitud_id_agregacion_proceso);
+            $ordenesTrabajo = $solicitud->ordenes_trabajo;
+
+            $procesoBuscado = Proceso::where('maquinaria_id', $maquina_idagregacion_proceso)
+                                        ->where('tipo_proceso_id', $tipo_proceso_idagregacion_proceso)
+                                        ->where('estado', 'TRABAJANDO')
+                                        ->first();
+
+            foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
+                $ots = $ordenTrabajo['ots'];
+                foreach ($ots as $key => $ot) {
+
+                    $proceso = Proceso::create([
+                        // 'order_trabajo_id' => $ot,
+                        'producto_id'      => $solicitud->producto_id,
+                        'solicitud_id'     => $solicitud->id,
+                        'maquinaria_id'    => $maquina_idagregacion_proceso,
+                        'tipo_proceso_id'  => $tipo_proceso_idagregacion_proceso,
+                        'fecha_ingreso'    => $fecha_ini_agregacion_proceso,
+                        'fecha_salida'     => $procesoBuscado->fecha_salida,
+                        'tiempo'           => $procesoBuscado->tiempo,
+                        'temperatura'      => $temperatura_agregacion_proceso,
+                        'ph'               => $ph_agregacion_proceso,
+                        'rb'               => $rb_agregacion_proceso,
+                        'descripcion'      => $descripcion_agregacion_proceso,
+                        'estado'           => 'TRABAJANDO',
+                        'order_trabajo_id' => $ot,
+                    ]);
+
+                    $orderTrabajo = Order_trabajo::find($ot);
+                    if ($orderTrabajo && !in_array($orderTrabajo->estado, ['FINALIZADO', 'ENTREGADO'])) {
+                        $orderTrabajo->estado = 'TRABAJANDO';
+                        $orderTrabajo->save();
+                    }
+                }
+            }
+
+            $solicitud->estado = "UTILIZADO";
+            $solicitud->save();
+
+            $data = Respuesta::success(null, "Datos editados correctamente");
 
         }else{
             $data = Respuesta::error(null, "No existe");

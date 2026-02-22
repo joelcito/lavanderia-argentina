@@ -38,22 +38,19 @@
     <div class="d-flex flex-column flex-column-fluid">
         <div id="kt_app_content" class="app-content flex-column-fluid">
             <div id="kt_app_content_container" class="app-container container-xxlg">
-
                 <h3 class="fw-bold mb-3">Maquinarias Disponibles</h3>
-                    <div id="bloque-mquinas"></div>
-                    <button class="btn btn-sm btn-primary" onclick="abrirModalSolicitud()">
-                        Solicitar productos
-                    </button>
-
-
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
-                            <h3 class="card-title fw-bold mb-0">Listado de Procesos de Lavandería</h3>
-                        </div>
-                        <div class="card-body py-4" id="table_listado">
-                            <!-- Tabla AJAX -->
-                        </div>
+                <div id="bloque-mquinas"></div>
+                <button class="btn btn-sm btn-primary" onclick="abrirModalSolicitud()">
+                    Solicitar productos
+                </button>
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
+                        <h3 class="card-title fw-bold mb-0">Listado de Procesos de Lavandería</h3>
                     </div>
+                    <div class="card-body py-4" id="table_listado">
+                        <!-- Tabla AJAX -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -386,11 +383,13 @@
         <div class="modal-dialog" style="max-width: 40%">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edicion de proceso <span class="text-info" id="texto-maquina-proceso"></span></h5>
+                    <h5 class="modal-title">Formulario de agregacion de producto</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="formularioAgregacionProductoProceso">
+                        <input type="hidden" name="maquina_idagregacion_proceso" id="maquina_idagregacion_proceso">
+                        <input type="hidden" name="tipo_proceso_idagregacion_proceso" id="tipo_proceso_idagregacion_proceso">
                         <div class="row">
                             <div class="col-md-3">
                                 <label>Producto</label>
@@ -1829,6 +1828,8 @@
                             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
                             let fechaHora = now.toISOString().slice(0,16);
                             $('#fecha_ini_agregacion_proceso').val(fechaHora);
+                            $('#tipo_proceso_idagregacion_proceso').val(tipo_proceso);
+                            $('#maquina_idagregacion_proceso').val(maquina);
                             $('#modalAgregarProductoAlProceso').modal('show')
                         }else{
                             Swal.fire({
@@ -1870,7 +1871,7 @@
                                 success: function (respuesta) {
 
                                     if(respuesta.estado){
-                                        $('#modalEdicionProceso').modal('hide');
+                                        $('#modalAgregarProductoAlProceso').modal('hide');
                                         $('#modalProcesosMaquina').modal('hide');
                                         Swal.fire({
                                             title: "FINALIZADO!",

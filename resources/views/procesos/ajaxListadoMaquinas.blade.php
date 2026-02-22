@@ -1,7 +1,12 @@
 <div class="d-flex flex-wrap mb-4">
     @foreach ($maquinarias as $m)
         <div class="maquina-container" style="border:2px solid {{ $m->estado_maquina == 'DISPONIBLE' ? '#28a745' : '#dc3545' }};" >
-            <div onclick="modalNuevaLavanderiaConMaquinaria({{ $m->id }})">
+            <div
+                @if($m->estado_maquina == 'DISPONIBLE')
+                    onclick="modalNuevaLavanderiaConMaquinaria({{ $m->id }})"
+                    style="cursor:pointer;"
+                @endif
+                >
                 <div class="fw-bold">{{ ucfirst($m->tipo) }}</div>
                 <div class="text-muted small">
                     Equipo N° {{ $m->numero}}
@@ -21,7 +26,7 @@
                 <center>
                     <div class="row">
                         <div class="col-md-12">
-                            <button type="button" class="btn btn-icon btn-sm btn-info" onclick="verProcesoEnMarchaMaquina({{$m->id}})"><i class="fa fa-eye"></i></button>
+                            <button title="Ver Productos Maquin" type="button" class="btn btn-icon btn-sm btn-info" onclick="verProcesoEnMarchaMaquina({{$m->id}})"><i class="fa fa-eye"></i></button>
                         </div>
                         {{-- <div class="col-md-6">
                             <button class="btn btn-icon btn-sm btn-info"><i class="fa fa-eye"></i></button>
