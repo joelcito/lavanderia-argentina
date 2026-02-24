@@ -16,6 +16,7 @@ use App\Utils\Respuesta;
 use App\Models\Maquinaria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PDF;
 
 class ProcesosController extends Controller
 {
@@ -42,15 +43,49 @@ class ProcesosController extends Controller
     {
         if ($request->ajax()) {
 
-            $ots = Order_trabajo::with('procesos')
-                ->whereHas('procesos')
-                ->orderBy('created_at', 'desc')
-                ->get();
+            $solicitudes = Solicitud::select('ordenes_trabajo')->groupBy('ordenes_trabajo')->get();
+
+            foreach ($solicitudes as $key => $solicitud) {
+
+                // $solicitudBuscada = Solicitud::
+
+                $ordenesTrabajo = $solicitud->ordenes_trabajo;
+                $fac = "";
+                foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
+                    $fac = $fac . " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
+                    $ots = $ordenTrabajo['ots'];
+                    $arrayOts = array();
+                    foreach ($ots as $key => $ot) {
+                        $ordenTrabajoBuscado = Order_trabajo::find($ot);
+                        if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
+                            $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
+                            array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
+                            if ((count($ots) - 1) == $key)
+                                $fac = $fac . "]";
+                            else
+                                $fac = $fac . " - ";
+                        }
+                    }
+                }
+
+                // $solicitudArray[$solicitud->id] = $fac;
+                $solicitudArray[] = [
+                                        'procesado' => $fac,
+                                        'crudo' => $ordenesTrabajo
+                                    ];
+            }
+
+            // dd($solicitudArray);
+
+            // $ots = Order_trabajo::with('procesos')
+            //                     ->whereHas('procesos')
+            //                     ->orderBy('created_at', 'desc')
+            //                     ->get();
 
             return response()->json([
                 'estado' => true,
                 'data' => [
-                    'listado' => view('procesos.ajaxListado', compact('ots'))->render()
+                    'listado' => view('procesos.ajaxListado', compact('solicitudArray'))->render()
                 ]
             ]);
         }
@@ -1043,6 +1078,95 @@ class ProcesosController extends Controller
         }
         return $data;
 
+    }
+
+    public function generaPDFHistorialProceso(Request $request)
+    {
+        $tipo = $request->input('tipo');
+
+        foreach ($tipo as &$item) {
+            $item['factura_id'] = (int) $item['factura_id'];
+            $item['nro_factura'] = (int) $item['nro_factura'];
+            $item['ots'] = array_map('intval', $item['ots']);
+        }
+
+        $query = Solicitud::query();
+
+$query->where(function ($q) use ($tipo) {
+
+    foreach ($tipo as $item) {
+
+        $q->orWhere(function ($sub) use ($item) {
+
+            // Buscar objeto que tenga ese factura_id
+            $sub->whereRaw(
+                "JSON_CONTAINS(ordenes_trabajo, ?)",
+                [json_encode(['factura_id' => $item['factura_id']])]
+            );
+
+            // Buscar que el objeto contenga exactamente esas OTs
+            $sub->whereRaw(
+                "JSON_CONTAINS(ordenes_trabajo, ?)",
+                [json_encode([
+                    'factura_id' => $item['factura_id'],
+                    'ots' => $item['ots']
+                ])]
+            );
+
+        });
+
+    }
+
+});
+
+$solicitudes = $query->pluck('id');
+
+        $procesos = Proceso::select(
+                                'procesos.producto_id',
+                                'procesos.maquinaria_id',
+                                'procesos.tipo_proceso_id',
+                                'procesos.fecha_ingreso',
+                                'procesos.fecha_salida',
+                                'procesos.tiempo',
+                                'procesos.temperatura',
+                                'procesos.ph',
+                                'procesos.rb',
+                                'procesos.descripcion',
+                                'solicitudes.cantidad',
+                                'solicitudes.porcentaje'
+                            )
+                            ->join('solicitudes', 'solicitudes.id', '=', 'procesos.solicitud_id')
+                            ->with('maquinaria')
+                            ->with('producto')
+                            ->with('tipoProceso')
+                            ->whereIn('solicitud_id', $solicitudes)
+                            ->groupBy(
+                                'procesos.producto_id',
+                                'procesos.maquinaria_id',
+                                'procesos.tipo_proceso_id',
+                                'procesos.fecha_ingreso',
+                                'procesos.fecha_salida',
+                                'procesos.tiempo',
+                                'procesos.temperatura',
+                                'procesos.ph',
+                                'procesos.rb',
+                                'procesos.descripcion',
+                                'solicitudes.cantidad',
+                                'solicitudes.porcentaje'
+                            )
+                            ->get();
+
+                            // dd($procesos, $solicitudes);
+        $usuario = Auth::user();
+
+        // Generar PDF
+        $pdf = PDF::loadView('procesos.pdf.historialProcesos', [
+            'procesos' => $procesos,
+            'tipo'     => $tipo,
+            'usuario'  => $usuario
+        ]);
+
+        return $pdf->stream('historial_proceso.pdf');
     }
 
 }

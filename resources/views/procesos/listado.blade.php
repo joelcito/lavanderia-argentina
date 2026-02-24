@@ -40,8 +40,8 @@
             <div id="kt_app_content_container" class="app-container container-xxlg">
                 <h3 class="fw-bold mb-3">Maquinarias Disponibles</h3>
                 <div id="bloque-mquinas"></div>
-                <button class="btn btn-sm btn-primary" onclick="abrirModalSolicitud()">
-                    Solicitar productos
+                <button class="btn btn-sm btn-primary w-100" onclick="abrirModalSolicitud()">
+                    <i class="fa fa-plus"></i> Solicitar productos
                 </button>
                 <div class="card shadow-sm">
                     <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
@@ -524,15 +524,12 @@
                     }
                 });
 
-                function recargarListado() {
-                    $.get("{{ route('procesos.ajaxListado') }}", function (res) {
-                        if (res.estado) $('#table_listado').html(res.data.listado);
-                        else $('#table_listado').html('<p class="text-danger text-center">Error al cargar los procesos</p>');
-                    });
-                }
-
-
-
+                // function recargarListado() {
+                //     $.get("{{ route('procesos.ajaxListado') }}", function (res) {
+                //         if (res.estado) $('#table_listado').html(res.data.listado);
+                //         else $('#table_listado').html('<p class="text-danger text-center">Error al cargar los procesos</p>');
+                //     });
+                // }
 
             });
 
@@ -1897,6 +1894,36 @@
                 }else{
                     $("#formularioAgregacionProductoProceso")[0].reportValidity();
                 }
+            }
+
+            function imprimirHistorialProceso(tipo){
+
+                $.ajax({
+                    url: "{{ route('procesos.generaPDFHistorialProceso') }}",
+                    type: 'POST',
+                    data: {tipo:tipo},
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    success: function (response) {
+
+                        let blob = new Blob([response], { type: 'application/pdf' });
+                        let link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = "proceso.pdf";
+                        link.click();
+
+                    },
+                    error: function (err) {
+                        console.error(err);
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se pudo generar el PDF",
+                            icon: "error"
+                        });
+                    }
+                });
+
             }
 
         </script>

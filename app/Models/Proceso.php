@@ -41,7 +41,8 @@ class Proceso extends Model
 
     public function maquinaria()
     {
-        return $this->belongsTo(Maquinaria::class);
+        // return $this->belongsTo(Maquinaria::class);
+        return $this->belongsTo('App\Models\Maquinaria', 'maquinaria_id');
     }
 
     public function producto()

@@ -2,29 +2,32 @@
     <table class="table table-bordered table-hover" id="kt_table_color_tela">
         <thead>
             <tr>
-                <th>Nº OT</th>
-                <th>Nº Venta</th>
+                <th>Agrupados para proceso</th>
+                {{-- <th>Nº Venta</th>
                 <th>Total Prendas</th>
                 <th>Prendas Focalizado</th>
                 <th>Prendas Planchadas</th>
-                <th>Estado OT</th>
+                <th>Estado OT</th> --}}
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($ots as $ot)
+            @forelse ($solicitudArray as $solcitudAgrupado)
                 <tr>
-                    <td>{{ $ot->nro_ot }}</td>
                     <td>
+                        {{ $solcitudAgrupado['procesado'] }}
+                    </td>
+                    {{-- <td>
                         {{ $ot->factura->numero_factura ?? 'SIN FACTURA' }}
                     </td>
                     <td>{{ $ot->cantidad}}</td>
                     <td>{{ $ot->cantidad_focalizado ?? 0}}</td>
                     <td>{{ $ot->cantidad_planchado ?? 0}}</td>
-                    <td>{{ $ot->estado }}</td>
+                    <td>{{ $ot->estado }}</td> --}}
 
                     <td>
-                        <button class="btn btn-info btn-sm" onclick="verDetalleOT({{ $ot->id }})">
+                        <button class="btn btn-sm btn-icon btn-danger" onclick='imprimirHistorialProceso(@json($solcitudAgrupado["crudo"]))' ><i class="fa fa-file-pdf"></i></button>
+                        {{-- <button class="btn btn-info btn-sm" onclick="verDetalleOT({{ $ot->id }})">
                             Detalle
                         </button>
 
@@ -36,7 +39,7 @@
                         </button>
                         <button class="btn btn-sm btn-danger" onclick="finalizarOT({{ $ot->id }})">
                             Finalizar
-                        </button>
+                        </button> --}}
                     </td>
                 </tr>
             @empty

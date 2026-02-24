@@ -233,6 +233,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/guardaEdicionProceso', [ProcesosController::class, 'guardaEdicionProceso'])->name('procesos.guardaEdicionProceso');
         Route::post('/agregarProductoAlProceso', [ProcesosController::class, 'agregarProductoAlProceso'])->name('procesos.agregarProductoAlProceso');
         Route::post('/agregarProductoProcesoNuevo', [ProcesosController::class, 'agregarProductoProcesoNuevo'])->name('procesos.agregarProductoProcesoNuevo');
+        Route::post('/generaPDFHistorialProceso', [ProcesosController::class, 'generaPDFHistorialProceso'])->name('procesos.generaPDFHistorialProceso');
     });
 
     // REPORTE
