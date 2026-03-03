@@ -159,7 +159,7 @@
             <tbody>
                 @foreach ( $procesos as $proceso)
                     <tr>
-                        <td>{{ $proceso->maquinaria?->tipo." N: ".$proceso->maquinaria->numero }}</td>
+                        <td>{{ $proceso->maquinaria?->tipo." N: ".$proceso->maquinaria?->numero }}</td>
                         <td>{{ $proceso->tipoProceso?->nombre }}</td>
                         <td>{{ $proceso->producto?->nombre }}</td>
                         <td>{{ $proceso->fecha_ingreso }}</td>

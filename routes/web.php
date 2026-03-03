@@ -234,6 +234,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/agregarProductoAlProceso', [ProcesosController::class, 'agregarProductoAlProceso'])->name('procesos.agregarProductoAlProceso');
         Route::post('/agregarProductoProcesoNuevo', [ProcesosController::class, 'agregarProductoProcesoNuevo'])->name('procesos.agregarProductoProcesoNuevo');
         Route::post('/generaPDFHistorialProceso', [ProcesosController::class, 'generaPDFHistorialProceso'])->name('procesos.generaPDFHistorialProceso');
+        Route::post('/enviarProcesoFocalizado', [ProcesosController::class, 'enviarProcesoFocalizado'])->name('procesos.enviarProcesoFocalizado');
+
+        Route::get('/focalizadoListado', [ProcesosController::class, 'focalizadoListado'])->name('procesos.focalizadoListado');
+        Route::post('/ajaxListadoSolicitudesFocalizado', [ProcesosController::class, 'ajaxListadoSolicitudesFocalizado'])->name('procesos.ajaxListadoSolicitudesFocalizado');
     });
 
     // REPORTE

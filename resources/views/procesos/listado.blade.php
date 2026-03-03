@@ -1598,6 +1598,7 @@
                             success: function (respuesta) {
 
                                 if(respuesta.estado){
+                                    ajaxListadoMaquinas();
                                     $('#modalProcesosMaquina').modal('hide');
                                     Swal.fire({
                                         title: "FINALIZADO!",
@@ -1898,6 +1899,16 @@
 
             function imprimirHistorialProceso(tipo){
 
+                Swal.fire({
+                    title: 'Generando reporte...',
+                    text: 'Por favor espera',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
                 $.ajax({
                     url: "{{ route('procesos.generaPDFHistorialProceso') }}",
                     type: 'POST',
@@ -1907,6 +1918,8 @@
                     },
                     success: function (response) {
 
+                        Swal.close(); // 🔥 Cierra el loader
+
                         let blob = new Blob([response], { type: 'application/pdf' });
                         let link = document.createElement('a');
                         link.href = window.URL.createObjectURL(blob);
@@ -1915,12 +1928,64 @@
 
                     },
                     error: function (err) {
+                        Swal.close(); // 🔥 También cerrar en error
+
                         console.error(err);
                         Swal.fire({
                             title: "Error",
                             text: "No se pudo generar el PDF",
                             icon: "error"
                         });
+                    }
+                });
+
+            }
+
+            function enviarProcesoFocalizado(datos){
+
+                console.log(datos);
+
+                Swal.fire({
+                    title: "Esta seguro de enviar la carga a FOCALIZADO?",
+                    text: "No podras revertir eso!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, Enviar!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        let datosE = {d:datos};
+                        // let datosE = datos;
+
+                        $.ajax({
+                            url: "{{ route('procesos.enviarProcesoFocalizado') }}",
+                            type: 'POST',
+                            dataType: 'json',
+                            data: datosE,
+                            success: function (respuesta) {
+                                if(respuesta.estado){
+                                    ajaxListado();
+                                    Swal.fire({
+                                        title: "FINALIZADO!",
+                                        text: "Carga enviado a FOCALIZADO.",
+                                        icon: "success"
+                                    });
+                                }else{
+                                    Swal.fire({
+                                        title: "Error!",
+                                        text: JSON.stringify(respuesta),
+                                        icon: "warning"
+                                    });
+                                }
+                            },
+                            error: function (err) {
+                                console.error('Error al cargar facturas:', err);
+                                // alert('No se pudieron cargar las facturas.');
+                            }
+                        });
+
                     }
                 });
 

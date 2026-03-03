@@ -24,7 +24,7 @@
                         Auth::user()->isLavador() ||
                         Auth::user()->isEncargadoAlmacen() ||
                         Auth::user()->isPlanchador() ||
-                        Auth::user()->isFocalizador() ||
+                        // Auth::user()->isFocalizador() ||
                         Auth::user()->isAyudanteLavado() ||
                         Auth::user()->isAuxuliarOficina()
                     )
@@ -368,11 +368,31 @@
                     </div>
                 @endif
 
+                @if (Auth::user()->isFocalizador())
+                <div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ Request::is('procesos/*') ? 'show' : '' }}">
+                    <span class="menu-link">
+                        <span class="menu-icon">
+                            <i class="fa fa-university"></i>
+                        </span>
+                        <span class="menu-title text-white">FOCALIZADO</span>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    <div class="menu-sub menu-sub-accordion">
+                        <div class="menu-item">
+                            <a class="menu-link" href="{{ route('procesos.focalizadoListado') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title text-white">Lista Para Focalizar</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                @endif
 
                 @if (Auth::user()->isCliente())
                     <div data-kt-menu-trigger="click"
                         class="menu-item menu-accordion {{ Request::is('sincronizacion/*', 'eventoSignificativo/*') ? 'show' : '' }}">
-                        <!--begin:Menu link-->
                         <span class="menu-link">
                             <span class="menu-icon">
                                 <i class="fa fa-university"></i>
@@ -380,10 +400,7 @@
                             <span class="menu-title text-white">SEGUIMIENTO</span>
                             <span class="menu-arrow"></span>
                         </span>
-                        <!--end:Menu link-->
                         <div class="menu-sub menu-sub-accordion">
-
-                            <!-- Reporte Procesos -->
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ route('factura.listadoFacturaCliente') }}">
                                     <span class="menu-bullet">
@@ -392,18 +409,7 @@
                                     <span class="menu-title text-white">Lista Notas Recepcion</span>
                                 </a>
                             </div>
-
-                            <!-- NUEVO: Stock Histórico -->
-                            {{-- <div class="menu-item">
-                                <a class="menu-link" href="{{ route('reporte.stock.formulario') }}">
-                                    <span class="menu-bullet">
-                                        <span class="bullet bullet-dot"></span>
-                                    </span>
-                                    <span class="menu-title text-white">Stock Histórico</span>
-                                </a>
-                            </div> --}}
                         </div>
-                        <!--end:Menu link-->
                     </div>
                 @endif
 

@@ -68,10 +68,23 @@ class ProcesosController extends Controller
                     }
                 }
 
+                $json = json_encode($ordenesTrabajo);
+                $solicitudesIds = Solicitud::with('producto')->whereRaw(
+                                                'JSON_CONTAINS(ordenes_trabajo, ?)',
+                                                [$json]
+                                            )
+                                            ->pluck('id');
+
+                $proceso = Proceso::with('tipoProceso')
+                                    ->whereIn('solicitud_id', $solicitudesIds)
+                                    ->orderByDesc('created_at')
+                                    ->first();
+
                 // $solicitudArray[$solicitud->id] = $fac;
                 $solicitudArray[] = [
                                         'procesado' => $fac,
-                                        'crudo' => $ordenesTrabajo
+                                        'crudo' => $ordenesTrabajo,
+                                        'procesoFinal' => $proceso
                                     ];
             }
 
@@ -1092,34 +1105,34 @@ class ProcesosController extends Controller
 
         $query = Solicitud::query();
 
-$query->where(function ($q) use ($tipo) {
+        $query->where(function ($q) use ($tipo) {
 
-    foreach ($tipo as $item) {
+            foreach ($tipo as $item) {
 
-        $q->orWhere(function ($sub) use ($item) {
+                $q->orWhere(function ($sub) use ($item) {
 
-            // Buscar objeto que tenga ese factura_id
-            $sub->whereRaw(
-                "JSON_CONTAINS(ordenes_trabajo, ?)",
-                [json_encode(['factura_id' => $item['factura_id']])]
-            );
+                    // Buscar objeto que tenga ese factura_id
+                    $sub->whereRaw(
+                        "JSON_CONTAINS(ordenes_trabajo, ?)",
+                        [json_encode(['factura_id' => $item['factura_id']])]
+                    );
 
-            // Buscar que el objeto contenga exactamente esas OTs
-            $sub->whereRaw(
-                "JSON_CONTAINS(ordenes_trabajo, ?)",
-                [json_encode([
-                    'factura_id' => $item['factura_id'],
-                    'ots' => $item['ots']
-                ])]
-            );
+                    // Buscar que el objeto contenga exactamente esas OTs
+                    $sub->whereRaw(
+                        "JSON_CONTAINS(ordenes_trabajo, ?)",
+                        [json_encode([
+                            'factura_id' => $item['factura_id'],
+                            'ots' => $item['ots']
+                        ])]
+                    );
+
+                });
+
+            }
 
         });
 
-    }
-
-});
-
-$solicitudes = $query->pluck('id');
+        $solicitudes = $query->pluck('id');
 
         $procesos = Proceso::select(
                                 'procesos.producto_id',
@@ -1167,6 +1180,99 @@ $solicitudes = $query->pluck('id');
         ]);
 
         return $pdf->stream('historial_proceso.pdf');
+    }
+
+    public function enviarProcesoFocalizado(Request $request){
+        if($request->ajax()){
+
+            // dd($request->all());
+            $datos   = $request->input('d');
+            $ots     = $datos[0]['ots'];
+            $usuario = Auth::user();
+
+            foreach ($datos as &$item) {
+                $item['factura_id'] = (int) $item['factura_id'];
+                $item['nro_factura'] = (int) $item['nro_factura'];
+                $item['ots'] = array_map('intval', $item['ots']);
+            }
+
+            // CREAMOS LA SOLICITUD
+            $solicitud                     = new Solicitud();
+            $solicitud->usuario_creador_id = $usuario->id;
+            $solicitud->ordenes_trabajo    = $datos;
+            $solicitud->cantidad           = 0;
+            $solicitud->porcentaje         = 0;
+            $solicitud->estado             = "EN PROCESO";
+            $solicitud->save();
+
+            foreach ($ots as $key => $ot) {
+                $proceso                     = new Proceso();
+                $proceso->usuario_creador_id = $usuario->id;
+                $proceso->order_trabajo_id   = $ot;
+                $proceso->tipo_proceso_id    = 4;               //FOCALIZADO
+                $proceso->solicitud_id       = $solicitud->id;
+                $proceso->estado             = "EN PROCESO";
+                $proceso->save();
+            }
+
+            $data = Respuesta::success(null, "Carga enviado a FOCALIZADO");
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+    }
+
+    public function focalizadoListado(Request $request){
+
+        return view('procesos.focalizadoListado');
+
+    }
+
+    public function ajaxListadoSolicitudesFocalizado(Request $request){
+
+        if($request->ajax()){
+
+            $solicitudes = Solicitud::whereNull('producto_id')
+                                    ->get();
+
+
+            foreach ($solicitudes as $key => $solicitud) {
+
+                $ordenesTrabajo = $solicitud->ordenes_trabajo;
+                $fac = "";
+
+                foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
+                    $fac = $fac . " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
+                    $ots = $ordenTrabajo['ots'];
+                    $arrayOts = array();
+                    foreach ($ots as $key => $ot) {
+                        $ordenTrabajoBuscado = Order_trabajo::find($ot);
+                        if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
+                            $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
+                            array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
+                            if ((count($ots) - 1) == $key)
+                                $fac = $fac . "]";
+                            else
+                                $fac = $fac . " - ";
+                        }
+                    }
+                }
+                $solicitudArray[$solicitud->id] = $fac;
+            }
+
+            // dd($solicitudArray);
+
+            $valores = [
+                'listado' => view('procesos.ajaxListadoSolicitudesFocalizado')->with(compact('solicitudArray'))->render()
+            ];
+
+            $data = Respuesta::success($valores, "Se proceso con EXITO");
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+
     }
 
 }
