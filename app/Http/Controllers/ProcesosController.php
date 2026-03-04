@@ -17,6 +17,7 @@ use App\Models\Maquinaria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PDF;
+use Svg\Tag\Rect;
 
 class ProcesosController extends Controller
 {
@@ -43,7 +44,10 @@ class ProcesosController extends Controller
     {
         if ($request->ajax()) {
 
-            $solicitudes = Solicitud::select('ordenes_trabajo')->groupBy('ordenes_trabajo')->get();
+            $solicitudes = Solicitud::select('ordenes_trabajo')
+                                    ->whereNotNull('ordenes_trabajo')
+                                    ->groupBy('ordenes_trabajo')
+                                    ->get();
 
             foreach ($solicitudes as $key => $solicitud) {
 
@@ -1237,6 +1241,8 @@ class ProcesosController extends Controller
                                     ->get();
 
 
+            $solicitudArray = [];
+
             foreach ($solicitudes as $key => $solicitud) {
 
                 $ordenesTrabajo = $solicitud->ordenes_trabajo;
@@ -1268,6 +1274,61 @@ class ProcesosController extends Controller
             ];
 
             $data = Respuesta::success($valores, "Se proceso con EXITO");
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+
+    }
+
+    public function focalizadoListadoSolicitud(){
+
+        $productos = Producto::all();
+
+        return view('procesos.focalizadoListadoSolicitud')->with(compact('productos'));
+
+    }
+
+    public function guardarSolicitudFocalizado(Request $request){
+
+        if($request->ajax()){
+
+            // dd($request->all());
+            $id          = $request->input('id');
+            $producto_id = $request->input('producto_id');
+            $cantidad    = $request->input('cantidad');
+            $porcentaje  = $request->input('porcentaje');
+            $usuario     = Auth::user();
+
+            $solicitud                     = new Solicitud();
+            $solicitud->usuario_creador_id = $usuario->id;
+            $solicitud->producto_id        = $producto_id;
+            $solicitud->cantidad           = $cantidad;
+            $solicitud->porcentaje         = $porcentaje;
+            $solicitud->estado             = "EN PROCESO";
+            $solicitud->save();
+
+            $data = Respuesta::success(null, "SE CREO CON EXITO");
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+    }
+
+    public function ajaxListadoSolicitudFocalizado(Request $request){
+
+        if($request->ajax()){
+
+            $solicitudes = Solicitud::whereNull('ordenes_trabajo')
+                                    ->get();
+
+            $valores = [
+                'listado' => view('procesos.ajaxListadoSolicitudFocalizado')->with(compact('solicitudes'))->render()
+            ];
+
+            $data = Respuesta::success($valores, "Se proceso con EXITO");
+
         }else{
             $data = Respuesta::error(null, "No existe");
         }

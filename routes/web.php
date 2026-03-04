@@ -238,6 +238,9 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/focalizadoListado', [ProcesosController::class, 'focalizadoListado'])->name('procesos.focalizadoListado');
         Route::post('/ajaxListadoSolicitudesFocalizado', [ProcesosController::class, 'ajaxListadoSolicitudesFocalizado'])->name('procesos.ajaxListadoSolicitudesFocalizado');
+        Route::get('/focalizadoListadoSolicitud', [ProcesosController::class, 'focalizadoListadoSolicitud'])->name('procesos.focalizadoListadoSolicitud');
+        Route::post('/guardarSolicitudFocalizado', [ProcesosController::class, 'guardarSolicitudFocalizado'])->name('procesos.guardarSolicitudFocalizado');
+        Route::post('/ajaxListadoSolicitudFocalizado', [ProcesosController::class, 'ajaxListadoSolicitudFocalizado'])->name('procesos.ajaxListadoSolicitudFocalizado');
     });
 
     // REPORTE
