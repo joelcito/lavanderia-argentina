@@ -7,12 +7,12 @@
         }
 
         /* .maquina-container {
-                                    cursor: pointer;
-                                    padding: 10px;
-                                    border-radius: 5px;
-                                    text-align: center;
-                                    margin: 0 10px;
-                                } */
+                                        cursor: pointer;
+                                        padding: 10px;
+                                        border-radius: 5px;
+                                        text-align: center;
+                                        margin: 0 10px;
+                                    } */
 
         .maquina-container {
             width: 220px;
@@ -248,7 +248,7 @@
                         </div>
 
                         <div class="col-md-4">
-                            <label>Cantidad solicitada (kg)</label>
+                            <label>Cantidad solicitada (gr)</label>
                             <input type="number" step="0.01" id="cantidad_solicitada" class="form-control">
                         </div>
 
@@ -878,17 +878,17 @@
 
                 listadoProcesos.forEach((p, index) => {
                     tbody.append(`
-                                                                                <tr>
-                                                                                    <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
-                                                                                    <td>${$('#producto_solicitud_aprobado option:selected').text()}</td>
-                                                                                    <td>${$('#tipo_proceso_id option:selected').text()}</td>
-                                                                                    <td>${p.fecha_ingreso}</td>
-                                                                                    <td>${p.fecha_salida}</td>
-                                                                                    <td>
-                                                                                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            `);
+                                                                                    <tr>
+                                                                                        <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
+                                                                                        <td>${$('#producto_solicitud_aprobado option:selected').text()}</td>
+                                                                                        <td>${$('#tipo_proceso_id option:selected').text()}</td>
+                                                                                        <td>${p.fecha_ingreso}</td>
+                                                                                        <td>${p.fecha_salida}</td>
+                                                                                        <td>
+                                                                                            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                `);
                 });
             }
 
@@ -1355,18 +1355,18 @@
 
                 productosTemporal.forEach(function (item, index) {
                     tbody.append(`
-                                    <tr>
-                                        <td>${item.producto_nombre}</td>
-                                        <td>${item.facturas.map(f => 'Factura ' + f.nro_factura + ' → [' + f.ots.map(o => o.nro_ot).join(', ') + ']').join(' | ')}</td>
-                                        <td>${item.porcentaje}%</td>
-                                        <td>${item.cantidad.toFixed(2)}</td>
-                                        <td>
-                                            <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${index})">
-                                                Eliminar
-                                            </button>
-                                        </td>
-                                    </tr>
-                                `);
+                                        <tr>
+                                            <td>${item.producto_nombre}</td>
+                                            <td>${item.facturas.map(f => 'Factura ' + f.nro_factura + ' → [' + f.ots.map(o => o.nro_ot).join(', ') + ']').join(' | ')}</td>
+                                            <td>${item.porcentaje}%</td>
+                                            <td>${item.cantidad.toFixed(2)}</td>
+                                            <td>
+                                                <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${index})">
+                                                    Eliminar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `);
                 });
             }
 
