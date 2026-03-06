@@ -135,6 +135,8 @@ class SolicitudController extends Controller
     public function store(Request $request)
     {
 
+        // dd($request->all());
+
         DB::beginTransaction();
 
         try {
@@ -225,17 +227,19 @@ class SolicitudController extends Controller
 
 
                     DB::table('movimientos')->insert([
-                        'producto_id' => $s->producto_id,
-                        'salida' => $cantidadASalir,
-                        'ingreso' => 0,
-                        'codigo_compra' => $ingresoMovimiento->codigo_compra,
-                        'fecha' => now(),
-                        'descripcion' => 'Salida por aprobación de solicitud #' . $s->id,
+                        'producto_id'        => $s->producto_id,
+                        'salida'             => $cantidadASalir,
+                        'sucursal_id'        => $ingresoMovimiento->sucursal_id,
+                        'solicitud_id'       => $s->id,
+                        'ingreso'            => 0,
+                        'codigo_compra'      => $ingresoMovimiento->codigo_compra,
+                        'fecha'              => now(),
+                        'descripcion'        => 'Salida por aprobación de solicitud #' . $s->id,
                         'usuario_creador_id' => Auth::id(),
-                        'movimiento_id' => $ingresoId,
-                        'estado' => 'ACTIVO',
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                        'movimiento_id'      => $ingresoId,
+                        'estado'             => 'ACTIVO',
+                        'created_at'         => now(),
+                        'updated_at'         => now(),
                     ]);
 
                     $cantidadRestante -= $cantidadASalir;
@@ -272,132 +276,79 @@ class SolicitudController extends Controller
         }
     }
 
-    //-----------------
-    // public function accionProducto(Request $request)
-    // {
-    //     $s = Solicitud::find($request->solicitud_id);
-    //     if (!$s) {
-    //         return response()->json(['estado' => false, 'mensaje' => 'Solicitud no encontrada']);
-    //     }
-
-    //     $ingresoId = $request->input('ingreso');
-
-    //     DB::beginTransaction();
-    //     try {
-
-    //         if ($request->accion === 'aprobar') {
-
-    //             // 1️⃣ Obtener ingreso seleccionado
-    //             $ingresoMovimiento = DB::table('movimientos')
-    //                 ->where('id', $ingresoId)
-    //                 ->first();
-
-    //             if (!$ingresoMovimiento) {
-    //                 return response()->json([
-    //                     'estado' => false,
-    //                     'mensaje' => 'Ingreso no válido'
-    //                 ]);
-    //             }
-
-    //             // 2️⃣ Última salida de ese ingreso
-    //             $ultimaSalida = DB::table('movimientos')
-    //                 ->where('movimiento_id', $ingresoMovimiento->id)
-    //                 ->where('salida', '>', 0)
-    //                 ->orderBy('created_at', 'desc')
-    //                 ->first();
-
-    //             // 3️⃣ Stock disponible
-    //             $stockDisponible =
-    //                 ($ingresoMovimiento->ingreso ?? 0)
-    //                 - ($ultimaSalida->salida ?? 0);
-
-    //             if ($stockDisponible < $s->cantidad) {
-    //                 return response()->json([
-    //                     'estado' => false,
-    //                     'mensaje' => 'No hay suficiente stock'
-    //                 ]);
-    //             }
-
-    //             // 4️⃣ Insertar salida
-    //             DB::table('movimientos')->insert([
-    //                 'producto_id' => $s->producto_id,
-    //                 'salida' => $s->cantidad,
-    //                 'ingreso' => 0,
-    //                 'codigo_compra' => $ingresoMovimiento->codigo_compra,
-    //                 'fecha' => now(),
-    //                 'descripcion' => 'Salida por aprobación de solicitud #' . $s->id,
-    //                 'usuario_creador_id' => Auth::id(),
-    //                 'movimiento_id' => $ingresoMovimiento->id,
-    //                 'estado' => 'ACTIVO',
-    //                 'created_at' => now(),
-    //                 'updated_at' => now(),
-    //             ]);
-
-    //             $s->estado = 'APROBADO';
-
-    //         } else {
-    //             $s->estado = 'RECHAZADO';
-    //         }
-
-    //         $s->save();
-    //         DB::commit();
-
-    //         return response()->json([
-    //             'estado' => true,
-    //             'mensaje' => 'Solicitud actualizada correctamente'
-    //         ]);
-
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return response()->json([
-    //             'estado' => false,
-    //             'mensaje' => 'Error: ' . $e->getMessage()
-    //         ]);
-    //     }
-    // }
-
-    //----------------------------------------------
-
-
-    // public function otsPorFactura($factura_id)
-    // {
-    //     try {
-    //         $factura = Factura::with('ordenTrabajos')->findOrFail($factura_id);
-
-    //         $ots = $factura->ordenTrabajos->map(function ($ot) {
-    //             return [
-    //                 'ids' => $ot->id, // si son múltiples, podrías usar ->pluck('id')->toArray()
-    //                 'nro_ot' => $ot->numero_ot,
-    //                 'peso_total' => $ot->peso_total ?? 0
-    //             ];
-    //         });
-
-    //         return response()->json($ots);
-    //     } catch (\Exception $e) {
-    //         \Log::error("Error al obtener OTs por factura: " . $e->getMessage());
-    //         return response()->json(['error' => 'No se pudieron cargar las OTs'], 500);
-    //     }
-    // }
-
     public function otsPorFactura($factura_id)
     {
         try {
+
+            // dd($factura_id);
+
+            // $ots = Order_Trabajo::where('factura_id', $factura_id)
+            //                     ->where('estado', 'RECEPCIONADO')
+            //                     ->where('tipo', 'ORDEN_TRABAJO')
+            //                     ->get();
+
             $ots = Order_Trabajo::where('factura_id', $factura_id)
-                ->where('estado', 'RECEPCIONADO')
-                ->where('tipo', 'ORDEN_TRABAJO')
-                ->get();
+                                ->where('tipo', 'ORDEN_TRABAJO')
+                                ->where(function ($query) {
+                                    $query->where('estado', 'RECEPCIONADO')
+                                        ->orWhere('estado', 'TRABAJANDO');
+                                })
+                                ->get();
+
+            // SACAMOS LAS SOLICITUDES CON ESE IF_FACTURA
+            // $solicitudes = DB::table('solicitudes as s')
+            //                 ->whereRaw("
+            //                         EXISTS (
+            //                             SELECT 1
+            //                             FROM JSON_TABLE(
+            //                                 s.ordenes_trabajo,
+            //                                 '$[*]' COLUMNS (
+            //                                     factura_id INT PATH '$.factura_id'
+            //                                 )
+            //                             ) jt
+            //                             WHERE jt.factura_id = ?
+            //                         )
+            //                     ", [$factura_id])
+            //                 ->get();
+
+            $solicitudes = DB::table('solicitudes')
+                                ->whereRaw("
+                                    JSON_CONTAINS(
+                                        JSON_EXTRACT(ordenes_trabajo, '$[*].factura_id'),
+                                        ?
+                                    )
+                                ", [$factura_id])
+                                ->get();
+
+            $otsUsadas = collect();
+            foreach ($solicitudes as $solicitud) {
+                $items = json_decode($solicitud->ordenes_trabajo, true);
+                foreach ($items as $item) {
+                    if ($item['factura_id'] == $factura_id) {
+                        foreach ($item['ots'] as $ot) {
+                            $otsUsadas->push($ot);
+                        }
+                    }
+                }
+            }
+
+            $otsUsadas = $otsUsadas->unique()->values();
 
             if ($ots->isEmpty()) {
                 return response()->json([]);
             }
 
-            $agrupadas = $ots->groupBy('nro_ot')->map(function ($grupo, $nro_ot) {
+            $agrupadas = $ots->groupBy('nro_ot')->map(function ($grupo, $nro_ot) use ($otsUsadas) {
                 $ids = $grupo->pluck('id')->toArray();
-                $peso_total = $grupo->sum('peso'); // columna real
+                $peso_total = $grupo->sum('peso');
+
+                $coincide = collect($ids)->intersect($otsUsadas)->isNotEmpty();
+
                 return [
-                    'nro_ot' => $nro_ot,
-                    'ids' => $ids,
+                    'nro_ot'     => $nro_ot,
+                    'ids'        => $ids,
                     'peso_total' => $peso_total,
+                    'disabled'   => $coincide
                 ];
             })->values();
 
@@ -405,7 +356,7 @@ class SolicitudController extends Controller
 
         } catch (\Exception $e) {
             \Log::error("Error al obtener OTs por factura: " . $e->getMessage());
-            return response()->json(['error' => 'No se pudieron cargar las OTs'], 500);
+            return response()->json(['error' => 'No se pudieron cargar las OTs', 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -668,10 +619,10 @@ class SolicitudController extends Controller
             $producto_id = $request->input('productoId');
 
             $solicitudes = Solicitud::where('producto_id', $producto_id)
-                ->where('estado', 'APROBADO')
-                ->get();
-            $fac = "";
+                                    ->where('estado', 'APROBADO')
+                                    ->get();
 
+            $fac = "";
             $solicitudArray = [];
 
             foreach ($solicitudes as $key => $solicitud) {
@@ -680,13 +631,18 @@ class SolicitudController extends Controller
                 foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
                     $fac = $fac . " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
                     $ots = $ordenTrabajo['ots'];
+                    $arrayOts = array();
                     foreach ($ots as $key => $ot) {
                         $ordenTrabajoBuscado = Order_trabajo::find($ot);
-                        $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
-                        if ((count($ots) - 1) == $key)
-                            $fac = $fac . "]";
-                        else
-                            $fac = $fac . " - ";
+                        if(!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)){
+                            $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
+                            array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
+                            if ((count($ots) - 1) == $key)
+                                $fac = $fac . "]";
+                            else
+                                $fac = $fac . " - ";
+                        }
+
                     }
                 }
 

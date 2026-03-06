@@ -219,13 +219,28 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/productos-aprobados-por-ot/{ot_id}', [ProcesosController::class, 'productosAprobadosPorOT'])->name('procesos.productosAprobadosPorOT');
         //////////////////
-// Procesos
         Route::post('/guardar-listado', [ProcesosController::class, 'guardarListado'])->name('procesos.guardarListado');
-
         Route::get('/obtener-ot/{id}', [ProcesosController::class, 'obtenerOT'])->name('procesos.obtenerOT')->middleware('auth');
-
         Route::post('/guardar-proceso-ot', [ProcesosController::class, 'guardarProcesoOT'])->name('procesos.guardarProcesoOT');
 
+        Route::post('/verProcesoEnMarchaMaquina', [ProcesosController::class, 'verProcesoEnMarchaMaquina'])->name('procesos.verProcesoEnMarchaMaquina');
+        Route::post('/finalizarProceso', [ProcesosController::class, 'finalizarProceso'])->name('procesos.finalizarProceso');
+        Route::post('/buscarSolicitudesProductoSoloAgua', [ProcesosController::class, 'buscarSolicitudesProductoSoloAgua'])->name('procesos.buscarSolicitudesProductoSoloAgua');
+        Route::post('/ajaxListadoMaquinas', [ProcesosController::class, 'ajaxListadoMaquinas'])->name('procesos.ajaxListadoMaquinas');
+        Route::post('/sacarSolicitudesAgrupados', [ProcesosController::class, 'sacarSolicitudesAgrupados'])->name('procesos.sacarSolicitudesAgrupados');
+        Route::post('/sacarPesoTotalSolicitudAgrupado', [ProcesosController::class, 'sacarPesoTotalSolicitudAgrupado'])->name('procesos.sacarPesoTotalSolicitudAgrupado');
+        Route::post('/GuardarSolicitudAgrupado', [ProcesosController::class, 'GuardarSolicitudAgrupado'])->name('procesos.GuardarSolicitudAgrupado');
+        Route::post('/guardaEdicionProceso', [ProcesosController::class, 'guardaEdicionProceso'])->name('procesos.guardaEdicionProceso');
+        Route::post('/agregarProductoAlProceso', [ProcesosController::class, 'agregarProductoAlProceso'])->name('procesos.agregarProductoAlProceso');
+        Route::post('/agregarProductoProcesoNuevo', [ProcesosController::class, 'agregarProductoProcesoNuevo'])->name('procesos.agregarProductoProcesoNuevo');
+        Route::post('/generaPDFHistorialProceso', [ProcesosController::class, 'generaPDFHistorialProceso'])->name('procesos.generaPDFHistorialProceso');
+        Route::post('/enviarProcesoFocalizado', [ProcesosController::class, 'enviarProcesoFocalizado'])->name('procesos.enviarProcesoFocalizado');
+
+        Route::get('/focalizadoListado', [ProcesosController::class, 'focalizadoListado'])->name('procesos.focalizadoListado');
+        Route::post('/ajaxListadoSolicitudesFocalizado', [ProcesosController::class, 'ajaxListadoSolicitudesFocalizado'])->name('procesos.ajaxListadoSolicitudesFocalizado');
+        Route::get('/focalizadoListadoSolicitud', [ProcesosController::class, 'focalizadoListadoSolicitud'])->name('procesos.focalizadoListadoSolicitud');
+        Route::post('/guardarSolicitudFocalizado', [ProcesosController::class, 'guardarSolicitudFocalizado'])->name('procesos.guardarSolicitudFocalizado');
+        Route::post('/ajaxListadoSolicitudFocalizado', [ProcesosController::class, 'ajaxListadoSolicitudFocalizado'])->name('procesos.ajaxListadoSolicitudFocalizado');
     });
 
     // REPORTE

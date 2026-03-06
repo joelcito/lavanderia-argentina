@@ -2,29 +2,31 @@
     <table class="table table-bordered table-hover" id="kt_table_color_tela">
         <thead>
             <tr>
-                <th>Nº OT</th>
-                <th>Nº Venta</th>
-                <th>Total Prendas</th>
-                <th>Prendas Focalizado</th>
+                <th>Agrupados para proceso</th>
+                <th>Estado</th>
+                <th>Ultimo Proceso</th>
+                {{-- <th>Prendas Focalizado</th>
                 <th>Prendas Planchadas</th>
-                <th>Estado OT</th>
+                <th>Estado OT</th> --}}
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($ots as $ot)
+            @forelse ($solicitudArray as $solcitudAgrupado)
                 <tr>
-                    <td>{{ $ot->nro_ot }}</td>
-                    <td>
-                        {{ $ot->factura->numero_factura ?? 'SIN FACTURA' }}
-                    </td>
-                    <td>{{ $ot->cantidad}}</td>
-                    <td>{{ $ot->cantidad_focalizado ?? 0}}</td>
+                    <td>{{ $solcitudAgrupado['procesado'] }}</td>
+                    <td><span class="badge badge-warning">{{ $solcitudAgrupado['procesoFinal']->estado }}</span></td>
+                    <td><span class="badge badge-success">{{ $solcitudAgrupado['procesoFinal']->tipoProceso->nombre }}</span></td>
+                    {{-- <td>{{ $ot->cantidad_focalizado ?? 0}}</td>
                     <td>{{ $ot->cantidad_planchado ?? 0}}</td>
-                    <td>{{ $ot->estado }}</td>
+                    <td>{{ $ot->estado }}</td> --}}
 
                     <td>
-                        <button class="btn btn-info btn-sm" onclick="verDetalleOT({{ $ot->id }})">
+                        <button class="btn btn-sm btn-icon btn-danger" title="Generar reporte de Proceso" onclick='imprimirHistorialProceso(@json($solcitudAgrupado["crudo"]))' ><i class="fa fa-file-pdf"></i></button>
+                        @if ($solcitudAgrupado['procesoFinal']->tipoProceso->id != 4)
+                            <button class="btn btn-sm btn-icon btn-dark" title="Enviar a Focalizado" onclick='enviarProcesoFocalizado(@json($solcitudAgrupado["crudo"]))' ><i class="fa fa-up-long"></i></button>
+                        @endif
+                        {{-- <button class="btn btn-info btn-sm" onclick="verDetalleOT({{ $ot->id }})">
                             Detalle
                         </button>
 
@@ -36,7 +38,7 @@
                         </button>
                         <button class="btn btn-sm btn-danger" onclick="finalizarOT({{ $ot->id }})">
                             Finalizar
-                        </button>
+                        </button> --}}
                     </td>
                 </tr>
             @empty

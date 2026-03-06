@@ -25,6 +25,8 @@ return new class extends Migration
             //foranea sucursal
             $table->foreign('sucursal_id')->references('id')->on('sucursales');
             $table->unsignedBigInteger('sucursal_id')->nullable();
+            $table->foreign('solicitud_id')->references('id')->on('solicitudes');
+            $table->unsignedBigInteger('solicitud_id')->nullable();
             //foranea proceso
             // $table->foreign('proceso_id')->references('id')->on('procesos');
             // $table->unsignedBigInteger('proceso_id')->nullable();
