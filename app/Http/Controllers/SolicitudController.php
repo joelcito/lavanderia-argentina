@@ -7,6 +7,7 @@ use App\Models\Movimiento;
 use App\Models\Producto;
 use App\Models\Solicitud;
 use App\Models\Order_trabajo;
+use App\Models\Proceso;
 use App\Utils\Respuesta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -227,19 +228,19 @@ class SolicitudController extends Controller
 
 
                     DB::table('movimientos')->insert([
-                        'producto_id'        => $s->producto_id,
-                        'salida'             => $cantidadASalir,
-                        'sucursal_id'        => $ingresoMovimiento->sucursal_id,
-                        'solicitud_id'       => $s->id,
-                        'ingreso'            => 0,
-                        'codigo_compra'      => $ingresoMovimiento->codigo_compra,
-                        'fecha'              => now(),
-                        'descripcion'        => 'Salida por aprobación de solicitud #' . $s->id,
+                        'producto_id' => $s->producto_id,
+                        'salida' => $cantidadASalir,
+                        'sucursal_id' => $ingresoMovimiento->sucursal_id,
+                        'solicitud_id' => $s->id,
+                        'ingreso' => 0,
+                        'codigo_compra' => $ingresoMovimiento->codigo_compra,
+                        'fecha' => now(),
+                        'descripcion' => 'Salida por aprobación de solicitud #' . $s->id,
                         'usuario_creador_id' => Auth::id(),
-                        'movimiento_id'      => $ingresoId,
-                        'estado'             => 'ACTIVO',
-                        'created_at'         => now(),
-                        'updated_at'         => now(),
+                        'movimiento_id' => $ingresoId,
+                        'estado' => 'ACTIVO',
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]);
 
                     $cantidadRestante -= $cantidadASalir;
@@ -288,12 +289,12 @@ class SolicitudController extends Controller
             //                     ->get();
 
             $ots = Order_Trabajo::where('factura_id', $factura_id)
-                                ->where('tipo', 'ORDEN_TRABAJO')
-                                ->where(function ($query) {
-                                    $query->where('estado', 'RECEPCIONADO')
-                                        ->orWhere('estado', 'TRABAJANDO');
-                                })
-                                ->get();
+                ->where('tipo', 'ORDEN_TRABAJO')
+                ->where(function ($query) {
+                    $query->where('estado', 'RECEPCIONADO')
+                        ->orWhere('estado', 'TRABAJANDO');
+                })
+                ->get();
 
             // SACAMOS LAS SOLICITUDES CON ESE IF_FACTURA
             // $solicitudes = DB::table('solicitudes as s')
@@ -312,13 +313,13 @@ class SolicitudController extends Controller
             //                 ->get();
 
             $solicitudes = DB::table('solicitudes')
-                                ->whereRaw("
+                ->whereRaw("
                                     JSON_CONTAINS(
                                         JSON_EXTRACT(ordenes_trabajo, '$[*].factura_id'),
                                         ?
                                     )
                                 ", [$factura_id])
-                                ->get();
+                ->get();
 
             $otsUsadas = collect();
             foreach ($solicitudes as $solicitud) {
@@ -345,10 +346,10 @@ class SolicitudController extends Controller
                 $coincide = collect($ids)->intersect($otsUsadas)->isNotEmpty();
 
                 return [
-                    'nro_ot'     => $nro_ot,
-                    'ids'        => $ids,
+                    'nro_ot' => $nro_ot,
+                    'ids' => $ids,
                     'peso_total' => $peso_total,
-                    'disabled'   => $coincide
+                    'disabled' => $coincide
                 ];
             })->values();
 
@@ -619,8 +620,8 @@ class SolicitudController extends Controller
             $producto_id = $request->input('productoId');
 
             $solicitudes = Solicitud::where('producto_id', $producto_id)
-                                    ->where('estado', 'APROBADO')
-                                    ->get();
+                ->where('estado', 'APROBADO')
+                ->get();
 
             $fac = "";
             $solicitudArray = [];
@@ -634,7 +635,7 @@ class SolicitudController extends Controller
                     $arrayOts = array();
                     foreach ($ots as $key => $ot) {
                         $ordenTrabajoBuscado = Order_trabajo::find($ot);
-                        if(!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)){
+                        if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
                             $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
                             array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
                             if ((count($ots) - 1) == $key)
@@ -664,7 +665,51 @@ class SolicitudController extends Controller
     }
 
 
+    //focalizado
 
+    public function storeFocalizado(Request $request)
+    {
+
+        $facturas = $request->facturas;
+        $ordenesTrabajoArray = [];
+        foreach ($facturas as $facturaId) {
+            $factura = Factura::find($facturaId);
+            $ordenes = Order_trabajo::where('factura_id', $facturaId)->get();
+            $ots = [];
+            foreach ($ordenes as $ot) {
+                $ots[] = $ot->id;
+            }
+            $ordenesTrabajoArray[] = [
+                'factura_id' => $facturaId,
+                'nro_factura' => $factura ? $factura->numero_factura : '',
+                'ots' => $ots
+            ];
+        }
+
+        $solicitud = Solicitud::create([
+            'estado' => 'UTILIZADO',
+            'ordenes_trabajo' => $ordenesTrabajoArray
+        ]);
+
+        foreach ($ordenesTrabajoArray as $ordenTrabajo) {
+
+            foreach ($ordenTrabajo['ots'] as $otId) {
+
+                Proceso::create([
+                    'solicitud_id' => $solicitud->id,
+                    'order_trabajo_id' => $otId,
+                    'tipo_proceso_id' => 4,
+                    'estado' => 'EN PROCESO'
+                ]);
+
+            }
+
+        }
+
+        return response()->json([
+            'estado' => true
+        ]);
+    }
 
 }
 
