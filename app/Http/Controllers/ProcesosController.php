@@ -44,11 +44,17 @@ class ProcesosController extends Controller
     {
         if ($request->ajax()) {
 
-            $solicitudes = Solicitud::select('ordenes_trabajo')
-                ->whereNotNull('ordenes_trabajo')
-                ->groupBy('ordenes_trabajo')
-                ->orderByDesc('id')
-                ->get();
+            // $solicitudes = Solicitud::select('ordenes_trabajo')
+            //     ->whereNotNull('ordenes_trabajo')
+            //     ->groupBy('ordenes_trabajo')
+            //     ->orderByDesc('id')
+            //     ->get();
+
+            $solicitudes = Solicitud::selectRaw('ordenes_trabajo, MAX(id) as id')
+                                ->whereNotNull('ordenes_trabajo')
+                                ->groupBy('ordenes_trabajo')
+                                ->orderByDesc('id')
+                                ->get();
 
             foreach ($solicitudes as $key => $solicitud) {
 
