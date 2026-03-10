@@ -328,6 +328,9 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/ajaxProductoSolicitud', [SolicitudController::class, 'ajaxProductoSolicitud'])->name('solicitudes.ajaxProductoSolicitud');
         Route::post('/buscarSolicitudesProducto', [SolicitudController::class, 'buscarSolicitudesProducto'])->name('solicitudes.buscarSolicitudesProducto');
+
+        Route::post('/focalizado', [SolicitudController::class, 'storeFocalizado'])->name('solicitudes.store.focalizado');
+
     });
 
     // NEVADO
