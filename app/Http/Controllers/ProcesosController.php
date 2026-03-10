@@ -14,6 +14,7 @@ use App\Models\Tipo_proceso;
 use App\Models\Proceso;
 use App\Utils\Respuesta;
 use App\Models\Maquinaria;
+use App\Models\Preparacion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PDF;
@@ -1150,7 +1151,8 @@ class ProcesosController extends Controller
                                 'procesos.rb',
                                 'procesos.descripcion',
                                 'solicitudes.cantidad',
-                                'solicitudes.porcentaje'
+                                'solicitudes.porcentaje',
+                                'procesos.solicitud_id',
                             )
                             ->join('solicitudes', 'solicitudes.id', '=', 'procesos.solicitud_id')
                             ->with('maquinaria')
@@ -1169,7 +1171,8 @@ class ProcesosController extends Controller
                                 'procesos.rb',
                                 'procesos.descripcion',
                                 'solicitudes.cantidad',
-                                'solicitudes.porcentaje'
+                                'solicitudes.porcentaje',
+                                'procesos.solicitud_id',
                             )
                             ->get();
 
@@ -1270,7 +1273,8 @@ class ProcesosController extends Controller
             // dd($solicitudArray);
 
             $valores = [
-                'listado' => view('procesos.ajaxListadoSolicitudesFocalizado')->with(compact('solicitudArray'))->render()
+                'listado'        => view('procesos.ajaxListadoSolicitudesFocalizado')->with(compact('solicitudArray'))->render(),
+                'solicitudArray' => $solicitudArray
             ];
 
             $data = Respuesta::success($valores, "Se proceso con EXITO");
@@ -1297,14 +1301,14 @@ class ProcesosController extends Controller
             $id          = $request->input('id');
             $producto_id = $request->input('producto_id');
             $cantidad    = $request->input('cantidad');
-            $porcentaje  = $request->input('porcentaje');
+            // $porcentaje  = $request->input('porcentaje');
             $usuario     = Auth::user();
 
             $solicitud                     = new Solicitud();
             $solicitud->usuario_creador_id = $usuario->id;
             $solicitud->producto_id        = $producto_id;
             $solicitud->cantidad           = $cantidad;
-            $solicitud->porcentaje         = $porcentaje;
+            // $solicitud->porcentaje         = $porcentaje;
             $solicitud->estado             = "EN PROCESO";
             $solicitud->save();
 
@@ -1328,6 +1332,88 @@ class ProcesosController extends Controller
             ];
 
             $data = Respuesta::success($valores, "Se proceso con EXITO");
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+
+    }
+
+    public function ajaxlistadoPreparaciones(Request $request){
+        if($request->ajax()){
+
+            $solicitud_id = $request->input('solicitud');
+
+            $preparaciones = Preparacion::where('solicitud_id_padre', $solicitud_id)->get();
+
+            $valores = [
+                'listado' => view('procesos.ajaxlistadoPreparaciones')->with(compact('preparaciones', 'solicitud_id'))->render()
+            ];
+
+            $data = Respuesta::success($valores, "Se proceso con EXITO");
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+    }
+
+    public function guardarNuevoProcesoPadre(Request $request){
+
+        if($request->ajax()){
+
+            $solicitud_id_padre       = $request->input('solicitud_id_padre');
+            $cantidad_liquido_preceso = $request->input('cantidad_liquido_preceso');
+            $usuario                  = Auth::user();
+            $solicitud                = Solicitud::find($solicitud_id_padre);
+
+            $preparacion                     = new Preparacion();
+            $preparacion->usuario_creador_id = $usuario->id;
+            $preparacion->solicitud_id_padre = $solicitud_id_padre;
+            $preparacion->cantidad           = $solicitud->cantidad;
+            $preparacion->cantidad_liquido   = $cantidad_liquido_preceso;
+            $preparacion->save();
+
+            $solicitud_id = $solicitud_id_padre;
+
+            $preparaciones = Preparacion::where('solicitud_id_padre', $solicitud_id)->get();
+
+            $valores = [
+                'listado' => view('procesos.ajaxlistadoPreparaciones')->with(compact('preparaciones', 'solicitud_id'))->render()
+            ];
+
+            $data = Respuesta::success($valores, "Se proceso con EXITO");
+
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+
+    }
+
+    public function guardarDivicacionCarga(Request $request){
+
+        if($request->ajax()){
+
+            // dd($request->all());
+            $preparacion_id_divicion        = $request->input('preparacion_id_divicion');
+            $solicitud_id_preceso_carga     = $request->input('solicitud_id_preceso_carga');
+            $cantidad_preceso_carga         = $request->input('cantidad_preceso_carga');
+            $cantidad_liquido_preceso_carga = $request->input('cantidad_liquido_preceso_carga');
+            $usuario                        = Auth::user();
+            $preparacionBuscada             = Preparacion::find($preparacion_id_divicion);
+
+            $preparacion                       = new Preparacion();
+            $preparacion->usuario_creador_id   = $usuario->id;
+            $preparacion->solicitud_id_padre   = $preparacionBuscada->solicitud_id_padre;
+            $preparacion->solicitud_id_preceso = $solicitud_id_preceso_carga;
+            $preparacion->preparacion_id       = $preparacionBuscada->id;
+            $preparacion->cantidad             = $cantidad_preceso_carga;
+            $preparacion->cantidad_liquido     = $cantidad_liquido_preceso_carga;
+            $preparacion->save();
+
+            $data = Respuesta::success(null, "Se proceso con EXITO");
 
         }else{
             $data = Respuesta::error(null, "No existe");

@@ -124,7 +124,7 @@
                                             class="form-control form-control-sm" name="usuario_busqueda_id" id="usuario_busqueda_id" onchange="filtarCajas()">
                                             <option value="">SELECCIONE</option>
                                             @foreach ($usuarios as $user)
-                                                <option data-sucursal="{{ $user->sucursal->id }}" value="{{ $user->id }}">{{ $user->name }}</option>
+                                                <option data-sucursal="{{ $user->sucursal?->id }}" value="{{ $user->id }}">{{ $user->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
