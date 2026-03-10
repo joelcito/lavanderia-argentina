@@ -47,6 +47,7 @@ class ProcesosController extends Controller
             $solicitudes = Solicitud::select('ordenes_trabajo')
                 ->whereNotNull('ordenes_trabajo')
                 ->groupBy('ordenes_trabajo')
+                ->orderByDesc('id')
                 ->get();
 
             foreach ($solicitudes as $key => $solicitud) {
@@ -70,6 +71,10 @@ class ProcesosController extends Controller
                                 $fac = $fac . " - ";
                         }
                     }
+
+
+
+                    $fac .= implode(" - ", $arrayOts) . "]";
                 }
 
                 $json = json_encode($ordenesTrabajo);

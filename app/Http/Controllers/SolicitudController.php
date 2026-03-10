@@ -104,10 +104,11 @@ class SolicitudController extends Controller
 
         $solicitudes = Solicitud::with(['producto', 'usuarioCreador'])
             ->whereNull('deleted_at')
+            ->whereHas('producto')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // 🔹 AQUÍ ES DONDE VA TODO
+
         foreach ($solicitudes as $solicitud) {
 
             $otsIds = [];
@@ -119,10 +120,8 @@ class SolicitudController extends Controller
                     }
                 }
             }
-
-            // Buscar nro_ot según IDs
             $solicitud->nros_ot = Order_trabajo::whereIn('id', $otsIds)
-                ->pluck('nro_ot'); // colección de nro_ot
+                ->pluck('nro_ot');
         }
 
         return Respuesta::success([
@@ -669,43 +668,46 @@ class SolicitudController extends Controller
 
     public function storeFocalizado(Request $request)
     {
-
         $facturas = $request->facturas;
         $ordenesTrabajoArray = [];
-        foreach ($facturas as $facturaId) {
-            $factura = Factura::find($facturaId);
-            $ordenes = Order_trabajo::where('factura_id', $facturaId)->get();
-            $ots = [];
-            foreach ($ordenes as $ot) {
-                $ots[] = $ot->id;
-            }
-            $ordenesTrabajoArray[] = [
-                'factura_id' => $facturaId,
-                'nro_factura' => $factura ? $factura->numero_factura : '',
-                'ots' => $ots
-            ];
-        }
 
+        foreach ($facturas as $facturaId) {
+
+            $factura = Factura::find($facturaId);
+
+            $ots = Order_trabajo::where('factura_id', $facturaId)
+                ->whereNotNull('nro_ot')
+                ->pluck('id')
+                ->map(fn($ot) => (int) $ot)
+                ->values()
+                ->toArray();
+
+            if (count($ots) > 0) {
+                $ordenesTrabajoArray[] = [
+                    'ots' => $ots,
+                    'factura_id' => (int) $facturaId,
+                    'nro_factura' => $factura ? (int) $factura->numero_factura : null
+                ];
+            }
+        }
         $solicitud = Solicitud::create([
+            'usuario_creador_id' => auth()->id(),
             'estado' => 'UTILIZADO',
             'ordenes_trabajo' => $ordenesTrabajoArray
         ]);
 
         foreach ($ordenesTrabajoArray as $ordenTrabajo) {
-
             foreach ($ordenTrabajo['ots'] as $otId) {
 
                 Proceso::create([
                     'solicitud_id' => $solicitud->id,
-                    'order_trabajo_id' => $otId,
+                    'order_trabajo_id' => (int) $otId,
                     'tipo_proceso_id' => 4,
                     'estado' => 'EN PROCESO'
                 ]);
 
             }
-
         }
-
         return response()->json([
             'estado' => true
         ]);
