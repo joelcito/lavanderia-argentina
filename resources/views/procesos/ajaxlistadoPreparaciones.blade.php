@@ -1,35 +1,32 @@
+@if (count($preparaciones) == 0)
+<div class="row">
+    <div class="col-md-12">
+        <button onclick="modalNuevoPreparacion({{ $solicitud_id }})" class="btn btn-success w-100 btn-sm"><i class="fa fa-plus"></i> Nuevo Preparacion</button>
+    </div>
+</div>
+@endif
 <div style="overflow-x: auto;">
     <!--begin::Table-->
     <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_roles">
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-                <th>N°</th>
-                <th>Producto</th>
                 <th>Cantidad</th>
-                <th>Porcentaje</th>
-                <th>Estado</th>
-                <th>Actions</th>
+                <th>Cantidad Liquido</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
-            @forelse ($solicitudes as $solicitud)
+            @php
+                $cantidad = $preparaciones->whereNotNull('preparacion_id')->sum('cantidad');
+                // $cantidad_liquido = $preparaciones->whereNull('preparacion_id')->sum('cantidad_liquido');
+            @endphp
+            @forelse ($preparaciones as $preparacion)
                 <tr>
-                    <td>{{ $solicitud->id }}</td>
-                    <td>{{ $solicitud->producto->nombre }}</td>
-                    <td>{{ $solicitud->cantidad }}</td>
-                    <td>{{ $solicitud->porcentaje }}</td>
+                    <td>{{ $preparacion->cantidad }}</td>
+                    <td>{{ $preparacion->cantidad_liquido }}</td>
                     <td>
-                        @if ($solicitud->estado == "EN PROCESO")
-                            <span class="badge badge-warning text-dark">{{ $solicitud->estado }}</span>
-                        @elseif( $solicitud->estado == "APROBADO")
-                            <span class="badge badge-success text-dark">{{ $solicitud->estado }}</span>
-                        @else
-                            <span class="badge badge-white text-dark">{{ $solicitud->estado }}</span>
-                        @endif
-                    </td>
-                    <td>
-                        @if ($solicitud->estado == "APROBADO")
-                            <button onclick="modalPreparaciones({{ $solicitud->id }})" title="Preparacion" class="btn btn-icon btn-sm btn-success"><i class="fa fa-cogs"></i></button>
+                        @if ($preparacion->preparacion_id == null)
+                            <button title="Separar para Carga" onclick="modalDivicionPreparacionCarga({{ $preparacion->id }}, '{{ $preparacion->cantidad + $preparacion->cantidad_liquido }}', '{{ $cantidad }}')" class="btn btn-dark btn-icon btn-sm"><i class="fa fa-sad-cry"></i></button>
                         @endif
                     </td>
                 </tr>

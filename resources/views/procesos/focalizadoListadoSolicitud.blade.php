@@ -34,18 +34,18 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Cantidad</label>
                                     <input type="number" step="0.01" class="form-control form-control-sm" name="cantidad" id="cantidad">
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            {{-- <div class="col-md-2">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Porcentaje</label>
                                     <input type="number" step="0.01" class="form-control form-control-sm" name="porcentaje" id="porcentaje">
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </form>
                 </div>
@@ -63,6 +63,128 @@
     </div>
     <!--end::Modal - Add task-->
 
+    <!--begin::Modal - Add task-->
+    <div class="modal fade" id="modalListaPreparacion" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="kt_modal_add_user_header">
+                    <h3 class="fw-bold">LISTADO DE PREPARACIONES para el N° <span class="text-info" id="text-numero-preparacion"></span></h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body scroll-y">
+                    <div id="tabla-preparaciones-solicitud"></div>
+                </div>
+                <!--end::Modal body-->
+            </div>
+        </div>
+        <!--end::Modal dialog-->
+    </div>
+    <!--end::Modal - Add task-->
+
+    <!--begin::Modal - Add task-->
+    <div class="modal fade" id="modalNuevoPreparacion" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="kt_modal_add_user_header">
+                    <h3 class="fw-bold">FORMULARIO DE NUEVA PREPARACION</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body scroll-y">
+                    <form id="formularioNuevoPreparacion">
+                        <input type="hidden" name="solicitud_id_padre" id="solicitud_id_padre" value="0">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Cantidad Liquido</label>
+                                    <input type="number" step="0.01" class="form-control form-control-sm" name="cantidad_liquido_preceso" id="cantidad_liquido_preceso" required/>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!--end::Modal body-->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-sm w-100 btn-success" onclick="guardarNuevoProceso()">Guardar Preparacion</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end::Modal dialog-->
+    </div>
+    <!--end::Modal - Add task-->
+
+    <!--begin::Modal - Add task-->
+    <div class="modal fade" id="modalDivicionCarga" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="kt_modal_add_user_header">
+                    <h3 class="fw-bold">FORMULARIO DE DIVICION PARA CARGA</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body scroll-y">
+                    <form id="formularioDivicionCarga">
+
+                        <input type="hidden" name="preparacion_id_divicion" id="preparacion_id_divicion" value="0">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="fv-row mb-7">
+                                            <label class="required fw-semibold fs-6 mb-2">Total</label>
+                                            <input class="form-control form-control-sm bg-primary" name="total_carga" id="total_carga" required readonly/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="fv-row mb-7">
+                                            <label class="required fw-semibold fs-6 mb-2">Utilizado</label>
+                                            <input class="form-control form-control-sm bg-warning" name="utilizado_carga" id="utilizado_carga" required readonly/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="fv-row mb-7">
+                                            <label class="required fw-semibold fs-6 mb-2">Disponible</label>
+                                            <input class="form-control form-control-sm bg-success" name="disponible_carga" id="disponible_carga" required readonly/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Carga</label>
+                                    <select class="form-select form-select-sm" name="solicitud_id_preceso_carga" id="solicitud_id_preceso_carga" required></select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Cantidad</label>
+                                    <input type="number" step="0.01" class="form-control form-control-sm" min="1" name="cantidad_preceso_carga" id="cantidad_preceso_carga" required/>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Cant. Liquido</label>
+                                    <input type="number" step="0.01" class="form-control form-control-sm" name="cantidad_liquido_preceso_carga" id="cantidad_liquido_preceso_carga" required/>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!--end::Modal body-->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-sm w-100 btn-success" onclick="guardarDivicacionCarga()">Guardar Preparacion</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end::Modal dialog-->
+    </div>
+    <!--end::Modal - Add task-->
 
     <div class="d-flex flex-column flex-column-fluid">
         <div id="kt_app_content" class="app-content flex-column-fluid">
@@ -153,7 +275,7 @@
                     }
                 },
                 error: function(xhr) {
-                    limpiarErorres();
+                    // limpiarErorres();
 
                     if (xhr.status === 422) {
                         let errores = xhr.responseJSON.errors;
@@ -176,67 +298,266 @@
             });
         }
 
-        // function editarRol(rol){
+        function modalPreparaciones(solicitud){
 
-        //     $('#nombre').val(rol.nombre)
-        //     $('#id').val(rol.id)
-        //     $('#modalRol').modal('show')
+            $.ajax({
+                url: "{{ route('procesos.ajaxlistadoPreparaciones') }}",
+                method: "POST",
+                data: {solicitud:solicitud},
+                success: function(resultado) {
+                    if (resultado.estado) {
 
-        // }
+                        $('#text-numero-preparacion').text(solicitud)
+                        $('#tabla-preparaciones-solicitud').html(resultado.data.listado)
+                        $('#modalListaPreparacion').modal('show')
 
-        // function eliminarRol(rol, nombre) {
-        //     Swal.fire({
-        //         title: "¿Quieres eliminar " + nombre + "?",
-        //         text: "¡No podrás recuperarlo!",
-        //         icon: "warning",
-        //         showCancelButton: true,
-        //         confirmButtonColor: '#3085d6',
-        //         cancelButtonColor: '#d33',
-        //         confirmButtonText: "Sí, borrar",
-        //         cancelButtonText: "No, cancelar",
-        //         reverseButtons: true
-        //     }).then((result) => {
-        //         if (result.isConfirmed) {
+                        // Swal.fire({
+                        //     title: "EL REGISTRO FUE EXITOSO.",
+                        //     icon: "success",
+                        //     timer: 3000, // Se cierra en 3 segundos
+                        //     showConfirmButton: false
+                        // });
+                        // ajaxListado();
+                        // $('#modalRol').modal('hide');
+                    } else {
 
-        //             $.ajax({
-        //                 url: "{{ route('rol.eliminarRol') }}",
-        //                 method: "POST",
-        //                 data: { rol: rol },
-        //                 success: function(resultado) {
-        //                     if (resultado.estado) {
-        //                         ajaxListado(); // recarga el listado
-        //                         Swal.fire(
-        //                             'Eliminado!',
-        //                             'El rol ha sido eliminado correctamente.',
-        //                             'success'
-        //                         );
-        //                     } else {
-        //                         Swal.fire(
-        //                             'Error',
-        //                             resultado.message || 'No se pudo eliminar el rol.',
-        //                             'error'
-        //                         );
-        //                     }
-        //                 },
-        //                 error: function(xhr) {
-        //                     Swal.fire({
-        //                         icon: 'error',
-        //                         title: 'Error',
-        //                         text: 'Ocurrió un error inesperado.'
-        //                     });
-        //                 }
-        //             });
+                    }
+                },
+                error: function(xhr) {
+                    // limpiarErorres();
+
+                    if (xhr.status === 422) {
+                        let errores = xhr.responseJSON.errors;
+
+                        for (let campo in errores) {
+                            let mensaje = errores[campo][0];
+
+                            let input = $(`[name="${campo}"]`);
+                            input.addClass("is-invalid");
+                            input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ocurrió un error inesperado.',
+                        });
+                    }
+                }
+            });
+        }
+
+        function modalNuevoPreparacion(solicitud){
+
+            // $.ajax({
+            //     url: "{{ route('procesos.ajaxListadoSolicitudesFocalizado') }}",
+            //     method: "POST",
+            //     data: {solicitud:solicitud},
+            //     success: function(resultado) {
+            //         if (resultado.estado) {
+
+            //             // let select = $('#solicitud_id_preceso');
+            //             // select.empty();
+            //             // select.append('<option value="">-- Seleccione --</option>');
+            //             // let datos = resultado.data.solicitudArray;
+            //             // Object.entries(datos).forEach(([key, value]) => {
+            //             //     select.append(
+            //             //         `<option value="${key}">
+            //             //             ${value}
+            //             //         </option>`
+            //             //     );
+            //             // });
 
 
-        //         } else if (result.dismiss === Swal.DismissReason.cancel) {
-        //             Swal.fire(
-        //                 'Cancelado',
-        //                 'La operación fue cancelada',
-        //                 'info'
-        //             );
-        //         }
-        //     });
-        // }
+            //         } else {
+
+            //         }
+            //     },
+            //     error: function(xhr) {
+            //         limpiarErorres();
+
+            //         if (xhr.status === 422) {
+            //             let errores = xhr.responseJSON.errors;
+
+            //             for (let campo in errores) {
+            //                 let mensaje = errores[campo][0];
+
+            //                 let input = $(`[name="${campo}"]`);
+            //                 input.addClass("is-invalid");
+            //                 input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+            //             }
+            //         } else {
+            //             Swal.fire({
+            //                 icon: 'error',
+            //                 title: 'Error',
+            //                 text: 'Ocurrió un error inesperado.',
+            //             });
+            //         }
+            //     }
+            // });
+
+            $('#solicitud_id_padre').val(solicitud)
+            $('#modalListaPreparacion').modal('hide')
+            $('#modalNuevoPreparacion').modal('show')
+        }
+
+        function guardarNuevoProceso(){
+            if($('#formularioNuevoPreparacion')[0].checkValidity()){
+                let datos = $('#formularioNuevoPreparacion').serializeArray();
+                $.ajax({
+                    url: "{{ route('procesos.guardarNuevoProcesoPadre') }}",
+                    method: "POST",
+                    data: datos,
+                    success: function(resultado) {
+                        if (resultado.estado) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Exito',
+                                text: 'Se creo con exito.',
+                            });
+                            $('#tabla-preparaciones-solicitud').html(resultado.data.listado);
+                            $('#modalNuevoPreparacion').modal('hide');
+                            $('#modalListaPreparacion').modal('show');
+                        } else {
+
+                        }
+                    },
+                    error: function(xhr) {
+                        // limpiarErorres();
+
+                        if (xhr.status === 422) {
+                            let errores = xhr.responseJSON.errors;
+
+                            for (let campo in errores) {
+                                let mensaje = errores[campo][0];
+
+                                let input = $(`[name="${campo}"]`);
+                                input.addClass("is-invalid");
+                                input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                            }
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error inesperado.',
+                            });
+                        }
+                    }
+                });
+            }else{
+                $("#formularioNuevoPreparacion")[0].reportValidity();
+            }
+        }
+
+        function modalDivicionPreparacionCarga(preparacion, total, totalHasta){
+
+            console.log(preparacion, total, totalHasta);
+
+            $.ajax({
+                url: "{{ route('procesos.ajaxListadoSolicitudesFocalizado') }}",
+                method: "POST",
+                success: function(resultado) {
+                    if (resultado.estado) {
+
+                        let select = $('#solicitud_id_preceso_carga');
+                        select.empty();
+                        select.append('<option value="">-- Seleccione --</option>');
+                        let datos = resultado.data.solicitudArray;
+                        Object.entries(datos).forEach(([key, value]) => {
+                            select.append(
+                                `<option value="${key}">
+                                    ${value}
+                                </option>`
+                            );
+                        });
+
+                        $('#cantidad_preceso_carga').prop('max', total - totalHasta)
+                        $('#disponible_carga').val(total - totalHasta);
+                        $('#total_carga').val(total);
+                        $('#utilizado_carga').val(totalHasta);
+                        $('#preparacion_id_divicion').val(preparacion);
+                        $('#modalListaPreparacion').modal('hide');
+                        $('#cantidad_preceso_carga').val(0)
+                        $('#cantidad_liquido_preceso_carga').val(0)
+                        $('#modalDivicionCarga').modal('show');
+
+                    } else {
+
+                    }
+                },
+                error: function(xhr) {
+                    limpiarErorres();
+
+                    if (xhr.status === 422) {
+                        let errores = xhr.responseJSON.errors;
+
+                        for (let campo in errores) {
+                            let mensaje = errores[campo][0];
+
+                            let input = $(`[name="${campo}"]`);
+                            input.addClass("is-invalid");
+                            input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                        }
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ocurrió un error inesperado.',
+                        });
+                    }
+                }
+            });
+
+        }
+
+        function guardarDivicacionCarga(){
+            if($('#formularioDivicionCarga')[0].checkValidity()){
+                let datos = $('#formularioDivicionCarga').serializeArray();
+                $.ajax({
+                    url: "{{ route('procesos.guardarDivicacionCarga') }}",
+                    method: "POST",
+                    data: datos,
+                    success: function(resultado) {
+                        if (resultado.estado) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Exito',
+                                text: 'Se creo con exito.',
+                            });
+                            $('#tabla-preparaciones-solicitud').html(resultado.data.listado);
+                            $('#modalNuevoPreparacion').modal('hide');
+                            $('#modalDivicionCarga').modal('hide');
+                            $('#modalListaPreparacion').modal('show');
+                        } else {
+
+                        }
+                    },
+                    error: function(xhr) {
+                        // limpiarErorres();
+
+                        if (xhr.status === 422) {
+                            let errores = xhr.responseJSON.errors;
+
+                            for (let campo in errores) {
+                                let mensaje = errores[campo][0];
+
+                                let input = $(`[name="${campo}"]`);
+                                input.addClass("is-invalid");
+                                input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                            }
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error inesperado.',
+                            });
+                        }
+                    }
+                });
+            }else{
+                $("#formularioDivicionCarga")[0].reportValidity();
+            }
+        }
 
     </script>
 @endsection

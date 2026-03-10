@@ -120,7 +120,9 @@
 
                     @endphp
                     <tr>
-                        <td>{{ $factura->cliente->nombres." ".$factura->cliente->ap_paterno." ".$factura->cliente->ap_materno }}</td>
+                        <td>
+                            {{ $factura->cliente->nombres." ".$factura->cliente->ap_paterno." ".$factura->cliente->ap_materno }}
+                        </td>
                         <td>{{ $factura->numero_factura }}</td>
                         <td>{{ $cantidadPrendas }}</td>
                         <td>{{ $peso }}</td>
@@ -157,16 +159,35 @@
                 </tr>
             </thead>
             <tbody>
+                {{-- @dd($procesos, count($procesos)); --}}
                 @foreach ( $procesos as $proceso)
                     <tr>
-                        <td>{{ $proceso->maquinaria?->tipo." N: ".$proceso->maquinaria?->numero }}</td>
+                        <td>
+                            @if ($proceso->tipoProceso?->id != 4)
+                                {{ $proceso->maquinaria?->tipo." N: ".$proceso->maquinaria?->numero }}
+                            @endif
+                        </td>
                         <td>{{ $proceso->tipoProceso?->nombre }}</td>
-                        <td>{{ $proceso->producto?->nombre }}</td>
+                        <td>
+                            @if ($proceso->tipoProceso?->id != 4)
+                                {{ $proceso->producto?->nombre }}
+                            @else
+                                {{ $proceso->solicitud_id }}
+                            @endif
+                        </td>
                         <td>{{ $proceso->fecha_ingreso }}</td>
                         <td>{{ $proceso->tiempo }}</td>
                         <td>{{ $proceso->fecha_salida }}</td>
-                        <td>{{ $proceso->cantidad }}</td>
-                        <td>{{ $proceso->porcentaje }}</td>
+                        <td>
+                            @if ($proceso->tipoProceso?->id != 4)
+                                {{ $proceso->cantidad }}
+                            @endif
+                        </td>
+                        <td>
+                            @if ($proceso->tipoProceso?->id != 4)
+                                {{ $proceso->porcentaje }}
+                            @endif
+                        </td>
                         <td>{{ $proceso->temperatura }}</td>
                         <td>{{ $proceso->ph }}</td>
                         <td>{{ $proceso->rb }}</td>
