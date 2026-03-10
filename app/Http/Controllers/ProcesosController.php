@@ -1215,9 +1215,9 @@ class ProcesosController extends Controller
                 'procesos.solicitud_id'
             )
             ->orderBy('procesos.fecha_ingreso', 'asc')
-            // ->get();
-            ->toSql();
-            dd($procesos, $solicitudes);
+            ->get();
+            // ->toSql();
+            // dd($procesos, $solicitudes);
 
         // dd($procesos, $solicitudes);
         $usuario = Auth::user();

@@ -30,4 +30,9 @@ class Preparacion extends Model
     protected $casts = [
         'ordenes_trabajo' => 'array',
     ];
+
+    public function solicitudPadre()
+    {
+        return $this->belongsTo('App\Models\Solicitud', 'solicitud_id_padre');
+    }
 }

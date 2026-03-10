@@ -202,22 +202,16 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>{{ $proceso->solicitud_id }}</td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-
-                                        {{-- @php
-
-                                        @endphp --}}
-                                        {{-- @foreach ( as )
+                                        @php
+                                            $preparaciones = App\Models\Preparacion::where('solicitud_id_preceso', $proceso->solicitud_id)->get();
+                                        @endphp
+                                        @foreach ( $preparaciones as $preparacion)
                                             <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                                <td>{{ $preparacion->solicitudPadre->producto->nombre }}</td>
+                                                <td>{{ $preparacion->cantidad }}</td>
+                                                <td>{{ $preparacion->cantidad_liquido }}</td>
                                             </tr>
-                                        @endforeach --}}
+                                        @endforeach
                                     </tbody>
                                 </table>
                             @else
