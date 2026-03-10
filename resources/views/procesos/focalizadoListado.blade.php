@@ -48,13 +48,12 @@
     </div>
     <!--end::Modal - Add task-->
 
-
     <div class="d-flex flex-column flex-column-fluid">
         <div id="kt_app_content" class="app-content flex-column-fluid">
             <div id="kt_app_content_container" class="app-container container-xxlg">
                 <div class="card shadow-sm">
                     <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
-                        <h3 class="card-title fw-bold">Listado de Cargas</h3>
+                        <h3 class="card-title fw-bold">Listado de Cargas en Focalizado</h3>
                         {{-- <div class="card-toolbar">
                             <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoRol()">
                                 <i class="fa fa-plus"></i> Nuevo Rol
@@ -110,118 +109,62 @@
             })
         }
 
-        // function modalNuevoRol(){
-        //     $('#nombre').val('')
-        //     $('#id').val(0)
-        //     $('#modalRol').modal('show')
-        // }
+        function finalizarFocalizado(solicitud){
 
-        // function guardarRol(){
-        //     let datos = $('#formularioRol').serializeArray();
+            Swal.fire({
+                title: "Esta seguro de finalizar el proceso?",
+                text: "No podras revertir eso!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, Finalizar!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('procesos.finalizarProcesoFocalizado') }}",
+                        method: "POST",
+                        data: {solicitud:solicitud},
+                        success: function(resultado) {
+                            if (resultado.estado) {
 
-        //      $.ajax({
-        //         url: "{{ route('rol.guardarRol') }}",
-        //         method: "POST",
-        //         data: datos,
-        //         success: function(resultado) {
-        //             if (resultado.estado) {
-        //                 Swal.fire({
-        //                     title: "EL REGISTRO FUE EXITOSO.",
-        //                     icon: "success",
-        //                     timer: 3000, // Se cierra en 3 segundos
-        //                     showConfirmButton: false
-        //                 });
-        //                 ajaxListado();
-        //                 $('#modalRol').modal('hide');
-        //             } else {
+                                ajaxListado();
 
-        //             }
-        //         },
-        //         error: function(xhr) {
-        //             limpiarErorres();
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Exito',
+                                    text: 'Se creo con exito.',
+                                });
+                            } else {
 
-        //             if (xhr.status === 422) {
-        //                 let errores = xhr.responseJSON.errors;
+                            }
+                        },
+                        error: function(xhr) {
+                            // limpiarErorres();
 
-        //                 for (let campo in errores) {
-        //                     let mensaje = errores[campo][0];
+                            if (xhr.status === 422) {
+                                let errores = xhr.responseJSON.errors;
 
-        //                     let input = $(`[name="${campo}"]`);
-        //                     input.addClass("is-invalid");
-        //                     input.after(`<div class="invalid-feedback">${mensaje}</div>`);
-        //                 }
-        //             } else {
-        //                 Swal.fire({
-        //                     icon: 'error',
-        //                     title: 'Error',
-        //                     text: 'Ocurrió un error inesperado.',
-        //                 });
-        //             }
-        //         }
-        //     });
-        // }
+                                for (let campo in errores) {
+                                    let mensaje = errores[campo][0];
 
-        // function editarRol(rol){
+                                    let input = $(`[name="${campo}"]`);
+                                    input.addClass("is-invalid");
+                                    input.after(`<div class="invalid-feedback">${mensaje}</div>`);
+                                }
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Ocurrió un error inesperado.',
+                                });
+                            }
+                        }
+                    });
+                }
+            });
 
-        //     $('#nombre').val(rol.nombre)
-        //     $('#id').val(rol.id)
-        //     $('#modalRol').modal('show')
-
-        // }
-
-        // function eliminarRol(rol, nombre) {
-        //     Swal.fire({
-        //         title: "¿Quieres eliminar " + nombre + "?",
-        //         text: "¡No podrás recuperarlo!",
-        //         icon: "warning",
-        //         showCancelButton: true,
-        //         confirmButtonColor: '#3085d6',
-        //         cancelButtonColor: '#d33',
-        //         confirmButtonText: "Sí, borrar",
-        //         cancelButtonText: "No, cancelar",
-        //         reverseButtons: true
-        //     }).then((result) => {
-        //         if (result.isConfirmed) {
-
-        //             $.ajax({
-        //                 url: "{{ route('rol.eliminarRol') }}",
-        //                 method: "POST",
-        //                 data: { rol: rol },
-        //                 success: function(resultado) {
-        //                     if (resultado.estado) {
-        //                         ajaxListado(); // recarga el listado
-        //                         Swal.fire(
-        //                             'Eliminado!',
-        //                             'El rol ha sido eliminado correctamente.',
-        //                             'success'
-        //                         );
-        //                     } else {
-        //                         Swal.fire(
-        //                             'Error',
-        //                             resultado.message || 'No se pudo eliminar el rol.',
-        //                             'error'
-        //                         );
-        //                     }
-        //                 },
-        //                 error: function(xhr) {
-        //                     Swal.fire({
-        //                         icon: 'error',
-        //                         title: 'Error',
-        //                         text: 'Ocurrió un error inesperado.'
-        //                     });
-        //                 }
-        //             });
-
-
-        //         } else if (result.dismiss === Swal.DismissReason.cancel) {
-        //             Swal.fire(
-        //                 'Cancelado',
-        //                 'La operación fue cancelada',
-        //                 'info'
-        //             );
-        //         }
-        //     });
-        // }
+        }
 
     </script>
 @endsection

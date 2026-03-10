@@ -244,6 +244,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxlistadoPreparaciones', [ProcesosController::class, 'ajaxlistadoPreparaciones'])->name('procesos.ajaxlistadoPreparaciones');
         Route::post('/guardarNuevoProcesoPadre', [ProcesosController::class, 'guardarNuevoProcesoPadre'])->name('procesos.guardarNuevoProcesoPadre');
         Route::post('/guardarDivicacionCarga', [ProcesosController::class, 'guardarDivicacionCarga'])->name('procesos.guardarDivicacionCarga');
+        Route::post('/finalizarProcesoFocalizado', [ProcesosController::class, 'finalizarProcesoFocalizado'])->name('procesos.finalizarProcesoFocalizado');
     });
 
     // REPORTE

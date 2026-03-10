@@ -1866,7 +1866,7 @@
                         let solicitudes = respuesta.data.solicitudes;
                         solicitudes.forEach(e => {
                             let g = e.estado == "UTILIZADO" ? 'disabled' : '';
-                            select.append('<option ' + g + ' value="' + e.id + '">' + e.producto.nombre + '</option>');
+                            select.append('<option ' + g + ' value="' + e.id + '">' + e.producto?.nombre + '</option>');
                         });
                         let now = new Date();
                         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -2077,9 +2077,29 @@
                 return;
             }
 
+            let otsSeleccionadas = [];
+
+            $('#ots_por_factura_container input[type="checkbox"]:checked').each(function () {
+
+                otsSeleccionadas.push({
+                    ot_id: $(this).data('ot-id'),
+                    nro_ot: $(this).data('nro-ot'),
+                    peso: $(this).data('peso'),
+                    factura_id: $(this).data('factura-id')
+                });
+
+            });
+
+             if (otsSeleccionadas.length === 0) {
+                Swal.fire('Error', 'Seleccione al menos una OT', 'warning');
+                return;
+            }
+
+
             $.post("{{ route('solicitudes.store.focalizado') }}", {
                 _token: "{{ csrf_token() }}",
-                facturas: facturasSeleccionadas
+                facturas: facturasSeleccionadas,
+                ots: otsSeleccionadas
             }, function (response) {
                 Swal.fire('OK', 'Proceso enviado a focalizado', 'success');
                 $('#modalSolicitudProductos').modal('hide');

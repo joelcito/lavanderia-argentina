@@ -172,7 +172,7 @@
                             @if ($proceso->tipoProceso?->id != 4)
                                 {{ $proceso->producto?->nombre }}
                             @else
-                                {{ $proceso->solicitud_id }}
+                                {{-- {{ $proceso->solicitud_id }} --}}
                             @endif
                         </td>
                         <td>{{ $proceso->fecha_ingreso }}</td>
@@ -191,7 +191,39 @@
                         <td>{{ $proceso->temperatura }}</td>
                         <td>{{ $proceso->ph }}</td>
                         <td>{{ $proceso->rb }}</td>
-                        <td>{{ $proceso->descripcion }}</td>
+                        <td>
+                            @if ($proceso->tipoProceso?->id == 4)
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>PRODUCTO</th>
+                                            <th>CANTIDAD</th>
+                                            <th>CANTIDAD LIQUIDO</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ $proceso->solicitud_id }}</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+
+                                        {{-- @php
+
+                                        @endphp --}}
+                                        {{-- @foreach ( as )
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        @endforeach --}}
+                                    </tbody>
+                                </table>
+                            @else
+                                {{ $proceso->descripcion }}
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

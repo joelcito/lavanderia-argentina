@@ -4,17 +4,33 @@
         <thead>
             <tr>
                 <th>Agrupados para proceso</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
+            {{-- @dd($solicitudArray) --}}
             @forelse ($solicitudArray as $key => $solcitudAgrupado)
-                <tr>
-                    <td>{{ $solcitudAgrupado }}</td>
-                    <td>
-                        <button title="Solicitar Producto" class="btn btn-primary btn-icon btn-sm"><i class="fa fa-plus"></i></button>
-                    </td>
-                </tr>
+                @php
+                    $solicitud_id = $key;
+
+                    $proceso = App\Models\Proceso::select('estado')
+                                                    ->where('solicitud_id', $solicitud_id)
+                                                    ->where('tipo_proceso_id', 4) // FOCALIZADO
+                                                    ->groupBy('solicitud_id','estado')
+                                                    ->first();
+                @endphp
+                @if ($proceso->estado == "TRABAJANDO")
+                    <tr>
+                        <td>{{ $solcitudAgrupado }}</td>
+                        <td>
+                            <span class="badge badge-warning">{{ $proceso->estado }}</span>
+                        </td>
+                        <td>
+                            <button title="Terminar Proceso Focalizado" class="btn btn-dark btn-icon btn-sm" onclick="finalizarFocalizado('{{ $solicitud_id }}')"><i class="fa fa-up-down"></i></button>
+                        </td>
+                    </tr>
+                @endif
             @empty
                 <span class="text-danger">No hay OTs registradas</span>
             @endforelse

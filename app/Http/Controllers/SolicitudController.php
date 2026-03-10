@@ -619,31 +619,67 @@ class SolicitudController extends Controller
             $producto_id = $request->input('productoId');
 
             $solicitudes = Solicitud::where('producto_id', $producto_id)
-                ->where('estado', 'APROBADO')
-                ->get();
+                                    ->where('estado', 'APROBADO')
+                                    ->get();
 
             $fac = "";
             $solicitudArray = [];
 
+            // foreach ($solicitudes as $key => $solicitud) {
+            //     $ordenesTrabajo = $solicitud->ordenes_trabajo;
+            //     $fac = "";
+            //     foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
+            //         $fac = $fac . " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
+            //         $ots = $ordenTrabajo['ots'];
+            //         $arrayOts = array();
+            //         foreach ($ots as $key => $ot) {
+            //             $ordenTrabajoBuscado = Order_trabajo::find($ot);
+            //             if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
+            //                 $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
+            //                 array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
+            //                 if ((count($ots) - 1) == $key)
+            //                     $fac = $fac . "]";
+            //                 else
+            //                     $fac = $fac . " - ";
+            //             }else{
+            //                 // $fac = $fac . "]";
+            //                 $fac = rtrim($fac, " -");
+            //                 $fac = $fac . "]";
+            //             }
+            //         }
+            //     }
+
+            //     $solicitudArray[$solicitud->id] = $fac;
+            // }
+
             foreach ($solicitudes as $key => $solicitud) {
+
                 $ordenesTrabajo = $solicitud->ordenes_trabajo;
                 $fac = "";
-                foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
-                    $fac = $fac . " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
-                    $ots = $ordenTrabajo['ots'];
-                    $arrayOts = array();
-                    foreach ($ots as $key => $ot) {
-                        $ordenTrabajoBuscado = Order_trabajo::find($ot);
-                        if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
-                            $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
-                            array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
-                            if ((count($ots) - 1) == $key)
-                                $fac = $fac . "]";
-                            else
-                                $fac = $fac . " - ";
-                        }
 
+                foreach ($ordenesTrabajo as $ordenTrabajo) {
+
+                    $fac .= " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
+
+                    $ots = $ordenTrabajo['ots'];
+                    $arrayOts = [];
+
+                    foreach ($ots as $ot) {
+
+                        $ordenTrabajoBuscado = Order_trabajo::find($ot);
+
+                        if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
+
+                            if (!empty($arrayOts)) {
+                                $fac .= " - ";
+                            }
+
+                            $fac .= " OT:" . $ordenTrabajoBuscado->nro_ot;
+                            $arrayOts[] = $ordenTrabajoBuscado->nro_ot;
+                        }
                     }
+
+                    $fac .= "]";
                 }
 
                 $solicitudArray[$solicitud->id] = $fac;
@@ -668,44 +704,73 @@ class SolicitudController extends Controller
 
     public function storeFocalizado(Request $request)
     {
-        $facturas = $request->facturas;
-        $ordenesTrabajoArray = [];
 
-        foreach ($facturas as $facturaId) {
+        // dd($request->all());
 
-            $factura = Factura::find($facturaId);
+        // $facturas = $request->facturas;
+        // $ordenesTrabajoArray = [];
+        $otsSeleccionados = $request->input('ots');
 
-            $ots = Order_trabajo::where('factura_id', $facturaId)
-                ->whereNotNull('nro_ot')
-                ->pluck('id')
-                ->map(fn($ot) => (int) $ot)
-                ->values()
-                ->toArray();
+        $resultado = [];
 
-            if (count($ots) > 0) {
-                $ordenesTrabajoArray[] = [
-                    'ots' => $ots,
-                    'factura_id' => (int) $facturaId,
-                    'nro_factura' => $factura ? (int) $factura->numero_factura : null
+        foreach ($otsSeleccionados as $ot) {
+            $facturaId = $ot['factura_id'];
+            $ots = array_map('intval', explode(',', $ot['ot_id']));
+            if (!isset($resultado[$facturaId])) {
+
+                $facturaBuscado = Factura::find($facturaId);
+
+                $resultado[$facturaId] = [
+                    "ots" => [],
+                    "factura_id" => (int)$facturaBuscado->id,
+                    "nro_factura" => (int)$facturaBuscado->numero_factura
                 ];
             }
+            $resultado[$facturaId]['ots'] = array_merge($resultado[$facturaId]['ots'], $ots);
         }
+        $resultado = array_values($resultado);
+
+
+        // foreach ($facturas as $facturaId) {
+
+        //     $factura = Factura::find($facturaId);
+
+        //     $ots = Order_trabajo::where('factura_id', $facturaId)
+        //                         ->whereNotNull('nro_ot')
+        //                         ->pluck('id')
+        //                         ->map(fn($ot) => (int) $ot)
+        //                         ->values()
+        //                         ->toArray();
+
+        //     if (count($ots) > 0) {
+        //         $ordenesTrabajoArray[] = [
+        //             'ots' => $ots,
+        //             'factura_id' => (int) $facturaId,
+        //             'nro_factura' => $factura ? (int) $factura->numero_factura : null
+        //         ];
+        //     }
+        // }
+
         $solicitud = Solicitud::create([
             'usuario_creador_id' => auth()->id(),
-            'estado' => 'UTILIZADO',
-            'ordenes_trabajo' => $ordenesTrabajoArray
+            'cantidad'           => 0,
+            'porcentaje'         => 0,
+            'estado'             => 'EN PROCESO',
+            // 'ordenes_trabajo'    => $ordenesTrabajoArray
+            'ordenes_trabajo'    => $resultado
+
         ]);
 
-        foreach ($ordenesTrabajoArray as $ordenTrabajo) {
+        // foreach ($ordenesTrabajoArray as $ordenTrabajo) {
+        foreach ($resultado as $ordenTrabajo) {
             foreach ($ordenTrabajo['ots'] as $otId) {
-
                 Proceso::create([
-                    'solicitud_id' => $solicitud->id,
-                    'order_trabajo_id' => (int) $otId,
-                    'tipo_proceso_id' => 4,
-                    'estado' => 'EN PROCESO'
+                    'usuario_creador_id' => auth()->id(),
+                    'order_trabajo_id'   => (int) $otId,
+                    'solicitud_id'       => $solicitud->id,
+                    'tipo_proceso_id'    => 4,
+                    'estado'             => 'TRABAJANDO'
                 ]);
-
             }
         }
         return response()->json([

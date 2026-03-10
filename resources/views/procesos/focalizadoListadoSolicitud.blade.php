@@ -519,15 +519,17 @@
                     data: datos,
                     success: function(resultado) {
                         if (resultado.estado) {
+
+                            $('#tabla-preparaciones-solicitud').html(resultado.data.listado);
+                            $('#modalNuevoPreparacion').modal('hide');
+                            $('#modalDivicionCarga').modal('hide');
+                            $('#modalListaPreparacion').modal('show');
+
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Exito',
                                 text: 'Se creo con exito.',
                             });
-                            $('#tabla-preparaciones-solicitud').html(resultado.data.listado);
-                            $('#modalNuevoPreparacion').modal('hide');
-                            $('#modalDivicionCarga').modal('hide');
-                            $('#modalListaPreparacion').modal('show');
                         } else {
 
                         }
