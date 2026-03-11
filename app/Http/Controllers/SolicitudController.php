@@ -730,27 +730,6 @@ class SolicitudController extends Controller
         }
         $resultado = array_values($resultado);
 
-
-        // foreach ($facturas as $facturaId) {
-
-        //     $factura = Factura::find($facturaId);
-
-        //     $ots = Order_trabajo::where('factura_id', $facturaId)
-        //                         ->whereNotNull('nro_ot')
-        //                         ->pluck('id')
-        //                         ->map(fn($ot) => (int) $ot)
-        //                         ->values()
-        //                         ->toArray();
-
-        //     if (count($ots) > 0) {
-        //         $ordenesTrabajoArray[] = [
-        //             'ots' => $ots,
-        //             'factura_id' => (int) $facturaId,
-        //             'nro_factura' => $factura ? (int) $factura->numero_factura : null
-        //         ];
-        //     }
-        // }
-
         $solicitud = Solicitud::create([
             'usuario_creador_id' => auth()->id(),
             'cantidad'           => 0,
@@ -769,7 +748,8 @@ class SolicitudController extends Controller
                     'order_trabajo_id'   => (int) $otId,
                     'solicitud_id'       => $solicitud->id,
                     'tipo_proceso_id'    => 4,
-                    'estado'             => 'TRABAJANDO'
+                    'estado'             => 'TRABAJANDO',
+                    'fecha_ingreso'      => date('Y-m-d H:i:s')
                 ]);
             }
         }

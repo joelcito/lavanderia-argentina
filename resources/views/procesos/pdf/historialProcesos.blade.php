@@ -196,9 +196,9 @@
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th>PRODUCTO</th>
-                                            <th>CANTIDAD</th>
-                                            <th>CANTIDAD LIQUIDO</th>
+                                            <th>PROD</th>
+                                            <th>CANT</th>
+                                            <th>CANT LIQ</th>
                                         </tr>
                                     </thead>
                                     <tbody>

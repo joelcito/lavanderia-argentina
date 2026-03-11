@@ -1019,23 +1019,25 @@
 
         function agregarProcesoAlListado() {
             let proceso = {
-                order_trabajo_id: $('#order_trabajo_id_lavanderia').val(),
-                producto_id: $('#producto_solicitud_aprobado').val(),
-                maquinaria_id: $('#maquinaria_id').val(),
-                tipo_proceso_id: $('#tipo_proceso_id').val(),
-                fecha_ingreso: $('#fecha_ingreso').val(),
-                fecha_salida: $('#fecha_salida').val(),
-                cantidad: $('#cantidad').val() || null,
-                porcentaje: $('#porcentaje').val() || null,
-                gr_litro: $('#gr_litro').val() || null,
-                tiempo: $('#tiempo').val() || null,
-                temperatura: $('#temperatura').val() || null,
-                ph: $('#ph').val() || null,
-                rb: $('#rb').val() || null,
-                descripcion: $('#descripcion').val(),
-                estado: 'TRABAJANDO',
-                producto_solicitud_aprobado: $('#producto_solicitud_aprobado').val(),
-                ordenes_trabajos_solicitudes_aprobados: $('#ordenes_trabajos_solicitudes_aprobados').val()
+                order_trabajo_id                      : $('#order_trabajo_id_lavanderia').val(),
+                producto_id                           : $('#producto_solicitud_aprobado').val(),
+                maquinaria_id                         : $('#maquinaria_id').val(),
+                tipo_proceso_id                       : $('#tipo_proceso_id').val(),
+                fecha_ingreso                         : $('#fecha_ingreso').val(),
+                fecha_salida                          : $('#fecha_salida').val(),
+                cantidad                              : $('#cantidad').val() || null,
+                porcentaje                            : $('#porcentaje').val() || null,
+                gr_litro                              : $('#gr_litro').val() || null,
+                tiempo                                : $('#tiempo').val() || null,
+                temperatura                           : $('#temperatura').val() || null,
+                ph                                    : $('#ph').val() || null,
+                rb                                    : $('#rb').val() || null,
+                descripcion                           : $('#descripcion').val(),
+                estado                                : 'TRABAJANDO',
+                producto_solicitud_aprobado           : $('#producto_solicitud_aprobado').val(),
+                ordenes_trabajos_solicitudes_aprobados: $('#ordenes_trabajos_solicitudes_aprobados').val(),
+                nombre_producto_seleccionado          : $('#producto_solicitud_aprobado option:selected').text(),
+                nombre_precesso_seleccionado          : $('#tipo_proceso_id option:selected').text(),
             };
 
             // Validaciones básicas
@@ -1058,17 +1060,17 @@
 
             listadoProcesos.forEach((p, index) => {
                 tbody.append(`
-                                                <tr>
-                                                    <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
-                                                    <td>${$('#producto_solicitud_aprobado option:selected').text()}</td>
-                                                    <td>${$('#tipo_proceso_id option:selected').text()}</td>
-                                                    <td>${p.fecha_ingreso}</td>
-                                                    <td>${p.fecha_salida}</td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
-                                                    </td>
-                                                </tr>
-                                            `);
+                            <tr>
+                                <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
+                                <td>${p.nombre_producto_seleccionado}</td>
+                                <td>${p.nombre_precesso_seleccionado}</td>
+                                <td>${p.fecha_ingreso}</td>
+                                <td>${p.fecha_salida}</td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
+                                </td>
+                            </tr>
+                        `);
             });
         }
 
@@ -1128,7 +1130,8 @@
         function limpiarFormularioModal() {
             $('#order_trabajo_id_lavanderia').val('');
             $('#producto_id_lavanderia').val('');
-            $('#tipo_proceso_id').val('');
+            // $('#tipo_proceso_id').val('');
+            $('#tipo_proceso_id').val(null).trigger('change');
             $('#fecha_ingreso').val('');
             $('#fecha_salida').val('');
             $('#tiempo').val('');

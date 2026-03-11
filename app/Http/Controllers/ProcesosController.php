@@ -843,7 +843,9 @@ class ProcesosController extends Controller
                     }
                 }
 
-                $solicitudArray[$solicitud->id] = $fac;
+                if(!in_array($fac, $solicitudArray)){
+                    $solicitudArray[$solicitud->id] = $fac;
+                }
             }
 
             $valores = [
@@ -906,7 +908,10 @@ class ProcesosController extends Controller
                     }
                 }
 
-                $solicitudArray[$solicitud->id] = $fac;
+                if(!in_array($fac, $solicitudArray)){
+                    $solicitudArray[$solicitud->id] = $fac;
+                }
+
             }
 
             $valores = [
@@ -1145,42 +1150,6 @@ class ProcesosController extends Controller
 
         $solicitudes = $query->pluck('id');
 
-        // $procesos = Proceso::select(
-        //     'procesos.producto_id',
-        //     'procesos.maquinaria_id',
-        //     'procesos.tipo_proceso_id',
-        //     'procesos.fecha_ingreso',
-        //     'procesos.fecha_salida',
-        //     'procesos.tiempo',
-        //     'procesos.temperatura',
-        //     'procesos.ph',
-        //     'procesos.rb',
-        //     'procesos.descripcion',
-        //     'solicitudes.cantidad',
-        //     'solicitudes.porcentaje'
-        // )
-        //     ->join('solicitudes', 'solicitudes.id', '=', 'procesos.solicitud_id')
-        //     ->with('maquinaria')
-        //     ->with('producto')
-        //     ->with('tipoProceso')
-        //     ->whereIn('solicitud_id', $solicitudes)
-        //     // ->orderBy('procesos.id','desc')
-        //     ->groupBy(
-        //         'procesos.producto_id',
-        //         'procesos.maquinaria_id',
-        //         'procesos.tipo_proceso_id',
-        //         'procesos.fecha_ingreso',
-        //         'procesos.fecha_salida',
-        //         'procesos.tiempo',
-        //         'procesos.temperatura',
-        //         'procesos.ph',
-        //         'procesos.rb',
-        //         'procesos.descripcion',
-        //         'solicitudes.cantidad',
-        //         'solicitudes.porcentaje'
-        //     )
-        //     ->get();
-
         $procesos = Proceso::select(
             'procesos.producto_id',
             'procesos.maquinaria_id',
@@ -1260,9 +1229,10 @@ class ProcesosController extends Controller
                 $proceso                     = new Proceso();
                 $proceso->usuario_creador_id = $usuario->id;
                 $proceso->order_trabajo_id   = $ot;
-                $proceso->tipo_proceso_id    = 4;               //FOCALIZADO
+                $proceso->tipo_proceso_id    = 4;                    //FOCALIZADO
                 $proceso->solicitud_id       = $solicitud->id;
                 $proceso->estado             = "TRABAJANDO";
+                $proceso->fecha_ingreso      = date('Y-m-d H:i:s');
                 $proceso->save();
             }
 
@@ -1526,7 +1496,8 @@ class ProcesosController extends Controller
 
             if ($procesos) {
                 foreach ($procesos as $key => $proceso) {
-                    $proceso->estado = 'EN PROCESO';
+                    $proceso->estado       = 'EN PROCESO';
+                    $proceso->fecha_salida = date('Y-m-d H:i:s');
                     $proceso->save();
                 }
                 $data = Respuesta::success(null, "SE FINALIZO CON EXITO");
