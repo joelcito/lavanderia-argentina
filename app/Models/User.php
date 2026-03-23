@@ -40,6 +40,10 @@ class User extends Authenticatable
 
         'estado',
         'deleted_at',
+
+        'pago_diario',
+        'horas_base',
+
     ];
 
     /**
@@ -73,42 +77,42 @@ class User extends Authenticatable
     //     return $this->belongsTo(Sucursal::class, 'sucursal_id');
     // }
 
-    public function  isAdmin()
+    public function isAdmin()
     {
         return $this->rol_id == 1 ? true : false;
     }
 
-    public function  isLavador()
+    public function isLavador()
     {
         return $this->rol_id == 2 ? true : false;
     }
 
-    public function  isCliente()
+    public function isCliente()
     {
         return $this->rol_id == 3 ? true : false;
     }
 
-    public function  isEncargadoAlmacen()
+    public function isEncargadoAlmacen()
     {
         return $this->rol_id == 4 ? true : false;
     }
 
-    public function  isPlanchador()
+    public function isPlanchador()
     {
         return $this->rol_id == 5 ? true : false;
     }
 
-    public function  isFocalizador()
+    public function isFocalizador()
     {
         return $this->rol_id == 6 ? true : false;
     }
 
-    public function  isAyudanteLavado()
+    public function isAyudanteLavado()
     {
         return $this->rol_id == 7 ? true : false;
     }
 
-    public function  isAuxuliarOficina()
+    public function isAuxuliarOficina()
     {
         return $this->rol_id == 8 ? true : false;
     }

@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\CaracteristicaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ColorTelaController;
+use App\Http\Controllers\ConfiguracionPersonalController;
+use App\Http\Controllers\ControlPersonalController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\FocalizadoController;
 use App\Http\Controllers\HomeController;
@@ -11,6 +14,7 @@ use App\Http\Controllers\MovimientoController;
 use App\Http\Controllers\NombreTelaController;
 use App\Http\Controllers\OrdenTrabajoController;
 use App\Http\Controllers\PagoController;
+use App\Http\Controllers\PagosPersonalController;
 use App\Http\Controllers\PrelavadoController;
 use App\Http\Controllers\PrendaController;
 use App\Http\Controllers\ProductoController;
@@ -57,6 +61,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [UserController::class, 'ajaxListado'])->name('user.ajaxListado');
         Route::post('/guardarUser', [UserController::class, 'guardarUser'])->name('user.guardarUser');
         Route::post('/eliminarUser', [UserController::class, 'eliminarUser'])->name('user.eliminarUser');
+
+        Route::get('/control-personal/user/{id}', [UserController::class, 'getUser']);
     });
     // CLIENTE
     Route::prefix('/cliente')->group(function () {
@@ -270,6 +276,10 @@ Route::middleware('auth')->group(function () {
             return view('reporte.prueba_ot', compact('facturas'));
         });
 
+        //pagos
+
+        Route::post('/personal/lavador/pdf', [ReporteController::class, 'reporteLavador'])->name('reporte.personal.lavador.pdf');
+
     });
 
 
@@ -340,6 +350,37 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [NevadoController::class, 'ajaxListado'])->name('nevado.ajaxListado');
         Route::post('/guardarNevado', [NevadoController::class, 'guardarNevado'])->name('nevado.guardarNevado');
         Route::post('/eliminarNevado', [NevadoController::class, 'eliminarNevado'])->name('nevado.eliminarNevado');
+    });
+
+    //PERSONAL
+
+    Route::prefix('control-personal')->group(function () {
+
+        Route::get('/', [ControlPersonalController::class, 'index'])->name('personal.index');
+        Route::get('/listado', [ControlPersonalController::class, 'ajaxListado'])->name('personal.ajaxListado');
+        // Route::get('/resumen/{user}', [PagosPersonalController::class, 'ajaxResumen'])->name('personal.resumen');
+        Route::post('/configuracion/update', [ConfiguracionPersonalController::class, 'update'])->name('personal.config.update');
+
+        Route::get('/user/{id}', [ControlPersonalController::class, 'getUser']);
+        Route::get('/resumen-fechas/{user}', [ControlPersonalController::class, 'resumenFechas']);
+        Route::post('/pagos-personal/store', [ControlPersonalController::class, 'store']);
+
+        Route::get('/lavador/formulario', [ControlPersonalController::class, 'formularioLavador']);
+
+        Route::get('/{user}', [ControlPersonalController::class, 'show'])->name('personal.show');
+
+    });
+
+    Route::prefix('asistencias')->group(function () {
+        Route::get('/listado/{user}', [AsistenciaController::class, 'ajaxListado'])->name('asistencias.listado');
+        Route::post('/store', [AsistenciaController::class, 'store'])->name('asistencias.store');
+        Route::post('/delete', [AsistenciaController::class, 'delete'])->name('asistencias.delete');
+        Route::get('/list/{user_id}', [AsistenciaController::class, 'listar']);
+    });
+
+    Route::prefix('pagos-personal')->group(function () {
+        Route::post('/store', [PagosPersonalController::class, 'store'])->name('pagos.store');
+        Route::get('/historial/{user}', [PagosPersonalController::class, 'historial'])->name('pagos.historial');
     });
 
 });

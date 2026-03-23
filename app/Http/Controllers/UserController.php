@@ -12,32 +12,35 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function listado (){
+    public function listado()
+    {
 
         // $roles = Rol::all();
         $roles = Rol::where('id', '!=', 3)->get();
         $sucursales = Sucursal::all();
 
-        return view ('user.listado')->with(compact('roles', 'sucursales'));
+        return view('user.listado')->with(compact('roles', 'sucursales'));
     }
 
-    public function ajaxListado (Request $request){
-        if($request->ajax()){
+    public function ajaxListado(Request $request)
+    {
+        if ($request->ajax()) {
             //sacamos el listado
             // $usuarios = User::all();
             $usuarios = User::where('rol_id', '!=', 3)->get();
-            $valores=[
+            $valores = [
                 'listado' => view('user.ajaxListado')->with(compact('usuarios'))->render()
             ];
             $data = Respuesta::success($valores, "Datos Obtenidos correctamente");
-        }else{
+        } else {
             $data = Respuesta::error(null, "Error al obtener los datos");
 
         }
         return $data;
     }
 
-    public function guardarUser(Request $request){
+    public function guardarUser(Request $request)
+    {
         if ($request->ajax()) {
             $user_id = $request->input('id');
             $sucursal_id = $request->input('sucursal_id');
@@ -52,7 +55,7 @@ class UserController extends Controller
             $password = Hash::make($request->input('password'));
             $usuario = Auth::user();
 
-            if ($user_id=='0') {
+            if ($user_id == '0') {
                 $user = new User();
                 $user->usuario_creador_id = $usuario->id;
             } else {
@@ -80,9 +83,10 @@ class UserController extends Controller
         return $data;
     }
 
-    public function eliminarUser(Request $request){
+    public function eliminarUser(Request $request)
+    {
 
-        if($request->ajax()){
+        if ($request->ajax()) {
 
             //INICIALIZAMOS LAS VARIABLES
             $user_id = $request->input('user');
@@ -98,7 +102,7 @@ class UserController extends Controller
 
             $data = Respuesta::success(null, "Se elimino con exito");
 
-        }else{
+        } else {
 
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
@@ -106,4 +110,13 @@ class UserController extends Controller
         return $data;
 
     }
+
+
+    public function getUser($id)
+    {
+        return response()->json(
+            User::select('id', 'pago_diario', 'horas_base')->find($id)
+        );
+    }
+
 }

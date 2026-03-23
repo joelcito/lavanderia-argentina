@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Asistencia;
 use App\Models\Cliente;
 use App\Models\Factura;
 use App\Models\Order_trabajo;
+use App\Models\Pago;
+use App\Models\User;
 use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -364,6 +367,90 @@ class ReporteController extends Controller
         return $pdf->stream('stock_compra.pdf');
     }
 
+    //pagos
+
+    public function reporteLavador(Request $request)
+    {
+        $inicio = $request->fecha_inicio;
+        $fin = $request->fecha_fin;
+        $usuarios = User::whereBetween('rol_id', [1, 8])->get();
+        $reporte = [];
+
+        foreach ($usuarios as $user) {
+
+
+            $asistencias = Asistencia::where('user_id', $user->id)
+                ->whereBetween('fecha', [$inicio, $fin])
+                ->get()
+                ->groupBy('fecha');
+
+            $totalSegundos = 0;
+
+            foreach ($asistencias as $fecha => $registros) {
+
+                foreach ($registros as $a) {
+
+                    if (!$a->hora_entrada || !$a->hora_salida)
+                        continue;
+
+                    $entrada = strtotime($a->hora_entrada);
+                    $salida = strtotime($a->hora_salida);
+
+                    if ($salida <= $entrada)
+                        continue;
+
+                    $totalSegundos += ($salida - $entrada);
+                }
+            }
+
+
+            $pagoTotal = 0;
+
+            if ($user->horas_base > 0) {
+                $pagoHora = $user->pago_diario / $user->horas_base;
+                $pagoMinuto = $pagoHora / 60;
+                $totalMinutos = $totalSegundos / 60;
+                $pagoTotal = $totalMinutos * $pagoMinuto;
+            }
+
+
+            $descuentos = Pago::where('user_id', $user->id)
+                ->whereIn('tipo_pago', ['adelanto', 'descuento'])
+                ->whereBetween('fecha', [$inicio, $fin])
+                ->sum('monto');
+
+
+            $totalFinal = $pagoTotal - $descuentos;
+
+
+            $pagado = Pago::where('user_id', $user->id)
+                ->where('tipo_pago', 'salario')
+                ->whereBetween('fecha_inicio', [$inicio, $fin])
+                ->whereBetween('fecha_fin', [$inicio, $fin])
+                ->exists();
+
+
+            $reporte[] = [
+                'nombres' => $user->nombres,
+                'ap_paterno' => $user->ap_paterno,
+                'ap_materno' => $user->ap_materno,
+
+                'monto_semana' => $pagoTotal,
+                'descuento' => $descuentos,
+                'total' => $totalFinal,
+                'estado' => $pagado ? 'PAGADO' : ''
+            ];
+        }
+
+
+        $pdf = PDF::loadView('personal.pdf.reporte_pago_lavador', [
+            'reporte' => $reporte,
+            'inicio' => $inicio,
+            'fin' => $fin
+        ]);
+
+        return $pdf->stream('reporte_lavadores.pdf');
+    }
 
 
 }

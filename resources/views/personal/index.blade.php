@@ -1,0 +1,754 @@
+@extends('layouts.app')
+@section('css')
+    <link href="{{ asset('assets/plugins/custom/datatables/datatables.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <style>
+        .tamanio_boton {
+            font-size: 6px;
+        }
+    </style>
+@endsection
+@section('metadatos')
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+@endsection
+@section('content')
+
+    <div class="container">
+        <h2>Control de Personal</h2>
+        <div id="tabla-personal">
+            <p>Cargando...</p>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalPersonal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-body" id="contenido-modal">
+                    Cargando...
+                </div>
+            </div>
+        </div>
+    </div>
+
+@endsection
+@section('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+
+        $(document).ready(function () {
+            cargarTabla();
+        });
+
+        function cargarTabla() {
+            $.ajax({
+                url: "{{ route('personal.ajaxListado') }}",
+                method: "GET",
+                success: function (data) {
+                    $('#tabla-personal').html(data);
+                }
+            });
+        }
+
+        $(document).on('click', '.btn-ver', function () {
+            let userId = $(this).data('id');
+            $('#contenido-modal').html('Cargando...');
+            $('#modalPersonal').modal('show');
+            $.get(`/control-personal/${userId}`, function (data) {
+                $('#contenido-modal').html(data);
+                setTimeout(() => {
+                    $('.tab-link').first().click();
+                }, 200);
+            });
+        });
+
+
+
+        function guardarConfiguracion(formId = '#form-config') {
+
+            let datos = $(formId).serialize();
+
+            $.ajax({
+                url: "{{ route('personal.config.update') }}",
+                method: "POST",
+                data: datos,
+                success: function () {
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Guardado correctamente',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+
+                    cargarTabla();
+                    $('#modalPersonal').modal('hide');
+
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al guardar'
+                    });
+                }
+            });
+        }
+
+
+        // REGISTRAR ASISTENCIA
+        function guardarAsistencia() {
+
+            let datos = {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                id: window.ASISTENCIA_ID ?? null,
+                user_id: window.USER_ID,
+                fecha: $('#fecha').val(),
+                hora_entrada: $('#hora_entrada').val(),
+                hora_salida: $('#hora_salida').val()
+            };
+
+            $.post('/asistencias/store', datos, function () {
+                window.ASISTENCIA_ID = null;
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Guardado correctamente',
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+
+                cargarAsistencias();
+                $('.tab-link[data-tab="asistencias"]').click();
+            });
+        }
+
+        function editarAsistencia(data) {
+
+            $('#fecha').val(data.fecha);
+            $('#hora_entrada').val(data.entrada);
+            $('#hora_salida').val(data.salida);
+            window.ASISTENCIA_ID = data.id;
+        }
+
+        function eliminarAsistencia(id) {
+            Swal.fire({
+                title: '¿Eliminar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post('/asistencias/delete', {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        id: id
+                    }, function () {
+                        $('.tab-link[data-tab="asistencias"]').click();
+                        Swal.fire('Eliminado', '', 'success');
+                    });
+                }
+            });
+        }
+
+        function formatearFecha(fecha) {
+            let dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
+            let partes = fecha.split('-');
+            let y = parseInt(partes[0]);
+            let m = parseInt(partes[1]) - 1;
+            let d = parseInt(partes[2]);
+            let f = new Date(y, m, d);
+
+            let dia = dias[f.getDay()];
+
+            return `${dia} ${String(d).padStart(2, '0')}/${String(m + 1).padStart(2, '0')}/${y}`;
+        }
+
+        //resumen
+
+        function cargarResumen() {
+
+            let inicio = $('#fecha_inicio').val();
+            let fin = $('#fecha_fin').val();
+
+
+            if (!inicio || !fin) {
+                Swal.fire('Error', 'Selecciona ambas fechas', 'warning');
+                return;
+            }
+            $.get(`/control-personal/resumen-fechas/${window.USER_ID}`, {
+                inicio: inicio,
+                fin: fin
+            }, function (data) {
+                let bloqueado = data.pago_realizado || data.total_final <= 0;
+                console.log('datos:', data);
+                let horas = Math.floor(data.total_minutos / 60);
+                let minutos = Math.floor(data.total_minutos % 60);
+                let tiempoTexto = `${horas}h ${minutos}m`;
+                let html = `
+
+
+                                                                                            <table class="table table-sm table-bordered text-center align-middle">
+                                                                                                <thead class="table-light">
+                                                                                                    <tr>
+                                                                                                        <th>Horas</th>
+                                                                                                        <th>Días</th>
+                                                                                                        <th>Pago/H</th>
+                                                                                                        <th>Pago/Min</th>
+                                                                                                        <th>Total</th>
+                                                                                                        <th>Adelantos</th>
+                                                                                                        <th>Desc</th>
+                                                                                                        <th>Pagos</th>
+                                                                                                        <th>Final</th>
+                                                                                                    </tr>
+                                                                                                </thead>
+                                                                                                <tbody>
+                                                                                                    <tr>
+                                                                                                        <td>${data.total_horas}</td>
+                                                                                                        <td>${data.dias}</td>
+                                                                                                        <td>Bs ${data.pago_hora}</td>
+                                                                                                        <td>Bs ${data.pago_minuto}</td>
+                                                                                                        <td class="text-success"><b>Bs ${data.pago_total}</b></td>
+                                                                                                        <td>Bs ${data.adelantos}</td>
+                                                                                                        <td class="text-danger">Bs ${data.descuentos}</td>
+                                                                                                        <td>Bs ${data.pagos}</td>
+                                                                                                        <td class="text-primary"><b>Bs ${data.total_final}</b></td>
+                                                                                                    </tr>
+                                                                                                </tbody>
+                                                                                            </table>
+
+
+                                                                                                <div class="row g-2 align-items-end" mb-3>
+
+
+                                                                                            <div class="col-md-4">
+                                                                                                <label class="form-label">Adelanto</label>
+                                                                                                <input type="number" id="adelanto_monto" class="form-control form-control-sm" ${bloqueado ? 'disabled' : ''}>
+                                                                                            </div>
+
+                                                                                            <div class="col-md-2">
+                                                                                                <button id="btn-guardar-adelanto" class="btn btn-success btn-sm w-100" ${bloqueado ? 'disabled' : ''}>
+                                                                                                    Guardar
+                                                                                                </button>
+                                                                                            </div>
+
+
+                                                                                            <div class="col-md-4">
+                                                                                                <label class="form-label">Descuento</label>
+                                                                                                <input type="number" id="descuento_monto" class="form-control form-control-sm" ${bloqueado ? 'disabled' : ''}>
+                                                                                            </div>
+
+                                                                                            <div class="col-md-2">
+                                                                                                <button id="btn-guardar-descuento" class="btn btn-warning btn-sm w-100" ${bloqueado ? 'disabled' : ''}>
+                                                                                                    Guardar
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </div>    
+                                                                                        <hr/>
+
+                                                                                    ${data.pago_realizado ? `
+                                                                                        <div class="alert alert-success text-center" mb-3>
+                                                                                            ✅ Este periodo ya fue pagado <br>
+                                                                                            <strong>Bs ${data.pago_info.monto}</strong>
+                                                                                        </div>
+                                                                                    ` : ''}
+
+                                                                                    <div class="text-center mb-3">
+                                                                                        ${data.pago_realizado
+                        ? `<button class="btn btn-secondary" disabled>YA PAGADO</button>`
+                        : `<button class="btn btn-success" id="btn-pagar">PAGAR</button>`
+                    }
+                                                                                    </div>                       
+                                                                                            <h5 class="mt-4">Asistencia</h5>
+                                                                                            <table class="table table-bordered">
+                                                                                                <thead>
+                                                                                                    <tr>
+                                                                                                        <th>Fecha</th>
+                                                                                                        <th>Día</th>
+                                                                                                        <th>Horas</th>
+                                                                                                    </tr>
+                                                                                                </thead>
+                                                                                                <tbody>
+                                                                                            `;
+
+                // ASISTENCIA
+                data.detalle.forEach(d => {
+                    html += `
+                                                                                            <tr>
+                                                                                                <td>${d.fecha}</td>
+                                                                                                <td>${d.dia}</td>
+                                                                                                <td>${d.horas_texto}</td>
+                                                                                            </tr>
+                                                                                        `;
+                });
+
+                html += `</tbody></table>`;
+
+                // TABLA AJUSTES
+                html += `
+                                                                                        <h5 class="mt-4">Movimientos (Adelantos / Descuentos)</h5>
+                                                                                        <table class="table table-bordered">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th>Fecha</th>
+                                                                                                    <th>Tipo</th>
+                                                                                                    <th>Monto</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                        `;
+
+                data.ajustes.forEach(a => {
+
+                    let color = a.tipo_pago === 'adelanto' ? 'danger' : 'secondary';
+
+                    html += `
+                                                                                            <tr>
+                                                                                                <td>${a.fecha}</td>
+                                                                                                <td><span class="badge bg-${color}">${a.tipo_pago}</span></td>
+                                                                                                <td class="text-${color}">- Bs ${a.monto}</td>
+                                                                                            </tr>
+                                                                                        `;
+                });
+
+                html += `</tbody></table>`;
+                $('#resultado-resumen').html(html);
+
+            });
+        }
+
+        // PAGAR
+
+        $(document).on('click', '#btn-guardar-adelanto', function () {
+
+            let monto = $('#adelanto_monto').val();
+            let inicio = $('#fecha_inicio').val();
+            let fin = $('#fecha_fin').val();
+
+            if (!monto || monto <= 0) {
+                Swal.fire('Error', 'El total es 0', 'warning');
+                return;
+            }
+            $.get(`/control-personal/resumen-fechas/${window.USER_ID}`, {
+                inicio, fin
+            }, function (data) {
+
+                console.log('RESUMEN COMPLETO:', data);
+
+                $.post('/control-personal/pagos-personal/store', {
+                    _token: '{{ csrf_token() }}',
+                    user_id: window.USER_ID,
+                    monto: monto,
+                    tipo_pago: 'adelanto',
+                    descripcion: 'Adelanto',
+
+                    fecha_inicio: inicio,
+                    fecha_fin: fin,
+
+                    total_horas: data.total_horas,
+                    total_minutos: data.total_minutos,
+                    monto_calculado: data.pago_total,
+
+                    pago_diario_usado: data.pago_diario,
+                    horas_base_usado: data.horas_base,
+
+                    fecha: new Date().toISOString().slice(0, 10)
+
+                }).done(function () {
+
+                    Swal.fire('OK', 'Adelanto guardado', 'success');
+                    cargarResumen();
+                    $('#adelanto_monto').val('');
+                    $('#descuento_monto').val('');
+
+                });
+            });
+        });
+
+
+        $(document).on('click', '#btn-guardar-descuento', function () {
+
+            let monto = $('#descuento_monto').val();
+            let inicio = $('#fecha_inicio').val();
+            let fin = $('#fecha_fin').val();
+
+            if (!monto || monto <= 0) {
+                Swal.fire('Error', 'El total es 0', 'warning');
+                return;
+            }
+
+            $.get(`/control-personal/resumen-fechas/${window.USER_ID}`, {
+                inicio, fin
+            }, function (data) {
+                $.post('/control-personal/pagos-personal/store', {
+                    _token: '{{ csrf_token() }}',
+                    user_id: window.USER_ID,
+                    monto: monto,
+                    tipo_pago: 'descuento',
+                    descripcion: 'Descuento',
+
+                    fecha_inicio: inicio,
+                    fecha_fin: fin,
+
+                    total_horas: data.total_horas,
+                    total_minutos: data.total_minutos,
+                    monto_calculado: data.pago_total,
+
+                    pago_diario_usado: data.pago_diario,
+                    horas_base_usado: data.horas_base,
+
+                    fecha: new Date().toISOString().slice(0, 10)
+
+                }).done(function () {
+
+                    Swal.fire('OK', 'Descuento guardado', 'success');
+                    cargarResumen();
+                    $('#adelanto_monto').val('');
+                    $('#descuento_monto').val('');
+
+                });
+            });
+        });
+
+        $(document).on('click', '#btn-pagar', function () {
+
+            let inicio = $('#fecha_inicio').val();
+            let fin = $('#fecha_fin').val();
+
+            if (!inicio || !fin) {
+                Swal.fire('Error', 'Selecciona fechas', 'warning');
+                return;
+            }
+
+            $.get(`/control-personal/resumen-fechas/${window.USER_ID}`, {
+                inicio: inicio,
+                fin: fin
+            }, function (data) {
+
+                if (data.total_final <= 0) {
+                    Swal.fire('Error', 'El total es 0', 'warning');
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Confirmar pago',
+                    text: `Se pagará Bs ${data.total_final}`,
+                    icon: 'question',
+                    showCancelButton: true
+                }).then(result => {
+
+                    if (result.isConfirmed) {
+
+                        $.post('/control-personal/pagos-personal/store', {
+                            _token: '{{ csrf_token() }}',
+                            user_id: window.USER_ID,
+                            monto: data.total_final,
+                            tipo_pago: 'salario',
+                            descripcion: 'Pago de sueldo',
+
+                            fecha_inicio: inicio,
+                            fecha_fin: fin,
+
+                            total_horas: data.total_horas,
+                            total_minutos: data.total_minutos,
+                            monto_calculado: data.pago_total,
+                            total_descuentos: data.adelantos + data.descuentos,
+
+                            pago_diario_usado: data.pago_diario,
+                            horas_base_usado: data.horas_base,
+
+                            fecha: new Date().toISOString().slice(0, 10)
+
+                        }).done(function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Pago registrado',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+
+                                $('#modalPersonal').modal('hide');
+                                cargarTabla();
+                            });
+                        }).fail(function (err) {
+
+                            let msg = err.responseJSON?.error || 'Error al pagar';
+                            Swal.fire('Error', msg, 'error');
+                        });
+                    }
+                });
+            });
+        });
+
+
+        function abrirModalResumen() {
+
+            let inicio = $('#fecha_inicio').val();
+            let fin = $('#fecha_fin').val();
+
+            $.get(`/control-personal/resumen-fechas/${window.USER_ID}`, {
+                inicio, fin
+            }, function (data) {
+
+                let html = `
+                                                                                            <div>
+                                                                                                <p><b>Total:</b> Bs ${data.pago_total}</p>
+                                                                                                <p><b>Adelantos:</b> Bs ${data.adelantos}</p>
+                                                                                                <p><b>Descuentos:</b> Bs ${data.descuentos}</p>
+                                                                                                <hr>
+                                                                                                <h4>Total Final: Bs ${data.total_final}</h4>
+
+                                                                                                <button class="btn btn-danger" onclick="agregarAjuste('adelanto')">+ Adelanto</button>
+                                                                                                <button class="btn btn-secondary" onclick="agregarAjuste('descuento')">+ Descuento</button>
+                                                                                            </div>
+                                                                                        `;
+
+                Swal.fire({
+                    title: 'Resumen de Pago',
+                    html: html,
+                    showConfirmButton: false
+                });
+
+            });
+        }
+
+        function agregarAjuste(tipo) {
+
+            Swal.fire({
+                title: 'Monto',
+                input: 'number',
+                showCancelButton: true
+            }).then(result => {
+
+                if (result.isConfirmed) {
+
+                    $.post('/control-personal/pagos-personal/store', {
+                        _token: '{{ csrf_token() }}',
+                        user_id: window.USER_ID,
+                        monto: result.value,
+                        tipo_pago: tipo,
+                        descripcion: tipo,
+                        fecha: new Date().toISOString().slice(0, 10)
+                    }, function () {
+                        abrirModalResumen();
+                    });
+                }
+            });
+        }
+
+        function refrescarResumen() {
+
+            let inicio = $('#fecha_inicio').val();
+            let fin = $('#fecha_fin').val();
+
+            $.get(`/control-personal/resumen-fechas/${window.USER_ID}`, {
+                inicio, fin
+            }, function (data) {
+
+                $('#txt-adelantos').text('Bs ' + data.adelantos);
+                $('#txt-descuentos').text('Bs ' + data.descuentos);
+                $('#txt-total-final').text('Bs ' + data.total_final);
+                let html = '';
+
+                data.ajustes.forEach(a => {
+                    let color = a.tipo_pago === 'adelanto' ? 'danger' : 'secondary';
+
+                    html += `
+                                                                                            <tr>
+                                                                                                <td>${a.fecha}</td>
+                                                                                                <td><span class="badge bg-${color}">${a.tipo_pago}</span></td>
+                                                                                                <td>Bs ${a.monto}</td>
+                                                                                                <td>${a.descripcion}</td>
+                                                                                            </tr>
+                                                                                        `;
+                });
+
+                $('#tabla-ajustes').html(html);
+
+            });
+        }
+
+        //botones
+        $(document).on('click', '.btn-config', function () {
+
+            let userId = $(this).data('id');
+            window.USER_ID = userId;
+
+            $('#contenido-modal').html('Cargando...');
+
+            $.get(`/control-personal/user/${window.USER_ID}`, function (data) {
+                let html = `
+                                                                                        <div class="modal-header">
+                                                                                        <h5 class="modal-title">Configuración</h5>
+                                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                                    </div>
+
+                                                                                    <div class="modal-body">
+                                                                                       <form id="form-config" onsubmit="event.preventDefault(); guardarConfiguracion();">
+                                                                                            <input type="hidden" name="user_id" value="${data.id}">
+                                                                                            <label>Pago diario</label>
+                                                                                            <input type="number" name="pago_diario" class="form-control mb-2" value="${data.pago_diario ?? 0}">
+                                                                                            <label>Horas base</label>
+                                                                                            <input type="number" name="horas_base" class="form-control mb-2" value="${data.horas_base ?? 0}">
+                                                                                            <button class="btn btn-success w-100">Guardar</button>
+                                                                                        </form>
+                                                                                        </div>
+                                                                                    `;
+
+                $('#contenido-modal').html(html);
+                $('#modalPersonal').modal('show');
+            });
+
+        })
+
+        $(document).on('click', '.btn-asistencia', function () {
+
+            let userId = $(this).data('id');
+            window.USER_ID = userId;
+
+            let html = `
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title">Asistencia</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                     <div id="contenido-asistencia">
+                                                                    <div class="mb-2">
+                                                                        <label>Fecha</label>
+                                                                        <input type="date" id="fecha" class="form-control">
+                                                                    </div>
+                                                                    <div class="mb-2">
+                                                                        <label>Hora Entrada</label>
+                                                                        <input type="time" id="hora_entrada" class="form-control">
+                                                                    </div>
+                                                                    <div class="mb-2">
+                                                                        <label>Hora Salida</label>
+                                                                        <input type="time" id="hora_salida" class="form-control">
+                                                                    </div>
+                                                                    <button class="btn btn-success" onclick="guardarAsistencia()">
+                                                                        Guardar
+                                                                    </button>
+                                                                    <hr>
+
+                                                                    <div id="tabla-asistencia"></div>
+                                                                    </div>
+                                                                    </div>
+
+                                                                `;
+
+            $('#contenido-modal').html(html);
+            let modal = new bootstrap.Modal(document.getElementById('modalPersonal'));
+            modal.show();
+            cargarAsistencias();
+        });
+
+
+        function cargarAsistencias() {
+
+            $.get(`/asistencias/listado/${window.USER_ID}`, function (data) {
+
+                let html = `
+
+                                                                                            <table class="table" id="tabla_asistencias">
+                                                                                                <thead>
+                                                                                                    <tr>
+                                                                                                        <th>Fecha</th>
+                                                                                                        <th>Entrada</th>
+                                                                                                        <th>Salida</th>
+                                                                                                        <th>Acciones</th>
+                                                                                                    </tr>
+                                                                                                </thead>
+                                                                                                <tbody>
+                                                                                        `;
+
+                data.forEach(a => {
+                    let entrada = a.hora_entrada || '-';
+                    let salida = a.hora_salida || '-';
+                    html += `
+                                                                                            <tr>
+                                                                                                <td>${formatearFecha(a.fecha)}</td>
+                                                                                                <td>${entrada}</td>
+                                                                                                <td>${salida}</td>
+                                                                                                <td>
+                                                                                                    <button class="btn btn-warning btn-sm"
+                                                                                                        onclick='editarAsistencia(${JSON.stringify({
+                        id: a.id,
+                        fecha: a.fecha,
+                        entrada: entrada,
+                        salida: salida
+                    })})'>
+                                                                                                    Editar
+                                                                                                </button>
+
+                                                                                                <button class="btn btn-danger btn-sm"
+                                                                                                    onclick="eliminarAsistencia(${a.id})">
+                                                                                                    Eliminar
+                                                                                                </button>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    `;
+                });
+
+                html += `</tbody></table>`;
+                $('#tabla-asistencia').html(html);
+                $('#tabla_asistencias').DataTable({
+                    destroy: true,
+                    lengthMenu: [10, 25, 50],
+                    language: {
+                        search: "Buscar:",
+                        lengthMenu: "Mostrar _MENU_",
+                        info: "Mostrando _START_ a _END_ de _TOTAL_",
+                        paginate: {
+                            next: "Siguiente",
+                            previous: "Anterior"
+                        }
+                    }
+                });
+            });
+        }
+
+
+
+        $(document).on('click', '.btn-pagos', function () {
+
+            let userId = $(this).data('id');
+            window.USER_ID = userId;
+
+            let html = `
+                                                                                    <div class="modal-header">
+                                                                                        <h5 class="modal-title">Pagos</h5>
+                                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                                                    </div>
+
+                                                                                    <div class="modal-body">
+                                                                                    <div class="row mb-3">
+                                                                                        <div class="col-md-5">
+                                                                                            <label>Fecha inicio</label>
+                                                                                            <input type="date" id="fecha_inicio" class="form-control">
+                                                                                        </div>
+
+                                                                                        <div class="col-md-5">
+                                                                                            <label>Fecha fin</label>
+                                                                                            <input type="date" id="fecha_fin" class="form-control">
+                                                                                        </div>
+
+                                                                                        <div class="col-md-2 d-flex align-items-end">
+                                                                                            <button class="btn btn-primary w-100" onclick="cargarResumen()">
+                                                                                                Consultar
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                    <div id="resultado-resumen"></div>
+
+                                                                                    </div>
+                                                                                `;
+
+            $('#contenido-modal').html(html);
+            $('#modalPersonal').modal('show');
+        });
+
+    </script>
+@endsection

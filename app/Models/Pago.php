@@ -19,12 +19,25 @@ class Pago extends Model
 
         'factura_id',
         'sucursal_id',
+
         'monto',
         'cambio',
         'fecha',
         'descripcion',
         'tipo_pago',
 
+        'user_id',
+        'fecha_inicio',
+        'fecha_fin',
+
+        'pago_diario_usado',
+        'horas_base_usado',
+
+        'total_horas',
+        'total_minutos',
+
+        'monto_calculado',
+        'total_descuentos',
 
         'estado',
         'deleted_at',

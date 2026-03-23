@@ -211,20 +211,27 @@
                                 </a>
                             </div>
 
-
+                            <div class="menu-item">
+                                <a class="menu-link" href="{{ route('personal.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title text-white">Control de personal</span>
+                                </a>
+                            </div>
 
                             <!-- @php
 
-                                    $userRol = strtolower(auth()->user()->rol); // minúscula para comparar
-                                @endphp -->
+                                        $userRol = strtolower(auth()->user()->rol); // minúscula para comparar
+                                    @endphp -->
 
                             <!-- @if(in_array($userRol, ['Planchador', 'Focalizador'])) -->
                             <div class="menu-item">
                                 <!-- <a class="menu-link {{ Route::currentRouteName() == 'order-trabajo.rol' ? 'active' : '' }}"
-                                        href="{{ route('order-trabajo.rol') }}">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span> -->
+                                            href="{{ route('order-trabajo.rol') }}">
+                                            <span class="menu-bullet">
+                                                <span class="bullet bullet-dot"></span>
+                                            </span> -->
                                 <span class="menu-title text-white">
                                     Planchador/Focalizador
                                 </span>
@@ -306,13 +313,13 @@
                         <!--end:Menu link-->
                         <div class="menu-sub menu-sub-accordion">
                             <!-- <div class="menu-item">
-                                    <a class="menu-link" href="{{ route('reporte.formulario') }}">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title text-white">Reporte Productos</span>
-                                    </a>
-                                </div> -->
+                                        <a class="menu-link" href="{{ route('reporte.formulario') }}">
+                                            <span class="menu-bullet">
+                                                <span class="bullet bullet-dot"></span>
+                                            </span>
+                                            <span class="menu-title text-white">Reporte Productos</span>
+                                        </a>
+                                    </div> -->
 
                             <!-- Reporte Procesos -->
                             <div class="menu-item">
@@ -369,35 +376,36 @@
                 @endif
 
                 @if (Auth::user()->isFocalizador())
-                <div data-kt-menu-trigger="click" class="menu-item menu-accordion {{ Request::is('procesos/*') ? 'show' : '' }}">
-                    <span class="menu-link">
-                        <span class="menu-icon">
-                            <i class="fa fa-university"></i>
+                    <div data-kt-menu-trigger="click"
+                        class="menu-item menu-accordion {{ Request::is('procesos/*') ? 'show' : '' }}">
+                        <span class="menu-link">
+                            <span class="menu-icon">
+                                <i class="fa fa-university"></i>
+                            </span>
+                            <span class="menu-title text-white">FOCALIZADO</span>
+                            <span class="menu-arrow"></span>
                         </span>
-                        <span class="menu-title text-white">FOCALIZADO</span>
-                        <span class="menu-arrow"></span>
-                    </span>
-                    <div class="menu-sub menu-sub-accordion">
-                        <div class="menu-item">
-                            <a class="menu-link" href="{{ route('procesos.focalizadoListado') }}">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title text-white">Lista Para Focalizar</span>
-                            </a>
+                        <div class="menu-sub menu-sub-accordion">
+                            <div class="menu-item">
+                                <a class="menu-link" href="{{ route('procesos.focalizadoListado') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title text-white">Lista Para Focalizar</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="menu-sub menu-sub-accordion">
+                            <div class="menu-item">
+                                <a class="menu-link" href="{{ route('procesos.focalizadoListadoSolicitud') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title text-white">Solicitud Para Focalizar</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="menu-sub menu-sub-accordion">
-                        <div class="menu-item">
-                            <a class="menu-link" href="{{ route('procesos.focalizadoListadoSolicitud') }}">
-                                <span class="menu-bullet">
-                                    <span class="bullet bullet-dot"></span>
-                                </span>
-                                <span class="menu-title text-white">Solicitud Para Focalizar</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
                 @endif
 
                 @if (Auth::user()->isCliente())
