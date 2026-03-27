@@ -251,6 +251,22 @@ Route::middleware('auth')->group(function () {
         Route::post('/guardarNuevoProcesoPadre', [ProcesosController::class, 'guardarNuevoProcesoPadre'])->name('procesos.guardarNuevoProcesoPadre');
         Route::post('/guardarDivicacionCarga', [ProcesosController::class, 'guardarDivicacionCarga'])->name('procesos.guardarDivicacionCarga');
         Route::post('/finalizarProcesoFocalizado', [ProcesosController::class, 'finalizarProcesoFocalizado'])->name('procesos.finalizarProcesoFocalizado');
+
+        //focalizado detalle
+
+        Route::get('/obtener-solicitud/{id}', [ProcesosController::class, 'obtenerSolicitud']);
+        Route::get('/obtener-detalle-focalizado/{id}', [ProcesosController::class, 'obtenerDetalleFocalizado']);
+        Route::post('/guardar-focalizado-detalle', [ProcesosController::class, 'guardarFocalizadoDetalle'])->name('procesos.guardarFocalizadoDetalle');
+
+        //planchado
+        Route::get('/planchadoListado', [ProcesosController::class, 'planchadoListado'])->name('procesos.planchadoListado');
+        Route::post('/ajaxListadoSolicitudesPlanchado', [ProcesosController::class, 'ajaxListadoSolicitudesPlanchado'])->name('procesos.ajaxListadoSolicitudesPlanchado');
+        Route::post('/enviarProcesoPlanchado', [ProcesosController::class, 'enviarProcesoPlanchado'])->name('procesos.enviarProcesoPlanchado');
+
+        Route::get('/obtener-detalle-planchado/{id}', [ProcesosController::class, 'obtenerDetallePlanchado']);
+        Route::post('/guardar-planchado-detalle', [ProcesosController::class, 'guardarPlanchadoDetalle'])->name('procesos.guardarPlanchadoDetalle');
+        Route::post('/finalizarProcesoPlanchado', [ProcesosController::class, 'finalizarProcesoPlanchado'])->name('procesos.finalizarProcesoPlanchado');
+
     });
 
     // REPORTE

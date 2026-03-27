@@ -16,15 +16,26 @@
                 <tr>
                     <td>{{ $solcitudAgrupado['procesado'] }}</td>
                     <td><span class="badge badge-warning">{{ $solcitudAgrupado['procesoFinal']->estado }}</span></td>
-                    <td><span class="badge badge-success">{{ $solcitudAgrupado['procesoFinal']->tipoProceso->nombre }}</span></td>
+                    <td><span
+                            class="badge badge-success">{{ $solcitudAgrupado['procesoFinal']->tipoProceso->nombre }}</span>
+                    </td>
                     {{-- <td>{{ $ot->cantidad_focalizado ?? 0}}</td>
                     <td>{{ $ot->cantidad_planchado ?? 0}}</td>
                     <td>{{ $ot->estado }}</td> --}}
 
                     <td>
-                        <button class="btn btn-sm btn-icon btn-danger" title="Generar reporte de Proceso" onclick='imprimirHistorialProceso(@json($solcitudAgrupado["crudo"]))' ><i class="fa fa-file-pdf"></i></button>
+                        <button class="btn btn-sm btn-icon btn-danger" title="Generar reporte de Proceso"
+                            onclick='imprimirHistorialProceso(@json($solcitudAgrupado["crudo"]))'><i
+                                class="fa fa-file-pdf"></i></button>
                         @if ($solcitudAgrupado['procesoFinal']->tipoProceso->id != 4)
-                            <button class="btn btn-sm btn-icon btn-dark" title="Enviar a Focalizado" onclick='enviarProcesoFocalizado(@json($solcitudAgrupado["crudo"]))' ><i class="fa fa-up-long"></i></button>
+                            <button class="btn btn-sm btn-icon btn-dark" title="Enviar a Focalizado"
+                                onclick='enviarProcesoFocalizado(@json($solcitudAgrupado["crudo"]))'><i
+                                    class="fa fa-up-long"></i></button>
+                        @endif
+                        @if ($solcitudAgrupado['procesoFinal']->tipoProceso->id != 20)
+                            <button class="btn btn-sm btn-icon btn-success" title="Enviar a Planchado"
+                                onclick='enviarProcesoPlanchado(@json($solcitudAgrupado["crudo"]))'><i
+                                    class="fa fa-up-long"></i></button>
                         @endif
                         {{-- <button class="btn btn-info btn-sm" onclick="verDetalleOT({{ $ot->id }})">
                             Detalle

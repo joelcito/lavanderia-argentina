@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Solicitud;
+use App\Models\SolicitudDetalleProceso;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\Factura;
@@ -52,10 +53,10 @@ class ProcesosController extends Controller
             //     ->get();
 
             $solicitudes = Solicitud::selectRaw('ordenes_trabajo, MAX(id) as id')
-                                ->whereNotNull('ordenes_trabajo')
-                                ->groupBy('ordenes_trabajo')
-                                ->orderByDesc('id')
-                                ->get();
+                ->whereNotNull('ordenes_trabajo')
+                ->groupBy('ordenes_trabajo')
+                ->orderByDesc('id')
+                ->get();
 
             $solicitudArray = [];
 
@@ -843,7 +844,7 @@ class ProcesosController extends Controller
                     }
                 }
 
-                if(!in_array($fac, $solicitudArray)){
+                if (!in_array($fac, $solicitudArray)) {
                     $solicitudArray[$solicitud->id] = $fac;
                 }
             }
@@ -908,7 +909,7 @@ class ProcesosController extends Controller
                     }
                 }
 
-                if(!in_array($fac, $solicitudArray)){
+                if (!in_array($fac, $solicitudArray)) {
                     $solicitudArray[$solicitud->id] = $fac;
                 }
 
@@ -1018,11 +1019,11 @@ class ProcesosController extends Controller
                 $json = json_encode($solicitud->ordenes_trabajo);
 
                 $solicitudes = Solicitud::with('producto')
-                                        ->whereRaw(
-                                            'JSON_CONTAINS(ordenes_trabajo, ?)',
-                                            [$json]
-                                        )
-                                        ->whereNotNull('producto_id')
+                    ->whereRaw(
+                        'JSON_CONTAINS(ordenes_trabajo, ?)',
+                        [$json]
+                    )
+                    ->whereNotNull('producto_id')
                     // ->where('estado', 'APROBADO')
                     ->get();
 
@@ -1185,8 +1186,8 @@ class ProcesosController extends Controller
             )
             ->orderBy('procesos.fecha_ingreso', 'asc')
             ->get();
-            // ->toSql();
-            // dd($procesos, $solicitudes);
+        // ->toSql();
+        // dd($procesos, $solicitudes);
 
         // dd($procesos, $solicitudes);
         $usuario = Auth::user();
@@ -1217,22 +1218,22 @@ class ProcesosController extends Controller
             }
 
             // CREAMOS LA SOLICITUD
-            $solicitud                     = new Solicitud();
+            $solicitud = new Solicitud();
             $solicitud->usuario_creador_id = $usuario->id;
-            $solicitud->ordenes_trabajo    = $datos;
-            $solicitud->cantidad           = 0;
-            $solicitud->porcentaje         = 0;
-            $solicitud->estado             = "EN PROCESO";
+            $solicitud->ordenes_trabajo = $datos;
+            $solicitud->cantidad = 0;
+            $solicitud->porcentaje = 0;
+            $solicitud->estado = "EN PROCESO";
             $solicitud->save();
 
             foreach ($ots as $key => $ot) {
-                $proceso                     = new Proceso();
+                $proceso = new Proceso();
                 $proceso->usuario_creador_id = $usuario->id;
-                $proceso->order_trabajo_id   = $ot;
-                $proceso->tipo_proceso_id    = 4;                    //FOCALIZADO
-                $proceso->solicitud_id       = $solicitud->id;
-                $proceso->estado             = "TRABAJANDO";
-                $proceso->fecha_ingreso      = date('Y-m-d H:i:s');
+                $proceso->order_trabajo_id = $ot;
+                $proceso->tipo_proceso_id = 4;                    //FOCALIZADO
+                $proceso->solicitud_id = $solicitud->id;
+                $proceso->estado = "TRABAJANDO";
+                $proceso->fecha_ingreso = date('Y-m-d H:i:s');
                 $proceso->save();
             }
 
@@ -1251,55 +1252,75 @@ class ProcesosController extends Controller
 
     }
 
+
+
     public function ajaxListadoSolicitudesFocalizado(Request $request)
     {
-
         if ($request->ajax()) {
 
-            $solicitudes = Solicitud::whereNull('producto_id')
-                ->get();
-
+            $solicitudes = Solicitud::whereNull('producto_id')->get();
 
             $solicitudArray = [];
 
             foreach ($solicitudes as $key => $solicitud) {
 
-                $ordenesTrabajo = $solicitud->ordenes_trabajo;
+                // 🔥 PROTECCIÓN CLAVE
+                $ordenesTrabajo = $solicitud->ordenes_trabajo ?? [];
+
+                // 🔥 SI ES JSON STRING (MUY IMPORTANTE)
+                if (is_string($ordenesTrabajo)) {
+                    $ordenesTrabajo = json_decode($ordenesTrabajo, true) ?? [];
+                }
+
                 $fac = "";
 
                 foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
-                    $fac = $fac . " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
-                    $ots = $ordenTrabajo['ots'];
-                    $arrayOts = array();
+
+                    $fac .= " | Fac/Or-Re " . ($ordenTrabajo['nro_factura'] ?? '') . " : [";
+
+                    $ots = $ordenTrabajo['ots'] ?? [];
+                    $arrayOts = [];
+
                     foreach ($ots as $key => $ot) {
+
                         $ordenTrabajoBuscado = Order_trabajo::find($ot);
+
+                        if (!$ordenTrabajoBuscado) {
+                            continue;
+                        }
+
                         if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
-                            $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
-                            array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
-                            if ((count($ots) - 1) == $key)
-                                $fac = $fac . "]";
-                            else
-                                $fac = $fac . " - ";
+
+                            if (!empty($arrayOts)) {
+                                $fac .= " - ";
+                            }
+
+                            $fac .= "OT:" . $ordenTrabajoBuscado->nro_ot;
+                            $arrayOts[] = $ordenTrabajoBuscado->nro_ot;
                         }
                     }
+
+                    $fac .= "]";
                 }
+
                 $solicitudArray[$solicitud->id] = $fac;
             }
 
-            // dd($solicitudArray);
-
             $valores = [
-                'listado' => view('procesos.ajaxListadoSolicitudesFocalizado')->with(compact('solicitudArray'))->render(),
+                'listado' => view('procesos.ajaxListadoSolicitudesFocalizado')
+                    ->with(compact('solicitudArray'))
+                    ->render(),
                 'solicitudArray' => $solicitudArray
             ];
 
-            $data = Respuesta::success($valores, "Se proceso con EXITO");
-        } else {
-            $data = Respuesta::error(null, "No existe");
-        }
-        return $data;
+            return Respuesta::success($valores, "Se proceso con EXITO");
 
+        } else {
+            return Respuesta::error(null, "No existe");
+        }
     }
+
+
 
     public function focalizadoListadoSolicitud()
     {
@@ -1360,40 +1381,42 @@ class ProcesosController extends Controller
     }
 
 
-    public function guardaEdicionProceso(Request $request){
+    public function guardaEdicionProceso(Request $request)
+    {
 
-        if($request->ajax()){
+        if ($request->ajax()) {
 
             // dd($request->all());
-            $maquina_id_proceso      = $request->input('maquina_id_proceso');
-            $producto_id_proceso     = $request->input('producto_id_proceso');
+            $maquina_id_proceso = $request->input('maquina_id_proceso');
+            $producto_id_proceso = $request->input('producto_id_proceso');
             $tipo_proceso_id_proceso = $request->input('tipo_proceso_id_proceso');
-            $fecha_ini_proceso       = $request->input('fecha_ini_proceso');
-            $tiempo_proceso          = $request->input('tiempo_proceso');
-            $fecha_fin_proceso       = $request->input('fecha_fin_proceso');
+            $fecha_ini_proceso = $request->input('fecha_ini_proceso');
+            $tiempo_proceso = $request->input('tiempo_proceso');
+            $fecha_fin_proceso = $request->input('fecha_fin_proceso');
 
             $procesos = Proceso::where('maquinaria_id', $maquina_id_proceso)
-                                ->where('estado', 'TRABAJANDO')
-                                ->where('tipo_proceso_id', $tipo_proceso_id_proceso)
-                                ->get();
+                ->where('estado', 'TRABAJANDO')
+                ->where('tipo_proceso_id', $tipo_proceso_id_proceso)
+                ->get();
 
             foreach ($procesos as $key => $proceso) {
-                $proceso->tiempo       = $tiempo_proceso;
+                $proceso->tiempo = $tiempo_proceso;
                 $proceso->fecha_salida = $fecha_fin_proceso;
                 $proceso->save();
             }
 
             $data = Respuesta::success(null, "Datos editados correctamente");
 
-        }else{
+        } else {
             $data = Respuesta::error(null, "No existe");
         }
         return $data;
 
     }
 
-    public function ajaxlistadoPreparaciones(Request $request){
-        if($request->ajax()){
+    public function ajaxlistadoPreparaciones(Request $request)
+    {
+        if ($request->ajax()) {
 
             $solicitud_id = $request->input('solicitud');
 
@@ -1405,26 +1428,27 @@ class ProcesosController extends Controller
 
             $data = Respuesta::success($valores, "Se proceso con EXITO");
 
-        }else{
+        } else {
             $data = Respuesta::error(null, "No existe");
         }
         return $data;
     }
 
-    public function guardarNuevoProcesoPadre(Request $request){
+    public function guardarNuevoProcesoPadre(Request $request)
+    {
 
-        if($request->ajax()){
+        if ($request->ajax()) {
 
-            $solicitud_id_padre       = $request->input('solicitud_id_padre');
+            $solicitud_id_padre = $request->input('solicitud_id_padre');
             $cantidad_liquido_preceso = $request->input('cantidad_liquido_preceso');
-            $usuario                  = Auth::user();
-            $solicitud                = Solicitud::find($solicitud_id_padre);
+            $usuario = Auth::user();
+            $solicitud = Solicitud::find($solicitud_id_padre);
 
-            $preparacion                     = new Preparacion();
+            $preparacion = new Preparacion();
             $preparacion->usuario_creador_id = $usuario->id;
             $preparacion->solicitud_id_padre = $solicitud_id_padre;
-            $preparacion->cantidad           = $solicitud->cantidad;
-            $preparacion->cantidad_liquido   = $cantidad_liquido_preceso;
+            $preparacion->cantidad = $solicitud->cantidad;
+            $preparacion->cantidad_liquido = $cantidad_liquido_preceso;
             $preparacion->save();
 
             $solicitud_id = $solicitud_id_padre;
@@ -1437,32 +1461,33 @@ class ProcesosController extends Controller
 
             $data = Respuesta::success($valores, "Se proceso con EXITO");
 
-        }else{
+        } else {
             $data = Respuesta::error(null, "No existe");
         }
         return $data;
 
     }
 
-    public function guardarDivicacionCarga(Request $request){
+    public function guardarDivicacionCarga(Request $request)
+    {
 
-        if($request->ajax()){
+        if ($request->ajax()) {
 
             // dd($request->all());
-            $preparacion_id_divicion        = $request->input('preparacion_id_divicion');
-            $solicitud_id_preceso_carga     = $request->input('solicitud_id_preceso_carga');
-            $cantidad_preceso_carga         = $request->input('cantidad_preceso_carga');
+            $preparacion_id_divicion = $request->input('preparacion_id_divicion');
+            $solicitud_id_preceso_carga = $request->input('solicitud_id_preceso_carga');
+            $cantidad_preceso_carga = $request->input('cantidad_preceso_carga');
             $cantidad_liquido_preceso_carga = $request->input('cantidad_liquido_preceso_carga');
-            $usuario                        = Auth::user();
-            $preparacionBuscada             = Preparacion::find($preparacion_id_divicion);
+            $usuario = Auth::user();
+            $preparacionBuscada = Preparacion::find($preparacion_id_divicion);
 
-            $preparacion                       = new Preparacion();
-            $preparacion->usuario_creador_id   = $usuario->id;
-            $preparacion->solicitud_id_padre   = $preparacionBuscada->solicitud_id_padre;
+            $preparacion = new Preparacion();
+            $preparacion->usuario_creador_id = $usuario->id;
+            $preparacion->solicitud_id_padre = $preparacionBuscada->solicitud_id_padre;
             $preparacion->solicitud_id_preceso = $solicitud_id_preceso_carga;
-            $preparacion->preparacion_id       = $preparacionBuscada->id;
-            $preparacion->cantidad             = $cantidad_preceso_carga;
-            $preparacion->cantidad_liquido     = $cantidad_liquido_preceso_carga;
+            $preparacion->preparacion_id = $preparacionBuscada->id;
+            $preparacion->cantidad = $cantidad_preceso_carga;
+            $preparacion->cantidad_liquido = $cantidad_liquido_preceso_carga;
             $preparacion->save();
 
             $solicitud_id = $preparacionBuscada->solicitud_id_padre;
@@ -1474,7 +1499,7 @@ class ProcesosController extends Controller
 
             // $data = Respuesta::success(null, "Se proceso con EXITO");
 
-        }else{
+        } else {
             $data = Respuesta::error(null, "No existe");
         }
         return $data;
@@ -1490,13 +1515,327 @@ class ProcesosController extends Controller
             $solicitud_id = $request->input('solicitud');
 
             $procesos = Proceso::where('solicitud_id', $solicitud_id)
-                                ->where('tipo_proceso_id', 4) //FOCALIZADO
-                                ->where('estado', 'TRABAJANDO')
-                                ->get();
+                ->where('tipo_proceso_id', 4) //FOCALIZADO
+                ->where('estado', 'TRABAJANDO')
+                ->get();
 
             if ($procesos) {
                 foreach ($procesos as $key => $proceso) {
-                    $proceso->estado       = 'EN PROCESO';
+                    $proceso->estado = 'EN PROCESO';
+                    $proceso->fecha_salida = date('Y-m-d H:i:s');
+                    $proceso->save();
+                }
+                $data = Respuesta::success(null, "SE FINALIZO CON EXITO");
+            } else {
+                $data = Respuesta::error(null, "NO SE ENCONTRO PROCESOS EN LA MAQUINA");
+            }
+        } else {
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+    }
+    //focalizador detalle
+
+    public function obtenerSolicitud($solicitud_id)
+    {
+        $solicitud = Solicitud::find($solicitud_id);
+
+        return response()->json([
+            'estado' => true,
+            'data' => $solicitud->ordenes_trabajo
+        ]);
+    }
+    public function guardarFocalizadoDetalle(Request $request)
+    {
+        foreach ($request->detalles as $detalle) {
+
+            SolicitudDetalleProceso::create([
+                'solicitud_id' => $request->solicitud_id,
+                'order_trabajo_id' => $detalle['ot_id'],
+                'factura_id' => $detalle['factura_id'],
+                'tipo_proceso' => 'FOCALIZADO',
+                'estado' => 'EN PROCESO',
+                'cantidad' => $detalle['cantidad'],
+                'usuario_creador_id' => auth()->id()
+            ]);
+
+            $ot = Order_trabajo::find($detalle['ot_id']);
+
+            $ot->cantidad_focalizado = ($ot->cantidad_focalizado ?? 0) + $detalle['cantidad'];
+            $ot->save();
+        }
+
+        return response()->json([
+            'estado' => true,
+            'mensaje' => 'Focalizado registrado correctamente'
+        ]);
+    }
+
+    public function obtenerDetalleFocalizado($id)
+    {
+        $solicitud = Solicitud::find($id);
+
+        if (!$solicitud) {
+            return response()->json([
+                'estado' => false,
+                'mensaje' => 'Solicitud no encontrada'
+            ]);
+        }
+
+        $ordenes = $solicitud->ordenes_trabajo;
+
+        $data = [];
+
+        foreach ($ordenes as $grupo) {
+
+            $ots_detalle = [];
+
+            foreach ($grupo['ots'] as $ot_id) {
+
+                $ot = Order_trabajo::find($ot_id);
+
+                $ots_detalle[] = [
+                    'id' => $ot->id,
+                    'total' => $ot->cantidad
+                ];
+            }
+
+            $data[] = [
+                'factura_id' => $grupo['factura_id'],
+                'ots' => $ots_detalle
+            ];
+        }
+
+        return response()->json([
+            'estado' => true,
+            'data' => $data
+        ]);
+    }
+
+    //planchado
+
+
+    public function planchadoListado(Request $request)
+    {
+
+        return view('procesos.planchadoListado');
+
+    }
+
+    public function ajaxListadoSolicitudesPlanchado(Request $request)
+    {
+        if ($request->ajax()) {
+
+            $solicitudes = Solicitud::whereNull('producto_id')->get();
+
+            $solicitudArray = [];
+
+            foreach ($solicitudes as $key => $solicitud) {
+
+                // 🔥 PROTECCIÓN CLAVE
+                $ordenesTrabajo = $solicitud->ordenes_trabajo ?? [];
+
+                // 🔥 SI ES JSON STRING (MUY IMPORTANTE)
+                if (is_string($ordenesTrabajo)) {
+                    $ordenesTrabajo = json_decode($ordenesTrabajo, true) ?? [];
+                }
+
+                $fac = "";
+
+                foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
+
+                    $fac .= " | Fac/Or-Re " . ($ordenTrabajo['nro_factura'] ?? '') . " : [";
+
+                    $ots = $ordenTrabajo['ots'] ?? [];
+                    $arrayOts = [];
+
+                    foreach ($ots as $key => $ot) {
+
+                        $ordenTrabajoBuscado = Order_trabajo::find($ot);
+
+                        if (!$ordenTrabajoBuscado) {
+                            continue;
+                        }
+
+                        if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
+
+                            if (!empty($arrayOts)) {
+                                $fac .= " - ";
+                            }
+
+                            $fac .= "OT:" . $ordenTrabajoBuscado->nro_ot;
+                            $arrayOts[] = $ordenTrabajoBuscado->nro_ot;
+                        }
+                    }
+
+                    $fac .= "]";
+                }
+
+                $solicitudArray[$solicitud->id] = $fac;
+            }
+
+            $valores = [
+                'listado' => view('procesos.ajaxListadoSolicitudesPlanchado')
+                    ->with(compact('solicitudArray'))
+                    ->render(),
+                'solicitudArray' => $solicitudArray
+            ];
+
+            return Respuesta::success($valores, "Se proceso con EXITO");
+
+        } else {
+            return Respuesta::error(null, "No existe");
+        }
+    }
+
+    public function enviarProcesoPlanchado(Request $request)
+    {
+        if ($request->ajax()) {
+
+            // dd($request->all());
+            $datos = $request->input('d');
+            $ots = $datos[0]['ots'];
+            $usuario = Auth::user();
+
+            foreach ($datos as &$item) {
+                $item['factura_id'] = (int) $item['factura_id'];
+                $item['nro_factura'] = (int) $item['nro_factura'];
+                $item['ots'] = array_map('intval', $item['ots']);
+            }
+
+            // CREAMOS LA SOLICITUD
+            $solicitud = new Solicitud();
+            $solicitud->usuario_creador_id = $usuario->id;
+            $solicitud->ordenes_trabajo = $datos;
+            $solicitud->cantidad = 0;
+            $solicitud->porcentaje = 0;
+            $solicitud->estado = "EN PROCESO";
+            $solicitud->save();
+
+            foreach ($ots as $key => $ot) {
+                $proceso = new Proceso();
+                $proceso->usuario_creador_id = $usuario->id;
+                $proceso->order_trabajo_id = $ot;
+                $proceso->tipo_proceso_id = 20;                    //PLANCHADO
+                $proceso->solicitud_id = $solicitud->id;
+                $proceso->estado = "TRABAJANDO";
+                $proceso->fecha_ingreso = date('Y-m-d H:i:s');
+                $proceso->save();
+            }
+
+            $data = Respuesta::success(null, "Carga enviado a PLANCHADO");
+
+        } else {
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
+    }
+
+
+    public function obtenerDetallePlanchado($id)
+    {
+        $solicitud = Solicitud::find($id);
+
+        if (!$solicitud) {
+            return response()->json([
+                'estado' => false,
+                'mensaje' => 'Solicitud no encontrada'
+            ]);
+        }
+
+        $ordenes = $solicitud->ordenes_trabajo;
+
+        $data = [];
+
+        foreach ($ordenes as $grupo) {
+
+            $ots_detalle = [];
+
+            foreach ($grupo['ots'] as $ot_id) {
+
+                $ot = Order_trabajo::find($ot_id);
+
+                if ($ot) {
+                    $ots_detalle[] = [
+                        'id' => $ot->id,
+                        'total' => $ot->cantidad,
+                        'prenda' => $ot->prenda ? $ot->prenda->nombre : 'SIN PRENDA',
+                        'prenda_id' => $ot->prenda_id
+                    ];
+                }
+            }
+
+            $data[] = [
+                'factura_id' => $grupo['factura_id'],
+                'ots' => $ots_detalle
+            ];
+        }
+
+        return response()->json([
+            'estado' => true,
+            'data' => $data
+        ]);
+    }
+
+    public function guardarPlanchadoDetalle(Request $request)
+    {
+        $request->validate([
+            'solicitud_id' => 'required',
+            'detalle' => 'required|array'
+        ]);
+
+        foreach ($request->detalle as $item) {
+
+            $ot_id = $item['ot_id'];
+            $factura_id = $item['factura_id'];
+
+            foreach ($item['categorias'] as $categoria => $cantidad) {
+
+                if ($cantidad > 0) {
+
+                    SolicitudDetalleProceso::create([
+                        'solicitud_id' => $request->solicitud_id,
+                        'order_trabajo_id' => $ot_id,
+                        'factura_id' => $factura_id,
+                        'tipo_proceso' => 'PLANCHADO',
+                        'categoria' => $categoria,
+                        'cantidad' => $cantidad,
+                        'usuario_creador_id' => auth()->id()
+                    ]);
+                }
+            }
+
+            // 🔥 actualizar resumen en OT
+            $ot = Order_trabajo::find($ot_id);
+
+            $total_planchado = collect($item['categorias'])->sum();
+
+            $ot->cantidad_planchado = ($ot->cantidad_planchado ?? 0) + $total_planchado;
+            $ot->save();
+        }
+
+        return response()->json([
+            'estado' => true,
+            'mensaje' => 'Planchado registrado correctamente'
+        ]);
+    }
+
+
+    public function finalizarProcesoPlanchado(Request $request)
+    {
+
+        if ($request->ajax()) {
+
+            $solicitud_id = $request->input('solicitud');
+
+            $procesos = Proceso::where('solicitud_id', $solicitud_id)
+                ->where('tipo_proceso_id', 20) //PLANCHADO
+                ->where('estado', 'TRABAJANDO')
+                ->get();
+
+            if ($procesos) {
+                foreach ($procesos as $key => $proceso) {
+                    $proceso->estado = 'EN PROCESO';
                     $proceso->fecha_salida = date('Y-m-d H:i:s');
                     $proceso->save();
                 }

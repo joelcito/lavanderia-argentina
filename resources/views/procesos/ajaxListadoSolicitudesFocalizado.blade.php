@@ -15,10 +15,10 @@
                     $solicitud_id = $key;
 
                     $proceso = App\Models\Proceso::select('estado')
-                                                    ->where('solicitud_id', $solicitud_id)
-                                                    ->where('tipo_proceso_id', 4) // FOCALIZADO
-                                                    ->groupBy('solicitud_id','estado')
-                                                    ->first();
+                        ->where('solicitud_id', $solicitud_id)
+                        ->where('tipo_proceso_id', 4) // FOCALIZADO
+                        ->groupBy('solicitud_id', 'estado')
+                        ->first();
                 @endphp
                 @if ($proceso->estado == "TRABAJANDO")
                     <tr>
@@ -27,7 +27,13 @@
                             <span class="badge badge-warning">{{ $proceso->estado }}</span>
                         </td>
                         <td>
-                            <button title="Terminar Proceso Focalizado" class="btn btn-dark btn-icon btn-sm" onclick="finalizarFocalizado('{{ $solicitud_id }}')"><i class="fa fa-up-down"></i></button>
+                            <button class="btn btn-success btn-sm" onclick="abrirModalFocalizado('{{ $solicitud_id }}')">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                            <button title="Terminar Proceso Focalizado" class="btn btn-dark btn-icon btn-sm"
+                                onclick="finalizarFocalizado('{{ $solicitud_id }}')"><i class="fa fa-up-down"></i></button>
+
+
                         </td>
                     </tr>
                 @endif

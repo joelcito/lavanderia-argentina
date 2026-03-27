@@ -7,12 +7,12 @@
         }
 
         /* .maquina-container {
-                                                            cursor: pointer;
-                                                            padding: 10px;
-                                                            border-radius: 5px;
-                                                            text-align: center;
-                                                            margin: 0 10px;
-                                                        } */
+                                                                cursor: pointer;
+                                                                padding: 10px;
+                                                                border-radius: 5px;
+                                                                text-align: center;
+                                                                margin: 0 10px;
+                                                            } */
 
         .maquina-container {
             width: 100px;
@@ -1019,25 +1019,25 @@
 
         function agregarProcesoAlListado() {
             let proceso = {
-                order_trabajo_id                      : $('#order_trabajo_id_lavanderia').val(),
-                producto_id                           : $('#producto_solicitud_aprobado').val(),
-                maquinaria_id                         : $('#maquinaria_id').val(),
-                tipo_proceso_id                       : $('#tipo_proceso_id').val(),
-                fecha_ingreso                         : $('#fecha_ingreso').val(),
-                fecha_salida                          : $('#fecha_salida').val(),
-                cantidad                              : $('#cantidad').val() || null,
-                porcentaje                            : $('#porcentaje').val() || null,
-                gr_litro                              : $('#gr_litro').val() || null,
-                tiempo                                : $('#tiempo').val() || null,
-                temperatura                           : $('#temperatura').val() || null,
-                ph                                    : $('#ph').val() || null,
-                rb                                    : $('#rb').val() || null,
-                descripcion                           : $('#descripcion').val(),
-                estado                                : 'TRABAJANDO',
-                producto_solicitud_aprobado           : $('#producto_solicitud_aprobado').val(),
+                order_trabajo_id: $('#order_trabajo_id_lavanderia').val(),
+                producto_id: $('#producto_solicitud_aprobado').val(),
+                maquinaria_id: $('#maquinaria_id').val(),
+                tipo_proceso_id: $('#tipo_proceso_id').val(),
+                fecha_ingreso: $('#fecha_ingreso').val(),
+                fecha_salida: $('#fecha_salida').val(),
+                cantidad: $('#cantidad').val() || null,
+                porcentaje: $('#porcentaje').val() || null,
+                gr_litro: $('#gr_litro').val() || null,
+                tiempo: $('#tiempo').val() || null,
+                temperatura: $('#temperatura').val() || null,
+                ph: $('#ph').val() || null,
+                rb: $('#rb').val() || null,
+                descripcion: $('#descripcion').val(),
+                estado: 'TRABAJANDO',
+                producto_solicitud_aprobado: $('#producto_solicitud_aprobado').val(),
                 ordenes_trabajos_solicitudes_aprobados: $('#ordenes_trabajos_solicitudes_aprobados').val(),
-                nombre_producto_seleccionado          : $('#producto_solicitud_aprobado option:selected').text(),
-                nombre_precesso_seleccionado          : $('#tipo_proceso_id option:selected').text(),
+                nombre_producto_seleccionado: $('#producto_solicitud_aprobado option:selected').text(),
+                nombre_precesso_seleccionado: $('#tipo_proceso_id option:selected').text(),
             };
 
             // Validaciones básicas
@@ -1060,17 +1060,17 @@
 
             listadoProcesos.forEach((p, index) => {
                 tbody.append(`
-                            <tr>
-                                <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
-                                <td>${p.nombre_producto_seleccionado}</td>
-                                <td>${p.nombre_precesso_seleccionado}</td>
-                                <td>${p.fecha_ingreso}</td>
-                                <td>${p.fecha_salida}</td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
-                                </td>
-                            </tr>
-                        `);
+                                <tr>
+                                    <td>${$('#ordenes_trabajos_solicitudes_aprobados option:selected').text()}</td>
+                                    <td>${p.nombre_producto_seleccionado}</td>
+                                    <td>${p.nombre_precesso_seleccionado}</td>
+                                    <td>${p.fecha_ingreso}</td>
+                                    <td>${p.fecha_salida}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarProceso(${index})">Eliminar</button>
+                                    </td>
+                                </tr>
+                            `);
             });
         }
 
@@ -1497,18 +1497,18 @@
 
             productosTemporal.forEach(function (item, index) {
                 tbody.append(`
-                                                            <tr>
-                                                                <td>${item.producto_nombre}</td>
-                                                                <td>${item.facturas.map(f => 'Factura ' + f.nro_factura + ' → [' + f.ots.map(o => o.nro_ot).join(', ') + ']').join(' | ')}</td>
-                                                                <td>${item.porcentaje}%</td>
-                                                                <td>${item.cantidad.toFixed(2)}</td>
-                                                                <td>
-                                                                    <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${index})">
-                                                                        Eliminar
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                        `);
+                                                                <tr>
+                                                                    <td>${item.producto_nombre}</td>
+                                                                    <td>${item.facturas.map(f => 'Factura ' + f.nro_factura + ' → [' + f.ots.map(o => o.nro_ot).join(', ') + ']').join(' | ')}</td>
+                                                                    <td>${item.porcentaje}%</td>
+                                                                    <td>${item.cantidad.toFixed(2)}</td>
+                                                                    <td>
+                                                                        <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${index})">
+                                                                            Eliminar
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            `);
             });
         }
 
@@ -1519,18 +1519,18 @@
             productosTemporalAgrupado
                 .forEach(function (item, index) {
                     tbody.append(`
-                                                                    <tr>
-                                                                        <td>${item.producto_nombre}</td>
-                                                                        <td>${item.solicitud_agrupado_id_text}</td>
-                                                                        <td>${item.porcentaje}%</td>
-                                                                        <td>${item.cantidad.toFixed(2)}</td>
-                                                                        <td>
-                                                                            <button class="btn btn-danger btn-sm" onclick="eliminarProductoAgrupado(${index})">
-                                                                                Eliminar
-                                                                            </button>
-                                                                        </td>
-                                                                    </tr>
-                                                                `);
+                                                                        <tr>
+                                                                            <td>${item.producto_nombre}</td>
+                                                                            <td>${item.solicitud_agrupado_id_text}</td>
+                                                                            <td>${item.porcentaje}%</td>
+                                                                            <td>${item.cantidad.toFixed(2)}</td>
+                                                                            <td>
+                                                                                <button class="btn btn-danger btn-sm" onclick="eliminarProductoAgrupado(${index})">
+                                                                                    Eliminar
+                                                                                </button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    `);
                 });
         }
 
@@ -2093,7 +2093,7 @@
 
             });
 
-             if (otsSeleccionadas.length === 0) {
+            if (otsSeleccionadas.length === 0) {
                 Swal.fire('Error', 'Seleccione al menos una OT', 'warning');
                 return;
             }
@@ -2110,6 +2110,58 @@
             }).fail(function () {
                 Swal.fire('Error', 'Error al crear proceso focalizado', 'error');
 
+            });
+
+        }
+
+
+        //planchado
+        function enviarProcesoPlanchado(datos) {
+
+            console.log(datos);
+
+            Swal.fire({
+                title: "Esta seguro de enviar la carga a PLANCHADO?",
+                text: "No podras revertir eso!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, Enviar!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    let datosE = { d: datos };
+                    // let datosE = datos;
+
+                    $.ajax({
+                        url: "{{ route('procesos.enviarProcesoPlanchado') }}",
+                        type: 'POST',
+                        dataType: 'json',
+                        data: datosE,
+                        success: function (respuesta) {
+                            if (respuesta.estado) {
+                                ajaxListado();
+                                Swal.fire({
+                                    title: "FINALIZADO!",
+                                    text: "Carga enviado a PLANCHADO.",
+                                    icon: "success"
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Error!",
+                                    text: JSON.stringify(respuesta),
+                                    icon: "warning"
+                                });
+                            }
+                        },
+                        error: function (err) {
+                            console.error('Error al cargar facturas:', err);
+                            // alert('No se pudieron cargar las facturas.');
+                        }
+                    });
+
+                }
             });
 
         }

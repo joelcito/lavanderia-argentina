@@ -52,7 +52,7 @@
         <div id="kt_app_content_container" class="app-container container-xxlg">
             <div class="card shadow-sm">
                 <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
-                    <h3 class="card-title fw-bold">Listado de Cargas en Focalizado</h3>
+                    <h3 class="card-title fw-bold">Listado de Cargas en Planchado</h3>
                     {{-- <div class="card-toolbar">
                         <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoRol()">
                             <i class="fa fa-plus"></i> Nuevo Rol
@@ -69,12 +69,12 @@
 </div>
 
 
-<div class="modal fade" id="modalFocalizado" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="modalPlanchado" tabindex="-1">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
 
-            <div class="modal-header bg-light-primary">
-                <h5 class="modal-title">Focalizar Prendas</h5>
+            <div class="modal-header bg-light-success">
+                <h5 class="modal-title">Planchado por Prendas</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -83,13 +83,13 @@
                 <input type="hidden" id="solicitud_id">
 
                 <!-- 🔥 CONTENIDO DINÁMICO -->
-                <div id="contenedor_ots"></div>
+                <div id="contenedor_planchado"></div>
 
             </div>
 
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button class="btn btn-primary" onclick="guardarFocalizadoDetalle()">Guardar</button>
+                <button class="btn btn-success" onclick="guardarPlanchadoDetalle()">Guardar</button>
             </div>
 
         </div>
@@ -119,7 +119,7 @@
         function ajaxListado() {
             let datos = {};
             $.ajax({
-                url: "{{ route('procesos.ajaxListadoSolicitudesFocalizado') }}",
+                url: "{{ route('procesos.ajaxListadoSolicitudesPlanchado') }}",
                 method: "POST",
                 data: datos,
                 success: function (resultado) {
@@ -135,7 +135,7 @@
             })
         }
 
-        function finalizarFocalizado(solicitud) {
+        function finalizarPlanchado(solicitud) {
 
             Swal.fire({
                 title: "Esta seguro de finalizar el proceso?",
@@ -148,7 +148,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "{{ route('procesos.finalizarProcesoFocalizado') }}",
+                        url: "{{ route('procesos.finalizarProcesoPlanchado') }}",
                         method: "POST",
                         data: { solicitud: solicitud },
                         success: function (resultado) {
@@ -194,94 +194,102 @@
 
 
 
-        //focalizado cantidad
+        //planchado cantidad
 
-        function abrirModalFocalizado(solicitud_id) {
+        function abrirModalPlanchado(solicitud_id) {
 
             console.log("Abrir modal solicitud:", solicitud_id);
 
-            $.get('/procesos/obtener-detalle-focalizado/' + solicitud_id, function (res) {
-
+            $.get('/procesos/obtener-detalle-planchado/' + solicitud_id, function (res) {
                 let html = '';
-                console.log(res.data);
+
                 res.data.forEach(grupo => {
 
                     html += `
-                                                    <div class="card mb-3 p-3 border">
-                                                        <h6>Factura: ${grupo.factura_id}</h6>
-                                                        <div class="row">
-                                                `;
+                        <div class="card mb-4 p-3 border">
+                            <h5 class="text-primary">Factura: ${grupo.factura_id}</h5>
+                            <div class="row">
+                    `;
 
                     grupo.ots.forEach(ot => {
 
                         html += `
-                                                        <div class="col-md-4 mb-2">
-                                                            <label>OT ${ot.id}</label>
-                                                            <span class="badge bg-success ms-2">
-                                                            ${ot.total}
-                                                        </span>
-                                                            <input 
-                                                                type="number" 
-                                                                class="form-control cantidad_ot"
-                                                                data-ot="${ot.id}"
-                                                                data-factura="${grupo.factura_id}"
-                                                                min="0"
-                                                                placeholder="Cantidad"
-                                                            >
-                                                        </div>
-                                                    `;
+                            <div class="col-md-4 mb-3 border rounded p-2">
+
+                                <strong>OT ${ot.id}</strong>
+                                <span class="badge bg-success ms-2">Total: ${ot.total}</span>
+
+                                <div class="mt-2">
+                                    <label>${ot.prenda}</label>
+                                    <input 
+                                        type="number"
+                                        class="form-control prenda"
+                                        data-ot="${ot.id}"
+                                        data-factura="${grupo.factura_id}"
+                                        data-categoria="${ot.prenda_id}"
+                                        min="0"
+                                        placeholder="Cantidad"
+                                    >
+                                </div>
+
+                            </div>
+                        `;
                     });
 
                     html += `</div></div>`;
                 });
 
-                $('#contenedor_ots').html(html);
+                $('#contenedor_planchado').html(html);
                 $('#solicitud_id').val(solicitud_id);
-                $('#modalFocalizado').modal('show');
+                $('#modalPlanchado').modal('show');
             });
+
         }
 
-        function guardarFocalizadoDetalle() {
+        function guardarPlanchadoDetalle() {
 
             let solicitud_id = $('#solicitud_id').val();
-            let detalles = [];
+            let detalle = [];
 
-            $('.cantidad_ot').each(function () {
+            let agrupado = {};
 
-                let cantidad = parseInt($(this).val());
+            $('.prenda').each(function () {
+
                 let ot = $(this).data('ot');
                 let factura = $(this).data('factura');
+                let categoria = $(this).data('categoria');
+                let cantidad = parseInt($(this).val()) || 0;
 
-                if (cantidad && cantidad > 0) {
-                    detalles.push({
-                        ot_id: ot,
-                        factura_id: factura,
-                        cantidad: cantidad
-                    });
+                if (cantidad > 0) {
+
+                    if (!agrupado[ot]) {
+                        agrupado[ot] = {
+                            ot_id: ot,
+                            factura_id: factura,
+                            categorias: {}
+                        };
+                    }
+
+                    agrupado[ot].categorias[categoria] = cantidad;
                 }
             });
 
-            console.log("DATOS A ENVIAR:", detalles);
+            detalle = Object.values(agrupado);
 
-            if (detalles.length === 0) {
-                Swal.fire('Error', 'Ingrese al menos una cantidad', 'error');
-                return;
-            }
+            console.log("ENVIO:", detalle);
 
-            $.post("{{ route('procesos.guardarFocalizadoDetalle') }}", {
+            $.post("{{ route('procesos.guardarPlanchadoDetalle') }}", {
                 solicitud_id: solicitud_id,
-                detalles: detalles
+                detalle: detalle
             }, function (res) {
-
-                // console.log("RESPUESTA:", res);
 
                 if (res.estado) {
                     Swal.fire('Correcto', res.mensaje, 'success');
-                    $('#modalFocalizado').modal('hide');
-                    ajaxListado();
+                    $('#modalPlanchado').modal('hide');
                 } else {
                     Swal.fire('Error', res.mensaje, 'error');
                 }
+
             });
         }
 
