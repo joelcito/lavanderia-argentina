@@ -17,6 +17,7 @@ use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PagosPersonalController;
 use App\Http\Controllers\PrelavadoController;
 use App\Http\Controllers\PrendaController;
+use App\Http\Controllers\ProduccionPagoController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ReporteController;
@@ -397,6 +398,17 @@ Route::middleware('auth')->group(function () {
     Route::prefix('pagos-personal')->group(function () {
         Route::post('/store', [PagosPersonalController::class, 'store'])->name('pagos.store');
         Route::get('/historial/{user}', [PagosPersonalController::class, 'historial'])->name('pagos.historial');
+    });
+
+
+
+    //pago focalizado plancahdo
+    Route::prefix('produccion-pago')->group(function () {
+
+        Route::post('/resumen', [ProduccionPagoController::class, 'resumen']);
+
+        Route::post('/pagar', [ProduccionPagoController::class, 'pagar']);
+
     });
 
 });

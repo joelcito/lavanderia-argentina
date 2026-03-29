@@ -18,6 +18,7 @@ class Prenda extends Model
         'usuario_eliminador_id',
 
         'nombre',
+        'precio_planchado',
 
         'estado',
         'deleted_at',
