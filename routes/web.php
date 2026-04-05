@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AsistenciaController;
 use App\Http\Controllers\CaracteristicaController;
+use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ColorTelaController;
 use App\Http\Controllers\ConfiguracionPersonalController;
@@ -29,7 +30,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProcesosController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\NevadoController;
-
+use App\Http\Controllers\SubCategoriaController;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +57,23 @@ Route::middleware('auth')->group(function () {
         Route::post('/guardarRol', [RolController::class, 'guardarRol'])->name('rol.guardarRol');
         Route::post('/eliminarRol', [RolController::class, 'eliminarRol'])->name('rol.eliminarRol');
     });
+
+    // CATEGORIA
+    Route::prefix('/categoria')->group(function(){
+        Route::get('/listado', [CategoriaController::class, 'listado'])->name('categoria.listado');
+        Route::post('/ajaxListado', [CategoriaController::class, 'ajaxListado'])->name('categoria.ajaxListado');
+        Route::post('/guardar', [CategoriaController::class, 'guardar'])->name('categoria.guardar');
+        Route::post('/eliminar', [CategoriaController::class, 'eliminar'])->name('categoria.eliminar');
+    });
+
+    //  SUB CATEGORIA
+    Route::prefix('/subCategoria')->group(function(){
+        Route::get('/listado', [SubCategoriaController::class, 'listado'])->name('subCategoria.listado');
+        Route::post('/ajaxListado', [SubCategoriaController::class, 'ajaxListado'])->name('subCategoria.ajaxListado');
+        Route::post('/guardar', [SubCategoriaController::class, 'guardar'])->name('subCategoria.guardar');
+        Route::post('/eliminar', [SubCategoriaController::class, 'eliminar'])->name('subCategoria.eliminar');
+    });
+
     // USUARIO
     Route::prefix('/user')->group(function () {
         Route::get('/listado', [UserController::class, 'listado'])->name('user.listado');

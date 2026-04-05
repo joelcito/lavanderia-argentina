@@ -219,7 +219,7 @@
             $('#monto').val(0)
             $('#descripcion').val('')
 
-            let categoriasIngreso = [];
+            let categoriasIngreso = (tipo === "INGRESO") ? @json($categoriasIngreso) : @json($categoriasSalida);
 
             $('#categoria_id').empty();
             $('#categoria_id').append('<option value="">Seleccione</option>');
@@ -239,7 +239,7 @@
         function sacarSubCategorias(){
 
             let categoria_id = $('#categoria_id').val();
-            let subCategorias = []
+            let subCategorias = @json($subCategorias);
             let subCategoriasFiltrados = subCategorias.filter(s =>s.categoria_id ==  categoria_id);
 
             $('#subcategoria_id').empty();

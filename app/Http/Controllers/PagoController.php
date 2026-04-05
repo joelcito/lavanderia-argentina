@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categoria;
 use App\Models\Factura;
 use App\Models\Pago;
+use App\Models\SubCategoria;
 use App\Models\Sucursal;
 use App\Models\User;
 use App\Utils\Respuesta;
@@ -29,7 +31,17 @@ class PagoController extends Controller
             $sucursales = Sucursal::where('id', $sucursal->id)->get();
         }
 
-        return view('pago.listado')->with(compact('sucursales', 'fechaIni', 'fechaFin', 'usuarios','usuario'));
+        $categoriasIngreso = Categoria::where('tipo', 'INGRESO')
+                                        ->where('estado', 'PAGO')
+                                        ->get();
+
+        $categoriasSalida  = Categoria::where('tipo', 'SALIDA')
+                                        ->where('estado', 'PAGO')
+                                        ->get();
+
+        $subCategorias     = SubCategoria::all();
+
+        return view('pago.listado')->with(compact('sucursales', 'fechaIni', 'fechaFin', 'usuarios','usuario', 'categoriasIngreso', 'categoriasSalida', 'subCategorias'));
     }
 
     public function ajaxListado(Request $request)
@@ -162,5 +174,43 @@ class PagoController extends Controller
             $data = Respuesta::error(null, "Error en registro de datos.");
         }
         return $data;
+    }
+
+    public function guardarTipoIngresoSalida(Request $request){
+
+        if($request->ajax()){
+
+            // dd($request->all());
+
+            $usuario         = Auth::user();
+            $monto           = $request->input('monto');
+            $descripcion     = $request->input('descripcion');
+            $tipo            = $request->input('tipo');
+            $subcategoria_id = $request->input('subcategoria_id');
+            $sucursal        = $usuario->sucursal;
+
+            // $caja = new Caja();
+            // $cajaVigente = $caja->sacaCajaVigente($sucursal->id);
+
+            $pago                     = new pago();
+            $pago->usuario_creador_id = $usuario->id;
+            $pago->sucursal_id        = $sucursal->id;
+              // $pago->caja_id            = $cajaVigente->id;
+            $pago->monto            = $monto;
+            $pago->fecha            = date('Y-m-d H:i:s');
+            $pago->descripcion      = $descripcion;
+            $pago->tipo_pago        = 'EFECTIVO';
+            $pago->estado           = $tipo;
+            // $pago->apertura_caja    = "No";
+            $pago->sub_categoria_id = $subcategoria_id;
+            $pago->save();
+
+            $data = Respuesta::success(null, "Datos registrados correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+
     }
 }

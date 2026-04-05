@@ -77,6 +77,25 @@
                                 </a>
                             </div>
                             <div class="menu-item">
+                                <a class="menu-link {{ Route::currentRouteName() == 'categoria.listado' ? 'active' : '' }}"
+                                    href="{{ route('categoria.listado') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title text-white">Categorias</span>
+                                </a>
+                            </div>
+
+                            <div class="menu-item">
+                                <a class="menu-link {{ Route::currentRouteName() == 'subCategoria.listado' ? 'active' : '' }}"
+                                    href="{{ route('subCategoria.listado') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title text-white">Sub Categorias</span>
+                                </a>
+                            </div>
+                            <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'prenda.listado' ? 'active' : '' }}"
                                     href="{{ route('prenda.listado') }}">
                                     <span class="menu-bullet">
