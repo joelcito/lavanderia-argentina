@@ -38,4 +38,12 @@ class SolicitudDetalleProceso extends Model
     {
         return $this->belongsTo(Factura::class);
     }
+
+    public function prenda()
+    {
+        return $this->belongsTo(Prenda::class, 'categoria');
+
+    }
+
+
 }

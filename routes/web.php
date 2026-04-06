@@ -59,7 +59,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // CATEGORIA
-    Route::prefix('/categoria')->group(function(){
+    Route::prefix('/categoria')->group(function () {
         Route::get('/listado', [CategoriaController::class, 'listado'])->name('categoria.listado');
         Route::post('/ajaxListado', [CategoriaController::class, 'ajaxListado'])->name('categoria.ajaxListado');
         Route::post('/guardar', [CategoriaController::class, 'guardar'])->name('categoria.guardar');
@@ -67,7 +67,7 @@ Route::middleware('auth')->group(function () {
     });
 
     //  SUB CATEGORIA
-    Route::prefix('/subCategoria')->group(function(){
+    Route::prefix('/subCategoria')->group(function () {
         Route::get('/listado', [SubCategoriaController::class, 'listado'])->name('subCategoria.listado');
         Route::post('/ajaxListado', [SubCategoriaController::class, 'ajaxListado'])->name('subCategoria.ajaxListado');
         Route::post('/guardar', [SubCategoriaController::class, 'guardar'])->name('subCategoria.guardar');
@@ -315,7 +315,8 @@ Route::middleware('auth')->group(function () {
         //pagos
 
         Route::post('/personal/lavador/pdf', [ReporteController::class, 'reporteLavador'])->name('reporte.personal.lavador.pdf');
-        Route::get('/cuentasDeudaCliente', [ReporteController::class, 'cuentasDeudaCliente'])->name('reporte.cuentasDeudaCliente');
+        Route::post('/personal/focalizador/pdf', [ReporteController::class, 'reporteFocalizador'])->name('reporte.personal.focalizador.pdf');
+        Route::post('/personal/planchador/pdf', [ReporteController::class, 'reportePlanchador'])->name('reporte.personal.planchador.pdf');
 
     });
 
@@ -403,6 +404,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/pagos-personal/store', [ControlPersonalController::class, 'store']);
 
         Route::get('/lavador/formulario', [ControlPersonalController::class, 'formularioLavador']);
+        Route::get('/focalizador/formulario', [ControlPersonalController::class, 'formularioFocalizador']);
+        Route::get('/planchador/formulario', [ControlPersonalController::class, 'formularioPlanchador']);
 
         Route::get('/{user}', [ControlPersonalController::class, 'show'])->name('personal.show');
 

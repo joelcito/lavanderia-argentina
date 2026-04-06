@@ -1,16 +1,16 @@
 <div class="modal-header">
-    <h5 class="modal-title">REPORTE PAGO LAVADOR</h5>
+    <h5 class="modal-title">REPORTE PAGO FOCALIZADOR</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 
 <div class="modal-body">
 
-    <form action="{{ route('reporte.personal.lavador.pdf') }}" method="POST" target="_blank">
+    <form action="{{ route('reporte.personal.focalizador.pdf') }}" method="POST" target="_blank">
         @csrf
 
         <div class="row">
 
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <label class="required fw-semibold fs-6 mb-2">Sucursal</label>
                 <select name="sucursal_id" class="form-select form-select-sm" required>
                     <option value="">-- Seleccione Sucursal --</option>
@@ -18,14 +18,25 @@
                         <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
                     @endforeach
                 </select>
-            </div>
 
+            </div>
             <div class="col-md-3">
+                <label class="required fw-semibold fs-6 mb-2">Focalizador</label>
+                <select name="user_id" id="user_id" class="form-select form-select-sm">
+                    <option value="">-- Seleccionar focalizador --</option>
+                    @foreach($usuarios as $u)
+                        <option value="{{ $u->id }}">
+                            {{ $u->nombres }} {{ $u->ap_paterno }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2">
                 <label class="required fw-semibold fs-6 mb-2">Fecha Inicio</label>
                 <input type="date" name="fecha_inicio" class="form-control form-control-sm" required>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="required fw-semibold fs-6 mb-2">Fecha Fin</label>
                 <input type="date" name="fecha_fin" class="form-control form-control-sm" required>
             </div>

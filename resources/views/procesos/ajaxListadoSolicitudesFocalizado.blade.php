@@ -14,11 +14,8 @@
                 @php
                     $solicitud_id = $key;
 
-                    $proceso = App\Models\Proceso::select('estado')
-                        ->where('solicitud_id', $solicitud_id)
-                        ->where('tipo_proceso_id', 4) // FOCALIZADO
-                        ->groupBy('solicitud_id', 'estado')
-                        ->first();
+
+                    $proceso = $procesos[$solicitud_id] ?? null;
                 @endphp
                 @if ($proceso)
                     @if ($proceso->estado == "TRABAJANDO")
@@ -33,8 +30,6 @@
                                 </button>
                                 <button title="Terminar Proceso Focalizado" class="btn btn-dark btn-icon btn-sm"
                                     onclick="finalizarFocalizado('{{ $solicitud_id }}')"><i class="fa fa-up-down"></i></button>
-
-
                             </td>
                         </tr>
                     @endif
@@ -171,7 +166,7 @@
     //             $('#labelCantidadProceso').text('Cantidad de prendas a planchar');
     //         }
 
-    //         // 👇 MISMO MÉTODO QUE TU MODAL FUNCIONAL
+
     //         $('#modalProcesoOT').modal('show');
     //     });
     // }
