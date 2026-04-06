@@ -19,7 +19,7 @@
     <meta property="og:url" content="https://infinitassoluciones.net/" />
     <meta property="og:site_name" content="Sistema de Facturación e Inventario en Línea" />
     <link rel="canonical" href="https://infinitassoluciones.net/" />
-    <link rel="shortcut icon" href="{{ asset('assets/img/lop.jpg') }}" />
+    <link rel="shortcut icon" href="{{ asset('assets/img/logo-lava-arg-icon.png') }}" />
     <!--begin::Fonts(mandatory for all pages)-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <!--end::Fonts-->
@@ -61,11 +61,11 @@
         <!--begin::Page bg image-->
         <style>
             body {
-                background-image: url('{{ asset('assets/media/auth/bg1.jpg') }}');
+                background-image: url('{{ asset('assets/media/auth/bg3.jpg') }}');
             }
 
             [data-bs-theme="dark"] body {
-                background-image: url('{{ asset('assets/media/auth/bg4-dark.jpg') }}');
+                background-image: url('{{ asset('assets/media/auth/bg3-dark.jpg') }}');
             }
         </style>
         <!--end::Page bg image-->
@@ -76,7 +76,7 @@
                 <!--begin::Aside-->
                 <div class="d-flex flex-center flex-lg-start flex-column">
                     <!--begin::Logo-->
-                    <img alt="Logo" src="{{ asset('assets/img/lop.jpg') }}" width="50%" />
+                    <img alt="Logo" src="{{ asset('assets/img/logo-lava-arg.png') }}" width="80%" />
                     <!--end::Logo-->
                     <!--begin::Title-->
                     <br>
