@@ -1257,34 +1257,28 @@ class ProcesosController extends Controller
     public function ajaxListadoSolicitudesFocalizado(Request $request)
     {
         if ($request->ajax()) {
-
             $solicitudes = Solicitud::whereNull('producto_id')->get();
 
+            $procesos = Proceso::where('tipo_proceso_id', 4)
+                ->get()
+                ->keyBy('solicitud_id');
+
+
             $solicitudArray = [];
-
             foreach ($solicitudes as $key => $solicitud) {
-
-                // 🔥 PROTECCIÓN CLAVE
                 $ordenesTrabajo = $solicitud->ordenes_trabajo ?? [];
-
-                // 🔥 SI ES JSON STRING (MUY IMPORTANTE)
                 if (is_string($ordenesTrabajo)) {
                     $ordenesTrabajo = json_decode($ordenesTrabajo, true) ?? [];
                 }
-
                 $fac = "";
-
                 foreach ($ordenesTrabajo as $key => $ordenTrabajo) {
-
                     $fac .= " | Fac/Or-Re " . ($ordenTrabajo['nro_factura'] ?? '') . " : [";
-
                     $ots = $ordenTrabajo['ots'] ?? [];
                     $arrayOts = [];
 
                     foreach ($ots as $key => $ot) {
 
                         $ordenTrabajoBuscado = Order_trabajo::find($ot);
-
                         if (!$ordenTrabajoBuscado) {
                             continue;
                         }
@@ -1308,7 +1302,7 @@ class ProcesosController extends Controller
 
             $valores = [
                 'listado' => view('procesos.ajaxListadoSolicitudesFocalizado')
-                    ->with(compact('solicitudArray'))
+                    ->with(compact('solicitudArray', 'solicitudes', 'procesos'))
                     ->render(),
                 'solicitudArray' => $solicitudArray
             ];
@@ -1514,25 +1508,55 @@ class ProcesosController extends Controller
 
             $solicitud_id = $request->input('solicitud');
 
+            // 🔥 VALIDACIÓN 1: verificar que exista al menos una prenda registrada
+            $totalProcesado = SolicitudDetalleProceso::where('solicitud_id', $solicitud_id)
+                ->where('tipo_proceso', 'FOCALIZADO')
+                ->sum('cantidad');
+
+            if ($totalProcesado <= 0) {
+                return Respuesta::error(null, "Debe registrar al menos una prenda antes de finalizar");
+            }
+
+            // 🔥 VALIDACIÓN 2 (OPCIONAL PRO): verificar que no haya OTs incompletas
+
+            $ots = SolicitudDetalleProceso::where('solicitud_id', $solicitud_id)
+                ->pluck('order_trabajo_id')
+                ->unique();
+            foreach ($ots as $ot_id) {
+
+                $ot = Order_trabajo::find($ot_id);
+
+                $procesado = SolicitudDetalleProceso::where('solicitud_id', $solicitud_id)
+                    ->where('order_trabajo_id', $ot_id)
+                    ->sum('cantidad');
+
+                if ($procesado < $ot->cantidad) {
+                    return Respuesta::error(null, "Falta completar la OT {$ot->id}");
+                }
+            }
+
+            // 🔥 TRAER PROCESOS
             $procesos = Proceso::where('solicitud_id', $solicitud_id)
-                ->where('tipo_proceso_id', 4) //FOCALIZADO
+                ->where('tipo_proceso_id', 4)
                 ->where('estado', 'TRABAJANDO')
                 ->get();
 
-            if ($procesos) {
-                foreach ($procesos as $key => $proceso) {
-                    $proceso->estado = 'EN PROCESO';
-                    $proceso->fecha_salida = date('Y-m-d H:i:s');
-                    $proceso->save();
-                }
-                $data = Respuesta::success(null, "SE FINALIZO CON EXITO");
-            } else {
-                $data = Respuesta::error(null, "NO SE ENCONTRO PROCESOS EN LA MAQUINA");
+            if ($procesos->isEmpty()) {
+                return Respuesta::error(null, "NO SE ENCONTRO PROCESOS EN LA MAQUINA");
             }
+
+            // ✅ FINALIZAR
+            foreach ($procesos as $proceso) {
+                $proceso->estado = 'FINALIZADO'; // 👈 mejor que EN PROCESO
+                $proceso->fecha_salida = now();
+                $proceso->save();
+            }
+
+            return Respuesta::success(null, "SE FINALIZO CON EXITO");
+
         } else {
-            $data = Respuesta::error(null, "No existe");
+            return Respuesta::error(null, "No existe");
         }
-        return $data;
     }
     //focalizador detalle
 
@@ -1549,6 +1573,33 @@ class ProcesosController extends Controller
     {
         foreach ($request->detalles as $detalle) {
 
+            $ot = Order_trabajo::find($detalle['ot_id']);
+
+            if (!$ot) {
+                return response()->json([
+                    'estado' => false,
+                    'mensaje' => 'OT no encontrada'
+                ], 404);
+            }
+
+            // 🔥 SUMAR LO YA GUARDADO EN BD
+            $cantidadExistente = SolicitudDetalleProceso::where('solicitud_id', $request->solicitud_id)
+                ->where('order_trabajo_id', $detalle['ot_id'])
+                ->where('tipo_proceso', 'FOCALIZADO')
+                ->sum('cantidad');
+
+            $totalOT = $ot->cantidad;
+            $restante = $totalOT - $cantidadExistente;
+
+            // 🚨 VALIDACIÓN REAL
+            if ($detalle['cantidad'] > $restante) {
+                return response()->json([
+                    'estado' => false,
+                    'mensaje' => "No puedes exceder. Disponible: $restante"
+                ], 400);
+            }
+
+            // ✅ GUARDAR
             SolicitudDetalleProceso::create([
                 'solicitud_id' => $request->solicitud_id,
                 'order_trabajo_id' => $detalle['ot_id'],
@@ -1558,11 +1609,6 @@ class ProcesosController extends Controller
                 'cantidad' => $detalle['cantidad'],
                 'usuario_creador_id' => auth()->id()
             ]);
-
-            $ot = Order_trabajo::find($detalle['ot_id']);
-
-            $ot->cantidad_focalizado = ($ot->cantidad_focalizado ?? 0) + $detalle['cantidad'];
-            $ot->save();
         }
 
         return response()->json([
@@ -1571,39 +1617,58 @@ class ProcesosController extends Controller
         ]);
     }
 
-    public function obtenerDetalleFocalizado($id)
+    public function obtenerDetalleFocalizado($solicitud_id)
     {
-        $solicitud = Solicitud::find($id);
+        $solicitud = Solicitud::find($solicitud_id);
 
         if (!$solicitud) {
             return response()->json([
                 'estado' => false,
                 'mensaje' => 'Solicitud no encontrada'
-            ]);
+            ], 404);
         }
 
-        $ordenes = $solicitud->ordenes_trabajo;
+        $ordenesTrabajo = $solicitud->ordenes_trabajo;
+
+        if (is_string($ordenesTrabajo)) {
+            $ordenesTrabajo = json_decode($ordenesTrabajo, true);
+        }
+
+        // 🔥 TRAER LO YA GUARDADO
+        $detalles = SolicitudDetalleProceso::where('solicitud_id', $solicitud_id)
+            ->where('tipo_proceso', 'FOCALIZADO')
+            ->get()
+            ->groupBy('order_trabajo_id');
 
         $data = [];
 
-        foreach ($ordenes as $grupo) {
+        foreach ($ordenesTrabajo as $grupo) {
 
-            $ots_detalle = [];
+            $grupoData = [
+                'factura_id' => $grupo['nro_factura'],
+                'ots' => []
+            ];
 
             foreach ($grupo['ots'] as $ot_id) {
 
                 $ot = Order_trabajo::find($ot_id);
 
-                $ots_detalle[] = [
+                if (!$ot)
+                    continue;
+
+                // 🔥 CALCULAR PROCESADO DESDE BD
+                $procesado = isset($detalles[$ot_id])
+                    ? $detalles[$ot_id]->sum('cantidad')
+                    : 0;
+
+                $grupoData['ots'][] = [
                     'id' => $ot->id,
-                    'total' => $ot->cantidad
+                    'total' => $ot->cantidad,
+                    'procesado' => $procesado
                 ];
             }
 
-            $data[] = [
-                'factura_id' => $grupo['factura_id'],
-                'ots' => $ots_detalle
-            ];
+            $data[] = $grupoData;
         }
 
         return response()->json([
@@ -1756,9 +1821,17 @@ class ProcesosController extends Controller
                 $ot = Order_trabajo::find($ot_id);
 
                 if ($ot) {
+                    $procesado = SolicitudDetalleProceso::where('order_trabajo_id', $ot->id)
+                        ->where('tipo_proceso', 'PLANCHADO')
+                        ->sum('cantidad');
+
+                    $total = $ot->cantidad;
+
                     $ots_detalle[] = [
                         'id' => $ot->id,
                         'total' => $ot->cantidad,
+                        'procesado' => $procesado,
+                        'restante' => max(0, $total - $procesado), // 👈 CLAVE
                         'prenda' => $ot->prenda ? $ot->prenda->nombre : 'SIN PRENDA',
                         'prenda_id' => $ot->prenda_id
                     ];
@@ -1784,40 +1857,115 @@ class ProcesosController extends Controller
             'detalle' => 'required|array'
         ]);
 
-        foreach ($request->detalle as $item) {
+        DB::beginTransaction();
 
-            $ot_id = $item['ot_id'];
-            $factura_id = $item['factura_id'];
+        try {
 
-            foreach ($item['categorias'] as $categoria => $cantidad) {
+            foreach ($request->detalle as $item) {
 
-                if ($cantidad > 0) {
-
-                    SolicitudDetalleProceso::create([
-                        'solicitud_id' => $request->solicitud_id,
-                        'order_trabajo_id' => $ot_id,
-                        'factura_id' => $factura_id,
-                        'tipo_proceso' => 'PLANCHADO',
-                        'categoria' => $categoria,
-                        'cantidad' => $cantidad,
-                        'usuario_creador_id' => auth()->id()
-                    ]);
+                // Validación básica de estructura
+                if (!isset($item['ot_id'], $item['factura_id'], $item['categorias'])) {
+                    continue;
                 }
+
+                $ot_id = $item['ot_id'];
+                $factura_id = $item['factura_id'];
+
+                $ot = Order_trabajo::find($ot_id);
+
+                if (!$ot) {
+                    continue;
+                }
+
+                // 🔴 VALIDAR DUPLICADOS
+                // $yaExiste = SolicitudDetalleProceso::where('solicitud_id', $request->solicitud_id)
+                //     ->where('order_trabajo_id', $ot_id)
+                //     ->where('tipo_proceso', 'PLANCHADO')
+                //     ->exists();
+
+                // if ($yaExiste) {
+                //     DB::rollBack();
+
+                //     return response()->json([
+                //         'estado' => false,
+                //         'mensaje' => "La OT {$ot_id} ya fue registrada previamente"
+                //     ], 400);
+                // }
+
+                // 🔴 VALIDAR Y SUMAR CANTIDADES
+                $totalNuevo = 0;
+
+                foreach ($item['categorias'] as $categoria => $cantidad) {
+
+                    if (!is_numeric($cantidad) || $cantidad < 0) {
+                        DB::rollBack();
+
+                        return response()->json([
+                            'estado' => false,
+                            'mensaje' => "Cantidad inválida en OT {$ot_id}"
+                        ], 400);
+                    }
+
+                    $totalNuevo += $cantidad;
+                }
+
+                // 🔴 TOTAL YA PROCESADO REAL (desde DB)
+                $yaProcesado = SolicitudDetalleProceso::where('order_trabajo_id', $ot_id)
+                    ->where('tipo_proceso', 'PLANCHADO')
+                    ->sum('cantidad');
+
+                // 🔴 TOTAL DE LA OT
+                $totalOT = $ot->cantidad;
+
+                // 🔴 VALIDACIÓN CLAVE
+                if (($yaProcesado + $totalNuevo) > $totalOT) {
+                    DB::rollBack();
+
+                    return response()->json([
+                        'estado' => false,
+                        'mensaje' => "La OT {$ot_id} excede el total permitido"
+                    ], 400);
+                }
+
+                // 🔴 GUARDAR DETALLE POR CATEGORÍA
+                foreach ($item['categorias'] as $categoria => $cantidad) {
+
+                    if ($cantidad > 0) {
+
+                        SolicitudDetalleProceso::create([
+                            'solicitud_id' => $request->solicitud_id,
+                            'order_trabajo_id' => $ot_id,
+                            'factura_id' => $factura_id,
+                            'tipo_proceso' => 'PLANCHADO',
+                            'categoria' => $categoria,
+                            'cantidad' => $cantidad,
+                            'usuario_creador_id' => auth()->id()
+                        ]);
+                    }
+                }
+
+                // 🔴 ACTUALIZAR OT (opcional pero útil)
+                $ot->cantidad_planchado = $yaProcesado + $totalNuevo;
+                $ot->save();
             }
 
-            // 🔥 actualizar resumen en OT
-            $ot = Order_trabajo::find($ot_id);
+            DB::commit();
 
-            $total_planchado = collect($item['categorias'])->sum();
+            return response()->json([
+                'estado' => true,
+                'mensaje' => 'Planchado registrado correctamente'
+            ]);
 
-            $ot->cantidad_planchado = ($ot->cantidad_planchado ?? 0) + $total_planchado;
-            $ot->save();
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'estado' => false,
+                'mensaje' => 'Error al guardar',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'estado' => true,
-            'mensaje' => 'Planchado registrado correctamente'
-        ]);
     }
 
 

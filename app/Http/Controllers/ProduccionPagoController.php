@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Pago;
@@ -19,7 +20,7 @@ class ProduccionPagoController extends Controller
         $fin = $request->fin;
 
         $query = SolicitudDetalleProceso::where('usuario_creador_id', $userId)
-            ->whereBetween('created_at', [$inicio, $fin]);
+            ->whereBetween('created_at', [$inicio . ' 00:00:00', $fin . ' 23:59:59']);
 
         if ($tipo === 'focalizador') {
             $query->where('tipo_proceso', 'FOCALIZADO');
@@ -42,7 +43,7 @@ class ProduccionPagoController extends Controller
             if ($tipo === 'focalizador') {
 
                 $factura = Factura::find($d->factura_id);
-                $precio = ($factura && $factura->prioridad === 'FERIA') ? 0.30 : 0.50;
+                $precio = ($factura && $factura->prioridad === 'PARA LA FERIA') ? 0.30 : 0.50;
 
                 $total += $cantidad * $precio;
             }
@@ -59,38 +60,36 @@ class ProduccionPagoController extends Controller
         // ADELANTOS
         $adelantos = Pago::where('user_id', $userId)
             ->where('tipo_pago', 'adelanto')
-            ->whereDate('fecha_inicio', '>=', $inicio)
-            ->whereDate('fecha_fin', '<=', $fin)
-            ->sum('monto');
+            ->whereBetween('created_at', [$inicio . ' 00:00:00', $fin . ' 23:59:59'])
+            ->sum(DB::raw('ABS(monto)'));
 
         // DESCUENTOS
         $descuentos = Pago::where('user_id', $userId)
             ->where('tipo_pago', 'descuento')
-            ->whereDate('fecha_inicio', '>=', $inicio)
-            ->whereDate('fecha_fin', '<=', $fin)
-            ->sum('monto');
+            ->whereBetween('created_at', [$inicio . ' 00:00:00', $fin . ' 23:59:59'])
+            ->sum(DB::raw('ABS(monto)'));
 
         $ajustes = Pago::where('user_id', $userId)
             ->whereIn('tipo_pago', ['adelanto', 'descuento'])
-            ->whereDate('fecha_inicio', '>=', $inicio)
-            ->whereDate('fecha_fin', '<=', $fin)
+            ->whereBetween('created_at', [$inicio . ' 00:00:00', $fin . ' 23:59:59'])
             ->orderBy('fecha', 'desc')
             ->get(['tipo_pago', 'monto', 'descripcion', 'fecha']);
 
         $pagoRealizado = Pago::where('user_id', $userId)
-            ->where('tipo_pago', 'salario')
-            ->where('fecha_inicio', $inicio)
-            ->where('fecha_fin', $fin)
+            ->where('tipo_pago', 'salario_produccion')
+            ->whereBetween('created_at', [$inicio . ' 00:00:00', $fin . ' 23:59:59'])
             ->first();
 
 
         // PAGOS
-        $pagos = Pago::where('user_id', $userId)
-            ->where('tipo_pago', 'salario_produccion')
-            ->whereDate('fecha', '<=', $fin)
-            ->sum('monto');
+        // $pagos = Pago::where('user_id', $userId)
+        //     ->where('tipo_pago', 'salario_produccion')
+        //     ->where('fecha_inicio', $inicio)
+        //     ->where('fecha_fin', $fin)
+        //     ->sum('monto');
 
-        $totalFinal = $total - $adelantos - $descuentos - $pagos;
+        $totalFinal = $total - $adelantos - $descuentos;
+        $sinProduccion = $totalPrendas == 0 && $total == 0;
 
         return response()->json([
             'total_prendas' => $totalPrendas,
@@ -98,8 +97,9 @@ class ProduccionPagoController extends Controller
 
             'adelantos' => $adelantos,
             'descuentos' => $descuentos,
-            'pagos' => $pagos,
+            //'pagos' => $pagos,
             'total_final' => $totalFinal,
+            'sin_produccion' => $sinProduccion,
 
             'ajustes' => $ajustes,
 
@@ -110,29 +110,43 @@ class ProduccionPagoController extends Controller
 
     public function pagar(Request $request)
     {
-        if ($request->monto <= 0) {
+
+        $request->validate([
+            'user_id' => 'required|integer',
+            'monto' => 'required|numeric|min:0.01',
+            'tipo_pago' => 'required|string',
+            'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date',
+        ]);
+
+
+
+
+        if ($request->tipo_pago == 'salario_produccion' && $request->monto <= 0) {
             return response()->json([
                 'error' => 'No hay producción para pagar'
             ], 400);
         }
 
 
-        $existePago = Pago::where('user_id', $request->user_id)
-            ->where('tipo_pago', 'salario')
-            ->where(function ($q) use ($request) {
-                $q->whereBetween('fecha_inicio', [$request->fecha_inicio, $request->fecha_fin])
-                    ->orWhereBetween('fecha_fin', [$request->fecha_inicio, $request->fecha_fin])
-                    ->orWhere(function ($q2) use ($request) {
-                        $q2->where('fecha_inicio', '<=', $request->fecha_inicio)
-                            ->where('fecha_fin', '>=', $request->fecha_fin);
-                    });
-            })
-            ->exists();
+        if ($request->tipo_pago == 'salario_produccion') {
+            $existePago = Pago::where('user_id', $request->user_id)
+                ->where('tipo_pago', 'salario_produccion')
+                ->where(function ($q) use ($request) {
+                    $q->whereBetween('fecha_inicio', [$request->fecha_inicio, $request->fecha_fin])
+                        ->orWhereBetween('fecha_fin', [$request->fecha_inicio, $request->fecha_fin])
+                        ->orWhere(function ($q2) use ($request) {
+                            $q2->where('fecha_inicio', '<=', $request->fecha_inicio)
+                                ->where('fecha_fin', '>=', $request->fecha_fin);
+                        });
+                })
+                ->exists();
 
-        if ($existePago) {
-            return response()->json([
-                'error' => 'Ya existe un pago en ese rango de fechas'
-            ], 400);
+            if ($existePago) {
+                return response()->json([
+                    'error' => 'Ya existe un pago en ese rango de fechas'
+                ], 400);
+            }
         }
 
         Pago::create([
@@ -147,7 +161,7 @@ class ProduccionPagoController extends Controller
             'fecha_inicio' => $request->fecha_inicio,
             'fecha_fin' => $request->fecha_fin,
 
-            'estado' => 'pagado'
+            'estado' => 'SALIDA'
         ]);
 
         return response()->json(['ok' => true]);

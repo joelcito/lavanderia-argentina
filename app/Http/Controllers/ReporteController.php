@@ -7,6 +7,8 @@ use App\Models\Cliente;
 use App\Models\Factura;
 use App\Models\Order_trabajo;
 use App\Models\Pago;
+use App\Models\SolicitudDetalleProceso;
+use App\Models\Sucursal;
 use App\Models\User;
 use PDF;
 use Illuminate\Http\Request;
@@ -373,7 +375,8 @@ class ReporteController extends Controller
     {
         $inicio = $request->fecha_inicio;
         $fin = $request->fecha_fin;
-        $usuarios = User::whereBetween('rol_id', [1, 8])->get();
+
+        $usuarios = User::where('rol_id', 2);
         $reporte = [];
 
         foreach ($usuarios as $user) {
@@ -452,5 +455,209 @@ class ReporteController extends Controller
         return $pdf->stream('reporte_lavadores.pdf');
     }
 
+
+
+    public function reporteFocalizador(Request $request)
+    {
+        $inicio = $request->fecha_inicio . ' 00:00:00';
+        $fin = $request->fecha_fin . ' 23:59:59';
+        $inicioFormato = Carbon::parse($inicio)->format('d/m/Y');
+        $finFormato = Carbon::parse($fin)->format('d/m/Y');
+
+        $userId = $request->user_id;
+        $sucursalId = $request->sucursal_id;
+
+        $usuarios = User::where('rol_id', 6); // 🔥 SIN get()
+
+        if ($userId) {
+            $usuarios->where('id', $userId);
+        }
+
+        if ($sucursalId) {
+            $usuarios->where('sucursal_id', $sucursalId);
+        }
+
+        $usuarios = $usuarios->get();
+        $reporte = [];
+
+        foreach ($usuarios as $user) {
+
+            $detalles = SolicitudDetalleProceso::where('tipo_proceso', 'FOCALIZADO')
+                ->whereBetween('created_at', [$inicio, $fin])
+                ->where('usuario_creador_id', $user->id)
+                ->get();
+
+            if ($detalles->isEmpty())
+                continue;
+
+
+            $pagos = Pago::where('user_id', $user->id)
+                ->whereBetween('fecha_inicio', [$inicio, $fin])
+                ->get();
+
+            $adelantos = $pagos->where('tipo_pago', 'adelanto')->sum('monto');
+            $descuentos = $pagos->where('tipo_pago', 'descuento')->sum('monto');
+            $pagado = $pagos->where('tipo_pago', 'salario_produccion')->sum('monto');
+
+            $estado = $pagado > 0 ? 'PAGADO' : 'PENDIENTE';
+
+            $filas = [];
+            $totalCantidad = 0;
+            $total = 0;
+
+            foreach ($detalles as $d) {
+
+                $factura = Factura::find($d->factura_id);
+                $precio = ($factura && $factura->prioridad === 'FERIA') ? 0.30 : 0.50;
+
+                $subtotal = $d->cantidad * $precio;
+
+                $filas[] = [
+                    'ot' => $d->order_trabajo_id,
+                    'factura' => $d->factura_id,
+                    'cantidad' => $d->cantidad,
+                    'precio' => $precio,
+                    'subtotal' => $subtotal
+                ];
+
+                $totalCantidad += $d->cantidad;
+                $total += $subtotal;
+            }
+
+            $reporte[] = [
+                'nombre' => $user->nombres . ' ' . $user->ap_paterno . ' ' . $user->ap_pmaterno,
+                'filas' => $filas,
+                'total_cantidad' => $totalCantidad,
+                'total' => $total,
+                'adelantos' => $adelantos,
+                'descuentos' => $descuentos,
+                'pagado' => $pagado,
+                'total_final' => $total - $adelantos - $descuentos,
+                'estado' => $estado
+            ];
+        }
+
+        $pdf = PDF::loadView('personal.pdf.reporte_pago_focalizador', compact(
+            'reporte',
+            'inicioFormato',
+            'finFormato'
+        ));
+
+        return $pdf->stream('reporte_focalizador.pdf');
+    }
+
+
+    public function reportePlanchador(Request $request)
+    {
+        $inicio = $request->fecha_inicio . ' 00:00:00';
+        $fin = $request->fecha_fin . ' 23:59:59';
+
+        $inicioFormato = Carbon::parse($request->fecha_inicio)->format('d/m/Y');
+        $finFormato = Carbon::parse($request->fecha_fin)->format('d/m/Y');
+
+        $userId = $request->user_id;
+        $sucursalId = $request->sucursal_id;
+
+        $sucursalNombre = $sucursalId
+            ? Sucursal::where('id', $sucursalId)->value('nombre')
+            : 'Todas';
+
+        $usuariosQuery = User::where('rol_id', 5);
+
+        if ($userId) {
+            $usuariosQuery->where('id', $userId);
+        }
+
+        if ($sucursalId) {
+            $usuariosQuery->where('sucursal_id', $sucursalId);
+        }
+
+        $usuarios = $usuariosQuery->get();
+
+        $reporte = [];
+
+        foreach ($usuarios as $user) {
+
+            // 🔥 DETALLES DE PRODUCCIÓN
+            $detalles = SolicitudDetalleProceso::with(['factura', 'prenda'])
+                ->where('tipo_proceso', 'PLANCHADO')
+                ->where('usuario_creador_id', $user->id)
+                ->whereDate('created_at', '>=', $request->fecha_inicio)
+                ->whereDate('created_at', '<=', $request->fecha_fin)
+                ->get();
+
+            if ($detalles->isEmpty())
+                continue;
+
+            // 🔥 PAGOS DEL USUARIO
+            $pagos = Pago::where('user_id', $user->id)
+                ->whereBetween('fecha_inicio', [$inicio, $fin])
+                ->get();
+
+            $adelantos = $pagos->where('tipo_pago', 'adelanto')->sum('monto');
+            $descuentos = $pagos->where('tipo_pago', 'descuento')->sum('monto');
+            $pagado = $pagos->where('tipo_pago', 'salario_produccion')->sum('monto');
+
+            // 🔥 DETALLE POR REGISTRO
+            $detalle = [];
+
+            foreach ($detalles as $d) {
+
+                $factura = $d->factura;
+
+                $facturaNumero = $factura->id ?? '-';
+                $categoria = $factura->prioridad ?? 'SIN CATEGORIA';
+                $prenda = $d->prenda->nombre ?? 'SIN PRENDA';
+
+                $ot = $d->order_trabajo_id;
+                $cantidad = $d->cantidad;
+
+
+                // precio según categoría
+                $precio = ($categoria === 'PARA LA FERIA') ? 0.30 : 0.50;
+
+                $totalPrenda = $cantidad * $precio;
+
+                $detalle[] = [
+                    'factura' => $facturaNumero,
+                    'ot' => $ot,
+                    'prenda' => $prenda,
+                    'categoria' => $categoria,
+                    'cantidad' => $cantidad,
+                    'precio' => $precio,
+                    'total' => $totalPrenda
+                ];
+            }
+
+            $totalProduccion = array_sum(array_column($detalle, 'total'));
+
+            $reporte[] = [
+                'nombre' => $user->nombres . ' ' . $user->ap_paterno,
+                'detalle' => $detalle,
+                'total_produccion' => $totalProduccion,
+                'adelantos' => $adelantos,
+                'descuentos' => $descuentos,
+                'pagado' => $pagado,
+                'total_final' => $totalProduccion - $adelantos - $descuentos
+            ];
+        }
+
+        $pdf = PDF::loadView('personal.pdf.reporte_pago_planchador', compact(
+            'reporte',
+            'inicioFormato',
+            'finFormato',
+            'sucursalNombre'
+        ));
+
+        return $pdf->stream('reporte_planchador.pdf');
+    }
+
+    public function vistaPlanchador()
+    {
+        $usuarios = User::where('rol_id', 5)->get(); // planchadores
+        $sucursales = Sucursal::all();
+
+        return view('personal.personalPlanchador', compact('usuarios', 'sucursales'));
+    }
 
 }

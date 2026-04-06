@@ -5,10 +5,10 @@
             <button class="btn btn-danger btn-sm btn-reporte-lavador">
                 <i class="fa fa-file-pdf"></i> Reporte Lavadores
             </button>
-            <button class="btn btn-primary btn-sm">
+            <button class="btn btn-primary btn-sm btn-reporte-focalizador">
                 <i class="fa fa-file-pdf"></i> Reporte Focalizador
             </button>
-            <button class="btn btn-secondary btn-sm">
+            <button class="btn btn-secondary btn-sm btn-reporte-planchador">
                 <i class="fa fa-file-pdf"></i> Reporte Planchador
             </button>
         </div>
@@ -80,6 +80,20 @@
 
     $(document).on('click', '.btn-reporte-lavador', function () {
         $.get('/control-personal/lavador/formulario', function (html) {
+            $('#contenido-modal').html(html);
+            $('#modalPersonal').modal('show');
+        });
+    });
+
+    $(document).on('click', '.btn-reporte-focalizador', function () {
+        $.get('/control-personal/focalizador/formulario', function (html) {
+            $('#contenido-modal').html(html);
+            $('#modalPersonal').modal('show');
+        });
+    });
+
+    $(document).on('click', '.btn-reporte-planchador', function () {
+        $.get('/control-personal/planchador/formulario', function (html) {
             $('#contenido-modal').html(html);
             $('#modalPersonal').modal('show');
         });

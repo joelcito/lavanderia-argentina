@@ -82,7 +82,7 @@
 
                 <input type="hidden" id="solicitud_id">
 
-                <!-- 🔥 CONTENIDO DINÁMICO -->
+
                 <div id="contenedor_ots"></div>
 
             </div>
@@ -162,6 +162,11 @@
                                     text: 'Se creo con exito.',
                                 });
                             } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: resultado.mensaje,
+                                });
 
                             }
                         },
@@ -207,29 +212,35 @@
                 res.data.forEach(grupo => {
 
                     html += `
-                                                    <div class="card mb-3 p-3 border">
-                                                        <h6>Factura: ${grupo.factura_id}</h6>
-                                                        <div class="row">
-                                                `;
+                                            <div class="card mb-3 p-3 border">
+                                                <h6>Factura: ${grupo.factura_id}</h6>
+                                                <div class="row">
+                                        `;
 
                     grupo.ots.forEach(ot => {
 
+                        let restante = Math.max(0, (ot.total || 0) - (ot.procesado || 0));
                         html += `
-                                                        <div class="col-md-4 mb-2">
-                                                            <label>OT ${ot.id}</label>
-                                                            <span class="badge bg-success ms-2">
-                                                            ${ot.total}
-                                                        </span>
-                                                            <input 
-                                                                type="number" 
-                                                                class="form-control cantidad_ot"
-                                                                data-ot="${ot.id}"
-                                                                data-factura="${grupo.factura_id}"
-                                                                min="0"
-                                                                placeholder="Cantidad"
-                                                            >
-                                                        </div>
-                                                    `;
+                                            <div class="col-md-4 mb-2">
+                                                <label>OT ${ot.id}</label>
+                                                <span class="badge bg-success ms-2">
+                                                ${ot.procesado || 0} / ${ot.total}
+                                            </span>
+                                            <span class="badge bg-warning ms-2">
+                                            ${restante} restantes
+                                        </span>
+                                                <input 
+                                                    type="number" 
+                                                    class="form-control cantidad_ot"
+                                                    data-ot="${ot.id}"
+                                                    data-factura="${grupo.factura_id}"
+                                                    min="0"
+                                                        max="${restante}"
+                                ${restante <= 0 ? 'disabled' : ''}
+                                                    placeholder="Cantidad"
+                                                >
+                                            </div>
+                                        `;
                     });
 
                     html += `</div></div>`;
@@ -245,14 +256,29 @@
 
             let solicitud_id = $('#solicitud_id').val();
             let detalles = [];
+            let error = false;
 
             $('.cantidad_ot').each(function () {
 
-                let cantidad = parseInt($(this).val());
+                let cantidad = parseInt($(this).val()) || 0;
+                let max = parseInt($(this).attr('max')) || 0;
                 let ot = $(this).data('ot');
                 let factura = $(this).data('factura');
 
-                if (cantidad && cantidad > 0) {
+
+                if (cantidad > max) {
+                    error = true;
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: `No puedes ingresar más de ${max}`
+                    });
+
+                    return false;
+                }
+
+                if (cantidad > 0) {
                     detalles.push({
                         ot_id: ot,
                         factura_id: factura,
@@ -261,7 +287,7 @@
                 }
             });
 
-            console.log("DATOS A ENVIAR:", detalles);
+            if (error) return;
 
             if (detalles.length === 0) {
                 Swal.fire('Error', 'Ingrese al menos una cantidad', 'error');
@@ -272,8 +298,6 @@
                 solicitud_id: solicitud_id,
                 detalles: detalles
             }, function (res) {
-
-                // console.log("RESPUESTA:", res);
 
                 if (res.estado) {
                     Swal.fire('Correcto', res.mensaje, 'success');

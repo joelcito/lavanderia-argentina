@@ -14,17 +14,16 @@
                 @php
                     $solicitud_id = $key;
 
-                    $proceso = App\Models\Proceso::select('estado')
-                        ->where('solicitud_id', $solicitud_id)
-                        ->where('tipo_proceso_id', 4) // FOCALIZADO
-                        ->groupBy('solicitud_id', 'estado')
-                        ->first();
+
+                    $proceso = $procesos[$solicitud_id] ?? null;
                 @endphp
-                @if ($proceso->estado == "TRABAJANDO")
+                @if (($proceso->estado ?? null) == "TRABAJANDO")
                     <tr>
                         <td>{{ $solcitudAgrupado }}</td>
                         <td>
-                            <span class="badge badge-warning">{{ $proceso->estado }}</span>
+                            <span class="badge badge-warning">
+                                {{ $proceso->estado ?? '' }}
+                            </span>
                         </td>
                         <td>
                             <button class="btn btn-success btn-sm" onclick="abrirModalFocalizado('{{ $solicitud_id }}')">
@@ -169,7 +168,7 @@
     //             $('#labelCantidadProceso').text('Cantidad de prendas a planchar');
     //         }
 
-    //         // 👇 MISMO MÉTODO QUE TU MODAL FUNCIONAL
+    
     //         $('#modalProcesoOT').modal('show');
     //     });
     // }

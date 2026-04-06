@@ -9,15 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 class CaracteristicaController extends Controller
 {
-    public function listado(){
-        return view ('caracteristica.listado');
+    public function listado()
+    {
+        return view('caracteristica.listado');
     }
 
-    public function ajaxListado(Request $request){
+    public function ajaxListado(Request $request)
+    {
 
-        if($request->ajax()){
-
-            //SACAMOS EL LISTADO
+        if ($request->ajax()) {
             $caracteristicas = Caracteristica::all();
 
             $valores = [
@@ -26,28 +26,25 @@ class CaracteristicaController extends Controller
 
             $data = Respuesta::success($valores, "Datos Obtenidos correctamente");
 
-        }else{
+        } else {
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
         return $data;
     }
 
-    public function guardarCaracteristica(Request $request){
+    public function guardarCaracteristica(Request $request)
+    {
 
-        if($request->ajax()){
-
-            //AL INICIO DECLARACION DE VARIABLES
+        if ($request->ajax()) {
             $caracteristica_id = $request->input('id');
             $nombre = $request->input('nombre');
             $usuario = Auth::user();
-            
-            if($caracteristica_id == '0'){
-                //LA CREACION DE UN NUEVa CARATERISTICA
+
+            if ($caracteristica_id == '0') {
                 $caracteristica = new Caracteristica();
                 $caracteristica->usuario_creador_id = $usuario->id;
 
-            }else{
-                //LA EDICION DE UN NUEVO CARACTERISTICA
+            } else {
                 $caracteristica = Caracteristica::find($caracteristica_id);
                 $caracteristica->usuario_modificador_id = $usuario->id;
             }
@@ -57,34 +54,35 @@ class CaracteristicaController extends Controller
 
             $data = Respuesta::success(null, "Datos Obtenidos correctamente");
 
-        }else{
+        } else {
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
 
         return $data;
-        
+
     }
 
-    public function eliminarCaracteristica(Request $request){
+    public function eliminarCaracteristica(Request $request)
+    {
 
-        if($request->ajax()){
+        if ($request->ajax()) {
 
-            //INICIALIZAMOS LAS VARIABLES
+
             $caracteristica_id = $request->input('caracteristica');
             $usuario = Auth::user();
 
-            //BUSCAMOS AL CARACTERISTICA
+
             $caracteristica = Caracteristica::find($caracteristica_id);
             $caracteristica->usuario_eliminador_id = $usuario->id;
             $caracteristica->save();
 
-            //AHORA ELIMINAMOS
+
             Caracteristica::destroy($caracteristica_id);
 
             $data = Respuesta::success(null, "Se elimino con exito");
 
-        }else{
-        
+        } else {
+
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
 

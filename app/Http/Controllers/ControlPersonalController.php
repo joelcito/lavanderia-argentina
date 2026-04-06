@@ -19,7 +19,7 @@ class ControlPersonalController extends Controller
 
     public function ajaxListado()
     {
-        $usuarios = User::whereIn('rol_id', [2, 3, 4, 5, 6])->get();
+        $usuarios = User::whereIn('rol_id', [2, 5, 6])->get();
         return view('personal.ajaxListado', compact('usuarios'));
     }
 
@@ -38,6 +38,22 @@ class ControlPersonalController extends Controller
         $sucursales = Sucursal::all();
 
         return view('personal.personalLavador', compact('sucursales'));
+    }
+
+    public function formularioFocalizador()
+    {
+        $sucursales = Sucursal::all();
+        $usuarios = User::where('rol_id', 6)->get(); // 🔥 AGREGA ESTO
+
+        return view('personal.personalFocalizador', compact('sucursales', 'usuarios'));
+    }
+
+    public function formularioPlanchador()
+    {
+        $usuarios = User::where('rol_id', 5)->get(); // planchadores   
+        $sucursales = Sucursal::all();
+
+        return view('personal.personalPlanchador', compact('usuarios', 'sucursales'));
     }
 
 
@@ -191,7 +207,7 @@ class ControlPersonalController extends Controller
             'monto_calculado' => $request->monto_calculado ?? 0,
             'total_descuentos' => $request->total_descuentos ?? 0,
 
-            'estado' => 'pagado'
+            'estado' => 'SALIDA'
         ]);
 
         return response()->json(['ok' => true]);

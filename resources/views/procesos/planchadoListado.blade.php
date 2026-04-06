@@ -82,7 +82,7 @@
 
                 <input type="hidden" id="solicitud_id">
 
-                <!-- 🔥 CONTENIDO DINÁMICO -->
+
                 <div id="contenedor_planchado"></div>
 
             </div>
@@ -206,34 +206,39 @@
                 res.data.forEach(grupo => {
 
                     html += `
-                        <div class="card mb-4 p-3 border">
-                            <h5 class="text-primary">Factura: ${grupo.factura_id}</h5>
-                            <div class="row">
-                    `;
+                                            <div class="card mb-4 p-3 border">
+                                                <h5 class="text-primary">Factura: ${grupo.factura_id}</h5>
+                                                <div class="row">
+                                        `;
 
                     grupo.ots.forEach(ot => {
-
+                        let restante = ot.restante || 0;
                         html += `
-                            <div class="col-md-4 mb-3 border rounded p-2">
+                                                <div class="col-md-4 mb-3 border rounded p-2">
 
-                                <strong>OT ${ot.id}</strong>
-                                <span class="badge bg-success ms-2">Total: ${ot.total}</span>
+                                                    <strong>OT ${ot.id}</strong>
+                                                    <span class="badge bg-success ms-2">Total: ${ot.total}</span>
+                     <span class="badge bg-warning ms-2">
+                                                            ${restante} restantes
+                                                        </span>
+                                                    <div class="mt-2">
+                                                        <label>${ot.prenda}</label>
 
-                                <div class="mt-2">
-                                    <label>${ot.prenda}</label>
-                                    <input 
-                                        type="number"
-                                        class="form-control prenda"
-                                        data-ot="${ot.id}"
-                                        data-factura="${grupo.factura_id}"
-                                        data-categoria="${ot.prenda_id}"
-                                        min="0"
-                                        placeholder="Cantidad"
-                                    >
-                                </div>
+                                                        <input 
+                                                            type="number"
+                                                            class="form-control prenda"
+                                                            data-ot="${ot.id}"
+                                                            data-factura="${grupo.factura_id}"
+                                                            data-categoria="${ot.prenda_id}"
+                                                            min="0"
+                                                              max="${restante}"
+                                                ${restante <= 0 ? 'disabled' : ''}
+                                                            placeholder="Cantidad"
+                                                        >
+                                                    </div>
 
-                            </div>
-                        `;
+                                                </div>
+                                            `;
                     });
 
                     html += `</div></div>`;
@@ -252,6 +257,7 @@
             let detalle = [];
 
             let agrupado = {};
+            let error = false;
 
             $('.prenda').each(function () {
 
@@ -259,6 +265,19 @@
                 let factura = $(this).data('factura');
                 let categoria = $(this).data('categoria');
                 let cantidad = parseInt($(this).val()) || 0;
+                let max = parseInt($(this).attr('max')) || 0;
+
+                if (cantidad > max) {
+                    error = true;
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: `No puedes ingresar más de ${max}`
+                    });
+
+                    return false; // rompe each
+                }
 
                 if (cantidad > 0) {
 
@@ -274,9 +293,15 @@
                 }
             });
 
+
+            if (error) return;
+
             detalle = Object.values(agrupado);
 
-            console.log("ENVIO:", detalle);
+            if (detalle.length === 0) {
+                Swal.fire('Error', 'Ingrese al menos una cantidad', 'error');
+                return;
+            }
 
             $.post("{{ route('procesos.guardarPlanchadoDetalle') }}", {
                 solicitud_id: solicitud_id,
@@ -286,10 +311,22 @@
                 if (res.estado) {
                     Swal.fire('Correcto', res.mensaje, 'success');
                     $('#modalPlanchado').modal('hide');
+
+                    // opcional: recargar listado o modal si quieres
                 } else {
                     Swal.fire('Error', res.mensaje, 'error');
                 }
 
+            }).fail(function (xhr) {
+
+
+                let msg = 'Error en el servidor';
+
+                if (xhr.responseJSON && xhr.responseJSON.mensaje) {
+                    msg = xhr.responseJSON.mensaje;
+                }
+
+                Swal.fire('Error', msg, 'error');
             });
         }
 
