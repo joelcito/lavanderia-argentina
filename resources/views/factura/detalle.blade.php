@@ -312,10 +312,23 @@
                             </span>
                             <div class="d-flex flex-column text-dark-75">
                                 <span class="font-weight-bolder font-size-sm text-primary">PRECIO</span>
-                                <h5>{{ $factura->total }}</h5>
+                                <h5>{{ number_format($factura->total , 2) }}</h5>
                             </div>
                         </div>
                         <!--end::Item-->
+
+                        <!--begin::Item-->
+                        <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
+                            <span>
+                                <i class="fas fa-barcode"  style="font-size: 30px; margin-right: 5px;"></i>
+                            </span>
+                            <div class="d-flex flex-column text-dark-75">
+                                <span class="font-weight-bolder font-size-sm text-primary">DESCUENTO</span>
+                                <h5>{{ number_format($factura->descuento_adicional, 2) }}</h5>
+                            </div>
+                        </div>
+                        <!--end::Item-->
+
                         <!--begin::Item-->
                         <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                             <span>
@@ -334,7 +347,7 @@
                             </span>
                             <div class="d-flex flex-column text-dark-75">
                                 <span class="font-weight-bolder font-size-sm text-primary">SALDO</span>
-                                <h5>{{ number_format(($factura->total - $factura->pagos->sum('monto')),2) }}</h5>
+                                <h5>{{ number_format((($factura->total - $factura->descuento_adicional) - $factura->pagos->sum('monto')),2) }}</h5>
                             </div>
                         </div>
                         <!--end::Item-->

@@ -5,8 +5,10 @@
                 <th>Sucursal</th>
                 <th>Cliente</th>
                 <th>Fecha</th>
-                <th>Monto</th>
-                <th>Numero</th>
+                <th>Total</th>
+                <th>Descuento</th>
+                <th>Sub Total</th>
+                <th>Fac / Or</th>
                 <th>Usuario</th>
                 <th>Estado</th>
                 <th>Prioridad</th>
@@ -19,9 +21,17 @@
                     <td>{{ $fac->sucursal?->nombre }}</td>
                     <td>{{ $fac->nombres . ' ' . $fac->ap_paterno . ' ' . $fac->ap_materno }}</td>
                     <td>{{ $fac->fecha }}</td>
-                    <td>{{ $fac->total }}</td>
+                    <td>{{ number_format($fac->total,2) }}</td>
+                    <td>{{ number_format($fac->descuento_adicional, 2) }}</td>
                     <td>
-                        <span class="text-success">FAC: </span>{{ $fac->numero_factura }}
+                        <span class="text-warning">
+                            {{ number_format($fac->total - $fac->descuento_adicional, 2) }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="text-info">
+                            {{ sprintf('%06d', $fac->numero_factura) }}
+                        </span>
                     </td>
                     <td>
                         {{ $fac->usuarioCreador->nombres . ' ' . $fac->usuarioCreador->ap_paterno }}

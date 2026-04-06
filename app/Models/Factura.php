@@ -55,7 +55,8 @@ class Factura extends Model
 
     public function ordenTrabajos()
     {
-        return $this->hasMany(Order_trabajo::class);
+        // return $this->hasMany(Order_trabajo::class);
+        return $this->hasMany(Order_trabajo::class)->orderBy('tipo', 'desc');
     }
 
     public function pagos()

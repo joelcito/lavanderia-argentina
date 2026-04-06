@@ -13,14 +13,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Stmt\UseUse;
 
 class ReporteController extends Controller
 {
     public function formulario(Request $request)
     {
 
-        $clientes = Cliente::all();
+        // $clientes = Cliente::all();
 
+        $clientes = User::where('rol_id', 3)->get();
         return view('reporte.formulario')->with(compact('clientes'));
 
     }
@@ -140,9 +142,10 @@ class ReporteController extends Controller
 
         $cliente_id = $request->input('cliente_id');
         $usuario = Auth::user();
-        $cliente = Cliente::find($cliente_id);
+        // $cliente = Cliente::find($cliente_id);
+        $cliente = User::find($cliente_id);
 
-        $facturas = Factura::where('cliente_id', $cliente_id)
+        $facturas = Factura::where('usuario_cliente_id', $cliente_id)
             ->where('estado_pago', 'DEUDA')
             ->get();
 
@@ -451,6 +454,13 @@ class ReporteController extends Controller
 
         return $pdf->stream('reporte_lavadores.pdf');
     }
+
+    // public function cuentasDeudaCliente(Request $request){
+
+    //     $clientes = User::where('rol_id', 3)->get();
+
+    //     return view('reporte.cuentasDeudaCliente')->with(compact('clientes'));
+    // }
 
 
 }

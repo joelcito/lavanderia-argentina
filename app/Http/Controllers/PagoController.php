@@ -213,4 +213,51 @@ class PagoController extends Controller
         return $data;
 
     }
+
+    public function formularioDecuentoAdicional(Request $request){
+
+        if($request->ajax()){
+
+            $factura_id = $request->input('factura_id');
+            $factura = Factura::find($factura_id);
+
+            $pagado = pago::where('factura_id', $factura_id)
+                            ->where('estado', 'INGRESO')
+                            ->sum('monto');
+
+            $valores = [
+                'formulario' => view('pago.formularioDecuentoAdicional')->with(compact('factura', 'pagado'))->render()
+            ];
+            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+
+    }
+
+    public function guardarDescuentoAdicional(Request $request){
+
+        if($request->ajax()){
+
+            $usuario                         = Auth::user();
+            $factura_id                      = $request->input('factura_id');
+            $descuento_adicional             = $request->input('descuento_adicional');
+            $descripcion_descuento_adicional = $request->input('descripcion_descuento_adicional');
+
+            $factura                         = Factura::find($factura_id);
+            $factura->usuario_modificador_id = $usuario->id;
+            $factura->descuento_adicional    = $descuento_adicional;
+            $factura->descripcion            = $descripcion_descuento_adicional;
+            $factura->save();
+
+            $data = Respuesta::success(null, "Datos obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+
+    }
 }

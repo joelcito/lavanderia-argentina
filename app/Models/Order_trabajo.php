@@ -87,5 +87,10 @@ class Order_trabajo extends Model
         return $this->hasMany(Detalle::class, 'order_trabajo_id');
     }
 
+    public function ordenTrabajoSuperior()
+    {
+        return $this->belongsTo('App\Models\Order_trabajo', 'order_trabajos_id');
+    }
+
 }
 

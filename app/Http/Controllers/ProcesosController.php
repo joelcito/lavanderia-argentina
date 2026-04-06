@@ -18,6 +18,7 @@ use App\Models\Maquinaria;
 use App\Models\Preparacion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Nette\Utils\Json;
 use PDF;
 use Svg\Tag\Rect;
 
@@ -46,12 +47,6 @@ class ProcesosController extends Controller
     {
         if ($request->ajax()) {
 
-            // $solicitudes = Solicitud::select('ordenes_trabajo')
-            //     ->whereNotNull('ordenes_trabajo')
-            //     ->groupBy('ordenes_trabajo')
-            //     ->orderByDesc('id')
-            //     ->get();
-
             $solicitudes = Solicitud::selectRaw('ordenes_trabajo, MAX(id) as id')
                 ->whereNotNull('ordenes_trabajo')
                 ->groupBy('ordenes_trabajo')
@@ -73,13 +68,6 @@ class ProcesosController extends Controller
                         $ordenTrabajoBuscado = Order_trabajo::find($ot);
                         if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
 
-                            // $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
-                            // array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
-                            // if ((count($ots) - 1) == $key)
-                            //     $fac = $fac . "]";
-                            // else
-                            //     $fac = $fac . " - ";
-
                             if (!empty($arrayOts)) {
                                 $fac .= " - ";
                             }
@@ -89,10 +77,7 @@ class ProcesosController extends Controller
 
                         }
                     }
-
                     $fac .= "]";
-
-                    // $fac .= implode(" - ", $arrayOts) . "]";
                 }
 
                 $json = json_encode($ordenesTrabajo);
@@ -103,26 +88,62 @@ class ProcesosController extends Controller
                     ->pluck('id');
 
                 $proceso = Proceso::with('tipoProceso')
-                    ->whereIn('solicitud_id', $solicitudesIds)
-                    ->orderByDesc('created_at')
-                    ->first();
+                                ->whereIn('solicitud_id', $solicitudesIds)
+                                ->orderByDesc('created_at')
+                                ->first();
 
-                // $solicitudArray[$solicitud->id] = $fac;
+                // BUSCAMOS Y SACAMOS SUS LAVADOS
+                $lavado = '';
+                if(count($ordenesTrabajo) > 0){
+                    $orden_trabajo_id = $ordenesTrabajo[0]['ots'][0];
+                    $ordenTrabajo = Order_trabajo::find($orden_trabajo_id);
+
+
+                    $ot = $ordenTrabajo;
+
+                    $partes = [];
+
+                    // $partes[] = $ot['prenda']['nombre'] ?? '';
+                    // $partes[] = '[Cant:' . (int)$ot['cantidad'] . ']';
+                    // $partes[] = '[Peso:' . $ot['peso'] . ']';
+                    // $partes[] = '[Ojales:' . (int)$ot['numero_ojales'] . '/' . (int)$ot['cantidad'] . ']';
+
+                    if (!empty($ot['prelavado'])) {
+                        $partes[] = '[Pre-Lavado:' . $ot['prelavado']['nombre'] . ']';
+                    }
+                    if (!empty($ot['nevado'])) {
+                        $partes[] = '[Nevado:' . $ot['nevado']['nombre'] . ']';
+                    }
+                    if (!empty($ot['focalizado'])) {
+                        $partes[] = '[Focalizado:' . $ot['focalizado']['nombre'] . ']';
+                    }
+                    // if (!empty($ot['tipoTela'])) {
+                    //     $partes[] = '[Tipo Tela:' . $ot['tipoTela']['nombre'] . ']';
+                    // }
+                    // if (!empty($ot['colorTela'])) {
+                    //     $partes[] = '[Color Tela:' . $ot['colorTela']['nombre'] . ']';
+                    // }
+                    // if (!empty($ot['caracteristicaTela'])) {
+                    //     $partes[] = '[Caracteristica Tela:' . $ot['caracteristicaTela']['nombre'] . ']';
+                    // }
+
+                    // $partes[] = '[Con Muestra:' . (!empty($ot['con_muestra']) ? 'SI' : 'NO') . ']';
+
+                    $lavado = implode(' ; ', $partes);
+                    $lavadoJson = $lavado;
+
+                    // $lavado = json_encode( $ordenesTrabajo[0]['ots'][0]);
+                }
+
                 if ($proceso) {
                     $solicitudArray[] = [
-                        'procesado' => $fac,
-                        'crudo' => $ordenesTrabajo,
-                        'procesoFinal' => $proceso
+                        'procesado'    => $fac,
+                        'crudo'        => $ordenesTrabajo,
+                        'procesoFinal' => $proceso,
+                        'lavado'       => $lavadoJson,
                     ];
                 }
             }
-
-            // dd($solicitudArray);
-
-            // $ots = Order_trabajo::with('procesos')
-            //                     ->whereHas('procesos')
-            //                     ->orderBy('created_at', 'desc')
-            //                     ->get();
 
             return response()->json([
                 'estado' => true,

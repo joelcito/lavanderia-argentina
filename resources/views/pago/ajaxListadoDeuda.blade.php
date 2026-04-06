@@ -3,42 +3,59 @@
     <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_facturas">
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-                {{-- <th>Codigo</th> --}}
                 <th>Sucursal</th>
                 <th>Fecha Venta</th>
-                {{-- <th>Fecha Entrega</th> --}}
                 <th>Asesor</th>
                 <th>Cliente</th>
+                <th>Fac / Or</th>
                 <th>Total</th>
+                <th>Descuento</th>
+                <th>Sub Total</th>
                 <th>A Cuenta</th>
                 <th>Saldo</th>
-                <th>Razon Social</th>
-                <th>Nit</th>
-                <th>N° Recibo</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($facturas as $factura)
                 <tr>
-                    {{-- <td>{{ $factura->codigo_venta }}</td> --}}
                     <td>{{ optional($factura->sucursal)->nombre }}</td>
                     <td>{{ date('d/m/Y H:i:s', strtotime($factura->fecha)) }}</td>
-                    {{-- <td>{{ $factura->fecha_entrega ? date('d/m/Y', strtotime($factura->fecha_entrega)) : '—' }}</td> --}}
                     <td>{{ $factura->usuarioCreador->nombres . ' ' . $factura->usuarioCreador->ap_paterno }}</td>
                     <td>{{ optional($factura->cliente)->nombres . ' ' . optional($factura->cliente)->ap_paterno . ' ' . optional($factura->cliente)->ap_materno }}
                     </td>
-                    <td>{{ number_format($factura->total, 2) }}</td>
-                    <td>{{ number_format($factura->pagos->sum('monto'), 2) }}</td>
-                    <td>{{ number_format($factura->total - $factura->pagos->sum('monto'), 2) }}</td>
-                    <td>{{ optional($factura->cliente)->razon_social }}</td>
-                    <td>{{ optional($factura->cliente)->nit }}</td>
                     <td>
-                        {{ $factura->numero_factura }}
+                        <span class="text-info">
+                            {{ sprintf('%06d', $factura->numero_factura) }}
+                        </span>
+                    </td>
+                    <td>
+                        {{ number_format($factura->total, 2) }}
+                    </td>
+                    <td>
+                        {{ number_format($factura->descuento_adicional, 2) }}
+                    </td>
+                    <td>
+                        <span class="text-warning">
+                            {{ number_format($factura->total - $factura->descuento_adicional, 2) }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="text-success">
+                            {{ number_format($factura->pagos->sum('monto'), 2) }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="text-danger">
+                            {{ number_format(($factura->total - $factura->descuento_adicional) - $factura->pagos->sum('monto'), 2) }}
+                        </span>
                     </td>
                     <td>
                         <button class="btn btn-icon btn-sm btn-info btn-circle" title="Registrar Pago"
                             onclick="registrarPago({{ json_encode($factura) }})"><i class="fa fa-dollar"></i></button>
+                        <button onclick="formularioDecuentoAdicional({{ $factura->id }})" class="btn btn-icon btn-warning btn-circle btn-sm" title="Registrar Descuento">
+                            <i class="fa fa-minus-square"></i>
+                        </button>
                     </td>
                 </tr>
             @empty

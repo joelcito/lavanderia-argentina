@@ -331,24 +331,24 @@
                         </span>
                         <!--end:Menu link-->
                         <div class="menu-sub menu-sub-accordion">
-                            <!-- <div class="menu-item">
-                                                <a class="menu-link" href="{{ route('reporte.formulario') }}">
-                                                    <span class="menu-bullet">
-                                                        <span class="bullet bullet-dot"></span>
-                                                    </span>
-                                                    <span class="menu-title text-white">Reporte Productos</span>
-                                                </a>
-                                            </div> -->
+                            <div class="menu-item">
+                                <a class="menu-link" href="{{ route('reporte.formulario') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title text-white">Reporte Cuentas Cliente</span>
+                                </a>
+                            </div>
 
                             <!-- Reporte Procesos -->
-                            <div class="menu-item">
+                            {{-- <div class="menu-item">
                                 <a class="menu-link" href="{{ route('reporte.proceso.formulario') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>
                                     <span class="menu-title text-white">Reporte Procesos</span>
                                 </a>
-                            </div>
+                            </div> --}}
 
                             <!-- NUEVO: Stock Histórico -->
                             <div class="menu-item">
@@ -367,30 +367,15 @@
                                     <span class="menu-title text-white">Stock por compra</span>
                                 </a>
                             </div>
-                        </div>
-                        <!--end:Menu link-->
-                        {{-- <div class="menu-sub menu-sub-accordion">
                             <div class="menu-item">
-                                <a class="menu-link " href="{{ route('factura.listado') }}">
+                                <a class="menu-link" href="{{ route('reporte.cuentasDeudaCliente') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>
-                                    <span class="menu-title text-white">Listado Venta</span>
+                                    <span class="menu-title text-white">Saldo Cuenta Cliente</span>
                                 </a>
                             </div>
                         </div>
-
-                        <div class="menu-sub menu-sub-accordion">
-                            <div class="menu-item">
-                                <a class="menu-link {{ Route::currentRouteName() == 'pago.listado' ? 'active' : '' }}"
-                                    href="{{ route('pago.listado') }}">
-                                    <span class="menu-bullet">
-                                        <span class="bullet bullet-dot"></span>
-                                    </span>
-                                    <span class="menu-title text-white">Ventas del Dia</span>
-                                </a>
-                            </div>
-                        </div> --}}
                     </div>
                 @endif
 

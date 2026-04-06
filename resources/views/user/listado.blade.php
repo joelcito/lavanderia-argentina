@@ -24,7 +24,7 @@
                     <form id="formularioUser">
                         <input type="hidden" name="id" id="id" value="0">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Sucursal</label>
                                     <select class="form-control form-control-sm" id="sucursal_id" name="sucursal_id" required>
@@ -36,6 +36,8 @@
                                            @endforelse
                                     </select>
                                 </div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Rol</label>
                                     <select class="form-control form-control-sm" id="rol_id" name="rol_id" required>
@@ -47,46 +49,68 @@
                                            @endforelse
                                     </select>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Nombre</label>
                                     <input type="text" class="form-control form-control-sm" id="nombre"
                                         name="nombre">
-                                </div>                     
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Apellido paterno</label>
                                     <input type="text" class="form-control form-control-sm" id="ap_paterno"
                                         name="ap_paterno">
-                                </div>                     
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Apellido materno</label>
                                     <input type="text" class="form-control form-control-sm" id="ap_materno"
                                         name="ap_materno">
-                                </div>                      
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Cedula Identidad</label>
                                     <input type="text" class="form-control form-control-sm" id="cedula"
                                         name="cedula" maxlength="10">
-                                </div>                       
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Celular</label>
                                     <input type="text" class="form-control form-control-sm" id="celular"
                                         name="celular" maxlength="8">
                                 </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Nombre Usuario</label>
                                     <input type="text" class="form-control form-control-sm" id="name"
                                         name="name">
-                                </div>                                                   
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Email</label>
                                     <input type="email" class="form-control form-control-sm" id="email"
                                         name="email" required>
-                                </div>                                                    
+                                </div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">password</label>
                                     <input type="password" class="form-control form-control-sm" id="password"
                                         name="password">
-                                </div>                                
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -132,7 +156,7 @@
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
 
@@ -186,7 +210,7 @@
 
             if($('#formularioUser')[0].checkValidity()){
                 let datos = $('#formularioUser').serializeArray();
-    
+
                  $.ajax({
                     url: "{{ route('user.guardarUser') }}",
                     method: "POST",
@@ -202,18 +226,18 @@
                             ajaxListado();
                             $('#modalUsuario').modal('hide');
                         } else {
-    
+
                         }
                     },
                     error: function(xhr) {
                         limpiarErorres();
-    
+
                         if (xhr.status === 422) {
                             let errores = xhr.responseJSON.errors;
-    
+
                             for (let campo in errores) {
                                 let mensaje = errores[campo][0];
-    
+
                                 let input = $(`[name="${campo}"]`);
                                 input.addClass("is-invalid");
                                 input.after(`<div class="invalid-feedback">${mensaje}</div>`);
@@ -232,7 +256,7 @@
             }
 
         }
-       
+
         function editarUser(user){
             $('#password').val(user.password)
             $('#email').val(user.email)
@@ -247,7 +271,7 @@
             $('#id').val(user.id)
             $('#modalUsuario').modal('show')
         }
-      
+
         function eliminarUser(user, name) {
             Swal.fire({
                 title: "¿Quieres eliminar " + name + "?",
@@ -289,8 +313,8 @@
                             });
                         }
                     });
-                    
-                    
+
+
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire(
                         'Cancelado',

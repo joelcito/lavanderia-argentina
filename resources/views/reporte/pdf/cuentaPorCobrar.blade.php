@@ -104,6 +104,7 @@
                     <th>DETALLE</th>
                     <th>PRE. UNI.</th>
                     <th>MONTO</th>
+                    <th>DESC.</th>
                     <th>PAGADO</th>
                     <th>SALDO</th>
                 </tr>
@@ -118,7 +119,7 @@
                     @php
 
                         $pagoFactura = $factura->pagos->sum('monto');
-                        $saldoFactura = $factura->total - $pagoFactura;
+                        $saldoFactura = ($factura->total - $factura->descuento_adicional) - $pagoFactura;
 
                         $ordenTrabajos = $factura->ordenTrabajos;
                         $totalServicio = $totalServicio + $factura->total;
@@ -133,14 +134,54 @@
                         <td></td>
                         <td></td>
                         <td>{{ number_format($factura->total, 2) }}</td>
+                        <td rowspan="{{count($ordenTrabajos) + 1}}">{{ number_format($factura->descuento_adicional, 2) }}</td>
                         <td rowspan="{{count($ordenTrabajos) + 1}}">{{ number_format($pagoFactura, 2) }}</td>
                         <td rowspan="{{count($ordenTrabajos) + 1}}">{{ number_format($saldoFactura , 2) }}</td>
                     </tr>
                     @foreach ( $ordenTrabajos as $ordenTrabajo)
                     <tr class="fondo1Cuerpo">
-                        <td>OT: {{ $ordenTrabajo->nro_ot }}</td>
+                        <td>
+                            @if ($ordenTrabajo->tipo == "ORDEN_TRABAJO")
+                                OT: {{ $ordenTrabajo->nro_ot }}
+                            @elseif($ordenTrabajo->tipo == "OJAL")
+                                OJAL: {{ $ordenTrabajo->ordenTrabajoSuperior->nro_ot }}
+                            @elseif($ordenTrabajo->tipo == "LASER")
+                                LASER: {{ $ordenTrabajo->ordenTrabajoSuperior->nro_ot }}
+                            @endif
+                        </td>
                         <td>{{ $ordenTrabajo->cantidad }}</td>
-                        <td>{{ $ordenTrabajo->prenda->nombre."/".$ordenTrabajo->tela->nombre."/".$ordenTrabajo->prelavado->nombre."/".$ordenTrabajo->nevado->nombre."/".$ordenTrabajo->focalizado->nombre }}</td>
+                        <td>
+                            @if ($ordenTrabajo->tipo == "ORDEN_TRABAJO")
+                                {{-- {{ $ordenTrabajo->prenda?->nombre."/".$ordenTrabajo->tela?->nombre."/".$ordenTrabajo->prelavado?->nombre."/".$ordenTrabajo->nevado?->nombre."/".$ordenTrabajo->focalizado?->nombre }} --}}
+                                 {{ $ordenTrabajo->prenda?->nombre }} ;
+                                [Cant:{{ (int) $ordenTrabajo->cantidad }}] ;
+                                [Peso:{{ $ordenTrabajo->peso }}] ;
+                                [Ojales:{{ (int) $ordenTrabajo->numero_ojales }}/{{ (int)$ordenTrabajo->cantidad }}] ;
+                                @if ($ordenTrabajo->prelavado)
+                                    [Pre-Lavado:{{ $ordenTrabajo->prelavado?->nombre }}] ;
+                                @endif
+                                @if ($ordenTrabajo->nevado)
+                                    [Nevado:{{ $ordenTrabajo->nevado?->nombre }}] ;
+                                @endif
+                                @if ($ordenTrabajo->focalizado)
+                                    [Focalizado:{{ $ordenTrabajo->focalizado?->nombre }}] ;
+                                @endif
+                                @if ($ordenTrabajo->tipoTela)
+                                    [Tipo Tela:{{ $ordenTrabajo->tipoTela?->nombre }}] ;
+                                @endif
+                                @if ($ordenTrabajo->colorTela)
+                                    [Color Tela:{{ $ordenTrabajo->colorTela?->nombre }}] ;
+                                @endif
+                                @if ($ordenTrabajo->caracteristicaTela)
+                                    [Caracteristica Tela:{{ $ordenTrabajo->caracteristicaTela?->nombre }}]
+                                @endif
+                                {{-- @if ($ordenTrabajo->con_muestra)
+                                    [Con Muestra: SI]
+                                @else
+                                    [Con Muestra: NO]
+                                @endif --}}
+                            @endif
+                        </td>
                         <td>{{ $ordenTrabajo->precio }}</td>
                         <td>{{ $ordenTrabajo->subtotal }}</td>
                     </tr>
@@ -149,15 +190,15 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td style="text-align: right" colspan="6"><strong>TOTAL SERVICIO: </strong></td>
+                    <td style="text-align: right" colspan="7"><strong>TOTAL SERVICIO: </strong></td>
                     <td style="text-align: left" colspan="3">{{ number_format($totalServicio, 2) }}</td>
                 </tr>
                 <tr>
-                    <td style="text-align: right" colspan="6"><strong>TOTAL PAGADO: </strong></td>
+                    <td style="text-align: right" colspan="7"><strong>TOTAL PAGADO: </strong></td>
                     <td style="text-align: left" colspan="3">{{ number_format($totalPagado, 2) }}</td>
                 </tr>
                 <tr>
-                    <td style="text-align: right" colspan="6"><strong>TOTAL SERVICIO: </strong></td>
+                    <td style="text-align: right" colspan="7"><strong>TOTAL SERVICIO: </strong></td>
                     <td style="text-align: left" colspan="3">{{ number_format($totalDeuda, 2) }}</td>
                 </tr>
             </tfoot>

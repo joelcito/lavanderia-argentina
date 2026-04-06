@@ -24,31 +24,41 @@
                     <form id="formularioProveedor">
                         <input type="hidden" name="id" id="id" value="0">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-3">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Nombre Completo</label>
                                     <input type="text" class="form-control form-control-sm" id="nombre_completo"
                                         name="nombre_completo">
                                 </div>
+                            </div>
+                            <div class="col-md-3">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">NIT</label>
                                     <input type="text" class="form-control form-control-sm" id="nit"
                                         name="nit" maxlength="13">
                                 </div>
+                            </div>
+                            <div class="col-md-3">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Razon Social</label>
                                     <input type="text" class="form-control form-control-sm" id="razon_social"
                                         name="razon_social">
                                 </div>
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Direccion</label>
-                                    <textarea class="form-control form-control-sm" id="direccion"
-                                        name="direccion"></textarea>
-                                </div>
+                            </div>
+                            <div class="col-md-3">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Celular</label>
                                     <input type="text" class="form-control form-control-sm" id="celular"
                                         name="celular" maxlength="8">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Direccion</label>
+                                    <textarea class="form-control form-control-sm" id="direccion"
+                                        name="direccion"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -95,7 +105,7 @@
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
 
@@ -194,7 +204,7 @@
             $('#nombre_completo').val(proveedor.nombre_completo)
             $('#id').val(proveedor.id)
             $('#modalProveedor').modal('show')
-            
+
         }
 
         function eliminarProveedor(proveedor, razon_social) {
@@ -239,8 +249,8 @@
                             });
                         }
                     });
-                    
-                    
+
+
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire(
                         'Cancelado',
@@ -250,6 +260,6 @@
                 }
             });
         }
-        
+
     </script>
 @endsection

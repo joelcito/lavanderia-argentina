@@ -20,22 +20,24 @@
                         ->groupBy('solicitud_id', 'estado')
                         ->first();
                 @endphp
-                @if ($proceso->estado == "TRABAJANDO")
-                    <tr>
-                        <td>{{ $solcitudAgrupado }}</td>
-                        <td>
-                            <span class="badge badge-warning">{{ $proceso->estado }}</span>
-                        </td>
-                        <td>
-                            <button class="btn btn-success btn-sm" onclick="abrirModalFocalizado('{{ $solicitud_id }}')">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                            <button title="Terminar Proceso Focalizado" class="btn btn-dark btn-icon btn-sm"
-                                onclick="finalizarFocalizado('{{ $solicitud_id }}')"><i class="fa fa-up-down"></i></button>
+                @if ($proceso)
+                    @if ($proceso->estado == "TRABAJANDO")
+                        <tr>
+                            <td>{{ $solcitudAgrupado }}</td>
+                            <td>
+                                <span class="badge badge-warning">{{ $proceso->estado }}</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="abrirModalFocalizado('{{ $solicitud_id }}')">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <button title="Terminar Proceso Focalizado" class="btn btn-dark btn-icon btn-sm"
+                                    onclick="finalizarFocalizado('{{ $solicitud_id }}')"><i class="fa fa-up-down"></i></button>
 
 
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    @endif
                 @endif
             @empty
                 <span class="text-danger">No hay OTs registradas</span>

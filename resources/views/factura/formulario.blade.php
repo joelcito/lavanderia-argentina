@@ -373,8 +373,8 @@
                                 </div>
 
                                 <div class="col-md">
-                                    <label class="fw-semibold fs-6 mb-2">Peso</label>
-                                    <input type="number" id="peso" name="peso" min="0" step="0.01" style="width: 100%">
+                                    <label class="fw-semibold fs-6 mb-2 required">Peso</label>
+                                    <input type="number" id="peso" name="peso" min="0" step="0.01" style="width: 100%"  required>
                                 </div>
 
                                 <div class="col-md">

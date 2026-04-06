@@ -36,6 +36,30 @@
     </div>
     <!--end::Modal - Add task-->
 
+    <!--begin::Modal - Add task-->
+    <div class="modal fade" id="modalDescuento" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="kt_modal_add_user_header">
+                    <h3 class="fw-bold">FORMULARIO DESCUENTO ADICIONAL</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body scroll-y" id="formulario_descuento">
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-sm w-100 btn-success" onclick="guardarDescuentoAdicional()">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Modal body-->
+            </div>
+        </div>
+        <!--end::Modal dialog-->
+    </div>
+    <!--end::Modal - Add task-->
+
     <!--begin::Content wrapper-->
     <div class="d-flex flex-column flex-column-fluid">
         <div id="kt_app_content" class="app-content flex-column-fluid">
@@ -254,6 +278,77 @@
                 });
             } else {
                 $('#formularioAperturaCaja')[0].reportValidity()
+            }
+        }
+
+        function formularioDecuentoAdicional(factura){
+            $('#formulario_descuento').html('');
+            // limpiarErorres();
+            datos = {factura_id: factura}
+            $.ajax({
+                url: "{{ route('pago.formularioDecuentoAdicional') }}",
+                method: "POST",
+                data: datos,
+                success: function (resultado) {
+                    if(resultado.estado){
+                        $('#formulario_descuento').html(resultado.data.formulario)
+                        $('#modalDescuento').modal('show')
+                    }
+                }
+            });
+        }
+
+        function guardarDescuentoAdicional(){
+            if($('#formularioDescuentoAdicional')[0].checkValidity()){
+                let datos = $('#formularioDescuentoAdicional').serializeArray();
+                $.ajax({
+                    url: "{{ route('pago.guardarDescuentoAdicional') }}",
+                    method: "POST",
+                    data: datos,
+                    success: function (resultado) {
+                        if(resultado.estado){
+                            Swal.fire({
+                                title: "EL REGISTRO FUE EXITOSO.",
+                                icon: "success",
+                                timer: 2000, // Se cierra en 2 segundos
+                                showConfirmButton: false
+                            });
+                            ajaxListado();
+                            $('#modalDescuento').modal('hide')
+                        }else{
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: JSON.stringify(resultado.data),
+                            });
+                        }
+                    },
+                    error: function (xhr) {
+                        limpiarErorres();
+
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+
+                            $.each(errors, function(key, messages) {
+                                let input = $('[name="' + key + '"]');
+                                let errorDiv = $('#error-' + key);
+
+                                if (input.length > 0) {
+                                    input.addClass('is-invalid'); // Agregar clase de error
+                                    errorDiv.html('<span>' + messages[0] + '</span>'); // Mostrar mensaje
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error inesperado.',
+                            });
+                        }
+                    }
+                });
+            }else{
+                $('#formularioDescuentoAdicional')[0].reportValidity()
             }
         }
 

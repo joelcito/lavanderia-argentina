@@ -214,6 +214,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxFormPagoDeuda', [PagoController::class, 'ajaxFormPagoDeuda'])->name('pago.ajaxFormPagoDeuda');
         Route::post('/guardarPagoDeuda', [PagoController::class, 'guardarPagoDeuda'])->name('pago.guardarPagoDeuda');
         Route::post('/ajaxDescargarReportePago', [PagoController::class, 'ajaxDescargarReportePago'])->name('pago.ajaxDescargarReportePago');
+        Route::post('/formularioDecuentoAdicional', [PagoController::class, 'formularioDecuentoAdicional'])->name('pago.formularioDecuentoAdicional');
+        Route::post('/guardarDescuentoAdicional', [PagoController::class, 'guardarDescuentoAdicional'])->name('pago.guardarDescuentoAdicional');
         Route::get('/comprobantePago/{pago_id}', [PagoController::class, 'comprobantePago'])->name('pago.comprobantePago');
     });
 
@@ -305,7 +307,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/stock-compra/pdf', [ReporteController::class, 'reporteStockCompraPdf'])->name('reporte.stockCompra.pdf');
 
 
-
         Route::get('/prueba-ot', function () {
             $facturas = App\Models\Factura::all();
             return view('reporte.prueba_ot', compact('facturas'));
@@ -314,6 +315,7 @@ Route::middleware('auth')->group(function () {
         //pagos
 
         Route::post('/personal/lavador/pdf', [ReporteController::class, 'reporteLavador'])->name('reporte.personal.lavador.pdf');
+        Route::get('/cuentasDeudaCliente', [ReporteController::class, 'cuentasDeudaCliente'])->name('reporte.cuentasDeudaCliente');
 
     });
 

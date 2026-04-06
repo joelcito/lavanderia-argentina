@@ -90,23 +90,38 @@ class ClienteController extends Controller
                 $cliente->usuario_modificador_id = $usuario->id;
             }
 
-            //imagenes
-            if ($request->hasFile('imagen', 'imagen_CI_anverso', 'imagen_CI_reverso' )) {
-                $file_imagen = $request->file('imagen');
-                $imagen = time() .'_'. Str::uuid() .'.'. $file_imagen->getClientOriginalExtension();
-                $file_imagen->storeAs('imagenesClientes', $imagen, 'public');
+            $imagen = null;
+            $imagen_CI_anverso = null;
+            $imagen_CI_reverso = null;
 
-                $file_imagen_CI_anverso = $request->file('imagen_CI_anverso');
-                $imagen_CI_anverso = time() .'_'. Str::uuid() .'.'. $file_imagen_CI_anverso->getClientOriginalExtension();
-                $file_imagen_CI_anverso->storeAs('imagenesClientes', $imagen_CI_anverso, 'public');
+            // IMAGEN
+            if ($request->hasFile('imagen')) {
+                $file = $request->file('imagen');
 
-                $file_imagen_CI_reverso = $request->file('imagen_CI_reverso');
-                $imagen_CI_reverso = time() .'_'. Str::uuid() .'.'. $file_imagen_CI_reverso->getClientOriginalExtension();
-                $file_imagen_CI_reverso->storeAs('imagenesClientes', $imagen_CI_reverso, 'public');
-            }else{
-                $imagen            = null;
-                $imagen_CI_anverso = null;
-                $imagen_CI_reverso = null;
+                if ($file && $file->isValid()) {
+                    $imagen = time().'_'.Str::uuid().'.'.$file->getClientOriginalExtension();
+                    $file->storeAs('imagenesClientes', $imagen, 'public');
+                }
+            }
+
+            // CI ANVERSO
+            if ($request->hasFile('imagen_CI_anverso')) {
+                $file = $request->file('imagen_CI_anverso');
+
+                if ($file && $file->isValid()) {
+                    $imagen_CI_anverso = time().'_'.Str::uuid().'.'.$file->getClientOriginalExtension();
+                    $file->storeAs('imagenesClientes', $imagen_CI_anverso, 'public');
+                }
+            }
+
+            // CI REVERSO
+            if ($request->hasFile('imagen_CI_reverso')) {
+                $file = $request->file('imagen_CI_reverso');
+
+                if ($file && $file->isValid()) {
+                    $imagen_CI_reverso = time().'_'.Str::uuid().'.'.$file->getClientOriginalExtension();
+                    $file->storeAs('imagenesClientes', $imagen_CI_reverso, 'public');
+                }
             }
 
             $cliente->nombres              = $nombre;

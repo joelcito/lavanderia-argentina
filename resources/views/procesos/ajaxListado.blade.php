@@ -14,14 +14,14 @@
         <tbody>
             @forelse ($solicitudArray as $solcitudAgrupado)
                 <tr>
-                    <td>{{ $solcitudAgrupado['procesado'] }}</td>
+                    <td>
+                        {{ $solcitudAgrupado['procesado'] }} <br>
+                        <span class="text-primary">{{ $solcitudAgrupado['lavado'] }}</span>
+                    </td>
                     <td><span class="badge badge-warning">{{ $solcitudAgrupado['procesoFinal']->estado }}</span></td>
                     <td><span
                             class="badge badge-success">{{ $solcitudAgrupado['procesoFinal']->tipoProceso->nombre }}</span>
                     </td>
-                    {{-- <td>{{ $ot->cantidad_focalizado ?? 0}}</td>
-                    <td>{{ $ot->cantidad_planchado ?? 0}}</td>
-                    <td>{{ $ot->estado }}</td> --}}
 
                     <td>
                         <button class="btn btn-sm btn-icon btn-danger" title="Generar reporte de Proceso"
@@ -37,19 +37,6 @@
                                 onclick='enviarProcesoPlanchado(@json($solcitudAgrupado["crudo"]))'><i
                                     class="fa fa-up-long"></i></button>
                         @endif
-                        {{-- <button class="btn btn-info btn-sm" onclick="verDetalleOT({{ $ot->id }})">
-                            Detalle
-                        </button>
-
-                        <button class="btn btn-success btn-sm" onclick="focalizarOT({{ $ot->id }})">
-                            Focalizar
-                        </button>
-                        <button class="btn btn-primary btn-sm" onclick="plancharOT({{ $ot->id }})">
-                            Planchar
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="finalizarOT({{ $ot->id }})">
-                            Finalizar
-                        </button> --}}
                     </td>
                 </tr>
             @empty
