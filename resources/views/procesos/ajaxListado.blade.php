@@ -27,11 +27,12 @@
                         <button class="btn btn-sm btn-icon btn-danger" title="Generar reporte de Proceso"
                             onclick='imprimirHistorialProceso(@json($solcitudAgrupado["crudo"]))'><i
                                 class="fa fa-file-pdf"></i></button>
-                        @if ($solcitudAgrupado['procesoFinal']->tipoProceso->id != 4)
+                        @if ($solcitudAgrupado['procesoFinal']->tipoProceso->id != 4 && $solcitudAgrupado['procesoFinal']->tipoProceso->id != 20)
                             <button class="btn btn-sm btn-icon btn-dark" title="Enviar a Focalizado"
                                 onclick='enviarProcesoFocalizado(@json($solcitudAgrupado["crudo"]))'><i
                                     class="fa fa-up-long"></i></button>
                         @endif
+
                         @if ($solcitudAgrupado['procesoFinal']->tipoProceso->id != 20)
                             <button class="btn btn-sm btn-icon btn-success" title="Enviar a Planchado"
                                 onclick='enviarProcesoPlanchado(@json($solcitudAgrupado["crudo"]))'><i

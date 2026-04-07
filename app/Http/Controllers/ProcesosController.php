@@ -88,13 +88,13 @@ class ProcesosController extends Controller
                     ->pluck('id');
 
                 $proceso = Proceso::with('tipoProceso')
-                                ->whereIn('solicitud_id', $solicitudesIds)
-                                ->orderByDesc('created_at')
-                                ->first();
+                    ->whereIn('solicitud_id', $solicitudesIds)
+                    ->orderByDesc('created_at')
+                    ->first();
 
                 // BUSCAMOS Y SACAMOS SUS LAVADOS
                 $lavado = '';
-                if(count($ordenesTrabajo) > 0){
+                if (count($ordenesTrabajo) > 0) {
                     $orden_trabajo_id = $ordenesTrabajo[0]['ots'][0];
                     $ordenTrabajo = Order_trabajo::find($orden_trabajo_id);
 
@@ -137,10 +137,10 @@ class ProcesosController extends Controller
 
                 if ($proceso) {
                     $solicitudArray[] = [
-                        'procesado'    => $fac,
-                        'crudo'        => $ordenesTrabajo,
+                        'procesado' => $fac,
+                        'crudo' => $ordenesTrabajo,
                         'procesoFinal' => $proceso,
-                        'lavado'       => $lavadoJson,
+                        'lavado' => $lavadoJson,
                     ];
                 }
             }
@@ -1898,7 +1898,7 @@ class ProcesosController extends Controller
                     continue;
                 }
 
-                // 🔴 VALIDAR DUPLICADOS
+
                 // $yaExiste = SolicitudDetalleProceso::where('solicitud_id', $request->solicitud_id)
                 //     ->where('order_trabajo_id', $ot_id)
                 //     ->where('tipo_proceso', 'PLANCHADO')
@@ -1913,7 +1913,7 @@ class ProcesosController extends Controller
                 //     ], 400);
                 // }
 
-                // 🔴 VALIDAR Y SUMAR CANTIDADES
+
                 $totalNuevo = 0;
 
                 foreach ($item['categorias'] as $categoria => $cantidad) {
@@ -1930,15 +1930,15 @@ class ProcesosController extends Controller
                     $totalNuevo += $cantidad;
                 }
 
-                // 🔴 TOTAL YA PROCESADO REAL (desde DB)
+
                 $yaProcesado = SolicitudDetalleProceso::where('order_trabajo_id', $ot_id)
                     ->where('tipo_proceso', 'PLANCHADO')
                     ->sum('cantidad');
 
-                // 🔴 TOTAL DE LA OT
+
                 $totalOT = $ot->cantidad;
 
-                // 🔴 VALIDACIÓN CLAVE
+
                 if (($yaProcesado + $totalNuevo) > $totalOT) {
                     DB::rollBack();
 
@@ -1948,7 +1948,7 @@ class ProcesosController extends Controller
                     ], 400);
                 }
 
-                // 🔴 GUARDAR DETALLE POR CATEGORÍA
+
                 foreach ($item['categorias'] as $categoria => $cantidad) {
 
                     if ($cantidad > 0) {
@@ -1965,7 +1965,7 @@ class ProcesosController extends Controller
                     }
                 }
 
-                // 🔴 ACTUALIZAR OT (opcional pero útil)
+
                 $ot->cantidad_planchado = $yaProcesado + $totalNuevo;
                 $ot->save();
             }
@@ -2004,7 +2004,7 @@ class ProcesosController extends Controller
 
             if ($procesos) {
                 foreach ($procesos as $key => $proceso) {
-                    $proceso->estado = 'EN PROCESO';
+                    $proceso->estado = 'FINALIZADO';
                     $proceso->fecha_salida = date('Y-m-d H:i:s');
                     $proceso->save();
                 }
