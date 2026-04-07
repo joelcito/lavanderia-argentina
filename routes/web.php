@@ -423,14 +423,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/historial/{user}', [PagosPersonalController::class, 'historial'])->name('pagos.historial');
     });
 
-
-
     //pago focalizado plancahdo
     Route::prefix('produccion-pago')->group(function () {
-
         Route::post('/resumen', [ProduccionPagoController::class, 'resumen']);
-
         Route::post('/pagar', [ProduccionPagoController::class, 'pagar']);
+
+    });
+
+
+    Route::prefix('/entregas')->group(function () {
+
+        Route::get('/listado', [ProcesosController::class, 'listadoEntregado'])->name('entregas.listado');
+        Route::post('/ajaxListadoEntregado', [ProcesosController::class, 'ajaxListadoEntregado'])->name('entregas.ajaxListado');
+        Route::post('/confirmar-entrega', [ProcesosController::class, 'confirmarEntrega'])->name('entregas.confirmarEntrega');
 
     });
 

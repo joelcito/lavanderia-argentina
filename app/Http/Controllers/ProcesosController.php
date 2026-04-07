@@ -92,6 +92,10 @@ class ProcesosController extends Controller
                     ->orderByDesc('created_at')
                     ->first();
 
+                if ($proceso && $proceso->estado == 'FINALIZADO') {
+                    continue;
+                }
+
                 // BUSCAMOS Y SACAMOS SUS LAVADOS
                 $lavado = '';
                 if (count($ordenesTrabajo) > 0) {
@@ -2017,5 +2021,217 @@ class ProcesosController extends Controller
         }
         return $data;
     }
+
+    //ENTREGAS
+
+    public function listadoEntregado()
+    {
+        $productos = Producto::all();
+        $ordenes = Order_trabajo::with(['factura'])->get();
+        $facturas = Factura::with('ordenTrabajos')
+            ->where(function ($query) {
+                $query->where('estado', '!=', 'Anulado')
+                    ->orWhereNull('estado');
+            })
+            ->get();
+        return view('entregas.listado', compact('productos', 'ordenes', 'facturas'));
+    }
+
+    public function ajaxListadoEntregado(Request $request)
+    {
+
+        if ($request->has('ordenes')) {
+            $ordenesTrabajo = json_decode($request->ordenes, true);
+
+            if (!is_array($ordenesTrabajo)) {
+                return response()->json([
+                    'estado' => false,
+                    'mensaje' => 'Datos inválidos'
+                ]);
+            }
+
+            $facturas = [];
+
+            foreach ($ordenesTrabajo as $ordenTrabajo) {
+
+                $factura = [
+                    'nro_factura' => $ordenTrabajo['nro_factura'] ?? '',
+                    'ots' => []
+                ];
+
+                if (!empty($ordenTrabajo['ots'])) {
+
+                    foreach ($ordenTrabajo['ots'] as $ot_id) {
+
+                        $ot = Order_trabajo::with('prenda')->find($ot_id);
+
+                        if ($ot) {
+                            $factura['ots'][] = [
+                                'id' => $ot->id,
+                                'nro_ot' => $ot->nro_ot,
+                                'producto' => optional($ot->prenda)->nombre ?? 'Sin prenda',
+                                'cantidad' => $ot->cantidad,
+                                'estado' => $ot->estado // 👈 CLAVE
+                            ];
+                        }
+                    }
+                }
+
+                $facturas[] = $factura;
+            }
+
+            return response()->json([
+                'estado' => true,
+                'facturas' => $facturas
+            ]);
+        }
+
+
+        if ($request->ajax()) {
+
+            $solicitudes = Solicitud::selectRaw('ordenes_trabajo, MAX(id) as id')
+                ->whereNotNull('ordenes_trabajo')
+                ->groupBy('ordenes_trabajo')
+                ->orderByDesc('id')
+                ->get();
+
+            $solicitudArray = [];
+
+            foreach ($solicitudes as $solicitud) {
+
+                $ordenesTrabajo = $solicitud->ordenes_trabajo;
+                $fac = "";
+
+                foreach ($ordenesTrabajo as $ordenTrabajo) {
+
+                    $fac .= " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
+
+                    $arrayOts = [];
+
+                    if (!empty($ordenTrabajo['ots'])) {
+
+                        foreach ($ordenTrabajo['ots'] as $ot) {
+
+                            $ordenTrabajoBuscado = Order_trabajo::find($ot);
+
+                            if ($ordenTrabajoBuscado && !in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
+
+                                if (!empty($arrayOts)) {
+                                    $fac .= " - ";
+                                }
+
+                                $fac .= "OT:" . $ordenTrabajoBuscado->nro_ot;
+                                $arrayOts[] = $ordenTrabajoBuscado->nro_ot;
+                            }
+                        }
+                    }
+
+                    $fac .= "]";
+                }
+
+                $json = json_encode($ordenesTrabajo);
+
+                $solicitudesIds = Solicitud::whereRaw(
+                    'JSON_CONTAINS(ordenes_trabajo, ?)',
+                    [$json]
+                )->pluck('id');
+
+                $proceso = Proceso::with('tipoProceso')
+                    ->whereIn('solicitud_id', $solicitudesIds)
+                    ->orderByDesc('created_at')
+                    ->first();
+
+
+                if ($proceso && !in_array($proceso->estado, ['FINALIZADO', 'ENTREGADO'])) {
+                    continue;
+                }
+
+
+                $lavado = '';
+
+                if (!empty($ordenesTrabajo[0]['ots'][0])) {
+
+                    $ot = Order_trabajo::find($ordenesTrabajo[0]['ots'][0]);
+
+                    if ($ot) {
+
+                        $partes = [];
+
+                        if (!empty($ot['prelavado'])) {
+                            $partes[] = '[Pre-Lavado:' . $ot['prelavado']['nombre'] . ']';
+                        }
+                        if (!empty($ot['nevado'])) {
+                            $partes[] = '[Nevado:' . $ot['nevado']['nombre'] . ']';
+                        }
+                        if (!empty($ot['focalizado'])) {
+                            $partes[] = '[Focalizado:' . $ot['focalizado']['nombre'] . ']';
+                        }
+
+                        $lavado = implode(' ; ', $partes);
+                    }
+                }
+
+                if ($proceso) {
+                    $solicitudArray[] = [
+                        'procesado' => $fac,
+                        'crudo' => $ordenesTrabajo, // 👈 SOLO transporte
+                        'procesoFinal' => $proceso,
+                        'lavado' => $lavado
+                    ];
+                }
+            }
+
+            return response()->json([
+                'estado' => true,
+                'data' => [
+                    'listado' => view('entregas.ajaxListado', compact('solicitudArray'))->render()
+                ]
+            ]);
+        }
+
+        return response()->json([
+            'estado' => false,
+            'mensaje' => 'Petición inválida'
+        ], 400);
+    }
+
+
+    public function confirmarEntrega(Request $request)
+    {
+        $ots = $request->ots;
+
+        if (!is_array($ots)) {
+            return response()->json([
+                'estado' => false,
+                'mensaje' => 'Datos inválidos'
+            ]);
+        }
+
+        foreach ($ots as $ot_id) {
+
+            $ot = Order_trabajo::find($ot_id);
+
+            if ($ot && $ot->estado != 'ENTREGADO') {
+                $ot->estado = 'ENTREGADO';
+                $ot->save();
+            }
+
+
+            Proceso::whereHas('solicitud', function ($q) use ($ot_id) {
+                $q->whereRaw("JSON_SEARCH(ordenes_trabajo, 'one', ?) IS NOT NULL", [$ot_id]);
+            })->update([
+                        'estado' => 'ENTREGADO'
+                    ]);
+        }
+
+        return response()->json([
+            'estado' => true,
+            'mensaje' => 'Entrega realizada correctamente'
+        ]);
+    }
+
+
+
+
 
 }
