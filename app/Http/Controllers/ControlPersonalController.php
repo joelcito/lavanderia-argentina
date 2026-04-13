@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Factura;
+use App\Models\SolicitudDetalleProceso;
 use App\Models\User;
 use App\Models\Pago;
 use App\Models\Sucursal;
+use App\Models\Order_trabajo;
 
 use Carbon\Carbon;
 use App\Models\Asistencia;
@@ -64,8 +67,7 @@ class ControlPersonalController extends Controller
         $usuario = User::find($user_id);
         $asistencias = Asistencia::where('user_id', $user_id)
             ->whereBetween('fecha', [$inicio, $fin])
-            ->orderBy('fecha')
-            ->get()
+            ->orderBy('fecha')->get()
             ->groupBy('fecha');
         $totalSegundos = 0;
         $dias = 0;
@@ -89,16 +91,15 @@ class ControlPersonalController extends Controller
             $minutos = floor(($segundosDia % 3600) / 60);
             $detalle[] = [
                 'fecha' => $fecha,
-                'dia' => Carbon::parse($fecha)->locale('es')->dayName,
+                'dia' =>
+                    Carbon::parse($fecha)->locale('es')->dayName,
                 'horas_texto' => sprintf('%02d:%02d', $horas, $minutos),
                 'segundos' => $segundosDia
             ];
         }
-
         $pagoHora = 0;
         $pagoMinuto = 0;
         $pagoTotal = 0;
-
         if ($usuario->horas_base > 0) {
             $pagoHora = $usuario->pago_diario / $usuario->horas_base;
             $pagoMinuto = $pagoHora / 60;
@@ -110,59 +111,51 @@ class ControlPersonalController extends Controller
             ->whereDate('fecha_inicio', '>=', $inicio)
             ->whereDate('fecha_fin', '<=', $fin)
             ->sum('monto');
-
         $descuentos = Pago::where('user_id', $user_id)
             ->where('tipo_pago', 'descuento')
             ->whereDate('fecha_inicio', '>=', $inicio)
             ->whereDate('fecha_fin', '<=', $fin)
             ->sum('monto');
-
         $ajustes = Pago::where('user_id', $user_id)
             ->whereIn('tipo_pago', ['adelanto', 'descuento'])
             ->whereDate('fecha_inicio', '>=', $inicio)
             ->whereDate('fecha_fin', '<=', $fin)
             ->orderBy('fecha', 'desc')
             ->get(['tipo_pago', 'monto', 'descripcion', 'fecha']);
-
         $pagoRealizado = Pago::where('user_id', $user_id)
             ->where('tipo_pago', 'salario')
             ->where('fecha_inicio', $inicio)
-            ->where('fecha_fin', $fin)
-            ->first();
-
+            ->where('fecha_fin', $fin)->first();
         $pagos = Pago::where('user_id', $user_id)
             ->where('tipo_pago', 'salario')
             ->whereDate('fecha', '<=', $fin)
             ->sum('monto');
-
-
         $totalFinal = $pagoTotal - $adelantos - $descuentos - $pagos;
-
         return response()->json([
-            'total_horas' => round($totalSegundos / 3600, 2),
+            'total_horas'
+            => round($totalSegundos / 3600, 2),
             'total_minutos' => round($totalSegundos / 60, 2),
             'dias' => $dias,
             'pago_hora' => round($pagoHora, 2),
             'pago_minuto' => round($pagoMinuto, 4),
             'pago_total' => round($pagoTotal, 2),
-
             'adelantos' => round($adelantos, 2),
             'descuentos' => round($descuentos, 2),
             'total_final' => round($totalFinal, 2),
-
             'pago_diario' => $usuario->pago_diario,
-            'horas_base' => $usuario->horas_base,
-
+            'horas_base' =>
+                $usuario->horas_base,
             'ajustes' => $ajustes,
             'inicio' => $inicio,
-            'fin' => $fin,
-
+            'fin'
+            => $fin,
             'pago_realizado' => $pagoRealizado ? true : false,
             'pago_info' => $pagoRealizado,
             'pagos' => round($pagos, 2),
-
             'detalle' => $detalle
         ]);
+
+
     }
 
 

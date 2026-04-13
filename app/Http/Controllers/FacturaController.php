@@ -14,6 +14,7 @@ use App\Models\Order_trabajo;
 use App\Models\Pago;
 use App\Models\Prelavado;
 use App\Models\Prenda;
+use App\Models\Proceso;
 use App\Models\Solicitud;
 use App\Models\Tipo_tela;
 use App\Models\User;
@@ -29,7 +30,8 @@ class FacturaController extends Controller
     public function formulario()
     {
         // $clientes = Cliente::select('id', 'nombres', 'ap_paterno', 'ap_materno', 'celular','direccion','imagen')->get();
-        $rolCliente = env('ROL_CLIENTE');
+        // $rolCliente = env('ROL_CLIENTE');
+        $rolCliente = 3;
         $clientes = User::where('rol_id', $rolCliente)->get();
         $usuario = Auth::user();
         $usuarios = User::all();
@@ -452,7 +454,6 @@ class FacturaController extends Controller
 
     public function ajaxListadoFacturasCliente(Request $request)
     {
-
         if ($request->ajax()) {
 
             $usuario = Auth::user();
@@ -476,37 +477,80 @@ class FacturaController extends Controller
                 ->join('users', 'users.id', '=', 'facturas.usuario_cliente_id')
                 ->where('facturas.usuario_cliente_id', $usuario_id);
 
-            if (!is_null($request->input('buscar_nro_factura'))) {
-                $numero_factura = $request->input('buscar_nro_factura');
-                $query->where('facturas.numero_factura', $numero_factura);
+
+            if ($request->filled('buscar_nro_factura')) {
+                $query->where('facturas.numero_factura', $request->buscar_nro_factura);
             }
 
-            if (!is_null($request->input('buscar_fecha_inicio')) && !is_null($request->input('buscar_fecha_fin'))) {
-                $fecha_ini = $request->input('buscar_fecha_inicio');
-                $fecha_fin = $request->input('buscar_fecha_fin');
-                $query->whereBetween('facturas.fecha', [$fecha_ini . " 00:00:00", $fecha_fin . " 23:59:59"]);
+            if ($request->filled('buscar_fecha_inicio') && $request->filled('buscar_fecha_fin')) {
+                $query->whereBetween('facturas.fecha', [
+                    $request->buscar_fecha_inicio . " 00:00:00",
+                    $request->buscar_fecha_fin . " 23:59:59"
+                ]);
             }
 
-            if (
-                !is_null($request->input('buscar_nro_factura')) &&
-                !is_null($request->input('buscar_fecha_inicio')) &&
-                !is_null($request->input('buscar_fecha_fin'))
-            ) {
-                $facturas = $query->limit(500)->get();
-            } else {
-                $facturas = $query->orderBy('facturas.id', 'desc')->limit(100)->get();
+
+            $facturas = $query->orderBy('facturas.id', 'desc')->limit(100)->get();
+
+
+            foreach ($facturas as $fac) {
+
+                $fac->estado_factura = $fac->estado ?? 'VIGENTE';
+                $fac->ultimo_proceso = 'SIN PROCESO';
+                $fac->estado_ultimo_proceso = 'SIN PROCESO';
+                $fac->numero_ots = 0;
+
+                $solicitudes = Solicitud::get()->filter(function ($s) use ($fac) {
+
+                    if (!$s->ordenes_trabajo)
+                        return false;
+
+                    foreach ($s->ordenes_trabajo as $ot) {
+                        if (isset($ot['nro_factura']) && $ot['nro_factura'] == $fac->id) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                });
+
+                if ($solicitudes->count()) {
+
+                    $solicitudesIds = $solicitudes->pluck('id');
+
+                    $proceso = Proceso::with('tipoProceso')
+                        ->whereIn('solicitud_id', $solicitudesIds)
+                        ->orderByDesc('created_at')
+                        ->first();
+
+                    if ($proceso) {
+                        $fac->ultimo_proceso = $proceso->tipoProceso->nombre ?? 'SIN NOMBRE';
+                        $fac->estado_ultimo_proceso = $proceso->estado;
+                    }
+
+                    $totalOTs = 0;
+
+                    foreach ($solicitudes as $s) {
+                        foreach ($s->ordenes_trabajo as $ot) {
+                            if ($ot['nro_factura'] == $fac->id) {
+                                $totalOTs += count($ot['ots']);
+                            }
+                        }
+                    }
+
+                    $fac->numero_ots = $totalOTs;
+                }
             }
 
             $valores = [
-                'listado' => view('factura.ajaxListadoFacturasCliente')->with(compact('facturas'))->render()
+                'listado' => view('factura.ajaxListadoFacturasCliente', compact('facturas'))->render()
             ];
-            $data = Respuesta::success($valores, "Datos obtenidos correctamente");
+
+            return Respuesta::success($valores, "Datos obtenidos correctamente");
 
         } else {
-            $data = Respuesta::error(null, "No existe");
+            return Respuesta::error(null, "No existe");
         }
-        return $data;
-
     }
 
     public function detalleCliente(Request $request, $factura_id)
@@ -555,8 +599,8 @@ class FacturaController extends Controller
         $facturaId = $request->factura_id;
 
         $ots = Order_Trabajo::where('factura_id', $facturaId)
-                            ->where('tipo', 'ORDEN_TRABAJO') // <-- filtramos solo tipo ORDEN_TRABAJO
-                            ->get(['id', 'nro_ot', 'cantidad']); // columnas que necesitas
+            ->where('tipo', 'ORDEN_TRABAJO') // <-- filtramos solo tipo ORDEN_TRABAJO
+            ->get(['id', 'nro_ot', 'cantidad']); // columnas que necesitas
 
         return response()->json($ots);
 
@@ -582,24 +626,25 @@ class FacturaController extends Controller
     //     return response()->json($productos);
     // }
 
-    public function obtenerProductosAprobados(Request $request){
+    public function obtenerProductosAprobados(Request $request)
+    {
 
-        if($request->ajax()){
+        if ($request->ajax()) {
 
-            $orderTrabajoId  = $request->input('orderTrabajoId');
-            $ordenTrabajo    = Order_trabajo::find($orderTrabajoId);
-            $factura         = $ordenTrabajo->factura;
+            $orderTrabajoId = $request->input('orderTrabajoId');
+            $ordenTrabajo = Order_trabajo::find($orderTrabajoId);
+            $factura = $ordenTrabajo->factura;
             $ordenesTrabajos = Order_trabajo::where('factura_id', $factura->id)->get();
 
             $solicitudes = Solicitud::with(['producto'])
-                                    ->where('estado','APROBADO')
-                                    ->whereJsonContains(
-                                        'ordenes_trabajo',
-                                        [
-                                            'factura_id' => $factura->id,
-                                            'ots' => [(int) $ordenTrabajo->id],
-                                        ]
-                                    )->get();
+                ->where('estado', 'APROBADO')
+                ->whereJsonContains(
+                    'ordenes_trabajo',
+                    [
+                        'factura_id' => $factura->id,
+                        'ots' => [(int) $ordenTrabajo->id],
+                    ]
+                )->get();
 
             $text = "";
 
@@ -607,22 +652,22 @@ class FacturaController extends Controller
             foreach ($solicitudes as $key => $solicitud) {
                 $ordenesTrabajos = $solicitud->ordenes_trabajo;
                 foreach ($ordenesTrabajos as $key => $ordenTrabajo) {
-                    $text = "| Or. Rec. ".$text. $factura->nro_factura."|[";
+                    $text = "| Or. Rec. " . $text . $factura->nro_factura . "|[";
                     // dd($ordenTrabajo['ots']);
                     foreach ($ordenTrabajo['ots'] as $key => $ot) {
                         // dd($ot);
                         $ordeTrabajoDB = Order_trabajo::find($ot);
-                        $text= $text. $ordeTrabajoDB->nro_ot." , ";
+                        $text = $text . $ordeTrabajoDB->nro_ot . " , ";
                     }
                 }
-                $text = $text."]<br>";
+                $text = $text . "]<br>";
             }
 
             $valores = [
                 'solicitudes' => $solicitudes,
-                'factura'     => $factura,
-                'ordenes'     => $ordenesTrabajos,
-                'text'        => $text
+                'factura' => $factura,
+                'ordenes' => $ordenesTrabajos,
+                'text' => $text
             ];
 
             $data = Respuesta::success($valores, "Datos obtenidos correctamente");

@@ -31,20 +31,20 @@
                     <td>{{ $user->nombres }} {{ $user->ap_paterno }} {{ $user->ap_materno }}</td>
                     <td>
 
-                        @if($user->rol_id == 3)
-                            <button class="btn btn-info btn-sm btn-config" data-id="{{ $user->id }}">Config</button>
+                        @if($user->rol_id == 2)
+                            <button class="btn btn-info btn-sm btn-config" data-id="{{ $user->id }}">Monto por hora</button>
                             <button class="btn btn-warning btn-sm btn-asistencia" data-id="{{ $user->id }}"> Asistencia</button>
-                            <button class="btn btn-success btn-sm btn-pagos" data-id="{{ $user->id }}">Pagos</button>
+                            <button class="btn btn-success btn-sm btn-pagos" data-id="{{ $user->id }}">Pagar</button>
                         @endif
                         @if($user->rol_id == 6)
                             <button class="btn btn-success btn-sm btn-produccion" data-id="{{ $user->id }}"
                                 data-tipo="focalizador">
-                                Pago Focalizador
+                                Pagar
                             </button>
                         @endif
                         @if($user->rol_id == 5)
                             <button class="btn btn-dark btn-sm btn-produccion" data-id="{{ $user->id }}" data-tipo="planchador">
-                                Pago Planchador
+                                Pagar
                             </button>
                         @endif
                     </td>

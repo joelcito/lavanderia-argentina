@@ -15,14 +15,18 @@
                         <span class="text-primary">{{ $solcitudAgrupado['lavado'] ?? ''}}</span>
                     </td>
                     <td><span class="badge badge-warning">{{ $solcitudAgrupado['procesoFinal']->estado }}</span></td>
+
                     <td>
                         <button class="btn btn-sm btn-icon btn-success" title="Entregar"
                             onclick='abrirModalEntrega(@json($solcitudAgrupado["crudo"]))'>
                             <i class="fa fa-check"></i>
                         </button>
-
-
+                        <button class="btn btn-sm btn-icon btn-danger" title="Generar reporte de Proceso"
+                            onclick='imprimirHistorialProceso(@json($solcitudAgrupado["crudo"]))'><i
+                                class="fa fa-file-pdf"></i></button>
                     </td>
+
+
                 </tr>
             @empty
                 <span class="text-danger">No hay OTs registradas</span>
@@ -33,9 +37,13 @@
 
 <div class="modal fade" id="modalEntrega">
     <div class="modal-dialog modal-lg">
+
         <div class="modal-content">
             <div class="modal-header bg-success">
                 <h5 class="modal-title">Seleccionar OTs a entregar</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+
             </div>
             <div class="modal-body">
                 <div id="listaOTs"></div>
@@ -102,6 +110,7 @@
     }
 
 
+
     function abrirModalEntrega(data) {
 
         otsSeleccionadas = [];
@@ -113,9 +122,25 @@
 
             let html = '';
 
+            let ahora = new Date();
+            let fechaHora = ahora.toLocaleString();
+
+            html += `
+            <div class="mb-3 text-end">
+                <small class="text-muted">
+                    Fecha y hora: ${fechaHora}
+                </small>
+            </div>
+        `;
+
             res.facturas.forEach(f => {
 
-                html += `<h5 class="text-primary">Factura: ${f.nro_factura}</h5>`;
+                html += `
+                    <div class="mb-2">
+                        <h5 class="text-primary">Factura: ${f.nro_factura}</h5>
+                        <small class="text-muted">Cliente: ${f.cliente ?? 'Sin cliente'}</small>
+                    </div>
+                `;
 
                 f.ots.forEach(ot => {
 

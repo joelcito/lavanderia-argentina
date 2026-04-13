@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order_trabajo;
 use DB;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -35,28 +36,76 @@ class ProduccionPagoController extends Controller
         $totalPrendas = 0;
         $total = 0;
 
+        $facturas = [];
+        $ots = [];
+        $cliente = null;
+
+        $facturasDetalle = [];
+
         foreach ($detalles as $d) {
 
             $cantidad = $d->cantidad;
+
+            if (!empty($d->factura_id)) {
+
+                $factura = Factura::with(['cliente'])->find($d->factura_id);
+
+                if ($factura) {
+
+                    $facturaId = $factura->id;
+
+                    // 🔥 crear estructura si no existe
+                    if (!isset($facturasDetalle[$facturaId])) {
+
+                        $facturasDetalle[$facturaId] = [
+                            'factura' => $factura->numero_factura ?? $factura->id,
+                            'cliente' => $factura->cliente->name ?? '—',
+                            'ots' => [],
+                            'prendas' => 0
+                        ];
+                    }
+
+                    $facturasDetalle[$facturaId]['prendas'] += $cantidad;
+
+                    // 🔥 agregar OT
+                    if (!empty($d->order_trabajo_id)) {
+
+                        $ot = Order_trabajo::find($d->order_trabajo_id);
+
+                        if ($ot) {
+                            $facturasDetalle[$facturaId]['ots'][] = $ot->nro_ot ?? $ot->id;
+                        }
+                    }
+                }
+            }
+
+            // 🔥 TOTAL GENERAL (lo mantienes)
             $totalPrendas += $cantidad;
 
+            // 🔥 cálculo (igual que ya tienes)
             if ($tipo === 'focalizador') {
-
                 $factura = Factura::find($d->factura_id);
                 $precio = ($factura && $factura->prioridad === 'PARA LA FERIA') ? 0.30 : 0.50;
-
                 $total += $cantidad * $precio;
             }
 
             if ($tipo === 'planchador') {
-
                 $prenda = Prenda::find($d->categoria);
                 $precio = $prenda->precio_planchado ?? 0;
-
                 $total += $cantidad * $precio;
             }
         }
 
+        // 🔥 limpiar duplicados de OTs
+        foreach ($facturasDetalle as &$f) {
+            $f['ots'] = array_values(array_unique($f['ots']));
+        }
+
+        // 🔥 convertir a array simple
+        $facturasDetalle = array_values($facturasDetalle);
+
+        $facturas = array_values(array_unique($facturas));
+        $ots = array_values(array_unique($ots));
         // ADELANTOS
         $adelantos = Pago::where('user_id', $userId)
             ->where('tipo_pago', 'adelanto')
@@ -104,7 +153,9 @@ class ProduccionPagoController extends Controller
             'ajustes' => $ajustes,
 
             'pago_realizado' => $pagoRealizado ? true : false,
-            'pago_info' => $pagoRealizado
+            'pago_info' => $pagoRealizado,
+
+            'facturas_detalle' => $facturasDetalle // 🔥 NUEVO
         ]);
     }
 

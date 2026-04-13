@@ -30,7 +30,7 @@ class ProcesosController extends Controller
         // $maquinarias = Maquinaria::all();
         $productos = Producto::all();
         $ordenes = Order_trabajo::with(['factura'])->get();
-        // Pasar los datos a la vista
+
         $facturas = Factura::with('ordenTrabajos')
             ->where(function ($query) {
                 $query->where('estado', '!=', 'Anulado') // excluir anuladas
@@ -163,9 +163,6 @@ class ProcesosController extends Controller
         ], 400);
     }
 
-
-
-
     public function listaProductos()
     {
         $productos = Producto::select('id', 'nombre')->orderBy('nombre')->get();
@@ -177,54 +174,6 @@ class ProcesosController extends Controller
         $tipos = Tipo_proceso::select('id', 'nombre')->orderBy('nombre')->get();
         return response()->json($tipos);
     }
-
-    // public function guardar(Request $request)
-    // {
-
-    //     $request->validate([
-    //         'order_trabajo_id' => 'required|exists:order_trabajos,id',
-    //         'tipo_proceso_id' => 'required|exists:tipo_procesos,id',
-    //         'fecha_ingreso' => 'required|date',
-    //     ]);
-
-
-    //     $maquinaria = Maquinaria::find($request->maquinaria_id);
-    //     $proceso = Proceso::updateOrCreate(
-    //         ['id' => $request->id],
-    //         [
-    //             'order_trabajo_id' => $request->order_trabajo_id,
-    //             'producto_id' => $request->producto_id,
-    //             'maquinaria_id' => $request->maquinaria_id,
-    //             'tipo_proceso_id' => $request->tipo_proceso_id,
-    //             'fecha_ingreso' => $request->fecha_ingreso,
-    //             'fecha_salida' => $request->fecha_salida,
-    //             'tiempo' => $request->tiempo,
-    //             'temperatura' => $request->temperatura,
-    //             'ph' => $request->ph,
-    //             'rb' => $request->rb,
-    //             'descripcion' => $request->descripcion,
-    //             'estado' => 'EN PROCESO',
-    //         ]
-    //     );
-
-    //     // Cambiar estado de la maquinaria
-    //     $maquinaria->estado_maquina = 'EN PROCESO';
-    //     $maquinaria->save();
-
-
-    //     // Cambiar estado de la OT a TRABAJANDO
-    //     $orderTrabajo = Order_trabajo::find($request->order_trabajo_id);
-    //     if ($orderTrabajo && !in_array($orderTrabajo->estado, ['FINALIZADO', 'ENTREGADO'])) {
-    //         $orderTrabajo->estado = 'TRABAJANDO';
-    //         $orderTrabajo->save();
-    //     }
-
-    //     return response()->json([
-    //         'estado' => true,
-    //         'mensaje' => 'Proceso registrado correctamente.',
-    //         'data' => $proceso
-    //     ]);
-    // }
 
     public function guardar(Request $request)
     {
@@ -255,13 +204,12 @@ class ProcesosController extends Controller
             ]
         );
 
-        // Cambiar estado de la maquinaria
         if ($maquinaria) {
             $maquinaria->estado_maquina = 'EN PROCESO';
             $maquinaria->save();
         }
 
-        // Cambiar estado de la OT a TRABAJANDO si aplica
+
         $orderTrabajo = Order_trabajo::find($request->order_trabajo_id);
         if ($orderTrabajo && !in_array($orderTrabajo->estado, ['FINALIZADO', 'ENTREGADO'])) {
             $orderTrabajo->estado = 'TRABAJANDO';
@@ -279,7 +227,7 @@ class ProcesosController extends Controller
     {
         // dd($request->all());
 
-        $procesos = $request->input('procesos', []); // array de procesos del listado
+        $procesos = $request->input('procesos', []);
 
         if (empty($procesos)) {
             return response()->json([
@@ -293,7 +241,7 @@ class ProcesosController extends Controller
         $arrayErrores = [];
 
         foreach ($procesos as $item) {
-            // Validar campos mínimos por cada proceso
+
             $validator = \Validator::make($item, [
                 // 'order_trabajo_id' => 'required|exists:order_trabajos,id',
                 'tipo_proceso_id' => 'required|exists:tipo_procesos,id',
@@ -303,7 +251,7 @@ class ProcesosController extends Controller
             ]);
 
             if ($validator->fails()) {
-                // Omitir este registro y continuar con los demás
+
                 $arrayErrores[] = [
                     'fila' => $item,
                     'errores' => $validator->errors()->all()
@@ -374,10 +322,6 @@ class ProcesosController extends Controller
 
     }
 
-
-
-
-
     public function infoMaquinaria(Request $request)
     {
         $maquinaria = Maquinaria::find($request->id);
@@ -402,9 +346,6 @@ class ProcesosController extends Controller
             'procesos_activos' => $procesosActivos
         ]);
     }
-
-
-
 
     // public function actualizarEstados()
     // {
@@ -438,11 +379,9 @@ class ProcesosController extends Controller
 
             if (now() >= $proceso->fecha_salida) {
 
-                // 1️⃣ Finalizar proceso
                 $proceso->estado = 'FINALIZADO';
                 $proceso->save();
 
-                // 2️⃣ Verificar OT
                 $procesosActivosOT = Proceso::where('order_trabajo_id', $proceso->order_trabajo_id)
                     ->whereIn('estado', ['PENDIENTE', 'EN_PROCESO'])
                     ->count();
@@ -452,7 +391,6 @@ class ProcesosController extends Controller
                         ->update(['estado' => 'FINALIZADO']);
                 }
 
-                // 3️⃣ Verificar maquinaria
                 $procesosActivosMaquina = Proceso::where('maquinaria_id', $proceso->maquinaria_id)
                     ->whereIn('estado', ['PENDIENTE', 'EN_PROCESO'])
                     ->count();
@@ -655,7 +593,6 @@ class ProcesosController extends Controller
         }
 
         $productos = $productos->unique()->values();
-
         $productosData = Producto::whereIn('id', $productos)->get(['id', 'nombre']);
 
         return response()->json($productosData);
@@ -812,7 +749,6 @@ class ProcesosController extends Controller
         if ($request->ajax()) {
 
             $maquina_id = $request->input('maquina');
-
             $procesos = Proceso::where('maquinaria_id', $maquina_id)
                 ->where('estado', 'TRABAJANDO')
                 ->get();
@@ -907,7 +843,6 @@ class ProcesosController extends Controller
     {
 
         if ($request->ajax()) {
-
             $solicitudes = Solicitud::where('estado', 'UTILIZADO')
                 ->get();
 
@@ -1018,8 +953,6 @@ class ProcesosController extends Controller
         return $data;
 
     }
-
-
 
     public function agregarProductoAlProceso(Request $request)
     {
@@ -1277,8 +1210,6 @@ class ProcesosController extends Controller
 
     }
 
-
-
     public function ajaxListadoSolicitudesFocalizado(Request $request)
     {
         if ($request->ajax()) {
@@ -1339,8 +1270,6 @@ class ProcesosController extends Controller
         }
     }
 
-
-
     public function focalizadoListadoSolicitud()
     {
 
@@ -1398,7 +1327,6 @@ class ProcesosController extends Controller
         return $data;
 
     }
-
 
     public function guardaEdicionProceso(Request $request)
     {
@@ -1525,7 +1453,6 @@ class ProcesosController extends Controller
 
     }
 
-
     public function finalizarProcesoFocalizado(Request $request)
     {
 
@@ -1533,7 +1460,6 @@ class ProcesosController extends Controller
 
             $solicitud_id = $request->input('solicitud');
 
-            // 🔥 VALIDACIÓN 1: verificar que exista al menos una prenda registrada
             $totalProcesado = SolicitudDetalleProceso::where('solicitud_id', $solicitud_id)
                 ->where('tipo_proceso', 'FOCALIZADO')
                 ->sum('cantidad');
@@ -1541,8 +1467,6 @@ class ProcesosController extends Controller
             if ($totalProcesado <= 0) {
                 return Respuesta::error(null, "Debe registrar al menos una prenda antes de finalizar");
             }
-
-            // 🔥 VALIDACIÓN 2 (OPCIONAL PRO): verificar que no haya OTs incompletas
 
             $ots = SolicitudDetalleProceso::where('solicitud_id', $solicitud_id)
                 ->pluck('order_trabajo_id')
@@ -1560,7 +1484,6 @@ class ProcesosController extends Controller
                 }
             }
 
-            // 🔥 TRAER PROCESOS
             $procesos = Proceso::where('solicitud_id', $solicitud_id)
                 ->where('tipo_proceso_id', 4)
                 ->where('estado', 'TRABAJANDO')
@@ -1570,9 +1493,8 @@ class ProcesosController extends Controller
                 return Respuesta::error(null, "NO SE ENCONTRO PROCESOS EN LA MAQUINA");
             }
 
-            // ✅ FINALIZAR
             foreach ($procesos as $proceso) {
-                $proceso->estado = 'FINALIZADO'; // 👈 mejor que EN PROCESO
+                $proceso->estado = 'EN PROCESO';
                 $proceso->fecha_salida = now();
                 $proceso->save();
             }
@@ -1607,7 +1529,6 @@ class ProcesosController extends Controller
                 ], 404);
             }
 
-            // 🔥 SUMAR LO YA GUARDADO EN BD
             $cantidadExistente = SolicitudDetalleProceso::where('solicitud_id', $request->solicitud_id)
                 ->where('order_trabajo_id', $detalle['ot_id'])
                 ->where('tipo_proceso', 'FOCALIZADO')
@@ -1616,7 +1537,7 @@ class ProcesosController extends Controller
             $totalOT = $ot->cantidad;
             $restante = $totalOT - $cantidadExistente;
 
-            // 🚨 VALIDACIÓN REAL
+
             if ($detalle['cantidad'] > $restante) {
                 return response()->json([
                     'estado' => false,
@@ -1624,7 +1545,7 @@ class ProcesosController extends Controller
                 ], 400);
             }
 
-            // ✅ GUARDAR
+
             SolicitudDetalleProceso::create([
                 'solicitud_id' => $request->solicitud_id,
                 'order_trabajo_id' => $detalle['ot_id'],
@@ -1659,7 +1580,7 @@ class ProcesosController extends Controller
             $ordenesTrabajo = json_decode($ordenesTrabajo, true);
         }
 
-        // 🔥 TRAER LO YA GUARDADO
+
         $detalles = SolicitudDetalleProceso::where('solicitud_id', $solicitud_id)
             ->where('tipo_proceso', 'FOCALIZADO')
             ->get()
@@ -1681,7 +1602,6 @@ class ProcesosController extends Controller
                 if (!$ot)
                     continue;
 
-                // 🔥 CALCULAR PROCESADO DESDE BD
                 $procesado = isset($detalles[$ot_id])
                     ? $detalles[$ot_id]->sum('cantidad')
                     : 0;
@@ -1704,7 +1624,6 @@ class ProcesosController extends Controller
 
     //planchado
 
-
     public function planchadoListado(Request $request)
     {
 
@@ -1722,10 +1641,9 @@ class ProcesosController extends Controller
 
             foreach ($solicitudes as $key => $solicitud) {
 
-                // 🔥 PROTECCIÓN CLAVE
                 $ordenesTrabajo = $solicitud->ordenes_trabajo ?? [];
 
-                // 🔥 SI ES JSON STRING (MUY IMPORTANTE)
+
                 if (is_string($ordenesTrabajo)) {
                     $ordenesTrabajo = json_decode($ordenesTrabajo, true) ?? [];
                 }
@@ -2054,26 +1972,36 @@ class ProcesosController extends Controller
 
             foreach ($ordenesTrabajo as $ordenTrabajo) {
 
+                $clienteNombre = 'Sin cliente';
+
+                if (!empty($ordenTrabajo['nro_factura'])) {
+
+                    $facturaDB = Factura::with('cliente')->find($ordenTrabajo['nro_factura']);
+
+                    if ($facturaDB && $facturaDB->cliente) {
+                        $clienteNombre = $facturaDB->cliente->name ?? 'Sin cliente';
+                    }
+                }
+
                 $factura = [
                     'nro_factura' => $ordenTrabajo['nro_factura'] ?? '',
+                    'cliente' => $clienteNombre,
                     'ots' => []
                 ];
 
-                if (!empty($ordenTrabajo['ots'])) {
+                foreach ($ordenTrabajo['ots'] as $ot_id) {
 
-                    foreach ($ordenTrabajo['ots'] as $ot_id) {
+                    $ot = Order_trabajo::with('prenda')->find($ot_id);
 
-                        $ot = Order_trabajo::with('prenda')->find($ot_id);
+                    if ($ot) {
 
-                        if ($ot) {
-                            $factura['ots'][] = [
-                                'id' => $ot->id,
-                                'nro_ot' => $ot->nro_ot,
-                                'producto' => optional($ot->prenda)->nombre ?? 'Sin prenda',
-                                'cantidad' => $ot->cantidad,
-                                'estado' => $ot->estado // 👈 CLAVE
-                            ];
-                        }
+                        $factura['ots'][] = [
+                            'id' => $ot->id,
+                            'nro_ot' => $ot->nro_ot,
+                            'producto' => optional($ot->prenda)->nombre ?? 'Sin prenda',
+                            'cantidad' => $ot->cantidad,
+                            'estado' => $ot->estado
+                        ];
                     }
                 }
 
@@ -2174,7 +2102,7 @@ class ProcesosController extends Controller
                 if ($proceso) {
                     $solicitudArray[] = [
                         'procesado' => $fac,
-                        'crudo' => $ordenesTrabajo, // 👈 SOLO transporte
+                        'crudo' => $ordenesTrabajo,
                         'procesoFinal' => $proceso,
                         'lavado' => $lavado
                     ];
@@ -2229,9 +2157,5 @@ class ProcesosController extends Controller
             'mensaje' => 'Entrega realizada correctamente'
         ]);
     }
-
-
-
-
 
 }

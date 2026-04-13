@@ -114,5 +114,50 @@
         }
 
 
+        function imprimirHistorialProceso(tipo) {
+
+            Swal.fire({
+                title: 'Generando reporte...',
+                text: 'Por favor espera',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: "{{ route('procesos.generaPDFHistorialProceso') }}",
+                type: 'POST',
+                data: { tipo: tipo },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (response) {
+
+                    Swal.close(); // 🔥 Cierra el loader
+
+                    let blob = new Blob([response], { type: 'application/pdf' });
+                    let link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "proceso.pdf";
+                    link.click();
+
+                },
+                error: function (err) {
+                    Swal.close(); // 🔥 También cerrar en error
+
+                    console.error(err);
+                    Swal.fire({
+                        title: "Error",
+                        text: "No se pudo generar el PDF",
+                        icon: "error"
+                    });
+                }
+            });
+
+        }
+
+
     </script>
 @endsection

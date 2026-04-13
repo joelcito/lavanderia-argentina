@@ -57,7 +57,6 @@ class ReporteController extends Controller
         ));
     }
 
-
     public function obtenerOTs($factura_id)
     {
         return Order_trabajo::where('factura_id', $factura_id)
@@ -65,7 +64,6 @@ class ReporteController extends Controller
             ->orderBy('nro_ot')
             ->get();
     }
-
 
     public function procesoPdf(Request $request)
     {
@@ -99,8 +97,6 @@ class ReporteController extends Controller
             'fechaImpresion'
         ))->stream('ficha_proceso_OT_' . $ordenTrabajo->nro_ot . '.pdf');
     }
-
-
 
     public function generarProcesoPDF(Request $request)
     {
@@ -285,8 +281,6 @@ class ReporteController extends Controller
     }
 
     //compra
-
-
     public function reporteStockCompraPdf(Request $request)
     {
         $request->validate([
@@ -408,8 +402,6 @@ class ReporteController extends Controller
                     $totalSegundos += ($salida - $entrada);
                 }
             }
-
-
             $pagoTotal = 0;
 
             if ($user->horas_base > 0) {
@@ -418,7 +410,6 @@ class ReporteController extends Controller
                 $totalMinutos = $totalSegundos / 60;
                 $pagoTotal = $totalMinutos * $pagoMinuto;
             }
-
 
             $descuentos = Pago::where('user_id', $user->id)
                 ->whereIn('tipo_pago', ['adelanto', 'descuento'])
@@ -507,27 +498,42 @@ class ReporteController extends Controller
             $totalCantidad = 0;
             $total = 0;
 
+            $agrupado = [];
+
             foreach ($detalles as $d) {
 
-                $factura = Factura::find($d->factura_id);
+                $factura = Factura::with('cliente')->find($d->factura_id);
+
+                $facturaNum = $factura->numero_factura ?? $d->factura_id;
+                $cliente = ($factura && $factura->cliente) ? $factura->cliente->name : '—';
+                $ot = $d->order_trabajo_id;
+
                 $precio = ($factura && $factura->prioridad === 'FERIA') ? 0.30 : 0.50;
 
-                $subtotal = $d->cantidad * $precio;
+                $key = $facturaNum . '-' . $ot;
 
-                $filas[] = [
-                    'ot' => $d->order_trabajo_id,
-                    'factura' => $d->factura_id,
-                    'cantidad' => $d->cantidad,
-                    'precio' => $precio,
-                    'subtotal' => $subtotal
-                ];
+                if (!isset($agrupado[$key])) {
+                    $agrupado[$key] = [
+                        'factura' => $facturaNum,
+                        'cliente' => $cliente,
+                        'ot' => $ot,
+                        'cantidad' => 0,
+                        'precio' => $precio,
+                        'subtotal' => 0
+                    ];
+                }
+
+                $agrupado[$key]['cantidad'] += $d->cantidad;
+                $agrupado[$key]['subtotal'] += $d->cantidad * $precio;
 
                 $totalCantidad += $d->cantidad;
-                $total += $subtotal;
+                $total += $d->cantidad * $precio;
             }
 
+            $filas = array_values($agrupado);
+
             $reporte[] = [
-                'nombre' => $user->nombres . ' ' . $user->ap_paterno . ' ' . $user->ap_pmaterno,
+                'nombre' => $user->nombres . ' ' . $user->ap_paterno . ' ' . $user->ap_materno,
                 'filas' => $filas,
                 'total_cantidad' => $totalCantidad,
                 'total' => $total,
@@ -579,8 +585,6 @@ class ReporteController extends Controller
         $reporte = [];
 
         foreach ($usuarios as $user) {
-
-            // 🔥 DETALLES DE PRODUCCIÓN
             $detalles = SolicitudDetalleProceso::with(['factura', 'prenda'])
                 ->where('tipo_proceso', 'PLANCHADO')
                 ->where('usuario_creador_id', $user->id)
@@ -591,7 +595,6 @@ class ReporteController extends Controller
             if ($detalles->isEmpty())
                 continue;
 
-            // 🔥 PAGOS DEL USUARIO
             $pagos = Pago::where('user_id', $user->id)
                 ->whereBetween('fecha_inicio', [$inicio, $fin])
                 ->get();
@@ -600,7 +603,6 @@ class ReporteController extends Controller
             $descuentos = $pagos->where('tipo_pago', 'descuento')->sum('monto');
             $pagado = $pagos->where('tipo_pago', 'salario_produccion')->sum('monto');
 
-            // 🔥 DETALLE POR REGISTRO
             $detalle = [];
 
             foreach ($detalles as $d) {
@@ -614,8 +616,6 @@ class ReporteController extends Controller
                 $ot = $d->order_trabajo_id;
                 $cantidad = $d->cantidad;
 
-
-                // precio según categoría
                 $precio = ($categoria === 'PARA LA FERIA') ? 0.30 : 0.50;
 
                 $totalPrenda = $cantidad * $precio;

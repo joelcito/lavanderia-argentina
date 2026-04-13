@@ -63,8 +63,9 @@
                 <table border="1" width="100%" cellspacing="0" cellpadding="5">
                     <thead>
                         <tr>
-                            <th>OT</th>
                             <th>Factura</th>
+                            <th>OT</th>
+                            <th>Cliente</th>
                             <th>Cantidad de prendas</th>
                             <th>Precio</th>
                             <th>Subtotal</th>
@@ -73,8 +74,9 @@
                     <tbody>
                         @foreach($r['filas'] as $f)
                             <tr>
-                                <td>{{ $f['ot'] }}</td>
                                 <td>{{ $f['factura'] }}</td>
+                                <td>{{ $f['ot'] }}</td>
+                                <td>{{ $f['cliente'] }}</td>
                                 <td>{{ $f['cantidad'] }}</td>
                                 <td>Bs {{ number_format($f['precio'], 2) }}</td>
                                 <td>Bs {{ number_format($f['subtotal'], 2) }}</td>

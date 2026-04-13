@@ -19,7 +19,7 @@
             <!--begin::Card-->
             <div class="card">
                 <div class="card-body py-4">
-                     <!--begin::Details-->
+                    <!--begin::Details-->
                     <div class="d-flex mb-9">
                         <!--begin: Pic-->
                         <div class="flex-shrink-0 mr-7 mt-lg-0 mt-3">
@@ -27,7 +27,9 @@
                                 <div style="width: 200px; height: 200px;">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <img width="100%" height="100%" src="{{ asset('storage/imagenesClientes') }}/{{ $cliente->imagen }}" height="110" alt="image">
+                                            <img width="100%" height="100%"
+                                                src="{{ asset('storage/imagenesClientes') }}/{{ $cliente->imagen }}"
+                                                height="110" alt="image">
                                         </div>
                                     </div>
                                 </div>
@@ -41,7 +43,8 @@
                             <!--begin::Title-->
                             <div class="d-flex justify-content-between flex-wrap mt-1">
                                 <div class="d-flex mr-3">
-                                    <h2><span class="text-primary">CLIENTE: </span> {{ $cliente->nombres." ".$cliente->ap_paterno." ".$cliente->ap_materno }}</h2>
+                                    <h2><span class="text-primary">CLIENTE: </span>
+                                        {{ $cliente->nombres . " " . $cliente->ap_paterno . " " . $cliente->ap_materno }}</h2>
                                 </div>
                             </div>
 
@@ -135,12 +138,11 @@
                         </div>
                         <!--end::Info-->
                     </div>
-                    <!--end::Details-->
-                    <!--end::Details-->
+
                     <div class="separator separator-solid"></div>
-                    <!--begin::Items-->
-                    <div class="d-flex align-items-center flex-wrap mt-8">
-                        <!--begin::Item-->
+
+                    <!-- <div class="d-flex align-items-center flex-wrap mt-8">
+                     
                         <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                             <span class="mr-4">
                                 <i class="fa-solid fa-money-bill-1-wave" style="font-size: 30px; margin-right: 5px;"></i>
@@ -150,8 +152,7 @@
                                 <h5>{{ $factura->total }}</h5>
                             </div>
                         </div>
-                        <!--end::Item-->
-                        <!--begin::Item-->
+                       
                         <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                             <span>
                                 <i class="fas fa-barcode"  style="font-size: 30px; margin-right: 5px;"></i>
@@ -161,8 +162,7 @@
                                 <h5>{{ number_format($factura->pagos->sum('monto'), 2) }}</h5>
                             </div>
                         </div>
-                        <!--end::Item-->
-                        <!--begin::Item-->
+                       
                         <div class="d-flex align-items-center flex-lg-fill mr-5 mb-2">
                             <span class="mr-4">
                                 <i class="fas fa-democrat"  style="font-size: 30px; margin-right: 5px;"></i>
@@ -172,18 +172,18 @@
                                 <h5>{{ number_format(($factura->total - $factura->pagos->sum('monto')),2) }}</h5>
                             </div>
                         </div>
-                        <!--end::Item-->
-                    </div>
-                    <!--begin::Items-->
+                     
+                    </div> -->
+
                 </div>
             </div>
-            <!--end::Card-->
+
         </div>
-        <!--end::Content container-->
+
     </div>
-    <!--end::Content-->
+
 </div>
-<!--end::Content wrapper-->
+
 <hr>
 
 <div class="row">
@@ -198,17 +198,22 @@
                                 <!--begin::Item-->
                                 <div class="mb-5">
                                     <!--begin::Header-->
-                                    <div class="accordion-header py-3 d-flex" data-bs-toggle="collapse" data-bs-target="#kt_accordion_3_item_1">
+                                    <div class="accordion-header py-3 d-flex" data-bs-toggle="collapse"
+                                        data-bs-target="#kt_accordion_3_item_1">
                                         <span class="accordion-icon">
-                                            <i class="ki-duotone ki-plus-square fs-3 accordion-icon-off"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>
-                                            <i class="ki-duotone ki-minus-square fs-3 accordion-icon-on"><span class="path1"></span><span class="path2"></span></i>
+                                            <i class="ki-duotone ki-plus-square fs-3 accordion-icon-off"><span
+                                                    class="path1"></span><span class="path2"></span><span
+                                                    class="path3"></span></i>
+                                            <i class="ki-duotone ki-minus-square fs-3 accordion-icon-on"><span
+                                                    class="path1"></span><span class="path2"></span></i>
                                         </span>
                                         <h3 class="fs-4 fw-semibold mb-0 ms-4">REGISTRO DE ORDENES DE TRABAJO</h3>
                                     </div>
                                     <!--end::Header-->
 
                                     <!--begin::Body-->
-                                    <div id="kt_accordion_3_item_1" class="fs-6 collapse show ps-10" data-bs-parent="#kt_accordion_3">
+                                    <div id="kt_accordion_3_item_1" class="fs-6 collapse show ps-10"
+                                        data-bs-parent="#kt_accordion_3">
                                         <div id="tabla-orden-trabjo"></div>
                                     </div>
                                     <!--end::Body-->
@@ -242,50 +247,50 @@
 
         let filaTableLaser = 1;
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             ajaxListadoOrdenTrabajos();
         });
 
-        function ajaxListadoOrdenTrabajos(){
-            let datos = {factura:{{ $factura->id }}};
+        function ajaxListadoOrdenTrabajos() {
+            let datos = { factura:{{ $factura->id }}};
             $.ajax({
                 url: "{{ route('ordenTrabajo.ajaxListadoOrdenTrabajosCliente') }}",
                 method: "POST",
                 data: datos,
-                success: function(resultado) {
+                success: function (resultado) {
                     if (resultado.estado)
                         $('#tabla-orden-trabjo').html(resultado.data.listado)
                 }
             })
         }
 
-        function ajaxListadoOjales(){
-            let datos = {factura:{{ $factura->id }}};
+        function ajaxListadoOjales() {
+            let datos = { factura:{{ $factura->id }}};
             $.ajax({
                 url: "{{ route('ordenTrabajo.ajaxListadoOjales') }}",
                 method: "POST",
                 data: datos,
-                success: function(resultado) {
+                success: function (resultado) {
                     if (resultado.estado)
                         $('#tabla-ojales').html(resultado.data.listado)
                 }
             })
         }
 
-        function ajaxListadoLaser(){
-            let datos = {factura:{{ $factura->id }}};
+        function ajaxListadoLaser() {
+            let datos = { factura:{{ $factura->id }}};
             $.ajax({
                 url: "{{ route('ordenTrabajo.ajaxListadoLaser') }}",
                 method: "POST",
                 data: datos,
-                success: function(resultado) {
+                success: function (resultado) {
                     if (resultado.estado)
                         $('#tabla-lasers').html(resultado.data.listado)
                 }
             })
         }
 
-        function modalAgregarLaser(ordenTrabajo, nroOt, observacion, cantidad){
+        function modalAgregarLaser(ordenTrabajo, nroOt, observacion, cantidad) {
 
             $('#orden_trabajo_id').val(ordenTrabajo);
             $('#observacion_orden_trabajo').val(observacion);
@@ -294,108 +299,108 @@
             $('#modalAgregarLaser').modal('show');
         }
 
-        function agregarFilaLaser(){
+        function agregarFilaLaser() {
 
             filaTableLaser++;
 
             let nuevaFila = `
-                <tr>
-                    <td><input name="talla_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
-                    <td><input name="cantidad_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
-                    <td><input name="intensidad_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
-                    <td><input name="altura_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
-                    <td><input name="dpi_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
-                    <td><input name="pos_1_laser[${filaTableLaser}]" id="pos_1_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
-                    <td><input name="pos_2_laser[${filaTableLaser}]" id="pos_2_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
-                    <td><input name="pos_3_laser[${filaTableLaser}]" id="pos_3_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
-                    <td><input name="pos_4_laser[${filaTableLaser}]" id="pos_4_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
-                    <td><input name="prenda_x_mesa_laser[${filaTableLaser}]" id="prenda_x_mesa_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="1" type="text" style="width: 100%;"></td>
-                    <td><input name="tiempo_total_laser[${filaTableLaser}]" id="tiempo_total_laser_${filaTableLaser}" type="text" style="width: 100%;"></td>
-                    <td><input class="precioMinutosValor" name="precio_minuto_valor[${filaTableLaser}]" id="precio_minuto_valor_${filaTableLaser}" type="text" style="width: 100%" value="6" onchange="calculapreciominutototal(${filaTableLaser})"></td>
-                    <td><input type="text" style="width: 100%" name="valor_laser[${filaTableLaser}]" value="0" name="valor_laser_${filaTableLaser}" id="valor_laser_${filaTableLaser}"></td>
-                    <td>
-                        <button title="Duplicar Debajo"
-                            onclick="duplicarDebajo(${filaTableLaser})"
-                            class="btn btn-success btn-icon btn-sm btn-circle" type="button">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                        <button title="Duplicar Debajo"
-                            onclick="elimiarFila(${filaTableLaser})"
-                            class="btn btn-danger btn-icon btn-sm btn-circle" type="button">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
+                    <tr>
+                        <td><input name="talla_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                        <td><input name="cantidad_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                        <td><input name="intensidad_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                        <td><input name="altura_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                        <td><input name="dpi_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
+                        <td><input name="pos_1_laser[${filaTableLaser}]" id="pos_1_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
+                        <td><input name="pos_2_laser[${filaTableLaser}]" id="pos_2_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
+                        <td><input name="pos_3_laser[${filaTableLaser}]" id="pos_3_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
+                        <td><input name="pos_4_laser[${filaTableLaser}]" id="pos_4_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;"></td>
+                        <td><input name="prenda_x_mesa_laser[${filaTableLaser}]" id="prenda_x_mesa_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="1" type="text" style="width: 100%;"></td>
+                        <td><input name="tiempo_total_laser[${filaTableLaser}]" id="tiempo_total_laser_${filaTableLaser}" type="text" style="width: 100%;"></td>
+                        <td><input class="precioMinutosValor" name="precio_minuto_valor[${filaTableLaser}]" id="precio_minuto_valor_${filaTableLaser}" type="text" style="width: 100%" value="6" onchange="calculapreciominutototal(${filaTableLaser})"></td>
+                        <td><input type="text" style="width: 100%" name="valor_laser[${filaTableLaser}]" value="0" name="valor_laser_${filaTableLaser}" id="valor_laser_${filaTableLaser}"></td>
+                        <td>
+                            <button title="Duplicar Debajo"
+                                onclick="duplicarDebajo(${filaTableLaser})"
+                                class="btn btn-success btn-icon btn-sm btn-circle" type="button">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                            <button title="Duplicar Debajo"
+                                onclick="elimiarFila(${filaTableLaser})"
+                                class="btn btn-danger btn-icon btn-sm btn-circle" type="button">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
 
             $("#table_laser tbody").append(nuevaFila);
 
         }
 
-        function duplicarDebajo(fila){
+        function duplicarDebajo(fila) {
 
             filaTableLaser++;
             let filaOriginal = $("#table_laser tbody tr").eq(fila - 1);
 
-            let talla      = filaOriginal.find('input[name="talla_laser['+fila+']"]').val();
-            let cantidad   = filaOriginal.find('input[name="cantidad_laser['+fila+']"]').val();
-            let intensidad = filaOriginal.find('input[name="intensidad_laser['+fila+']"]').val();
-            let altura     = filaOriginal.find('input[name="altura_laser['+fila+']"]').val();
-            let dpi        = filaOriginal.find('input[name="dpi_laser['+fila+']"]').val();
-            let pos1       = filaOriginal.find('input[name="pos_1_laser['+fila+']"]').val();
-            let pos2       = filaOriginal.find('input[name="pos_2_laser['+fila+']"]').val();
-            let pos3       = filaOriginal.find('input[name="pos_3_laser['+fila+']"]').val();
-            let pos4       = filaOriginal.find('input[name="pos_4_laser['+fila+']"]').val();
-            let pxm        = filaOriginal.find('input[name="prenda_x_mesa_laser['+fila+']"]').val();
-            let tiempo     = filaOriginal.find('input[name="tiempo_total_laser['+fila+']"]').val();
+            let talla = filaOriginal.find('input[name="talla_laser[' + fila + ']"]').val();
+            let cantidad = filaOriginal.find('input[name="cantidad_laser[' + fila + ']"]').val();
+            let intensidad = filaOriginal.find('input[name="intensidad_laser[' + fila + ']"]').val();
+            let altura = filaOriginal.find('input[name="altura_laser[' + fila + ']"]').val();
+            let dpi = filaOriginal.find('input[name="dpi_laser[' + fila + ']"]').val();
+            let pos1 = filaOriginal.find('input[name="pos_1_laser[' + fila + ']"]').val();
+            let pos2 = filaOriginal.find('input[name="pos_2_laser[' + fila + ']"]').val();
+            let pos3 = filaOriginal.find('input[name="pos_3_laser[' + fila + ']"]').val();
+            let pos4 = filaOriginal.find('input[name="pos_4_laser[' + fila + ']"]').val();
+            let pxm = filaOriginal.find('input[name="prenda_x_mesa_laser[' + fila + ']"]').val();
+            let tiempo = filaOriginal.find('input[name="tiempo_total_laser[' + fila + ']"]').val();
 
             let nuevaFila = `
-                <tr>
-                    <td><input name="talla_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${talla}"></td>
-                    <td><input name="cantidad_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${cantidad}"></td>
-                    <td><input name="intensidad_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${intensidad}"></td>
-                    <td><input name="altura_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${altura}"></td>
-                    <td><input name="dpi_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${dpi}"></td>
-                    <td><input name="pos_1_laser[${filaTableLaser}]" id="pos_1_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;" value="${pos1}"></td>
-                    <td><input name="pos_2_laser[${filaTableLaser}]" id="pos_2_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;" value="${pos2}"></td>
-                    <td><input name="pos_3_laser[${filaTableLaser}]" id="pos_3_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;" value="${pos3}"></td>
-                    <td><input name="pos_4_laser[${filaTableLaser}]" id="pos_4_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;" value="${pos4}"></td>
-                    <td><input name="prenda_x_mesa_laser[${filaTableLaser}]" id="prenda_x_mesa_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" type="text" style="width: 100%;" value="${pxm}"></td>
-                    <td><input name="tiempo_total_laser[${filaTableLaser}]" id="tiempo_total_laser_${filaTableLaser}" type="text" style="width: 100%;" value="${tiempo}"></td>
-                    <td><input class="precioMinutosValor" name="precio_minuto_valor[${filaTableLaser}]" id="precio_minuto_valor_${filaTableLaser}" type="text" style="width: 100%" value="6" onchange="calculapreciominutototal(${filaTableLaser})"></td>
-                    <td><input type="text" style="width: 100%" name="valor_laser[${filaTableLaser}]" value="0" name="valor_laser_${filaTableLaser}" id="valor_laser_${filaTableLaser}"></td>
-                    <td>
-                        <button title="Duplicar Debajo"
-                            onclick="duplicarDebajo(${filaTableLaser})"
-                            class="btn btn-success btn-icon btn-sm btn-circle" type="button">
-                            <i class="fa fa-plus"></i>
-                        </button>
-                        <button title="Duplicar Debajo"
-                            onclick="elimiarFila(${filaTableLaser})"
-                            class="btn btn-danger btn-icon btn-sm btn-circle" type="button">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
+                    <tr>
+                        <td><input name="talla_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${talla}"></td>
+                        <td><input name="cantidad_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${cantidad}"></td>
+                        <td><input name="intensidad_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${intensidad}"></td>
+                        <td><input name="altura_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${altura}"></td>
+                        <td><input name="dpi_laser[${filaTableLaser}]" type="text" style="width: 100%;" value="${dpi}"></td>
+                        <td><input name="pos_1_laser[${filaTableLaser}]" id="pos_1_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;" value="${pos1}"></td>
+                        <td><input name="pos_2_laser[${filaTableLaser}]" id="pos_2_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;" value="${pos2}"></td>
+                        <td><input name="pos_3_laser[${filaTableLaser}]" id="pos_3_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;" value="${pos3}"></td>
+                        <td><input name="pos_4_laser[${filaTableLaser}]" id="pos_4_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" value="0" onclick="this.select()" type="text" style="width: 100%;" value="${pos4}"></td>
+                        <td><input name="prenda_x_mesa_laser[${filaTableLaser}]" id="prenda_x_mesa_laser_${filaTableLaser}" onkeyup="sumaTimepos(${filaTableLaser})" type="text" style="width: 100%;" value="${pxm}"></td>
+                        <td><input name="tiempo_total_laser[${filaTableLaser}]" id="tiempo_total_laser_${filaTableLaser}" type="text" style="width: 100%;" value="${tiempo}"></td>
+                        <td><input class="precioMinutosValor" name="precio_minuto_valor[${filaTableLaser}]" id="precio_minuto_valor_${filaTableLaser}" type="text" style="width: 100%" value="6" onchange="calculapreciominutototal(${filaTableLaser})"></td>
+                        <td><input type="text" style="width: 100%" name="valor_laser[${filaTableLaser}]" value="0" name="valor_laser_${filaTableLaser}" id="valor_laser_${filaTableLaser}"></td>
+                        <td>
+                            <button title="Duplicar Debajo"
+                                onclick="duplicarDebajo(${filaTableLaser})"
+                                class="btn btn-success btn-icon btn-sm btn-circle" type="button">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                            <button title="Duplicar Debajo"
+                                onclick="elimiarFila(${filaTableLaser})"
+                                class="btn btn-danger btn-icon btn-sm btn-circle" type="button">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
 
             filaOriginal.after(nuevaFila);
 
         }
 
-        function elimiarFila(fila){
+        function elimiarFila(fila) {
             let filaEliminar = $("#table_laser tbody tr").eq(fila - 1);
             filaEliminar.remove();
         }
 
-        function guardarLaser(){
+        function guardarLaser() {
             let datos = $('#formularioLaser').serializeArray();
             $.ajax({
                 url: "{{ route('ordenTrabajo.guardarLaser') }}",
                 method: "POST",
                 data: datos,
-                success: function(resultado) {
-                    if (resultado.estado){
+                success: function (resultado) {
+                    if (resultado.estado) {
                         // $('#tabla-orden-trabjo').html(resultado.data.listado)
                         Swal.fire(
                             'Exito',
@@ -408,13 +413,13 @@
             })
         }
 
-        function sumaTimepos(fila){
+        function sumaTimepos(fila) {
 
-            let timempo1 = $('#pos_1_laser_'+fila).val();
-            let timempo2 = $('#pos_2_laser_'+fila).val();
-            let timempo3 = $('#pos_3_laser_'+fila).val();
-            let timempo4 = $('#pos_4_laser_'+fila).val();
-            let cantidadMesa = $('#prenda_x_mesa_laser_'+fila).val()
+            let timempo1 = $('#pos_1_laser_' + fila).val();
+            let timempo2 = $('#pos_2_laser_' + fila).val();
+            let timempo3 = $('#pos_3_laser_' + fila).val();
+            let timempo4 = $('#pos_4_laser_' + fila).val();
+            let cantidadMesa = $('#prenda_x_mesa_laser_' + fila).val()
 
             let sumTotalTiempo = parseFloat(timempo1) + parseFloat(timempo2) + parseFloat(timempo3) + parseFloat(timempo4);
 
@@ -430,35 +435,35 @@
 
         }
 
-        function calcularPrecio(item){
-            let precio = $('#tiempo_total_laser_'+item).val();
-            let precioMinuto = $('#precio_minuto_valor_'+item).val();
+        function calcularPrecio(item) {
+            let precio = $('#tiempo_total_laser_' + item).val();
+            let precioMinuto = $('#precio_minuto_valor_' + item).val();
             let calculo = parseFloat(precio) * parseFloat(precioMinuto);
-            $('#valor_laser_'+item).val(calculo);
+            $('#valor_laser_' + item).val(calculo);
         }
 
-        function cambiarPrecioMinuto(){
+        function cambiarPrecioMinuto() {
 
             $('.precioMinutosValor').val($('#precio_minuto').val()).trigger('change');
 
         }
 
-        function calculapreciominutototal(dato){
-            let valor = $('#precio_minuto_valor_'+dato).val();
-            let totalMin = $('#tiempo_total_laser_'+dato).val();
+        function calculapreciominutototal(dato) {
+            let valor = $('#precio_minuto_valor_' + dato).val();
+            let totalMin = $('#tiempo_total_laser_' + dato).val();
 
-            $('#valor_laser_'+dato).val(parseFloat(valor) * parseFloat(totalMin));
+            $('#valor_laser_' + dato).val(parseFloat(valor) * parseFloat(totalMin));
         }
 
-        function ajaxFormularioEditarOrdenTrabajo(orden){
+        function ajaxFormularioEditarOrdenTrabajo(orden) {
 
             // let datos = $('#formularioLaser').serializeArray();
             $.ajax({
                 url: "{{ route('ordenTrabajo.ajaxFormularioEditarOrdenTrabajo') }}",
                 method: "POST",
-                data: {factura:{{ $factura->id }}},
-                success: function(resultado) {
-                    if (resultado.estado){
+                data: { factura:{{ $factura->id }}},
+                success: function (resultado) {
+                    if (resultado.estado) {
 
                         $('#formularioAjaxOrdenTrabajo').html(resultado.data.listado)
 
@@ -468,13 +473,13 @@
             })
         }
 
-        function ajaxNroOtFactura(){
+        function ajaxNroOtFactura() {
             $.ajax({
                 url: "{{ route('ordenTrabajo.ajaxNroOtFactura') }}",
                 method: "POST",
-                data: {factura:{{ $factura->id }}},
-                success: function(resultado) {
-                    if (resultado.estado){
+                data: { factura:{{ $factura->id }}},
+                success: function (resultado) {
+                    if (resultado.estado) {
                         let listado = resultado.data.listaOt
                         $('#numero_ot_select').empty().append('<option value="">Seleccione una OT</option>');
                         $.each(listado, function (i, element) {
@@ -491,7 +496,7 @@
             })
         }
 
-        function imprimirOrdenTrabajo(){
+        function imprimirOrdenTrabajo() {
             let select = $('#numero_ot_select').val();
 
             if (!select) {
@@ -512,7 +517,7 @@
             window.open(url, '_blank');
         }
 
-        function editarEstadoOrdenTrabajo(orden, estado){
+        function editarEstadoOrdenTrabajo(orden, estado) {
             console.log(orden);
 
             $('#numero_orden_trabajo_text').text(orden)
@@ -522,14 +527,14 @@
             $('#modalEdicionEstadoOrdenTrabajo').modal('show')
         }
 
-        function guardarEstadoOrdenTrabajo(){
+        function guardarEstadoOrdenTrabajo() {
             let datos = $('#formularioCambioEstadoOrdenTrabajo').serializeArray();
             $.ajax({
                 url: "{{ route('ordenTrabajo.guardarEstadoOrdenTrabajo') }}",
                 method: "POST",
                 data: datos,
-                success: function(resultado) {
-                    if (resultado.estado){
+                success: function (resultado) {
+                    if (resultado.estado) {
                         ajaxListadoOrdenTrabajos();
                         Swal.fire(
                             'Exito',
@@ -542,9 +547,9 @@
             })
         }
 
-        function agregarProducto(){
+        function agregarProducto() {
 
-            if($("#formularioNewOt")[0].checkValidity()){
+            if ($("#formularioNewOt")[0].checkValidity()) {
                 Swal.fire({
                     title: "Esta seguro de agregar un nuevo OT?",
                     text: "Ya no podras revertir eso!",
@@ -560,8 +565,8 @@
                             url: "{{ url('factura/agregarNuevoOrdenTrabajo') }}",
                             method: "POST",
                             data: datos,
-                            success: function(resultado) {
-                                if (resultado.estado){
+                            success: function (resultado) {
+                                if (resultado.estado) {
                                     ajaxListadoOrdenTrabajos();
                                     Swal.fire(
                                         'Exito',
@@ -576,7 +581,7 @@
                         })
                     }
                 });
-            }else{
+            } else {
                 $("#formularioNewOt")[0].reportValidity();
             }
         }
@@ -613,20 +618,20 @@
 
         }
 
-        function cambiarDato(tipo, ordenTrabajo, dato){
+        function cambiarDato(tipo, ordenTrabajo, dato) {
 
             $.ajax({
                 url: "{{ route('ordenTrabajo.cambiaDatoOrdenTrabajo') }}",
                 method: "POST",
                 data: {
-                    tipo:tipo,
-                    ordenTrabajo:ordenTrabajo,
-                    dato:dato.value
+                    tipo: tipo,
+                    ordenTrabajo: ordenTrabajo,
+                    dato: dato.value
                 },
-                success: function(resultado) {
-                    if (resultado.estado){
-                        $('#'+tipo+"_"+ordenTrabajo).show('toggle')
-                    }else{
+                success: function (resultado) {
+                    if (resultado.estado) {
+                        $('#' + tipo + "_" + ordenTrabajo).show('toggle')
+                    } else {
                         Swal.fire(
                             'Error',
                             'Ocurrio un error',
@@ -636,5 +641,5 @@
                 }
             })
         }
-   </script>
+    </script>
 @endsection

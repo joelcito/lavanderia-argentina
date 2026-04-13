@@ -13,6 +13,7 @@
                 <th>Ca. Tela</th>
                 <th>Peso</th>
                 <th>Nro. OT</th>
+                <th>Ultimo proceso</th>
                 <th>Estado</th>
                 {{-- <th>Actions</th> --}}
             </tr>
@@ -30,6 +31,9 @@
                     <td>{{ $ordenTrabajo->caracteristicaTela?->nombre }}</td>
                     <td>{{ $ordenTrabajo->preso }}</td>
                     <td>{{ $ordenTrabajo->nro_ot }}</td>
+                    <td><span class="badge badge-primary">
+                            {{ $ordenTrabajo->ultimo_proceso }}
+                        </span></td>
                     <td>
                         @if ($ordenTrabajo->estado == "RECEPCIONADO")
                             <span class="badge badge-info">{{ $ordenTrabajo->estado }}</span>
@@ -51,7 +55,7 @@
 </div>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#kt_table_roles').DataTable({
             lengthMenu: [10, 25, 50, 100], // Opciones de longitud de página
             dom: '<"dt-head row"<"col-md-6"l><"col-md-6"f>><"clear">t<"dt-footer row"<"col-md-5"i><"col-md-7"p>>', // Use dom for basic layout
