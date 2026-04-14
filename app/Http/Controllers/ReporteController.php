@@ -373,7 +373,7 @@ class ReporteController extends Controller
         $inicio = $request->fecha_inicio;
         $fin = $request->fecha_fin;
 
-        $usuarios = User::where('rol_id', 2);
+        $usuarios = User::where('rol_id', 2)->get();
         $reporte = [];
 
         foreach ($usuarios as $user) {
@@ -386,7 +386,7 @@ class ReporteController extends Controller
 
             $totalSegundos = 0;
 
-            foreach ($asistencias as $fecha => $registros) {
+            foreach ($asistencias as $registros) {
 
                 foreach ($registros as $a) {
 
@@ -406,25 +406,32 @@ class ReporteController extends Controller
 
             if ($user->horas_base > 0) {
                 $pagoHora = $user->pago_diario / $user->horas_base;
-                $pagoMinuto = $pagoHora / 60;
-                $totalMinutos = $totalSegundos / 60;
-                $pagoTotal = $totalMinutos * $pagoMinuto;
+                //  $pagoMinuto = $pagoHora / 60;
+                //  $totalMinutos = $totalSegundos / 60;
+                //  $pagoTotal = $totalMinutos * $pagoMinuto;
+                $pagoTotal = ($totalSegundos / 3600) * $pagoHora;
             }
 
-            $descuentos = Pago::where('user_id', $user->id)
-                ->whereIn('tipo_pago', ['adelanto', 'descuento'])
-                ->whereBetween('fecha', [$inicio, $fin])
-                ->sum('monto');
+            $pagos = Pago::where('user_id', $user->id)
+                ->where(function ($q) use ($inicio, $fin) {
+                    $q->whereBetween('fecha_inicio', [$inicio, $fin])
+                        ->orWhereBetween('fecha_fin', [$inicio, $fin])
+                        ->orWhere(function ($q2) use ($inicio, $fin) {
+                            $q2->where('fecha_inicio', '<=', $inicio)
+                                ->where('fecha_fin', '>=', $fin);
+                        });
+                })
+                ->get();
 
 
-            $totalFinal = $pagoTotal - $descuentos;
 
+            $adelantos = $pagos->where('tipo_pago', 'adelanto')->sum('monto');
+            $descuentos = $pagos->where('tipo_pago', 'descuento')->sum('monto');
+            $pagado = $pagos->where('tipo_pago', 'salario')->sum('monto');
 
-            $pagado = Pago::where('user_id', $user->id)
-                ->where('tipo_pago', 'salario')
-                ->whereBetween('fecha_inicio', [$inicio, $fin])
-                ->whereBetween('fecha_fin', [$inicio, $fin])
-                ->exists();
+            $totalFinal = $pagoTotal - $adelantos - $descuentos;
+
+            $estado = $pagado > 0 ? 'PAGADO' : 'PENDIENTE';
 
 
             $reporte[] = [
@@ -435,7 +442,7 @@ class ReporteController extends Controller
                 'monto_semana' => $pagoTotal,
                 'descuento' => $descuentos,
                 'total' => $totalFinal,
-                'estado' => $pagado ? 'PAGADO' : ''
+                'estado' => $estado ? 'PAGADO' : ''
             ];
         }
 
@@ -460,14 +467,14 @@ class ReporteController extends Controller
         $userId = $request->user_id;
         $sucursalId = $request->sucursal_id;
 
-        $usuarios = User::where('rol_id', 6); // 🔥 SIN get()
+        $usuarios = User::where('rol_id', 6);
 
-        if ($userId) {
-            $usuarios->where('id', $userId);
+        if ($request->user_id) {
+            $usuarios->where('id', $request->user_id);
         }
 
-        if ($sucursalId) {
-            $usuarios->where('sucursal_id', $sucursalId);
+        if ($request->sucursal_id) {
+            $usuarios->where('sucursal_id', $request->sucursal_id);
         }
 
         $usuarios = $usuarios->get();
@@ -485,7 +492,14 @@ class ReporteController extends Controller
 
 
             $pagos = Pago::where('user_id', $user->id)
-                ->whereBetween('fecha_inicio', [$inicio, $fin])
+                ->where(function ($q) use ($request) {
+                    $q->whereBetween('fecha_inicio', [$request->fecha_inicio, $request->fecha_fin])
+                        ->orWhereBetween('fecha_fin', [$request->fecha_inicio, $request->fecha_fin])
+                        ->orWhere(function ($q2) use ($request) {
+                            $q2->where('fecha_inicio', '<=', $request->fecha_inicio)
+                                ->where('fecha_fin', '>=', $request->fecha_fin);
+                        });
+                })
                 ->get();
 
             $adelantos = $pagos->where('tipo_pago', 'adelanto')->sum('monto');
@@ -508,7 +522,7 @@ class ReporteController extends Controller
                 $cliente = ($factura && $factura->cliente) ? $factura->cliente->name : '—';
                 $ot = $d->order_trabajo_id;
 
-                $precio = ($factura && $factura->prioridad === 'FERIA') ? 0.30 : 0.50;
+                $precio = ($factura && $factura->prioridad === 'PARA LA FERIA') ? 0.30 : 0.50;
 
                 $key = $facturaNum . '-' . $ot;
 
@@ -530,11 +544,11 @@ class ReporteController extends Controller
                 $total += $d->cantidad * $precio;
             }
 
-            $filas = array_values($agrupado);
+            //$filas = array_values($agrupado);
 
             $reporte[] = [
                 'nombre' => $user->nombres . ' ' . $user->ap_paterno . ' ' . $user->ap_materno,
-                'filas' => $filas,
+                'filas' => array_values($agrupado),
                 'total_cantidad' => $totalCantidad,
                 'total' => $total,
                 'adelantos' => $adelantos,
@@ -588,15 +602,15 @@ class ReporteController extends Controller
             $detalles = SolicitudDetalleProceso::with(['factura', 'prenda'])
                 ->where('tipo_proceso', 'PLANCHADO')
                 ->where('usuario_creador_id', $user->id)
-                ->whereDate('created_at', '>=', $request->fecha_inicio)
-                ->whereDate('created_at', '<=', $request->fecha_fin)
+                ->whereBetween('created_at', [$inicio, $fin])
                 ->get();
 
             if ($detalles->isEmpty())
                 continue;
 
             $pagos = Pago::where('user_id', $user->id)
-                ->whereBetween('fecha_inicio', [$inicio, $fin])
+                ->whereDate('fecha_inicio', '>=', $request->fecha_inicio)
+                ->whereDate('fecha_fin', '<=', $request->fecha_fin)
                 ->get();
 
             $adelantos = $pagos->where('tipo_pago', 'adelanto')->sum('monto');
@@ -609,14 +623,16 @@ class ReporteController extends Controller
 
                 $factura = $d->factura;
 
-                $facturaNumero = $factura->id ?? '-';
+                $facturaNumero = $factura->numero_factura ?? $factura->id ?? '-';
                 $categoria = $factura->prioridad ?? 'SIN CATEGORIA';
-                $prenda = $d->prenda->nombre ?? 'SIN PRENDA';
+
+                $prendaObj = $d->prenda;
+
+                $prenda = $prendaObj->nombre ?? 'SIN PRENDA';
+                $precio = $prendaObj->precio_planchado ?? 0;
 
                 $ot = $d->order_trabajo_id;
                 $cantidad = $d->cantidad;
-
-                $precio = ($categoria === 'PARA LA FERIA') ? 0.30 : 0.50;
 
                 $totalPrenda = $cantidad * $precio;
 
@@ -640,7 +656,8 @@ class ReporteController extends Controller
                 'adelantos' => $adelantos,
                 'descuentos' => $descuentos,
                 'pagado' => $pagado,
-                'total_final' => $totalProduccion - $adelantos - $descuentos
+                'total_final' => $totalProduccion - $adelantos - $descuentos,
+                'estado' => $pagado > 0 ? 'PAGADO' : 'PENDIENTE'
             ];
         }
 

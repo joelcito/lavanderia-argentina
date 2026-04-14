@@ -106,20 +106,29 @@ class ControlPersonalController extends Controller
             $totalMinutos = $totalSegundos / 60;
             $pagoTotal = $totalMinutos * $pagoMinuto;
         }
+
+        $rangoFechas = function ($q) use ($inicio, $fin) {
+            $q->whereBetween('fecha_inicio', [$inicio, $fin])
+                ->orWhereBetween('fecha_fin', [$inicio, $fin])
+                ->orWhere(function ($q2) use ($inicio, $fin) {
+                    $q2->where('fecha_inicio', '<=', $inicio)
+                        ->where('fecha_fin', '>=', $fin);
+                });
+        };
+
+
+
         $adelantos = Pago::where('user_id', $user_id)
             ->where('tipo_pago', 'adelanto')
-            ->whereDate('fecha_inicio', '>=', $inicio)
-            ->whereDate('fecha_fin', '<=', $fin)
+            ->where($rangoFechas)
             ->sum('monto');
         $descuentos = Pago::where('user_id', $user_id)
             ->where('tipo_pago', 'descuento')
-            ->whereDate('fecha_inicio', '>=', $inicio)
-            ->whereDate('fecha_fin', '<=', $fin)
+            ->where($rangoFechas)
             ->sum('monto');
         $ajustes = Pago::where('user_id', $user_id)
             ->whereIn('tipo_pago', ['adelanto', 'descuento'])
-            ->whereDate('fecha_inicio', '>=', $inicio)
-            ->whereDate('fecha_fin', '<=', $fin)
+            ->where($rangoFechas)
             ->orderBy('fecha', 'desc')
             ->get(['tipo_pago', 'monto', 'descripcion', 'fecha']);
         $pagoRealizado = Pago::where('user_id', $user_id)

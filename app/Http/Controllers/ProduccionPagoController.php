@@ -45,7 +45,7 @@ class ProduccionPagoController extends Controller
         foreach ($detalles as $d) {
 
             $cantidad = $d->cantidad;
-
+            $totalPrendas += $cantidad;
             if (!empty($d->factura_id)) {
 
                 $factura = Factura::with(['cliente'])->find($d->factura_id);
@@ -54,7 +54,7 @@ class ProduccionPagoController extends Controller
 
                     $facturaId = $factura->id;
 
-                    // 🔥 crear estructura si no existe
+
                     if (!isset($facturasDetalle[$facturaId])) {
 
                         $facturasDetalle[$facturaId] = [
@@ -67,7 +67,7 @@ class ProduccionPagoController extends Controller
 
                     $facturasDetalle[$facturaId]['prendas'] += $cantidad;
 
-                    // 🔥 agregar OT
+
                     if (!empty($d->order_trabajo_id)) {
 
                         $ot = Order_trabajo::find($d->order_trabajo_id);
@@ -79,10 +79,6 @@ class ProduccionPagoController extends Controller
                 }
             }
 
-            // 🔥 TOTAL GENERAL (lo mantienes)
-            $totalPrendas += $cantidad;
-
-            // 🔥 cálculo (igual que ya tienes)
             if ($tipo === 'focalizador') {
                 $factura = Factura::find($d->factura_id);
                 $precio = ($factura && $factura->prioridad === 'PARA LA FERIA') ? 0.30 : 0.50;
@@ -96,37 +92,56 @@ class ProduccionPagoController extends Controller
             }
         }
 
-        // 🔥 limpiar duplicados de OTs
+
         foreach ($facturasDetalle as &$f) {
             $f['ots'] = array_values(array_unique($f['ots']));
         }
 
-        // 🔥 convertir a array simple
+
         $facturasDetalle = array_values($facturasDetalle);
 
         $facturas = array_values(array_unique($facturas));
         $ots = array_values(array_unique($ots));
+
+        $rangoFechas = function ($q) use ($inicio, $fin) {
+            $q->whereBetween('fecha_inicio', [$inicio, $fin])
+                ->orWhereBetween('fecha_fin', [$inicio, $fin])
+                ->orWhere(function ($q2) use ($inicio, $fin) {
+                    $q2->where('fecha_inicio', '<=', $inicio)
+                        ->where('fecha_fin', '>=', $fin);
+                });
+        };
+
+
+
         // ADELANTOS
         $adelantos = Pago::where('user_id', $userId)
             ->where('tipo_pago', 'adelanto')
-            ->whereBetween('created_at', [$inicio . ' 00:00:00', $fin . ' 23:59:59'])
+            ->where($rangoFechas)
             ->sum(DB::raw('ABS(monto)'));
 
         // DESCUENTOS
         $descuentos = Pago::where('user_id', $userId)
             ->where('tipo_pago', 'descuento')
-            ->whereBetween('created_at', [$inicio . ' 00:00:00', $fin . ' 23:59:59'])
+            ->where($rangoFechas)
             ->sum(DB::raw('ABS(monto)'));
 
         $ajustes = Pago::where('user_id', $userId)
             ->whereIn('tipo_pago', ['adelanto', 'descuento'])
-            ->whereBetween('created_at', [$inicio . ' 00:00:00', $fin . ' 23:59:59'])
+            ->where($rangoFechas)
             ->orderBy('fecha', 'desc')
             ->get(['tipo_pago', 'monto', 'descripcion', 'fecha']);
 
         $pagoRealizado = Pago::where('user_id', $userId)
             ->where('tipo_pago', 'salario_produccion')
-            ->whereBetween('created_at', [$inicio . ' 00:00:00', $fin . ' 23:59:59'])
+            ->where(function ($q) use ($inicio, $fin) {
+                $q->whereBetween('fecha_inicio', [$inicio, $fin])
+                    ->orWhereBetween('fecha_fin', [$inicio, $fin])
+                    ->orWhere(function ($q2) use ($inicio, $fin) {
+                        $q2->where('fecha_inicio', '<=', $inicio)
+                            ->where('fecha_fin', '>=', $fin);
+                    });
+            })
             ->first();
 
 
@@ -155,7 +170,7 @@ class ProduccionPagoController extends Controller
             'pago_realizado' => $pagoRealizado ? true : false,
             'pago_info' => $pagoRealizado,
 
-            'facturas_detalle' => $facturasDetalle // 🔥 NUEVO
+            'facturas_detalle' => $facturasDetalle
         ]);
     }
 
@@ -168,10 +183,8 @@ class ProduccionPagoController extends Controller
             'tipo_pago' => 'required|string',
             'fecha_inicio' => 'required|date',
             'fecha_fin' => 'required|date',
+
         ]);
-
-
-
 
         if ($request->tipo_pago == 'salario_produccion' && $request->monto <= 0) {
             return response()->json([
