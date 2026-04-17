@@ -327,7 +327,7 @@ class FacturaController extends Controller
             $orden_trabajoIds = Order_trabajo::where('factura_id', $factura->id)->pluck('id')->toArray();
 
             //ELIMINAMOS LOS MOVIMIENTOS
-            Movimiento::whereIn('orden_trabajo_id', $orden_trabajoIds)->delete();
+            Movimiento::whereIn('movimiento_id', $orden_trabajoIds)->delete();
 
             // PARA ELIMINAR LOS ORDENEES DE TRABAJO
             Order_trabajo::where('factura_id', $factura->id)->delete();
