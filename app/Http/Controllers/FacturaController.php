@@ -195,7 +195,7 @@ class FacturaController extends Controller
                 'facturas.numero_factura',
                 'facturas.usuario_creador_id',
                 'facturas.sucursal_id',
-                'facturas.prioridad',
+                //'facturas.prioridad',
                 'facturas.descuento_adicional',
                 'users.cedula',
                 'users.nombres',

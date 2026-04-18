@@ -72,7 +72,7 @@
                     <td>{{ $d['factura'] }}</td>
                     <td>{{ $d['ot'] }}</td>
                     <td>{{ $d['prenda'] }}</td>
-                    <td>{{ $d['categoria'] }}</td>
+                    <td style="white-space: pre-line;">{{ $d['categoria'] }}</td>
                     <td>{{ $d['cantidad'] }}</td>
                     <td>{{ number_format($d['precio'], 2) }}</td>
                     <td>{{ number_format($d['total'], 2) }}</td>

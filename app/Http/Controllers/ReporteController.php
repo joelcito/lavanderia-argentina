@@ -482,7 +482,17 @@ class ReporteController extends Controller
 
         foreach ($usuarios as $user) {
 
-            $detalles = SolicitudDetalleProceso::where('tipo_proceso', 'FOCALIZADO')
+            $detalles = SolicitudDetalleProceso::with([
+                'ordenTrabajo.prenda',
+                'ordenTrabajo.tela',
+                'ordenTrabajo.prelavado',
+                'ordenTrabajo.focalizado',
+                'ordenTrabajo.nevado',
+                'ordenTrabajo.tipoTela',
+                'ordenTrabajo.colorTela',
+                'ordenTrabajo.caracteristicasTelas'
+            ])
+                ->where('tipo_proceso', 'FOCALIZADO')
                 ->whereBetween('created_at', [$inicio, $fin])
                 ->where('usuario_creador_id', $user->id)
                 ->get();
@@ -522,6 +532,23 @@ class ReporteController extends Controller
                 $cliente = ($factura && $factura->cliente) ? $factura->cliente->name : '—';
                 $ot = $d->order_trabajo_id;
 
+                $orden = $d->ordenTrabajo;
+                $categoria = $orden
+                    ? implode(' | ', array_filter([
+                        optional($orden)->tela?->nombre ? 'Tela: ' . $orden->tela->nombre : null,
+                        optional($orden)->prelavado?->nombre ? 'Prelavado: ' . $orden->prelavado->nombre : null,
+                        optional($orden)->nevado?->nombre ? 'Nevado: ' . $orden->nevado->nombre : null,
+                        optional($orden)->focalizado?->nombre ? 'Focalizado:' . $orden->focalizado->nombre : null,
+                        optional($orden)->tipoTela?->nombre ? 'Tipo Tela: ' . $orden->tipoTela->nombre : null,
+                        optional($orden)->colorTela?->nombre ? 'Color Tela: ' . $orden->colorTela->nombre : null,
+                        optional($orden)->caracteristicasTelas?->nombre ? 'Característica: ' . $orden->caracteristicasTelas->nombre : null
+
+                    ]))
+                    : 'SIN ORDEN';
+
+
+
+
                 $precio = ($factura && $factura->prioridad === 'PARA LA FERIA') ? 0.30 : 0.50;
 
                 $key = $facturaNum . '-' . $ot;
@@ -531,6 +558,7 @@ class ReporteController extends Controller
                         'factura' => $facturaNum,
                         'cliente' => $cliente,
                         'ot' => $ot,
+                        'categoria' => $categoria,
                         'cantidad' => 0,
                         'precio' => $precio,
                         'subtotal' => 0
@@ -599,7 +627,18 @@ class ReporteController extends Controller
         $reporte = [];
 
         foreach ($usuarios as $user) {
-            $detalles = SolicitudDetalleProceso::with(['factura', 'prenda'])
+            $detalles = SolicitudDetalleProceso::with([
+                'factura',
+                'prenda',
+                'ordenTrabajo.prenda',
+                'ordenTrabajo.prelavado',
+                'ordenTrabajo.focalizado',
+                'ordenTrabajo.nevado',
+                'ordenTrabajo.tipoTela',
+                'ordenTrabajo.colorTela',
+
+                'ordenTrabajo.caracteristicasTelas'
+            ])
                 ->where('tipo_proceso', 'PLANCHADO')
                 ->where('usuario_creador_id', $user->id)
                 ->whereBetween('created_at', [$inicio, $fin])
@@ -624,7 +663,23 @@ class ReporteController extends Controller
                 $factura = $d->factura;
 
                 $facturaNumero = $factura->numero_factura ?? $factura->id ?? '-';
-                $categoria = $factura->prioridad ?? 'SIN CATEGORIA';
+
+                $orden = $d->ordenTrabajo;
+                // $categoria = $orden && $orden->caracteristicasTelas
+                //     ? $orden->caracteristicasTelas->nombre
+                //     : 'SIN CATEGORIA';
+                $categoria = $orden
+                    ? implode(' | ', array_filter([
+                        optional($orden)->tela?->nombre ? 'Tela: ' . $orden->tela->nombre : null,
+                        optional($orden)->prelavado?->nombre ? 'Prelavado: ' . $orden->prelavado->nombre : null,
+                        optional($orden)->nevado?->nombre ? 'Nevado: ' . $orden->nevado->nombre : null,
+                        optional($orden)->focalizado?->nombre ? 'Focalizado:' . $orden->focalizado->nombre : null,
+                        optional($orden)->tipoTela?->nombre ? 'Tipo Tela: ' . $orden->tipoTela->nombre : null,
+                        optional($orden)->colorTela?->nombre ? 'Color Tela: ' . $orden->colorTela->nombre : null,
+                        optional($orden)->caracteristicasTelas?->nombre ? 'Característica: ' . $orden->caracteristicasTelas->nombre : null
+
+                    ]))
+                    : 'SIN ORDEN';
 
                 $prendaObj = $d->prenda;
 

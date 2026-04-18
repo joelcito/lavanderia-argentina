@@ -92,5 +92,10 @@ class Order_trabajo extends Model
         return $this->belongsTo('App\Models\Order_trabajo', 'order_trabajos_id');
     }
 
+    public function caracteristicasTelas()
+    {
+        return $this->belongsTo(Caracteristica::class, 'caracteristica_tela_id');
+    }
+
 }
 

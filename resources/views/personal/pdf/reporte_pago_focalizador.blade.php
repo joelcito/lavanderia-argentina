@@ -66,6 +66,7 @@
                             <th>Factura</th>
                             <th>OT</th>
                             <th>Cliente</th>
+                            <th>Caracteristicas</th>
                             <th>Cantidad de prendas</th>
                             <th>Precio</th>
                             <th>Subtotal</th>
@@ -77,6 +78,7 @@
                                 <td>{{ $f['factura'] }}</td>
                                 <td>{{ $f['ot'] }}</td>
                                 <td>{{ $f['cliente'] }}</td>
+                                <td style="white-space: pre-line;">{{ $f['categoria'] }}</td>
                                 <td>{{ $f['cantidad'] }}</td>
                                 <td>Bs {{ number_format($f['precio'], 2) }}</td>
                                 <td>Bs {{ number_format($f['subtotal'], 2) }}</td>
