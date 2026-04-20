@@ -161,6 +161,12 @@
                         Cant: ${ot.cantidad}
                         ${badge}
                     </label>
+
+                    <input type="text"
+        class="form-control mt-2"
+        id="entregado_${ot.id}"
+        placeholder="Entregado a..."
+        ${disabled}>
                 </div>
                 `;
                 });
@@ -191,9 +197,28 @@
             return;
         }
 
+        let data = [];
+
+        for (let i = 0; i < otsSeleccionadas.length; i++) {
+
+            let id = otsSeleccionadas[i];
+            let nombre = $(`#entregado_${id}`).val();
+
+            if (!nombre) {
+                Swal.fire('Error', `Ingrese quien recibe la OT ${id}`, 'error');
+                return;
+            }
+
+            data.push({
+                id: id,
+                entregado_a: nombre
+            });
+        }
+
         $.post("{{ route('entregas.confirmarEntrega') }}", {
             _token: "{{ csrf_token() }}",
-            ots: otsSeleccionadas
+            //ots: otsSeleccionadas
+            data: data
         }, function (res) {
 
             if (res.estado) {

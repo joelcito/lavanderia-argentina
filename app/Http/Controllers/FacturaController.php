@@ -452,106 +452,122 @@ class FacturaController extends Controller
 
     }
 
+
     public function ajaxListadoFacturasCliente(Request $request)
     {
-        if ($request->ajax()) {
-
-            $usuario = Auth::user();
-            $usuario_id = $usuario->id;
-
-            $query = Factura::select(
-                'facturas.estado',
-                'facturas.nit',
-                'facturas.id',
-                'facturas.fecha',
-                'facturas.total',
-                'facturas.numero_factura',
-                'facturas.usuario_creador_id',
-                'facturas.sucursal_id',
-                'facturas.prioridad',
-                'users.cedula',
-                'users.nombres',
-                'users.ap_paterno',
-                'users.ap_materno',
-            )
-                ->join('users', 'users.id', '=', 'facturas.usuario_cliente_id')
-                ->where('facturas.usuario_cliente_id', $usuario_id);
-
-
-            if ($request->filled('buscar_nro_factura')) {
-                $query->where('facturas.numero_factura', $request->buscar_nro_factura);
-            }
-
-            if ($request->filled('buscar_fecha_inicio') && $request->filled('buscar_fecha_fin')) {
-                $query->whereBetween('facturas.fecha', [
-                    $request->buscar_fecha_inicio . " 00:00:00",
-                    $request->buscar_fecha_fin . " 23:59:59"
-                ]);
-            }
-
-
-            $facturas = $query->orderBy('facturas.id', 'desc')->limit(100)->get();
-
-
-            foreach ($facturas as $fac) {
-
-                $fac->estado_factura = $fac->estado ?? 'VIGENTE';
-                $fac->ultimo_proceso = 'SIN PROCESO';
-                $fac->estado_ultimo_proceso = 'SIN PROCESO';
-                $fac->numero_ots = 0;
-
-                $solicitudes = Solicitud::get()->filter(function ($s) use ($fac) {
-
-                    if (!$s->ordenes_trabajo)
-                        return false;
-
-                    foreach ($s->ordenes_trabajo as $ot) {
-                        if (isset($ot['nro_factura']) && $ot['nro_factura'] == $fac->id) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                });
-
-                if ($solicitudes->count()) {
-
-                    $solicitudesIds = $solicitudes->pluck('id');
-
-                    $proceso = Proceso::with('tipoProceso')
-                        ->whereIn('solicitud_id', $solicitudesIds)
-                        ->orderByDesc('created_at')
-                        ->first();
-
-                    if ($proceso) {
-                        $fac->ultimo_proceso = $proceso->tipoProceso->nombre ?? 'SIN NOMBRE';
-                        $fac->estado_ultimo_proceso = $proceso->estado;
-                    }
-
-                    $totalOTs = 0;
-
-                    foreach ($solicitudes as $s) {
-                        foreach ($s->ordenes_trabajo as $ot) {
-                            if ($ot['nro_factura'] == $fac->id) {
-                                $totalOTs += count($ot['ots']);
-                            }
-                        }
-                    }
-
-                    $fac->numero_ots = $totalOTs;
-                }
-            }
-
-            $valores = [
-                'listado' => view('factura.ajaxListadoFacturasCliente', compact('facturas'))->render()
-            ];
-
-            return Respuesta::success($valores, "Datos obtenidos correctamente");
-
-        } else {
+        if (!$request->ajax()) {
             return Respuesta::error(null, "No existe");
         }
+
+        $usuario = Auth::user();
+        $usuario_id = $usuario->id;
+
+        $query = Factura::select(
+            'facturas.estado',
+            'facturas.nit',
+            'facturas.id',
+            'facturas.fecha',
+            'facturas.total',
+            'facturas.numero_factura',
+            'facturas.usuario_creador_id',
+            'facturas.sucursal_id',
+            'facturas.prioridad',
+            'users.cedula',
+            'users.nombres',
+            'users.ap_paterno',
+            'users.ap_materno',
+        )
+            ->join('users', 'users.id', '=', 'facturas.usuario_cliente_id')
+            ->where('facturas.usuario_cliente_id', $usuario_id);
+
+        // 🔎 Filtros
+        if ($request->filled('buscar_nro_factura')) {
+            $query->where('facturas.numero_factura', $request->buscar_nro_factura);
+        }
+
+        if ($request->filled('buscar_fecha_inicio') && $request->filled('buscar_fecha_fin')) {
+            $query->whereBetween('facturas.fecha', [
+                $request->buscar_fecha_inicio . " 00:00:00",
+                $request->buscar_fecha_fin . " 23:59:59"
+            ]);
+        }
+
+        $facturas = $query->with([
+            'ordenTrabajos.prelavado',
+            'ordenTrabajos.nevado',
+            'ordenTrabajos.focalizado',
+            'ordenTrabajos.tipoTela',
+            'ordenTrabajos.colorTela'
+        ])
+            ->orderBy('facturas.id', 'desc')
+            ->limit(100)
+            ->get();
+
+        foreach ($facturas as $fac) {
+
+            $fac->estado_factura = $fac->estado;
+
+            $fac->ultimo_proceso = 'SIN PROCESO';
+            $fac->estado_ultimo_proceso = 'SIN PROCESO';
+            $fac->numero_ots = 0;
+            $fac->detalle_ot = [];
+
+            if ($fac->ordenTrabajos && $fac->ordenTrabajos->count()) {
+
+
+                $fac->numero_ots = $fac->ordenTrabajos->count();
+
+
+                $fac->detalle_ot = $fac->ordenTrabajos->map(function ($orden) {
+                    return implode(' | ', array_filter([
+                        optional($orden->prelavado)->nombre ? 'Lavado: ' . $orden->prelavado->nombre : null,
+                        optional($orden->nevado)->nombre ? 'Nevado: ' . $orden->nevado->nombre : null,
+                        optional($orden->focalizado)->nombre ? 'Focalizado: ' . $orden->focalizado->nombre : null,
+                        optional($orden->tipoTela)->nombre ? 'Tipo Tela: ' . $orden->tipoTela->nombre : null,
+                        optional($orden->colorTela)->nombre ? 'Color: ' . $orden->colorTela->nombre : null,
+                    ]));
+                })
+                    ->filter()
+                    ->values()
+                    ->toArray();
+            }
+
+
+            $solicitudes = Solicitud::get()->filter(function ($s) use ($fac) {
+
+                if (!$s->ordenes_trabajo)
+                    return false;
+
+                foreach ($s->ordenes_trabajo as $ot) {
+                    if (isset($ot['nro_factura']) && $ot['nro_factura'] == $fac->id) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+
+            if ($solicitudes->count()) {
+
+                $solicitudesIds = $solicitudes->pluck('id');
+
+                $proceso = Proceso::with('tipoProceso')
+                    ->whereIn('solicitud_id', $solicitudesIds)
+                    ->orderByDesc('created_at')
+                    ->first();
+
+                if ($proceso) {
+                    $fac->ultimo_proceso = $proceso->tipoProceso->nombre ?? 'SIN NOMBRE';
+                    $fac->estado_ultimo_proceso = $proceso->estado ?? 'SIN PROCESO';
+                }
+            }
+        }
+
+        return Respuesta::success([
+            'listado' => view('factura.ajaxListadoFacturasCliente', compact('facturas'))->render()
+        ], "Datos obtenidos correctamente");
     }
+
+
 
     public function detalleCliente(Request $request, $factura_id)
     {

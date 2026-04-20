@@ -2126,27 +2126,33 @@ class ProcesosController extends Controller
 
     public function confirmarEntrega(Request $request)
     {
-        $ots = $request->ots;
+        //$ots = $request->ots;
+        //$entregado_a = $request->entregado_a;
 
-        if (!is_array($ots)) {
+        $data = $request->data;
+
+        if (!is_array($data)) {
             return response()->json([
                 'estado' => false,
                 'mensaje' => 'Datos inválidos'
             ]);
         }
 
-        foreach ($ots as $ot_id) {
 
-            $ot = Order_trabajo::find($ot_id);
+        foreach ($data as $item) {
+
+            $ot = Order_trabajo::find($item['id']);
 
             if ($ot && $ot->estado != 'ENTREGADO') {
                 $ot->estado = 'ENTREGADO';
+                $ot->fecha_entrega = now();
+                $ot->entregado_a = $item['entregado_a'];
                 $ot->save();
             }
 
 
-            Proceso::whereHas('solicitud', function ($q) use ($ot_id) {
-                $q->whereRaw("JSON_SEARCH(ordenes_trabajo, 'one', ?) IS NOT NULL", [$ot_id]);
+            Proceso::whereHas('solicitud', function ($q) use ($item) {
+                $q->whereRaw("JSON_SEARCH(ordenes_trabajo, 'one', ?) IS NOT NULL", [$item['id']]);
             })->update([
                         'estado' => 'ENTREGADO'
                     ]);
