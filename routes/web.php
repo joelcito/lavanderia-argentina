@@ -306,6 +306,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/stockCompra', [ReporteController::class, 'formularioStockCompra'])->name('reporte.stockCompra.formulario');
         Route::post('/stock-compra/pdf', [ReporteController::class, 'reporteStockCompraPdf'])->name('reporte.stockCompra.pdf');
 
+        Route::post('/estructuraCostos/pdf', [ReporteController::class, 'reporteEstructuraCostosPdf'])->name('reporte.estructuraCostos.pdf');
+        Route::get('/costos', [ReporteController::class, 'formularioCostos'])->name('reporte.costos.formulario');
 
         Route::get('/prueba-ot', function () {
             $facturas = App\Models\Factura::all();

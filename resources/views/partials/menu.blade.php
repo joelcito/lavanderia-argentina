@@ -241,16 +241,16 @@
 
                             <!-- @php
 
-                                                        $userRol = strtolower(auth()->user()->rol); // minúscula para comparar
-                                                    @endphp -->
+                                                                $userRol = strtolower(auth()->user()->rol); // minúscula para comparar
+                                                            @endphp -->
 
                             <!-- @if(in_array($userRol, ['Planchador', 'Focalizador'])) -->
                             <div class="menu-item">
                                 <!-- <a class="menu-link {{ Route::currentRouteName() == 'order-trabajo.rol' ? 'active' : '' }}"
-                                                            href="{{ route('order-trabajo.rol') }}">
-                                                            <span class="menu-bullet">
-                                                                <span class="bullet bullet-dot"></span>
-                                                            </span> -->
+                                                                    href="{{ route('order-trabajo.rol') }}">
+                                                                    <span class="menu-bullet">
+                                                                        <span class="bullet bullet-dot"></span>
+                                                                    </span> -->
                                 <span class="menu-title text-white">
                                     Planchador/Focalizador
                                 </span>
@@ -362,22 +362,32 @@
                             </div> --}}
 
                             <!-- NUEVO: Stock Histórico -->
-                            <!-- <div class="menu-item">
-                                        <a class="menu-link" href="{{ route('reporte.stock.formulario') }}">
-                                            <span class="menu-bullet">
-                                                <span class="bullet bullet-dot"></span>
-                                            </span>
-                                            <span class="menu-title text-white">Stock Histórico</span>
-                                        </a>
-                                    </div> -->
                             <div class="menu-item">
-                                <a class="menu-link" href="{{ route('reporte.stockCompra.formulario') }}">
+                                <a class="menu-link" href="{{ route('reporte.stock.formulario') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>
-                                    <span class="menu-title text-white">Stock por compra</span>
+                                    <span class="menu-title text-white">Stock Histórico</span>
                                 </a>
                             </div>
+                            <!-- <div class="menu-item">
+                                    <a class="menu-link" href="{{ route('reporte.stockCompra.formulario') }}">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title text-white">Stock por compra</span>
+                                    </a>
+                                </div> -->
+
+                            <div class="menu-item">
+                                <a class="menu-link" href="{{ route('reporte.costos.formulario') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title text-white">Estructura de costos</span>
+                                </a>
+                            </div>
+
 
                         </div>
                     </div>

@@ -57,6 +57,16 @@ class ReporteController extends Controller
         ));
     }
 
+    public function formularioCostos()
+    {
+        $solicitudes = DB::table('solicitudes')
+            ->select('id')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('reporte.estructura_costos', compact('solicitudes'));
+    }
+
     public function obtenerOTs($factura_id)
     {
         return Order_trabajo::where('factura_id', $factura_id)
@@ -365,6 +375,164 @@ class ReporteController extends Controller
 
         return $pdf->stream('stock_compra.pdf');
     }
+
+
+    public function reporteEstructuraCostosPdf(Request $request)
+    {
+        $request->validate([
+            'solicitud_id' => 'required',
+        ]);
+
+        $solicitud = DB::table('solicitudes')
+            ->where('id', $request->solicitud_id)
+            ->first();
+
+        if (!$solicitud) {
+            return back()->with('error', 'Solicitud no encontrada');
+        }
+
+
+
+        $ordenes = collect(json_decode($solicitud->ordenes_trabajo, true));
+
+        $ots = $ordenes
+            ->pluck('ots')
+            ->flatten()
+            ->map(fn($v) => (int) $v)
+            ->unique()
+            ->values();
+
+        $facturas = $ordenes
+            ->pluck('factura_id')
+            ->filter()
+            ->unique()
+            ->values();
+
+
+
+        $procesos = \App\Models\Proceso::with(['tipoProceso'])
+            ->whereIn('order_trabajo_id', $ots)
+            ->get();
+
+
+
+        $movimientos = DB::table('movimientos')
+            ->join('productos', 'productos.id', '=', 'movimientos.producto_id')
+            ->whereIn('movimientos.movimiento_id', $ots) // 🔥 CLAVE
+            ->where('movimientos.salida', '>', 0)
+            ->select(
+                'movimientos.movimiento_id',
+                'movimientos.producto_id',
+                'productos.nombre as producto',
+                'movimientos.salida as cantidad',
+                'movimientos.precio'
+            )
+            ->get();
+
+
+
+
+        $precios = DB::table('movimientos')
+            ->where('ingreso', '>', 0)
+            ->whereNotNull('precio')
+            ->select(
+                'producto_id',
+                DB::raw('AVG(precio) as precio')
+            )
+            ->groupBy('producto_id')
+            ->get()
+            ->keyBy('producto_id');
+
+
+
+        $movimientos = $movimientos->map(function ($m) use ($precios) {
+
+            $precio = $precios[$m->producto_id]->precio ?? 0;
+            $cantidadKg = $m->cantidad / 1000;
+
+            return [
+                'movimiento_id' => (int) $m->movimiento_id,
+                'producto' => $m->producto,
+                'cantidad' => $m->cantidad,
+                'precio' => $precio,
+                'costo' => $cantidadKg * $precio,
+            ];
+        });
+
+
+
+        $pagos = DB::table('pagos')
+            ->whereIn('factura_id', $facturas)
+            ->get();
+
+        $sueldos = $pagos->where('tipo_pago', 'salario_produccion')->sum('monto');
+        $descuentos = $pagos->where('tipo_pago', 'descuento')->sum('monto');
+
+        $sueldosNetos = $sueldos - $descuentos;
+
+
+
+        $costoQuimico = $movimientos->sum('costo');
+
+        $costoTotal = $costoQuimico + $sueldosNetos;
+
+
+        $cantidadProduccion = $movimientos->sum('cantidad') ?: 1;
+
+        $costoUnitario = $costoTotal / $cantidadProduccion;
+
+        $totalVentas = DB::table('facturas')
+            ->whereIn('id', $facturas)
+            ->sum('total');
+
+
+        $precioUnitario = $totalVentas / ($cantidadProduccion ?: 1);
+
+        $utilidad = $precioUnitario - $costoUnitario;
+
+        $margen = $precioUnitario > 0
+            ? ($utilidad / $precioUnitario) * 100
+            : 0;
+
+        $reporte = $procesos
+            ->groupBy(fn($p) => $p->tipoProceso?->nombre ?? 'SIN PROCESO')
+            ->map(function ($items, $nombreProceso) use ($movimientos) {
+
+                $otsProceso = $items
+                    ->pluck('order_trabajo_id')
+                    ->map(fn($v) => (int) $v);
+
+                $detalle = $movimientos
+                    ->whereIn('movimiento_id', $otsProceso)
+                    ->values();
+
+                return [
+                    'proceso' => $nombreProceso,
+                    'detalle' => $detalle,
+                ];
+            })
+            ->values();
+        $pdf = Pdf::loadView('reporte.pdf.costos_pdf', [
+            'reporte' => $reporte,
+
+            'costoUnitario' => round($costoUnitario, 2),
+            'sueldos' => round($sueldosNetos, 2),
+            'costoTotal' => round($costoTotal, 2),
+            'precio' => $precioUnitario,
+            'utilidad' => round($utilidad, 2),
+            'margen' => round($margen, 2) . '%',
+
+            'solicitud' => $solicitud->id,
+            'factura' => $facturas->implode(', '),
+            'ots' => $ots->implode(', '),
+
+            'fechaInicio' => now(),
+            'fechaFin' => now(),
+        ]);
+
+        return $pdf->stream('estructura_costos.pdf');
+    }
+
 
     //pagos
 
