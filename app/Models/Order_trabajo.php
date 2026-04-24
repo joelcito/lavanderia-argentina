@@ -69,7 +69,7 @@ class Order_trabajo extends Model
 
     public function caracteristicaTela()
     {
-        return $this->belongsTo('App\Models\Caracteristica', 'color_tela_id');
+        return $this->belongsTo('App\Models\Caracteristica', 'caracteristica_tela_id');
     }
 
     public function procesos()

@@ -249,7 +249,7 @@
                             <select name="" id="" style="width: 100%;" onchange="cambiarDato('CARACTERISTICA_TELA', {{ $ordenTrabajo->id }}, this)">
                                 <option value=""></option>
                                 @foreach ($caracteristicaTelas as $caracteristicaTela)
-                                    <option {{ $ordenTrabajo->color_tela_id == $caracteristicaTela->id? 'selected' : '' }} value="{{ $caracteristicaTela->id }}">{{ $caracteristicaTela->nombre }}</option>
+                                    <option {{ $ordenTrabajo->caracteristica_tela_id == $caracteristicaTela->id? 'selected' : '' }} value="{{ $caracteristicaTela->id }}">{{ $caracteristicaTela->nombre }}</option>
                                 @endforeach
                             </select>
                             <small style="display: none;" class="text-success" id="CARACTERISTICA_TELA_{{ $ordenTrabajo->id }}">Guardado con exito.</small>

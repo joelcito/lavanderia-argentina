@@ -246,16 +246,16 @@ class OrdenTrabajoController extends Controller
             $factura_id = $request->input('factura');
 
             $ordenesTrabajos = Order_trabajo::where('factura_id', $factura_id)
-                ->where('tipo', 'ORDEN_TRABAJO')
-                ->get();
+                                            ->where('tipo', 'ORDEN_TRABAJO')
+                                            ->get();
 
-            $prendas = Prenda::all();
-            $telas = Nombre_tela::all();
-            $prelavados = Prelavado::all();
-            $nevados = Nevado::all();
-            $focalizados = Focalizado::all();
-            $tipoTelas = Tipo_tela::all();
-            $colorTelas = Color_tela::all();
+            $prendas             = Prenda::all();
+            $telas               = Nombre_tela::all();
+            $prelavados          = Prelavado::all();
+            $nevados             = Nevado::all();
+            $focalizados         = Focalizado::all();
+            $tipoTelas           = Tipo_tela::all();
+            $colorTelas          = Color_tela::all();
             $caracteristicaTelas = Caracteristica::all();
 
             $valores = [
@@ -420,12 +420,12 @@ class OrdenTrabajoController extends Controller
 
             // dd($request->all());
 
-            $tipo = $request->input('tipo');
-            $ordenTrabajo = $request->input('ordenTrabajo');
-            $dato = $request->input('dato');
+            $tipo          = $request->input('tipo');
+            $ordenTrabajo  = $request->input('ordenTrabajo');
+            $dato          = $request->input('dato');
             $orden_trabajo = Order_trabajo::find($ordenTrabajo);
-            $usuario = Auth::user();
-            $sucursal = $usuario->sucursal;
+            $usuario       = Auth::user();
+            $sucursal      = $usuario->sucursal;
 
             if ($tipo == "CANTIDAD")
                 $orden_trabajo->cantidad = $dato;
@@ -461,17 +461,17 @@ class OrdenTrabajoController extends Controller
                         $nroOjales = ($dato - 1) * $orden_trabajo->cantidad;
                         $precioOjal = $nroOjales * 0.33;
 
-                        $orden_trabajoOjal = new Order_trabajo();
+                        $orden_trabajoOjal                     = new Order_trabajo();
                         $orden_trabajoOjal->usuario_creador_id = $usuario->id;
-                        $orden_trabajoOjal->order_trabajos_id = $orden_trabajo->id;
-                        $orden_trabajoOjal->factura_id = $factura->id;
-                        $orden_trabajoOjal->sucursal_id = $sucursal->id;
-                        $orden_trabajoOjal->cantidad = $nroOjales;
-                        $orden_trabajoOjal->precio = 0.33;
-                        $orden_trabajoOjal->subtotal = $precioOjal;
-                        $orden_trabajoOjal->observacion = "SERVICIO DE OJAL";
-                        $orden_trabajoOjal->fecha = date('Y-m-d H:i:s');
-                        $orden_trabajoOjal->tipo = "OJAL";
+                        $orden_trabajoOjal->order_trabajos_id  = $orden_trabajo->id;
+                        $orden_trabajoOjal->factura_id         = $factura->id;
+                        $orden_trabajoOjal->sucursal_id        = $sucursal->id;
+                        $orden_trabajoOjal->cantidad           = $nroOjales;
+                        $orden_trabajoOjal->precio             = 0.33;
+                        $orden_trabajoOjal->subtotal           = $precioOjal;
+                        $orden_trabajoOjal->observacion        = "SERVICIO DE OJAL";
+                        $orden_trabajoOjal->fecha              = date('Y-m-d H:i:s');
+                        $orden_trabajoOjal->tipo               = "OJAL";
                         $orden_trabajoOjal->save();
                         // PARA ADICIONAR EL PRECIO A LA FACTURA
                         $factura->total = $factura->total + $precioOjal;

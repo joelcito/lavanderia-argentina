@@ -1056,6 +1056,7 @@
                 },
                 success: function(resultado) {
                     if (resultado.estado){
+                        ajaxListadoOrdenTrabajos();
                         $('#'+tipo+"_"+ordenTrabajo).show('toggle')
                     }else{
                         Swal.fire(
