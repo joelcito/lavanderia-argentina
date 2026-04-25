@@ -5,6 +5,9 @@
             <button class="btn btn-danger btn-sm btn-reporte-lavador">
                 <i class="fa fa-file-pdf"></i> Reporte Lavadores
             </button>
+            <button class="btn btn-warning btn-sm btn-reporte-auxiliar">
+                <i class="fa fa-file-pdf"></i> Reporte Auxiliar
+            </button>
             <button class="btn btn-primary btn-sm btn-reporte-focalizador">
                 <i class="fa fa-file-pdf"></i> Reporte Focalizador
             </button>
@@ -81,6 +84,13 @@
 
     $(document).on('click', '.btn-reporte-lavador', function () {
         $.get('/control-personal/lavador/formulario', function (html) {
+            $('#contenido-modal').html(html);
+            $('#modalPersonal').modal('show');
+        });
+    });
+
+    $(document).on('click', '.btn-reporte-auxiliar', function () {
+        $.get('/control-personal/auxiliar/formulario', function (html) {
             $('#contenido-modal').html(html);
             $('#modalPersonal').modal('show');
         });

@@ -43,6 +43,13 @@ class ControlPersonalController extends Controller
         return view('personal.personalLavador', compact('sucursales'));
     }
 
+    public function formularioAuxiliar()
+    {
+        $sucursales = Sucursal::all();
+
+        return view('personal.personalAuxiliar', compact('sucursales'));
+    }
+
     public function formularioFocalizador()
     {
         $sucursales = Sucursal::all();
