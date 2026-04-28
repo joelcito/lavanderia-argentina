@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asistencia;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AsistenciaController extends Controller
@@ -16,15 +17,38 @@ class AsistenciaController extends Controller
 
     public function store(Request $request)
     {
+        $entrada = Carbon::parse($request->fecha . ' ' . $request->hora_entrada)
+            ->second(0);
+
+        $salida = Carbon::parse($request->fecha . ' ' . $request->hora_salida)
+            ->second(59);
+
+        if ($salida->lessThanOrEqualTo($entrada)) {
+            $salida->addDay();
+        }
+
+        $existe = Asistencia::where('user_id', $request->user_id)
+            ->where('fecha', $request->fecha)
+            ->where('hora_entrada', $entrada->format('H:i:s'))
+            ->where('hora_salida', $salida->format('H:i:s'))
+            ->when($request->id, function ($q) use ($request) {
+                $q->where('id', '!=', $request->id);
+            })
+            ->exists();
+
+        if ($existe) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Ya existe una asistencia con el mismo horario'
+            ], 422);
+        }
         $asistencia = Asistencia::updateOrCreate(
-            [
-                'id' => $request->id
-            ],
+            ['id' => $request->id],
             [
                 'user_id' => $request->user_id,
                 'fecha' => $request->fecha,
-                'hora_entrada' => $request->hora_entrada,
-                'hora_salida' => $request->hora_salida
+                'hora_entrada' => $entrada->format('H:i:s'),
+                'hora_salida' => $salida->format('H:i:s'),
             ]
         );
 
@@ -33,7 +57,20 @@ class AsistenciaController extends Controller
 
     public function delete(Request $request)
     {
-        Asistencia::where('id', $request->id)->delete();
+        $asistencia = Asistencia::find($request->id);
+
+        if (!$asistencia) {
+            return response()->json([
+                'ok' => false,
+                'message' => 'Registro no encontrado'
+            ], 404);
+        }
+
+        $asistencia->usuario_eliminador_id = auth()->id();
+        $asistencia->save();
+
+
+        $asistencia->delete();
 
         return response()->json(['ok' => true]);
     }
