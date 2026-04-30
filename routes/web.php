@@ -317,6 +317,7 @@ Route::middleware('auth')->group(function () {
         //pagos
 
         Route::post('/personal/lavador/pdf', [ReporteController::class, 'reporteLavador'])->name('reporte.personal.lavador.pdf');
+        Route::post('/personal/auxiliar/pdf', [ReporteController::class, 'reporteAuxiliar'])->name('reporte.personal.auxiliar.pdf');
         Route::post('/personal/focalizador/pdf', [ReporteController::class, 'reporteFocalizador'])->name('reporte.personal.focalizador.pdf');
         Route::post('/personal/planchador/pdf', [ReporteController::class, 'reportePlanchador'])->name('reporte.personal.planchador.pdf');
 
@@ -406,6 +407,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/pagos-personal/store', [ControlPersonalController::class, 'store']);
 
         Route::get('/lavador/formulario', [ControlPersonalController::class, 'formularioLavador']);
+        Route::get('/auxiliar/formulario', [ControlPersonalController::class, 'formularioAuxiliar']);
         Route::get('/focalizador/formulario', [ControlPersonalController::class, 'formularioFocalizador']);
         Route::get('/planchador/formulario', [ControlPersonalController::class, 'formularioPlanchador']);
 

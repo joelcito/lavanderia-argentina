@@ -133,17 +133,48 @@
         }
 
         function guardarAsistencia() {
+            let fecha = $('#fecha').val();
+            let horaEntrada = $('#hora_entrada').val();
+            let horaSalida = $('#hora_salida').val();
+
+
+            if (!fecha || !horaEntrada || !horaSalida) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Completa todos los campos'
+                });
+                return;
+            }
+
+            if (horaSalida <= horaEntrada) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Hora inválida',
+                    text: 'La salida debe ser mayor que la entrada'
+                });
+                return;
+            }
+
             let datos = {
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 id: window.ASISTENCIA_ID ?? null,
                 user_id: window.USER_ID,
-                fecha: $('#fecha').val(),
-                hora_entrada: $('#hora_entrada').val(),
-                hora_salida: $('#hora_salida').val()
+                fecha: fecha,
+                hora_entrada: horaEntrada,
+                hora_salida: horaSalida
             };
 
-            $.post('/asistencias/store', datos, function () {
-                window.ASISTENCIA_ID = null;
+            $.post('/asistencias/store', datos, function (res) {
+
+                if (!res.ok) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: res.message || 'No se pudo guardar'
+                    });
+                    return;
+                }
+
                 Swal.fire({
                     icon: 'success',
                     title: 'Guardado correctamente',
@@ -152,7 +183,26 @@
                 });
 
                 cargarAsistencias();
-                $('.tab-link[data-tab="asistencias"]').click();
+
+            }).fail(function (xhr) {
+
+                let mensaje = 'Error al guardar';
+                if (xhr.responseJSON) {
+                    if (xhr.responseJSON.message) {
+                        mensaje = xhr.responseJSON.message;
+                    }
+                    if (xhr.responseJSON.errors) {
+                        mensaje = Object.values(xhr.responseJSON.errors)
+                            .flat()
+                            .join('\n');
+                    }
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: mensaje
+                });
+
             });
         }
 
@@ -178,6 +228,7 @@
                     }, function () {
                         $('.tab-link[data-tab="asistencias"]').click();
                         Swal.fire('Eliminado', '', 'success');
+                        cargarAsistencias();
                     });
                 }
             });
@@ -219,135 +270,135 @@
                 let minutos = Math.floor(data.total_minutos % 60);
                 let tiempoTexto = `${horas}h ${minutos}m`;
                 let html = `
-                                                                            <table class="table table-sm table-bordered text-center align-middle">
-                                                                                <thead class="table-light">
-                                                                                    <tr>
-                                                                                        <th>Horas</th>
-                                                                                        <th>Días</th>
-                                                                                        <th>Pago/H</th>
-                                                                                        <th>Pago/Min</th>
-                                                                                        <th>Total</th>
-                                                                                        <th>Adelantos</th>
-                                                                                        <th>Desc</th>
-                                                                                        <th>Pagos</th>
-                                                                                        <th>Final</th>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    <tr>
-                                                                                        <td>${data.total_horas}</td>
-                                                                                        <td>${data.dias}</td>
-                                                                                        <td>Bs ${data.pago_hora}</td>
-                                                                                        <td>Bs ${data.pago_minuto}</td>
-                                                                                        <td class="text-success"><b>Bs ${data.pago_total}</b></td>
-                                                                                        <td>Bs ${data.adelantos}</td>
-                                                                                        <td class="text-danger">Bs ${data.descuentos}</td>
-                                                                                        <td>Bs ${data.pagos}</td>
-                                                                                        <td class="text-primary"><b>Bs ${data.total_final}</b></td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                            <div class="row g-2 align-items-end" mb-3>
+                                        <table class="table table-sm table-bordered text-center align-middle">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Horas</th>
+                                                    <th>Días</th>
+                                                    <th>Pago/H</th>
+                                                    <th>Pago/Min</th>
+                                                    <th>Total</th>
+                                                    <th>Adelantos</th>
+                                                    <th>Desc</th>
+                                                    <th>Pagos</th>
+                                                    <th>Final</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>${data.total_horas}</td>
+                                                    <td>${data.dias}</td>
+                                                    <td>Bs ${data.pago_hora}</td>
+                                                    <td>Bs ${data.pago_minuto}</td>
+                                                    <td class="text-success"><b>Bs ${data.pago_total}</b></td>
+                                                    <td>Bs ${data.adelantos}</td>
+                                                    <td class="text-danger">Bs ${data.descuentos}</td>
+                                                    <td>Bs ${data.pagos}</td>
+                                                    <td class="text-primary"><b>Bs ${data.total_final}</b></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="row g-2 align-items-end" mb-3>
 
-                                                                            <div class="col-md-2">
-                                                                                <label class="form-label">Adelanto</label>
-                                                                                <input type="number" id="adelanto_monto" class="form-control form-control-sm" ${bloqueado ? 'disabled' : ''}>
-                                                                            </div>
-                                                                            <div class="col-md-2">
-                                                                            <label class="form-label">Descripción</label>
-                                                                                <textarea id="adelanto_desc" class="form-control" rows="1"
-                                                                                     ${bloqueado ? 'disabled' : ''}></textarea>
-                                                                            </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Adelanto</label>
+                                            <input type="number" id="adelanto_monto" class="form-control form-control-sm" ${bloqueado ? 'disabled' : ''}>
+                                        </div>
+                                        <div class="col-md-2">
+                                        <label class="form-label">Descripción</label>
+                                            <textarea id="adelanto_desc" class="form-control" rows="1"
+                                                    ${bloqueado ? 'disabled' : ''}></textarea>
+                                        </div>
 
-                                                                            <div class="col-md-2">
-                                                                                <button id="btn-guardar-adelanto" class="btn btn-success btn-sm w-100" ${bloqueado ? 'disabled' : ''}>
-                                                                                    Guardar
-                                                                                </button>
-                                                                            </div>
+                                        <div class="col-md-2">
+                                            <button id="btn-guardar-adelanto" class="btn btn-success btn-sm w-100" ${bloqueado ? 'disabled' : ''}>
+                                                Guardar
+                                            </button>
+                                        </div>
 
-                                                                            <div class="col-md-2">
-                                                                                <label class="form-label">Descuento</label>
-                                                                                <input type="number" id="descuento_monto" class="form-control form-control-sm" ${bloqueado ? 'disabled' : ''}>
-                                                                            </div>
-                                                                            <div class="col-md-2">
-                                                                            <label class="form-label">Descripción</label>
-                                                                                <textarea id="descuento_desc" class="form-control" rows="1"
-                                                                                     ${bloqueado ? 'disabled' : ''}></textarea>
-                                                                            </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Descuento</label>
+                                            <input type="number" id="descuento_monto" class="form-control form-control-sm" ${bloqueado ? 'disabled' : ''}>
+                                        </div>
+                                        <div class="col-md-2">
+                                        <label class="form-label">Descripción</label>
+                                            <textarea id="descuento_desc" class="form-control" rows="1"
+                                                    ${bloqueado ? 'disabled' : ''}></textarea>
+                                        </div>
 
-                                                                            <div class="col-md-2">
-                                                                                <button id="btn-guardar-descuento" class="btn btn-warning btn-sm w-100" ${bloqueado ? 'disabled' : ''}>
-                                                                                    Guardar
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>    
-                                                                        <hr/>
+                                        <div class="col-md-2">
+                                            <button id="btn-guardar-descuento" class="btn btn-warning btn-sm w-100" ${bloqueado ? 'disabled' : ''}>
+                                                Guardar
+                                            </button>
+                                        </div>
+                                    </div>    
+                                    <hr/>
 
-                                                                    ${data.pago_realizado ? `
-                                                                        <div class="alert alert-success text-center" mb-3>
-                                                                            ✅ Este periodo ya fue pagado <br>
-                                                                            <strong>Bs ${data.pago_info.monto}</strong>
-                                                                        </div>
-                                                                    ` : ''}
+                                ${data.pago_realizado ? `
+                                    <div class="alert alert-success text-center" mb-3>
+                                        ✅ Este periodo ya fue pagado <br>
+                                        <strong>Bs ${data.pago_info.monto}</strong>
+                                    </div>
+                                ` : ''}
 
-                                                                    <div class="text-center mb-3">
-                                                                        ${data.pago_realizado
+                                <div class="text-center mb-3">
+                                    ${data.pago_realizado
                         ? `<button class="btn btn-secondary" disabled>YA PAGADO</button>`
                         : `<button class="btn btn-success" id="btn-pagar">PAGAR TOTAL</button>`
                     }
-                                                                    </div>                       
-                                                                            <h5 class="mt-4">Asistencia</h5>
-                                                                            <table class="table table-bordered">
-                                                                                <thead>
-                                                                                    <tr>
-                                                                                        <th>Fecha</th>
-                                                                                        <th>Día</th>
-                                                                                        <th>Horas</th>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                            `;
+                                </div>                       
+                                        <h5 class="mt-4">Asistencia</h5>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha</th>
+                                                    <th>Día</th>
+                                                    <th>Horas</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                        `;
 
                 // ASISTENCIA
                 data.detalle.forEach(d => {
                     html += `
-                                                                        <tr>
-                                                                            <td>${d.fecha}</td>
-                                                                            <td>${d.dia}</td>
-                                                                            <td>${d.horas_texto}</td>
-                                                                        </tr>
-                                                                    `;
+                                    <tr>
+                                        <td>${d.fecha}</td>
+                                        <td>${d.dia}</td>
+                                        <td>${d.horas_texto}</td>
+                                    </tr>
+                                `;
                 });
 
                 html += `</tbody></table>`;
 
                 // TABLA AJUSTES
                 html += `
-                                                                    <h5 class="mt-4">Movimientos (Adelantos / Descuentos)</h5>
-                                                                    <table class="table table-bordered">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>Fecha</th>
-                                                                                <th>Tipo</th>
-                                                                                <th>Descripcion</th>
-                                                                                <th>Monto</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                    `;
+                            <h5 class="mt-4">Movimientos (Adelantos / Descuentos)</h5>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Descripcion</th>
+                                        <th>Monto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                            `;
 
                 data.ajustes.forEach(a => {
 
                     let color = a.tipo_pago === 'adelanto' ? 'danger' : 'warning';
 
                     html += `
-                                                                        <tr>
-                                                                            <td>${a.fecha}</td>
-                                                                            <td><span class="badge bg-${color}">${a.tipo_pago}</span></td>
-                                                                            <td>${a.descripcion ?? '-'}</td>
-                                                                            <td class="text-${color}">- Bs ${a.monto}</td>
-                                                                        </tr>
-                                                                    `;
+                            <tr>
+                                <td>${a.fecha}</td>
+                                <td><span class="badge bg-${color}">${a.tipo_pago}</span></td>
+                                <td>${a.descripcion ?? '-'}</td>
+                                <td class="text-${color}">- Bs ${a.monto}</td>
+                            </tr>
+                        `;
                 });
 
                 html += `</tbody></table>`;
@@ -533,17 +584,17 @@
             }, function (data) {
 
                 let html = `
-                                                                        <div>
-                                                                            <p><b>Total:</b> Bs ${data.pago_total}</p>
-                                                                            <p><b>Adelantos:</b> Bs ${data.adelantos}</p>
-                                                                            <p><b>Descuentos:</b> Bs ${data.descuentos}</p>
-                                                                            <hr>
-                                                                            <h4>Total Final: Bs ${data.total_final}</h4>
+                        <div>
+                            <p><b>Total:</b> Bs ${data.pago_total}</p>
+                            <p><b>Adelantos:</b> Bs ${data.adelantos}</p>
+                            <p><b>Descuentos:</b> Bs ${data.descuentos}</p>
+                            <hr>
+                            <h4>Total Final: Bs ${data.total_final}</h4>
 
-                                                                            <button class="btn btn-danger" onclick="agregarAjuste('adelanto')">+ Adelanto</button>
-                                                                            <button class="btn btn-secondary" onclick="agregarAjuste('descuento')">+ Descuento</button>
-                                                                        </div>
-                                                                    `;
+                            <button class="btn btn-danger" onclick="agregarAjuste('adelanto')">+ Adelanto</button>
+                            <button class="btn btn-secondary" onclick="agregarAjuste('descuento')">+ Descuento</button>
+                        </div>
+                    `;
 
                 Swal.fire({
                     title: 'Resumen de Pago',
@@ -596,13 +647,13 @@
                     let color = a.tipo_pago === 'adelanto' ? 'danger' : 'warning';
 
                     html += `
-                                                                        <tr>
-                                                                            <td>${a.fecha}</td>
-                                                                            <td><span class="badge bg-${color}">${a.tipo_pago}</span></td>
-                                                                            <td>Bs ${a.monto}</td>
-                                                                            <td>${a.descripcion}</td>
-                                                                        </tr>
-                                                                    `;
+                                        <tr>
+                                            <td>${a.fecha}</td>
+                                            <td><span class="badge bg-${color}">${a.tipo_pago}</span></td>
+                                            <td>Bs ${a.monto}</td>
+                                            <td>${a.descripcion}</td>
+                                        </tr>
+                                    `;
                 });
 
                 $('#tabla-ajustes').html(html);
@@ -620,22 +671,33 @@
 
             $.get(`/control-personal/user/${window.USER_ID}`, function (data) {
                 let html = `
-                                                                <div class="modal-header">
-                                                                <h5 class="modal-title">Configuración</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                            </div>
+                            <div class="modal-header">
+                            <h5 class="modal-title">Configuración</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
 
-                                                            <div class="modal-body">
-                                                                <form id="form-config" onsubmit="event.preventDefault(); guardarConfiguracion();">
-                                                                    <input type="hidden" name="user_id" value="${data.id}">
-                                                                    <label>Pago diario</label>
-                                                                    <input type="number" name="pago_diario" class="form-control mb-2" value="${data.pago_diario ?? 0}">
-                                                                    <label>Horas base</label>
-                                                                    <input type="number" name="horas_base" class="form-control mb-2" value="${data.horas_base ?? 0}">
-                                                                    <button class="btn btn-success w-100">Guardar</button>
-                                                                </form>
-                                                                </div>
-                                                            `;
+                        <div class="modal-body">
+                        <form id="form-config" onsubmit="event.preventDefault(); guardarConfiguracion();">
+                            <input type="hidden" name="user_id" value="${data.id}">
+
+                            <label>Pago diario</label>
+                            <input type="number"
+                                name="pago_diario"
+                                step="0.01"
+                                class="form-control mb-2"
+                                value="${data.pago_diario ? parseFloat(data.pago_diario).toFixed(2) : '0.00'}">
+
+                            <label>Horas base</label>
+                            <input type="number"
+                                name="horas_base"
+                                step="0.01"
+                                class="form-control mb-2"
+                                value="${data.horas_base ? parseFloat(data.horas_base).toFixed(2) : '0.00'}">
+
+                            <button class="btn btn-success w-100">Guardar</button>
+                        </form>
+                    </div>
+                        `;
 
                 $('#contenido-modal').html(html);
                 $('#modalPersonal').modal('show');
@@ -649,34 +711,34 @@
             window.USER_ID = userId;
 
             let html = `
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title">Asistencia</h5>
-                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            <div id="contenido-asistencia">
-                                                                        <div class="mb-2">
-                                                                            <label>Fecha</label>
-                                                                            <input type="date" id="fecha" class="form-control">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label>Hora Entrada</label>
-                                                                            <input type="time" id="hora_entrada" class="form-control">
-                                                                        </div>
-                                                                        <div class="mb-2">
-                                                                            <label>Hora Salida</label>
-                                                                            <input type="time" id="hora_salida" class="form-control">
-                                                                        </div>
-                                                                        <button class="btn btn-success" onclick="guardarAsistencia()">
-                                                                            Guardar
-                                                                        </button>
-                                                                        <hr>
+                    <div class="modal-header">
+                        <h5 class="modal-title">Asistencia</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="contenido-asistencia">
+                    <div class="mb-2">
+                        <label>Fecha</label>
+                        <input type="date" id="fecha" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label>Hora Entrada</label>
+                        <input type="time" id="hora_entrada" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label>Hora Salida</label>
+                        <input type="time" id="hora_salida" class="form-control">
+                    </div>
+                    <button class="btn btn-success" onclick="guardarAsistencia()">
+                        Guardar
+                    </button>
+                    <hr>
 
-                                                                        <div id="tabla-asistencia"></div>
-                                                                        </div>
-                                                                        </div>
+                    <div id="tabla-asistencia"></div>
+                    </div>
+                    </div>
 
-                                                                    `;
+                `;
 
             $('#contenido-modal').html(html);
             let modal = new bootstrap.Modal(document.getElementById('modalPersonal'));
@@ -691,44 +753,44 @@
 
                 let html = `
 
-                                                                        <table class="table" id="tabla_asistencias">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>Fecha</th>
-                                                                                    <th>Entrada</th>
-                                                                                    <th>Salida</th>
-                                                                                    <th>Acciones</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                    `;
+                                        <table class="table" id="tabla_asistencias">
+                                            <thead>
+                                                <tr>
+                                                    <th>Fecha</th>
+                                                    <th>Entrada</th>
+                                                    <th>Salida</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                    `;
 
                 data.forEach(a => {
                     let entrada = a.hora_entrada || '-';
                     let salida = a.hora_salida || '-';
                     html += `
-                                                                        <tr>
-                                                                            <td>${formatearFecha(a.fecha)}</td>
-                                                                            <td>${entrada}</td>
-                                                                            <td>${salida}</td>
-                                                                            <td>
-                                                                                <button class="btn btn-warning btn-sm"
-                                                                                    onclick='editarAsistencia(${JSON.stringify({
+                            <tr>
+                                <td>${formatearFecha(a.fecha)}</td>
+                                <td>${entrada}</td>
+                                <td>${salida}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm"
+                                        onclick='editarAsistencia(${JSON.stringify({
                         id: a.id,
                         fecha: a.fecha,
                         entrada: entrada,
                         salida: salida
                     })})'>
-                                                                            Editar
-                                                                        </button>
+                                    Editar
+                                </button>
 
-                                                                        <button class="btn btn-danger btn-sm"
-                                                                            onclick="eliminarAsistencia(${a.id})">
-                                                                            Eliminar
-                                                                        </button>
-                                                                    </td>
-                                                                </tr>
-                                                            `;
+                                <button class="btn btn-danger btn-sm"
+                                    onclick="eliminarAsistencia(${a.id})">
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    `;
                 });
 
                 html += `</tbody></table>`;
@@ -757,34 +819,34 @@
             window.USER_ID = userId;
 
             let html = `
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title">Pagos</h5>
-                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                                    </div>
+                            <div class="modal-header">
+                                <h5 class="modal-title">Pagos</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
 
-                                                                    <div class="modal-body">
-                                                                    <div class="row mb-3">
-                                                                        <div class="col-md-5">
-                                                                            <label>Fecha inicio</label>
-                                                                            <input type="date" id="fecha_inicio" class="form-control">
-                                                                        </div>
+                            <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label>Fecha inicio</label>
+                                    <input type="date" id="fecha_inicio" class="form-control">
+                                </div>
 
-                                                                        <div class="col-md-5">
-                                                                            <label>Fecha fin</label>
-                                                                            <input type="date" id="fecha_fin" class="form-control">
-                                                                        </div>
+                                <div class="col-md-5">
+                                    <label>Fecha fin</label>
+                                    <input type="date" id="fecha_fin" class="form-control">
+                                </div>
 
-                                                                        <div class="col-md-2 d-flex align-items-end">
-                                                                            <button class="btn btn-primary w-100" onclick="cargarResumen()">
-                                                                                Consultar
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
+                                <div class="col-md-2 d-flex align-items-end">
+                                    <button class="btn btn-primary w-100" onclick="cargarResumen()">
+                                        Consultar
+                                    </button>
+                                </div>
+                            </div>
 
-                                                                    <div id="resultado-resumen"></div>
+                            <div id="resultado-resumen"></div>
 
-                                                                    </div>
-                                                                `;
+                            </div>
+                        `;
 
             $('#contenido-modal').html(html);
             $('#modalPersonal').modal('show');
@@ -832,44 +894,44 @@
                 let bloqueado = data.pago_realizado || data.total_final <= 0;
 
                 let html = `
-                                                                        <table class="table table-bordered text-center">
-                                                                            <tr>
-                                                                                <th>Prendas</th>
-                                                                                <th>Total</th>
-                                                                                <th>Adelantos</th>
-                                                                                <th>Descuentos</th>
-                                                                                <th>Total Final</th>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>${data.total_prendas} </td>
-                                                                                <td>Bs ${data.total}</td>
-                                                                                <td>Bs ${data.adelantos}</td>
-                                                                                <td>Bs ${data.descuentos}</td>
+                        <table class="table table-bordered text-center">
+                            <tr>
+                                <th>Prendas</th>
+                                <th>Total</th>
+                                <th>Adelantos</th>
+                                <th>Descuentos</th>
+                                <th>Total Final</th>
+                            </tr>
+                            <tr>
+                                <td>${data.total_prendas} </td>
+                                <td>Bs ${data.total}</td>
+                                <td>Bs ${data.adelantos}</td>
+                                <td>Bs ${data.descuentos}</td>
 
-                                                                                <td><b>Bs ${data.total_final}</b></td>
-                                                                            </tr>
-                                                                        </table>
-                                                                `;
+                                <td><b>Bs ${data.total_final}</b></td>
+                            </tr>
+                        </table>
+                `;
 
                 let facturasDetalle = Array.isArray(data.facturas_detalle) ? data.facturas_detalle : [];
 
 
                 html += `<div class="card mt-4 p-3">
-                                                                <h5>Detalle de Producción</h5>
-                                                            `;
+                            <h5>Detalle de Producción</h5>
+                        `;
 
                 if (facturasDetalle.length) {
 
                     facturasDetalle.forEach(f => {
                         html += `
-                                                                        <div class="mb-2">
-                                                                        <b><i class="bi bi-receipt"></i> Factura:</b> ${f.factura} <br>
-                                                                        <b><i class="bi bi-person"></i> Cliente:</b> ${f.cliente} <br>
-                                                                        <b><i class="bi bi-hash"></i> OTs:</b> ${f.ots.length ? f.ots.join(', ') : '—'} <br>
-                                                                        <b><i class="bi bi-basket"></i> Prendas:</b> ${f.prendas}
-                                                                        <hr>
-                                                                    </div>
-                                                                    `;
+                                    <div class="mb-2">
+                                    <b><i class="bi bi-receipt"></i> Factura:</b> ${f.factura} <br>
+                                    <b><i class="bi bi-person"></i> Cliente:</b> ${f.cliente} <br>
+                                    <b><i class="bi bi-hash"></i> OTs:</b> ${f.ots.length ? f.ots.join(', ') : '—'} <br>
+                                    <b><i class="bi bi-basket"></i> Prendas:</b> ${f.prendas}
+                                    <hr>
+                                </div>
+                                `;
                     });
 
                 } else {
@@ -881,86 +943,86 @@
 
                 if (data.pago_realizado) {
                     html += `
-                                                                        <div class="alert alert-success text-center mt-2">
-                                                                            ✅ Este periodo ya fue pagado <br>
-                                                                            <strong>Bs ${data.total_final}</strong>
-                                                                        </div>
-                                                                    `;
+                                <div class="alert alert-success text-center mt-2">
+                                    ✅ Este periodo ya fue pagado <br>
+                                    <strong>Bs ${data.total_final}</strong>
+                                </div>
+                            `;
                 }
 
                 html += `
-                                                                        <div class="row mt-3">
-                                                                            <div class="col-md-2">
-                                                                                <input type="number" id="adelanto_monto" class="form-control"
-                                                                                    placeholder="Adelanto" ${bloqueado ? 'disabled' : ''}>
-                                                                            </div>
-                                                                            <div class="col-md-2">
-                                                                                <textarea id="adelanto_desc" class="form-control" rows="1"
-                                                                                     ${bloqueado ? 'disabled' : ''}></textarea>
-                                                                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-2">
+                                    <input type="number" id="adelanto_monto" class="form-control"
+                                        placeholder="Adelanto" ${bloqueado ? 'disabled' : ''}>
+                                </div>
+                                <div class="col-md-2">
+                                    <textarea id="adelanto_desc" class="form-control" rows="1"
+                                            ${bloqueado ? 'disabled' : ''}></textarea>
+                                </div>
 
-                                                                            <div class="col-md-2">
-                                                                                <button id="btn-adelanto" class="btn btn-success w-100"
-                                                                                    ${bloqueado ? 'disabled' : ''}>
-                                                                                    Guardar
-                                                                                </button>
-                                                                            </div>
+                                <div class="col-md-2">
+                                    <button id="btn-adelanto" class="btn btn-success w-100"
+                                        ${bloqueado ? 'disabled' : ''}>
+                                        Guardar
+                                    </button>
+                                </div>
 
-                                                                            <div class="col-md-2">
-                                                                                <input type="number" id="descuento_monto" class="form-control"
-                                                                                    placeholder="Descuento" ${bloqueado ? 'disabled' : ''}>
-                                                                            </div>
-                                                                            <div class="col-md-2">
-                                                                                <textarea id="descuento_desc" class="form-control" rows="1"
-                                                                                     ${bloqueado ? 'disabled' : ''}></textarea>
-                                                                            </div>
+                                <div class="col-md-2">
+                                    <input type="number" id="descuento_monto" class="form-control"
+                                        placeholder="Descuento" ${bloqueado ? 'disabled' : ''}>
+                                </div>
+                                <div class="col-md-2">
+                                    <textarea id="descuento_desc" class="form-control" rows="1"
+                                            ${bloqueado ? 'disabled' : ''}></textarea>
+                                </div>
 
-                                                                            <div class="col-md-2">
-                                                                                <button id="btn-descuento" class="btn btn-warning w-100"
-                                                                                    ${bloqueado ? 'disabled' : ''}>
-                                                                                    Guardar
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    `;
+                                <div class="col-md-2">
+                                    <button id="btn-descuento" class="btn btn-warning w-100"
+                                        ${bloqueado ? 'disabled' : ''}>
+                                        Guardar
+                                    </button>
+                                </div>
+                            </div>
+                        `;
 
 
                 html += `
-                                                                        <div class="text-center mt-3">
-                                                                            ${data.pago_realizado
+                                <div class="text-center mt-3">
+                                    ${data.pago_realizado
                         ? `<button class="btn btn-secondary" disabled>YA PAGADO</button>`
                         : `<button class="btn btn-primary" id="btn-pagar-produccion">PAGAR TOTAL</button>`
                     }
-                                                                        </div>
-                                                                    `;
+                                </div>
+                            `;
 
 
                 html += `
-                                                                        <h5 class="mt-4">Movimientos</h5>
-                                                                        <table class="table table-bordered">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th>Fecha</th>
-                                                                                    <th>Tipo</th>
-                                                                                    <th>Descripcion</th>
-                                                                                    <th>Monto</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                    `;
+                            <h5 class="mt-4">Movimientos</h5>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Descripcion</th>
+                                        <th>Monto</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
 
                 data.ajustes.forEach(a => {
 
                     let color = a.tipo_pago === 'adelanto' ? 'danger' : 'warning';
 
                     html += `
-                                                                            <tr>
-                                                                                <td>${a.fecha}</td>
-                                                                                <td><span class="badge bg-${color}">${a.tipo_pago}</span></td>
-                                                                                <td>${a.descripcion ?? '-'}</td>
-                                                                                <td class="text-${color}">Bs ${Math.abs(a.monto)}</td>
-                                                                            </tr>
-                                                                        `;
+                            <tr>
+                                <td>${a.fecha}</td>
+                                <td><span class="badge bg-${color}">${a.tipo_pago}</span></td>
+                                <td>${a.descripcion ?? '-'}</td>
+                                <td class="text-${color}">Bs ${Math.abs(a.monto)}</td>
+                            </tr>
+                        `;
                 });
 
                 html += `</tbody></table>`;

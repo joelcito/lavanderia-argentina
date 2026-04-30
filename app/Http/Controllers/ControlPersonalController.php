@@ -22,7 +22,7 @@ class ControlPersonalController extends Controller
 
     public function ajaxListado()
     {
-        $usuarios = User::whereIn('rol_id', [2, 5, 6])->get();
+        $usuarios = User::whereIn('rol_id', [2, 8, 5, 6])->get();
         return view('personal.ajaxListado', compact('usuarios'));
     }
 
@@ -41,6 +41,13 @@ class ControlPersonalController extends Controller
         $sucursales = Sucursal::all();
 
         return view('personal.personalLavador', compact('sucursales'));
+    }
+
+    public function formularioAuxiliar()
+    {
+        $sucursales = Sucursal::all();
+
+        return view('personal.personalAuxiliar', compact('sucursales'));
     }
 
     public function formularioFocalizador()

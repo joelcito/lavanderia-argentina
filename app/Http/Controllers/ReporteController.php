@@ -625,6 +625,102 @@ class ReporteController extends Controller
     }
 
 
+
+    public function reporteAuxiliar(Request $request)
+    {
+        $inicio = $request->fecha_inicio;
+        $fin = $request->fecha_fin;
+
+        $usuarios = User::where('rol_id', 8)->get();
+        $reporte = [];
+
+        foreach ($usuarios as $user) {
+
+
+            $asistencias = Asistencia::where('user_id', $user->id)
+                ->whereBetween('fecha', [$inicio, $fin])
+                ->get()
+                ->groupBy('fecha');
+
+            $totalSegundos = 0;
+
+            foreach ($asistencias as $registros) {
+
+                foreach ($registros as $a) {
+
+                    if (!$a->hora_entrada || !$a->hora_salida)
+                        continue;
+
+                    $entrada = strtotime($a->hora_entrada);
+                    $salida = strtotime($a->hora_salida);
+
+                    if ($salida <= $entrada)
+                        continue;
+
+                    $totalSegundos += ($salida - $entrada);
+                }
+            }
+            $pagoTotal = 0;
+
+            if ($user->horas_base > 0) {
+                $pagoHora = $user->pago_diario / $user->horas_base;
+                //  $pagoMinuto = $pagoHora / 60;
+                //  $totalMinutos = $totalSegundos / 60;
+                //  $pagoTotal = $totalMinutos * $pagoMinuto;
+                $pagoTotal = ($totalSegundos / 3600) * $pagoHora;
+            }
+
+            $pagos = Pago::where('user_id', $user->id)
+                ->where(function ($q) use ($inicio, $fin) {
+                    $q->whereBetween('fecha_inicio', [$inicio, $fin])
+                        ->orWhereBetween('fecha_fin', [$inicio, $fin])
+                        ->orWhere(function ($q2) use ($inicio, $fin) {
+                            $q2->where('fecha_inicio', '<=', $inicio)
+                                ->where('fecha_fin', '>=', $fin);
+                        });
+                })
+                ->get();
+
+
+
+            $adelantos = $pagos->where('tipo_pago', 'adelanto')->sum('monto');
+            $descuentos = $pagos->where('tipo_pago', 'descuento')->sum('monto');
+            $pagado = $pagos->where('tipo_pago', 'salario')->sum('monto');
+
+            $totalFinal = $pagoTotal - $adelantos - $descuentos;
+
+            $estado = $pagado > 0 ? 'PAGADO' : 'PENDIENTE';
+
+
+            $reporte[] = [
+                'nombres' => $user->nombres,
+                'ap_paterno' => $user->ap_paterno,
+                'ap_materno' => $user->ap_materno,
+
+                'monto_semana' => $pagoTotal,
+                'descuento' => $descuentos,
+                'total' => $totalFinal,
+                'estado' => $estado ? 'PAGADO' : ''
+            ];
+        }
+
+
+        $pdf = PDF::loadView('personal.pdf.reporte_pago_auxiliar', [
+            'reporte' => $reporte,
+            'inicio' => $inicio,
+            'fin' => $fin
+        ]);
+
+        return $pdf->stream('reporte_auxiliar.pdf');
+    }
+
+
+
+
+
+
+
+
     public function reporteFocalizador(Request $request)
     {
         $inicio = $request->fecha_inicio . ' 00:00:00';

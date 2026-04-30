@@ -5,6 +5,9 @@
             <button class="btn btn-danger btn-sm btn-reporte-lavador">
                 <i class="fa fa-file-pdf"></i> Reporte Lavadores
             </button>
+            <button class="btn btn-warning btn-sm btn-reporte-auxiliar">
+                <i class="fa fa-file-pdf"></i> Reporte Auxiliar
+            </button>
             <button class="btn btn-primary btn-sm btn-reporte-focalizador">
                 <i class="fa fa-file-pdf"></i> Reporte Focalizador
             </button>
@@ -31,7 +34,8 @@
                     <td>{{ $user->nombres }} {{ $user->ap_paterno }} {{ $user->ap_materno }}</td>
                     <td>
 
-                        @if($user->rol_id == 2)
+                        @if(in_array($user->rol_id, [2, 8]))
+
                             <button class="btn btn-info btn-sm btn-config" data-id="{{ $user->id }}">Monto por hora</button>
                             <button class="btn btn-warning btn-sm btn-asistencia" data-id="{{ $user->id }}"> Asistencia</button>
                             <button class="btn btn-success btn-sm btn-pagos" data-id="{{ $user->id }}">Pagar</button>
@@ -80,6 +84,13 @@
 
     $(document).on('click', '.btn-reporte-lavador', function () {
         $.get('/control-personal/lavador/formulario', function (html) {
+            $('#contenido-modal').html(html);
+            $('#modalPersonal').modal('show');
+        });
+    });
+
+    $(document).on('click', '.btn-reporte-auxiliar', function () {
+        $.get('/control-personal/auxiliar/formulario', function (html) {
             $('#contenido-modal').html(html);
             $('#modalPersonal').modal('show');
         });
