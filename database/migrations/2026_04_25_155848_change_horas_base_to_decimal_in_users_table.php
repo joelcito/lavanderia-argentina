@@ -11,14 +11,14 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->decimal('horas_base', 5, 2)->change();
+            $table->decimal('horas_base', 5, 2)->nullable()->change();
         });
     }
 
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('horas_base')->change();
+            $table->decimal('horas_base', 5, 2)->nullable(false)->change();
         });
     }
 
