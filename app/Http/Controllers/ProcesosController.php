@@ -2032,9 +2032,6 @@ class ProcesosController extends Controller
 
                 foreach ($ordenesTrabajo as $ordenTrabajo) {
 
-                    // $fac .= " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
-
-                    // $arrayOts = [];
 
                     if (is_array($ordenTrabajo)) {
                         $nroFactura = $ordenTrabajo['nro_factura'] ?? null;
@@ -2049,6 +2046,11 @@ class ProcesosController extends Controller
                     $fac .= " | Fac/Or-Re " . ($nroFactura ?? 'S/N') . " : [";
 
                     $arrayOts = [];
+
+
+                    // $fac .= " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
+
+                    // $arrayOts = [];
 
                     if (!empty($ordenTrabajo['ots'])) {
 
