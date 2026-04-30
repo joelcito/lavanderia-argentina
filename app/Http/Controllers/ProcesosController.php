@@ -2032,7 +2032,21 @@ class ProcesosController extends Controller
 
                 foreach ($ordenesTrabajo as $ordenTrabajo) {
 
-                    $fac .= " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
+                    // $fac .= " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
+
+                    // $arrayOts = [];
+
+                    if (is_array($ordenTrabajo)) {
+                        $nroFactura = $ordenTrabajo['nro_factura'] ?? null;
+                        $ots = $ordenTrabajo['ots'] ?? [];
+                    } elseif (is_object($ordenTrabajo)) {
+                        $nroFactura = $ordenTrabajo->nro_factura ?? null;
+                        $ots = $ordenTrabajo->ots ?? [];
+                    } else {
+                        continue;
+                    }
+
+                    $fac .= " | Fac/Or-Re " . ($nroFactura ?? 'S/N') . " : [";
 
                     $arrayOts = [];
 
