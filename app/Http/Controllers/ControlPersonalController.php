@@ -11,6 +11,7 @@ use App\Models\Order_trabajo;
 
 use Carbon\Carbon;
 use App\Models\Asistencia;
+use DB;
 use Illuminate\Http\Request;
 
 class ControlPersonalController extends Controller
@@ -72,14 +73,26 @@ class ControlPersonalController extends Controller
         $inicio = $request->inicio;
         $fin = $request->fin;
         $usuario = User::find($user_id);
+
         $asistencias = Asistencia::where('user_id', $user_id)
             ->whereBetween('fecha', [$inicio, $fin])
-            ->orderBy('fecha')->get()
+            ->whereNotExists(function ($q) {
+                $q->select(DB::raw(1))
+                    ->from('pagos')
+                    ->whereColumn('pagos.user_id', 'asistencias.user_id')
+                    ->where('pagos.tipo_pago', 'salario')
+                    ->whereRaw("asistencias.fecha BETWEEN pagos.fecha_inicio AND pagos.fecha_fin");
+            })
+            ->orderBy('fecha')
+            ->get()
             ->groupBy('fecha');
+
+
         $totalSegundos = 0;
         $dias = 0;
         $detalle = [];
         foreach ($asistencias as $fecha => $registros) {
+
             $segundosDia = 0;
             foreach ($registros as $a) {
                 if (!$a->hora_entrada || !$a->hora_salida)
@@ -142,11 +155,12 @@ class ControlPersonalController extends Controller
             ->where('tipo_pago', 'salario')
             ->where('fecha_inicio', $inicio)
             ->where('fecha_fin', $fin)->first();
-        $pagos = Pago::where('user_id', $user_id)
-            ->where('tipo_pago', 'salario')
-            ->whereDate('fecha', '<=', $fin)
-            ->sum('monto');
-        $totalFinal = $pagoTotal - $adelantos - $descuentos - $pagos;
+        // $pagos = Pago::where('user_id', $user_id)
+        //     ->where('tipo_pago', 'salario')
+        //     ->where($rangoFechas)
+        //     ->sum('monto');
+        //$totalFinal = $pagoTotal - $adelantos - $descuentos - $pagos;
+        $totalFinal = $pagoTotal - $adelantos - $descuentos;
         return response()->json([
             'total_horas'
             => round($totalSegundos / 3600, 2),
@@ -167,7 +181,7 @@ class ControlPersonalController extends Controller
             => $fin,
             'pago_realizado' => $pagoRealizado ? true : false,
             'pago_info' => $pagoRealizado,
-            'pagos' => round($pagos, 2),
+            //'pagos' => round($pagos, 2),
             'detalle' => $detalle
         ]);
 
@@ -195,12 +209,14 @@ class ControlPersonalController extends Controller
                 'error' => 'Ya se pagó este periodo'
             ], 400);
         }
+        $montoFinal = round($request->monto, 2);
+        $montoCalculado = round($request->monto_calculado ?? 0, 2);
 
         Pago::create([
             'user_id' => $request->user_id,
             'usuario_creador_id' => auth()->id(),
 
-            'monto' => $request->monto,
+            'monto' => $montoFinal,
             'tipo_pago' => $request->tipo_pago,
             'descripcion' => $request->descripcion,
             'fecha' => $request->fecha ?? now(),
@@ -213,7 +229,7 @@ class ControlPersonalController extends Controller
 
             'total_horas' => $request->total_horas ?? 0,
             'total_minutos' => $request->total_minutos ?? 0,
-            'monto_calculado' => $request->monto_calculado ?? 0,
+            'monto_calculado' => $montoCalculado ?? 0,
             'total_descuentos' => $request->total_descuentos ?? 0,
 
             'estado' => 'SALIDA'

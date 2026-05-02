@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order_trabajo;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -42,7 +43,30 @@ class ProduccionPagoController extends Controller
 
         $facturasDetalle = [];
 
+        $diasPagados = Pago::where('user_id', $userId)
+            ->where('tipo_pago', 'salario_produccion')
+            ->where(function ($q) use ($inicio, $fin) {
+                $q->whereBetween('fecha_inicio', [$inicio, $fin])
+                    ->orWhereBetween('fecha_fin', [$inicio, $fin])
+                    ->orWhere(function ($q2) use ($inicio, $fin) {
+                        $q2->where('fecha_inicio', '<=', $inicio)
+                            ->where('fecha_fin', '>=', $fin);
+                    });
+            })
+            ->get()
+            ->flatMap(function ($pago) {
+                return Carbon::parse($pago->fecha_inicio)
+                    ->daysUntil(Carbon::parse($pago->fecha_fin)->addDay())
+                    ->map(fn($d) => $d->format('Y-m-d'));
+            })
+            ->toArray();
+
         foreach ($detalles as $d) {
+            $fecha = Carbon::parse($d->created_at)->format('Y-m-d');
+            if (in_array($fecha, $diasPagados)) {
+                continue;
+            }
+
 
             $cantidad = $d->cantidad;
             $totalPrendas += $cantidad;
@@ -134,15 +158,8 @@ class ProduccionPagoController extends Controller
 
         $pagoRealizado = Pago::where('user_id', $userId)
             ->where('tipo_pago', 'salario_produccion')
-            ->where(function ($q) use ($inicio, $fin) {
-                $q->whereBetween('fecha_inicio', [$inicio, $fin])
-                    ->orWhereBetween('fecha_fin', [$inicio, $fin])
-                    ->orWhere(function ($q2) use ($inicio, $fin) {
-                        $q2->where('fecha_inicio', '<=', $inicio)
-                            ->where('fecha_fin', '>=', $fin);
-                    });
-            })
-            ->first();
+            ->where($rangoFechas)
+            ->get();
 
 
         // PAGOS
@@ -152,7 +169,7 @@ class ProduccionPagoController extends Controller
         //     ->where('fecha_fin', $fin)
         //     ->sum('monto');
 
-        $totalFinal = $total - $adelantos - $descuentos;
+        $totalFinal = max(0, $total - $adelantos - $descuentos);
         $sinProduccion = $totalPrendas == 0 && $total == 0;
 
         return response()->json([
@@ -167,7 +184,7 @@ class ProduccionPagoController extends Controller
 
             'ajustes' => $ajustes,
 
-            'pago_realizado' => $pagoRealizado ? true : false,
+            'pago_realizado' => $pagoRealizado->count() > 0,
             'pago_info' => $pagoRealizado,
 
             'facturas_detalle' => $facturasDetalle
@@ -213,11 +230,13 @@ class ProduccionPagoController extends Controller
             }
         }
 
+        $montoFinal = round((float) $request->monto, 2);
+
         Pago::create([
             'user_id' => $request->user_id,
             'usuario_creador_id' => auth()->id(),
 
-            'monto' => $request->monto,
+            'monto' => $montoFinal,
             'tipo_pago' => $request->tipo_pago,
             'descripcion' => $request->descripcion ?? 'Pago producción',
 
