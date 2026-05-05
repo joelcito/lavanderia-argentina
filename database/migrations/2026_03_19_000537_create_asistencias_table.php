@@ -26,6 +26,8 @@ return new class extends Migration {
 
             $table->timestamps();
             $table->index(['user_id', 'fecha']);
+            $table->string('estado')->nullable();
+            $table->dateTime('deleted_at')->nullable();
         });
     }
 
