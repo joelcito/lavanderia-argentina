@@ -17,11 +17,9 @@ class AsistenciaController extends Controller
 
     public function store(Request $request)
     {
-        $entrada = Carbon::parse($request->fecha . ' ' . $request->hora_entrada)
-            ->second(0);
+        $entrada = Carbon::parse($request->fecha . ' ' . $request->hora_entrada);
 
-        $salida = Carbon::parse($request->fecha . ' ' . $request->hora_salida)
-            ->second(59);
+        $salida = Carbon::parse($request->fecha . ' ' . $request->hora_salida);
 
         if ($salida->lessThanOrEqualTo($entrada)) {
             $salida->addDay();
