@@ -61,25 +61,27 @@ class ProcesosController extends Controller
                 $fac = "";
 
                 foreach ($ordenesTrabajo as $ordenTrabajo) {
-                    $fac = $fac . " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
-                    $ots = $ordenTrabajo['ots'];
-                    $arrayOts = [];
-                    foreach ($ots as $ot) {
-                        $ordenTrabajoBuscado = Order_trabajo::find($ot);
-                        if($ordenTrabajoBuscado){
-                            if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
+                    if(is_array($ordenTrabajo) && isset($ordenTrabajo['nro_factura'])){
+                        $fac = $fac . " | Fac/Or-Re " . $ordenTrabajo['nro_factura'] . " : [";
+                        $ots = $ordenTrabajo['ots'];
+                        $arrayOts = [];
+                        foreach ($ots as $ot) {
+                            $ordenTrabajoBuscado = Order_trabajo::find($ot);
+                            if($ordenTrabajoBuscado){
+                                if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
 
-                                if (!empty($arrayOts)) {
-                                    $fac .= " - ";
+                                    if (!empty($arrayOts)) {
+                                        $fac .= " - ";
+                                    }
+
+                                    $fac .= " OT:" . $ordenTrabajoBuscado->nro_ot;
+                                    $arrayOts[] = $ordenTrabajoBuscado->nro_ot;
+
                                 }
-
-                                $fac .= " OT:" . $ordenTrabajoBuscado->nro_ot;
-                                $arrayOts[] = $ordenTrabajoBuscado->nro_ot;
-
                             }
                         }
+                        $fac .= "]";
                     }
-                    $fac .= "]";
                 }
 
                 $json = json_encode($ordenesTrabajo);
