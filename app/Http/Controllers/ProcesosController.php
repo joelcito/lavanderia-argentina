@@ -66,15 +66,17 @@ class ProcesosController extends Controller
                     $arrayOts = [];
                     foreach ($ots as $ot) {
                         $ordenTrabajoBuscado = Order_trabajo::find($ot);
-                        if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
+                        if($ordenTrabajoBuscado){
+                            if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
 
-                            if (!empty($arrayOts)) {
-                                $fac .= " - ";
+                                if (!empty($arrayOts)) {
+                                    $fac .= " - ";
+                                }
+
+                                $fac .= " OT:" . $ordenTrabajoBuscado->nro_ot;
+                                $arrayOts[] = $ordenTrabajoBuscado->nro_ot;
+
                             }
-
-                            $fac .= " OT:" . $ordenTrabajoBuscado->nro_ot;
-                            $arrayOts[] = $ordenTrabajoBuscado->nro_ot;
-
                         }
                     }
                     $fac .= "]";
