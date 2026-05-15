@@ -794,13 +794,15 @@ class ProcesosController extends Controller
                     $arrayOts = array();
                     foreach ($ots as $key => $ot) {
                         $ordenTrabajoBuscado = Order_trabajo::find($ot);
-                        if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
-                            $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
-                            array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
-                            if ((count($ots) - 1) == $key)
-                                $fac = $fac . "]";
-                            else
-                                $fac = $fac . " - ";
+                        if($ordenTrabajoBuscado){
+                            if (!in_array($ordenTrabajoBuscado->nro_ot, $arrayOts)) {
+                                $fac = $fac . " OT:" . $ordenTrabajoBuscado->nro_ot;
+                                array_push($arrayOts, $ordenTrabajoBuscado->nro_ot);
+                                if ((count($ots) - 1) == $key)
+                                    $fac = $fac . "]";
+                                else
+                                    $fac = $fac . " - ";
+                            }
                         }
                     }
                 }
