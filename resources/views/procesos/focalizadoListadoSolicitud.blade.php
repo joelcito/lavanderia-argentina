@@ -159,13 +159,13 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Cantidad</label>
+                                    <label class="required fw-semibold fs-6 mb-2">Cantidad Gr</label>
                                     <input type="number" step="0.01" class="form-control form-control-sm" min="1" name="cantidad_preceso_carga" id="cantidad_preceso_carga" required/>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Cant. Liquido</label>
+                                    <label class="required fw-semibold fs-6 mb-2">Cant. H2O</label>
                                     <input type="number" step="0.01" class="form-control form-control-sm" name="cantidad_liquido_preceso_carga" id="cantidad_liquido_preceso_carga" required/>
                                 </div>
                             </div>
