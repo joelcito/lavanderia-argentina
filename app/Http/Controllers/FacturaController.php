@@ -221,10 +221,22 @@ class FacturaController extends Controller
                 $query->where('facturas.numero_factura', $numero_factura);
             }
 
-            // if (!is_null($request->input('buscar_nro_cedula'))) {
-            //     $cedula = $request->input('buscar_nro_cedula');
-            //     $query->where('clientes.cedula', $cedula);
-            // }
+            if (!is_null($request->input('buscar_nombre_cliente'))) {
+                $nombre = trim($request->input('buscar_nombre_cliente'));
+                $palabras = explode(' ', $nombre);
+
+                $query->where(function ($q) use ($palabras) {
+                    foreach ($palabras as $palabra) {
+                        if ($palabra === '') continue;
+
+                        $q->where(function ($sub) use ($palabra) {
+                            $sub->where('users.nombres', 'like', "%{$palabra}%")
+                                ->orWhere('users.ap_paterno', 'like', "%{$palabra}%")
+                                ->orWhere('users.ap_materno', 'like', "%{$palabra}%");
+                        });
+                    }
+                });
+            }
 
             if (!is_null($request->input('buscar_nit'))) {
                 $nit = $request->input('buscar_nit');

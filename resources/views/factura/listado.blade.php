@@ -145,6 +145,10 @@
                                         id="buscar_nro_factura">
                                 </div>
                                 <div class="col-md-2">
+                                    <label class="fw-semibold fs-6 mb-2">Nombre Cliente</label>
+                                    <input type="text" class="form-control form-control-sm" name="buscar_nombre_cliente" id="buscar_nombre_cliente">
+                                </div>
+                                <div class="col-md-2">
                                     <label class="fw-semibold fs-6 mb-2">C.I. Persona</label>
                                     <input type="number" class="form-control form-control-sm" name="buscar_nro_cedula"
                                         id="buscar_nro_cedula">
@@ -154,12 +158,12 @@
                                     <input type="number" class="form-control form-control-sm" name="buscar_nit"
                                         id="buscar_nit">
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-1">
                                     <label class="fw-semibold fs-6 mb-2">Fecha Inicio</label>
                                     <input type="date" class="form-control form-control-sm" name="buscar_fecha_inicio"
                                         id="buscar_fecha_inicio">
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-1">
                                     <label class="fw-semibold fs-6 mb-2">Fecha Fin</label>
                                     <input type="date" class="form-control form-control-sm" name="buscar_fecha_fin"
                                         id="buscar_fecha_fin">
