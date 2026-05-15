@@ -103,44 +103,46 @@ class ProcesosController extends Controller
                 // BUSCAMOS Y SACAMOS SUS LAVADOS
                 $lavado = '';
                 if (count($ordenesTrabajo) > 0) {
-                    $orden_trabajo_id = $ordenesTrabajo[0]['ots'][0];
-                    $ordenTrabajo = Order_trabajo::find($orden_trabajo_id);
+                    if(is_array($ordenTrabajo) && isset($ordenTrabajo['nro_factura'])){
+                        $orden_trabajo_id = $ordenesTrabajo[0]['ots'][0];
+                        $ordenTrabajo = Order_trabajo::find($orden_trabajo_id);
 
 
-                    $ot = $ordenTrabajo;
+                        $ot = $ordenTrabajo;
 
-                    $partes = [];
+                        $partes = [];
 
-                    // $partes[] = $ot['prenda']['nombre'] ?? '';
-                    // $partes[] = '[Cant:' . (int)$ot['cantidad'] . ']';
-                    // $partes[] = '[Peso:' . $ot['peso'] . ']';
-                    // $partes[] = '[Ojales:' . (int)$ot['numero_ojales'] . '/' . (int)$ot['cantidad'] . ']';
+                        // $partes[] = $ot['prenda']['nombre'] ?? '';
+                        // $partes[] = '[Cant:' . (int)$ot['cantidad'] . ']';
+                        // $partes[] = '[Peso:' . $ot['peso'] . ']';
+                        // $partes[] = '[Ojales:' . (int)$ot['numero_ojales'] . '/' . (int)$ot['cantidad'] . ']';
 
-                    if (!empty($ot['prelavado'])) {
-                        $partes[] = '[Pre-Lavado:' . $ot['prelavado']['nombre'] . ']';
+                        if (!empty($ot['prelavado'])) {
+                            $partes[] = '[Pre-Lavado:' . $ot['prelavado']['nombre'] . ']';
+                        }
+                        if (!empty($ot['nevado'])) {
+                            $partes[] = '[Nevado:' . $ot['nevado']['nombre'] . ']';
+                        }
+                        if (!empty($ot['focalizado'])) {
+                            $partes[] = '[Focalizado:' . $ot['focalizado']['nombre'] . ']';
+                        }
+                        // if (!empty($ot['tipoTela'])) {
+                        //     $partes[] = '[Tipo Tela:' . $ot['tipoTela']['nombre'] . ']';
+                        // }
+                        // if (!empty($ot['colorTela'])) {
+                        //     $partes[] = '[Color Tela:' . $ot['colorTela']['nombre'] . ']';
+                        // }
+                        // if (!empty($ot['caracteristicaTela'])) {
+                        //     $partes[] = '[Caracteristica Tela:' . $ot['caracteristicaTela']['nombre'] . ']';
+                        // }
+
+                        // $partes[] = '[Con Muestra:' . (!empty($ot['con_muestra']) ? 'SI' : 'NO') . ']';
+
+                        $lavado = implode(' ; ', $partes);
+                        $lavadoJson = $lavado;
+
+                        // $lavado = json_encode( $ordenesTrabajo[0]['ots'][0]);
                     }
-                    if (!empty($ot['nevado'])) {
-                        $partes[] = '[Nevado:' . $ot['nevado']['nombre'] . ']';
-                    }
-                    if (!empty($ot['focalizado'])) {
-                        $partes[] = '[Focalizado:' . $ot['focalizado']['nombre'] . ']';
-                    }
-                    // if (!empty($ot['tipoTela'])) {
-                    //     $partes[] = '[Tipo Tela:' . $ot['tipoTela']['nombre'] . ']';
-                    // }
-                    // if (!empty($ot['colorTela'])) {
-                    //     $partes[] = '[Color Tela:' . $ot['colorTela']['nombre'] . ']';
-                    // }
-                    // if (!empty($ot['caracteristicaTela'])) {
-                    //     $partes[] = '[Caracteristica Tela:' . $ot['caracteristicaTela']['nombre'] . ']';
-                    // }
-
-                    // $partes[] = '[Con Muestra:' . (!empty($ot['con_muestra']) ? 'SI' : 'NO') . ']';
-
-                    $lavado = implode(' ; ', $partes);
-                    $lavadoJson = $lavado;
-
-                    // $lavado = json_encode( $ordenesTrabajo[0]['ots'][0]);
                 }
 
                 if ($proceso) {
