@@ -2,21 +2,17 @@
     <input type="hidden" name="orden_trabajo_id" id="orden_trabajo_id" value="{{ $ordenTrabajo->id }}">
     @foreach ( $ordenesTrabajos as $key => $ordenTrabajo)
         <div class="row">
-            <div class="col-md-6">
-                {{-- <div class="fv-row mb-7"> --}}
-                    @if ($key==0)
-                        <label class="required fw-semibold fs-6 mb-2">Cantidad Prendas</label>
-                    @endif
-                    <input type="text" class="form-control form-control-sm" id="numero_prendas_orden_trabajo" name="numero_prendas_orden_trabajo" readonly value="{{ (int) $ordenTrabajo->cantidad." - ".$ordenTrabajo->prenda->nombre }}">
-                {{-- </div> --}}
+            <div class="col-md-4">
+                @if ($key==0)
+                    <label class="required fw-semibold fs-6 mb-2">Cantidad Prendas</label>
+                @endif
+                <input type="text" class="form-control form-control-sm" id="numero_prendas_orden_trabajo" name="numero_prendas_orden_trabajo" readonly value="{{ (int) $ordenTrabajo->cantidad." - ".$ordenTrabajo->prenda->nombre }}">
             </div>
-            <div class="col-md-6">
-                {{-- <div class="fv-row mb-7"> --}}
-                    @if ($key==0)
-                        <label class="required fw-semibold fs-6 mb-2">Observaciones</label>
-                    @endif
-                    <input type="text" class="form-control form-control-sm" id="observacion_orden_trabajo" name="observacion_orden_trabajo" readonly value="{{ $ordenTrabajo->observacion }}">
-                {{-- </div> --}}
+            <div class="col-md-8">
+                @if ($key==0)
+                    <label class="required fw-semibold fs-6 mb-2">Observaciones</label>
+                @endif
+                <input type="text" class="form-control form-control-sm" id="observacion_orden_trabajo" name="observacion_orden_trabajo" readonly value="{{ $ordenTrabajo->observacion }}">
             </div>
         </div>
     @endforeach
@@ -63,7 +59,7 @@
                     <tbody>
                         <tr id="fila_laser_1">
                             <td><input autocomplete="off" name="talla_laser[1]" type="text" style="width: 100%;"></td>
-                            <td><input autocomplete="off" name="cantidad_laser[1]" id="cantidad_laser_1" type="number" style="width: 100%;"></td>
+                            <td><input autocomplete="off" name="cantidad_laser[1]" onkeyup="sumaCantidadPrendas(1)" onclick="this.select()" id="cantidad_laser_1" type="number" style="width: 100%;"></td>
                             <td><input autocomplete="off" name="intensidad_laser[1]" type="number" style="width: 100%;"></td>
                             <td><input autocomplete="off" name="altura_laser[1]" type="number" style="width: 100%;"></td>
                             <td><input autocomplete="off" name="dpi_laser[1]" type="number" style="width: 100%;"></td>
@@ -82,7 +78,12 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="12"><input type="text" value="6" id="precio_minuto" name="precio_minuto" style="width: 100%;" onchange="cambiarPrecioMinuto()"></td>
+                            <td>Precio Minuto Global</td>
+                            <td colspan="11"><input type="text" value="6" id="precio_minuto" name="precio_minuto" style="width: 100%;" onchange="cambiarPrecioMinuto()"></td>
+                        </tr>
+                        <tr>
+                            <td>Cantidad Prenda</td>
+                            <td colspan="11"><input id="total_prendas" readonly></td>
                         </tr>
                     </tfoot>
                 </table>

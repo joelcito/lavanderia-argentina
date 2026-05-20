@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [ClienteController::class, 'ajaxListado'])->name('cliente.ajaxListado');
         Route::post('/guardarCliente', [ClienteController::class, 'guardarCliente'])->name('cliente.guardarCliente');
         Route::post('/eliminarCliente', [ClienteController::class, 'eliminarCliente'])->name('cliente.eliminarCliente');
+        Route::get('/verVenta/{cliente_id}', [ClienteController::class, 'verVenta'])->name('cliente.verVenta');
     });
     // PRENDA
     Route::prefix('/prenda')->group(function () {
@@ -202,7 +203,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/facturas-estado-null', [FacturaController::class, 'getFacturasNull'])->name('factura.estadoNull');
         Route::get('/ots', [FacturaController::class, 'getOTs'])->name('factura.obtenerOTs');
         Route::post('/obtenerProductosAprobados', [FacturaController::class, 'obtenerProductosAprobados'])->name('factura.obtenerProductosAprobados');
-
+        Route::post('/enviarArchivar', [FacturaController::class, 'enviarArchivar'])->name('factura.enviarArchivar');
     });
 
     //PAGO
@@ -295,6 +296,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/reporte')->group(function () {
         Route::get('/formulario', [ReporteController::class, 'formulario'])->name('reporte.formulario');
         Route::post('/cuentaPorCobrar', [ReporteController::class, 'cuentaPorCobrar'])->name('reporte.cuentaPorCobrar');
+        Route::post('/cuentaPorCobrarRango', [ReporteController::class, 'cuentaPorCobrarRango'])->name('reporte.cuentaPorCobrarRango');
 
         Route::get('/stock', [ReporteController::class, 'formularioStock'])->name('reporte.stock.formulario');
         Route::post('/stock-historico', [ReporteController::class, 'stockHistorico'])->name('reporte.stock.historico');

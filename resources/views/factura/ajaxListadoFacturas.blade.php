@@ -8,15 +8,31 @@
                 <th>Total</th>
                 <th>Descuento</th>
                 <th>Sub Total</th>
+                <th>A cuenta</th>
                 <th>Fac / Or</th>
                 <th>Usuario</th>
+                <th>Est. Ven.</th>
                 <th>Estado</th>
                 <th>Prioridad</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
+            @php
+                $montoTotal          = 0;
+                $montoTotalDescuento = 0;
+                $montoTotalSubTotal  = 0;
+                $montoTotalACuneta   = 0;
+            @endphp
             @forelse ( $facturas as $fac)
+                @php
+
+                    $montoTotal = $montoTotal + $fac->total;
+                    $montoTotalDescuento = $montoTotalDescuento + $fac->descuento_adicional;
+                    $montoTotalSubTotal = $montoTotalSubTotal + ($fac->total - $fac->descuento_adicional);
+                    $montoTotalACuneta = $montoTotalACuneta + $fac->pagos->sum('monto');
+
+                @endphp
                 <tr>
                     <td>{{ $fac->sucursal?->nombre }}</td>
                     <td>{{ $fac->nombres . ' ' . $fac->ap_paterno . ' ' . $fac->ap_materno }}</td>
@@ -29,12 +45,24 @@
                         </span>
                     </td>
                     <td>
+                        {{ number_format($fac->pagos->sum('monto'), 2) }}
+                    </td>
+                    <td>
                         <span class="text-info">
                             {{ sprintf('%06d', $fac->numero_factura) }}
                         </span>
                     </td>
                     <td>
                         {{ $fac->usuarioCreador->nombres . ' ' . $fac->usuarioCreador->ap_paterno }}
+                    </td>
+                    <td>
+                        @if ($fac->estado_pago == "DEUDA")
+                            <span class="badge badge-danger">{{ $fac->estado_pago }}</span>
+                        @elseif($fac->estado_pago == "PAGADO")
+                            <span class="badge badge-success">{{ $fac->estado_pago }}</span>
+                        @else
+                            {{ $fac->estado_pago }}
+                        @endif
                     </td>
                     <td>
                         @if (is_null($fac->estado))
@@ -44,7 +72,7 @@
                         @endif
                     </td>
                     <td>
-                        <span class="badge badge-success">{{ $fac->prioridad }}</span>
+                        <span class="badge badge-info">{{ $fac->prioridad }}</span>
                     </td>
                     <td>
                         @if (is_null($fac->estado))
@@ -61,6 +89,16 @@
                 <h4 class="text-danger">No hay datos</h4>
             @endforelse
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3"><b>TOTAL</b></td>
+                <td><b>{{ number_format($montoTotal , 2) }}</b></td>
+                <td><b>{{ number_format($montoTotalDescuento , 2) }}</b></td>
+                <td><b>{{ number_format($montoTotalSubTotal , 2) }}</b></td>
+                <td><b>{{ number_format($montoTotalACuneta , 2) }}</b></td>
+                <td colspan="6"></td>
+            </tr>
+        </tfoot>
     </table>
 </div>
 

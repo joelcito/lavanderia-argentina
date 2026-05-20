@@ -13,7 +13,7 @@
 
 <!--begin::Modal - Add task-->
 <div class="modal fade" id="modalAgregarLaser" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 80%">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 95%">
         <div class="modal-content">
             <div class="modal-header" id="kt_modal_add_user_header">
                 <h3 class="fw-bold">FORMULARIO DE LASER</h3>
@@ -716,7 +716,7 @@
                 <tr id="fila_laser_${filaTableLaser}">
 
                     <td><input autocomplete="off" name="talla_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
-                    <td><input autocomplete="off" name="cantidad_laser[${filaTableLaser}]" id="cantidad_laser_${filaTableLaser}" type="number" style="width: 100%;"></td>
+                    <td><input autocomplete="off" name="cantidad_laser[${filaTableLaser}]" onkeyup="sumaCantidadPrendas(${filaTableLaser})" onclick="this.select()" id="cantidad_laser_${filaTableLaser}" type="number" style="width: 100%;"></td>
                     <td><input autocomplete="off" name="intensidad_laser[${filaTableLaser}]" type="number" style="width: 100%;"></td>
                     <td><input autocomplete="off" name="altura_laser[${filaTableLaser}]" type="number" style="width: 100%;"></td>
                     <td><input autocomplete="off" name="dpi_laser[${filaTableLaser}]" type="number" style="width: 100%;"></td>
@@ -774,7 +774,7 @@
             let nuevaFila = `
                 <tr id="fila_laser_${filaTableLaser}">
                     <td><input value="${talla}" autocomplete="off" name="talla_laser[${filaTableLaser}]" type="text" style="width: 100%;"></td>
-                    <td><input value="${cantidad}" autocomplete="off" name="cantidad_laser[${filaTableLaser}]" id="cantidad_laser_${filaTableLaser}" type="number" style="width: 100%;"></td>
+                    <td><input value="${cantidad}" autocomplete="off" name="cantidad_laser[${filaTableLaser}]" onkeyup="sumaCantidadPrendas(${filaTableLaser})" onclick="this.select()" id="cantidad_laser_${filaTableLaser}" type="number" style="width: 100%;"></td>
                     <td><input value="${intensidad}" autocomplete="off" name="intensidad_laser[${filaTableLaser}]" type="number" style="width: 100%;"></td>
                     <td><input value="${altura}" autocomplete="off" name="altura_laser[${filaTableLaser}]" type="number" style="width: 100%;"></td>
                     <td><input value="${dpi}" autocomplete="off" name="dpi_laser[${filaTableLaser}]" type="number" style="width: 100%;"></td>
@@ -805,6 +805,8 @@
             `;
 
             filaOriginal.after(nuevaFila);
+
+            sumaCantidadPrendas();
 
         }
 
@@ -1076,6 +1078,15 @@
 
             $('#valor_laser_'+fila).val(precioCliente * cantidad);
 
+        }
+
+        function sumaCantidadPrendas() {
+            let total = 0;
+            $('input[name^="cantidad_laser"]').each(function () {
+                let valor = parseInt($(this).val()) || 0;
+                total += valor;
+            });
+            $('#total_prendas').val(total);
         }
    </script>
 @endsection

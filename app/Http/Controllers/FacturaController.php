@@ -195,8 +195,9 @@ class FacturaController extends Controller
                 'facturas.numero_factura',
                 'facturas.usuario_creador_id',
                 'facturas.sucursal_id',
-                //'facturas.prioridad',
+                'facturas.prioridad',
                 'facturas.descuento_adicional',
+                'facturas.estado_pago',
                 'users.cedula',
                 'users.nombres',
                 'users.ap_paterno',
@@ -704,6 +705,24 @@ class FacturaController extends Controller
         }
         return $data;
 
+    }
+
+    public function enviarArchivar(Request $request){
+
+        if($request->ajax()){
+            $factura_id = $request->input('factura');
+            $usuario    = Auth::user();
+
+            $factura                         = Factura::find($factura_id);
+            $factura->usuario_modificador_id = $usuario->id;
+            $factura->estado_venta           = "ARCHIVADO";
+            $factura->save();
+
+            $data = Respuesta::success(null, "Se modifico con exito");
+        }else{
+            $data = Respuesta::error(null, "No existe");
+        }
+        return $data;
     }
 
 

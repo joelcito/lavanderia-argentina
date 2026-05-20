@@ -171,6 +171,37 @@ class ReporteController extends Controller
 
     }
 
+    public function cuentaPorCobrarRango(Request $request)
+    {
+
+        $nro_inicia_factura = $request->input('nro_inicia_factura');
+        $nro_fin_factura    = $request->input('nro_fin_factura');
+        $cliente_id         = $request->input('cliente_id_reporte_cobrar');
+
+        $usuario = Auth::user();
+        // $cliente = Cliente::find($cliente_id);
+        $cliente = User::find($cliente_id);
+
+        $facturas = Factura::where('usuario_cliente_id', $cliente_id)
+                            ->where('numero_factura', '>=' ,$nro_inicia_factura)
+                            ->where('numero_factura', '<=', $nro_fin_factura)
+                            ->where('estado_pago', 'DEUDA')
+                            ->whereNull('estado_venta')
+                            ->get();
+
+        $data = [
+            'facturas' => $facturas,
+            'usuario' => $usuario,
+            'cliente' => $cliente
+
+        ];
+
+        $pdf = PDF::loadView('reporte.pdf.cuentaPorCobrar', $data)
+            ->setPaper('letter', 'landscape');
+
+        return $pdf->stream('cuentaPorCobrar.pdf');
+    }
+
     public function stockHistorico(Request $request)
     {
         $fechaInicio = Carbon::parse($request->fecha_inicio)->startOfDay();

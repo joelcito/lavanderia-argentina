@@ -28,6 +28,7 @@
                     <td>{{ $cliente->razon_social }}</td>
                     <td>{{ $cliente->direccion}}</td>
                     <td>
+                        <a target="_blank" href="{{ url('cliente/verVenta', [$cliente->id]) }}" class="btn btn-icon btn-sm btn-info btn-circle" title="Ver ventas clientes"><i class="fa fa-eye"></i></a>
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar cliente" onclick="editarCliente({{ json_encode($cliente) }})"><i class="fa fa-edit"></i></button>
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar cliente" onclick="eliminarCliente('{{ $cliente->id }}',  '{{ $cliente->razon_social }}')"><i class="fa fa-trash"></i></button>
                     </td>

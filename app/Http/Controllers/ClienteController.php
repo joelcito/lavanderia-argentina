@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use App\Models\Factura;
 use App\Models\User;
 use App\Utils\Respuesta;
 use Illuminate\Support\Str;
@@ -201,5 +202,16 @@ class ClienteController extends Controller
 
         return $data;
 
+    }
+
+    public function verVenta(Request $request, $cliente_id){
+
+        $facturas = Factura::where('usuario_cliente_id', $cliente_id)->orderBy('id', 'desc')->get();
+        if(count($facturas) > 0)
+            $cliente = $facturas[0]->cliente;
+        else
+            $cliente = Cliente::find($cliente_id);
+
+        return view('factura.verVenta')->with(compact('facturas', 'cliente'));
     }
 }

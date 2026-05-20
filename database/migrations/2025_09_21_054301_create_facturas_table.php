@@ -41,6 +41,7 @@ return new class extends Migration
             $table->string('servico_laser',2)->nullable();
             $table->string('entregado_por')->nullable();
             $table->string('preceso_lavado',2)->nullable();
+            $table->string('estado_venta')->nullable();
 
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();
