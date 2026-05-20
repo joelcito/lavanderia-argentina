@@ -10,17 +10,22 @@
         </thead>
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($sucursales as $sucusal)
-            <tr>
-                <td>{{ $sucusal->nombre }}</td>
-                <td>{{ $sucusal->movimientos->where('producto_id', $productoId)->sum('ingreso') - $sucusal->movimientos->where('producto_id', $productoId)->sum('salida') }}</td>
-                <td>
-                    {{-- <button class="btn btn-icon btn-sm btn-success btn-circle" title="Ingreso producto" onclick="modalIngreso({{ $productoId }}, {{ $movimiento->sucursal_id }},{{ json_encode($movimiento->sucursal_nombre) }})">+</button>
-                    <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Salida producto" onclick="modalSalida({{ $productoId }}, {{ $movimiento->sucursal_id }},{{ json_encode($movimiento->sucursal_nombre) }})">-</button> --}}
-
-                    <button class="btn btn-icon btn-sm btn-success btn-circle" title="Ingreso producto" onclick="modalIngreso({{ $productoId }}, {{ $sucusal->id }},{{ json_encode($sucusal->nombre) }})">+</button>
-                    <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Salida producto" onclick="modalSalida({{ $productoId }}, {{ $sucusal->id }},{{ json_encode($sucusal->nombre) }})">-</button>
-                </td>
-            </tr>
+                <tr>
+                    <td>{{ $sucusal->nombre }}</td>
+                    <td>{{ $sucusal->movimientos->where('producto_id', $productoId)->sum('ingreso') - $sucusal->movimientos->where('producto_id', $productoId)->sum('salida') }}
+                    </td>
+                    <td>
+                        {{-- <button class="btn btn-icon btn-sm btn-success btn-circle" title="Ingreso producto"
+                            onclick="modalIngreso({{ $productoId }}, {{ $movimiento->sucursal_id }},{{ json_encode($movimiento->sucursal_nombre) }})">+</button>
+                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Salida producto"
+                            onclick="modalSalida({{ $productoId }}, {{ $movimiento->sucursal_id }},{{ json_encode($movimiento->sucursal_nombre) }})">-</button>
+                        --}}
+                        <button class="btn btn-icon btn-sm btn-success btn-circle" title="Ingreso producto"
+                            onclick="modalIngreso({{ $productoId }}, {{ $sucusal->id }},{{ json_encode($sucusal->nombre) }})">+</button>
+                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Salida producto"
+                            onclick="modalSalida({{ $productoId }}, {{ $sucusal->id }},{{ json_encode($sucusal->nombre) }})">-</button>
+                    </td>
+                </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>
             @endforelse
@@ -30,7 +35,7 @@
 </div>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#kt_table_stock').DataTable({
             lengthMenu: [10, 25, 50, 100], // Opciones de longitud de página
             dom: '<"dt-head row"<"col-md-6"l><"col-md-6"f>><"clear">t<"dt-footer row"<"col-md-5"i><"col-md-7"p>>', // Use dom for basic layout

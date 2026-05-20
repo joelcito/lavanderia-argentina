@@ -7,6 +7,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ColorTelaController;
 use App\Http\Controllers\ConfiguracionPersonalController;
 use App\Http\Controllers\ControlPersonalController;
+use App\Http\Controllers\DeudaController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\FocalizadoController;
 use App\Http\Controllers\HomeController;
@@ -441,6 +442,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListadoEntregado', [ProcesosController::class, 'ajaxListadoEntregado'])->name('entregas.ajaxListado');
         Route::post('/confirmar-entrega', [ProcesosController::class, 'confirmarEntrega'])->name('entregas.confirmarEntrega');
 
+    });
+
+
+    //deudas
+    Route::prefix('/deudas')->group(function () {
+        Route::get('/{user_id}', [DeudaController::class, 'listarPorUsuario']);
+        Route::post('/store', [DeudaController::class, 'store']);
+        Route::post('/descontar', [DeudaController::class, 'descontar']);
+        Route::get('/movimientos/{deuda_id}', [DeudaController::class, 'movimientos']);
     });
 
 });

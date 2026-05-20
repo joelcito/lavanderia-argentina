@@ -36,8 +36,10 @@
 
                         @if(in_array($user->rol_id, [2, 8]))
 
+
                             <button class="btn btn-info btn-sm btn-config" data-id="{{ $user->id }}">Monto por hora</button>
                             <button class="btn btn-warning btn-sm btn-asistencia" data-id="{{ $user->id }}"> Asistencia</button>
+                            <button class="btn btn-primary btn-sm btn-deudas" data-id="{{ $user->id }}">Descuentos</button>
                             <button class="btn btn-success btn-sm btn-pagos" data-id="{{ $user->id }}">Pagar</button>
                         @endif
                         @if($user->rol_id == 6)
@@ -45,11 +47,13 @@
                                 data-tipo="focalizador">
                                 Pagar
                             </button>
+                            <button class="btn btn-primary btn-sm btn-deudas" data-id="{{ $user->id }}">Descuentos</button>
                         @endif
                         @if($user->rol_id == 5)
                             <button class="btn btn-dark btn-sm btn-produccion" data-id="{{ $user->id }}" data-tipo="planchador">
                                 Pagar
                             </button>
+                            <button class="btn btn-primary btn-sm btn-deudas" data-id="{{ $user->id }}">Descuentos</button>
                         @endif
                     </td>
                 </tr>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Deuda;
+use App\Models\DeudaDetalle;
 use App\Models\Factura;
 use App\Models\SolicitudDetalleProceso;
 use App\Models\User;
@@ -191,51 +193,162 @@ class ControlPersonalController extends Controller
 
     public function store(Request $request)
     {
-        $usuario = User::find($request->user_id);
-        $yaPagado = Pago::where('user_id', $request->user_id)
-            ->where('tipo_pago', 'salario')
-            ->where('fecha_inicio', $request->fecha_inicio)
-            ->where('fecha_fin', $request->fecha_fin)
-            ->exists();
+        DB::beginTransaction();
 
-        if ($yaPagado && $request->tipo_pago !== 'salario') {
+        try {
+
+            $usuario = User::find($request->user_id);
+
+            $yaPagado = Pago::where('user_id', $request->user_id)
+                ->where('tipo_pago', 'salario')
+                ->where('fecha_inicio', $request->fecha_inicio)
+                ->where('fecha_fin', $request->fecha_fin)
+                ->exists();
+
+            if ($yaPagado && $request->tipo_pago !== 'salario') {
+
+                return response()->json([
+                    'error' => 'Este periodo ya fue pagado'
+                ], 400);
+            }
+
+            if ($request->tipo_pago === 'salario' && $yaPagado) {
+
+                return response()->json([
+                    'error' => 'Ya se pagó este periodo'
+                ], 400);
+            }
+
+            $montoFinal = round($request->monto, 2);
+
+            if ($montoFinal <= 0) {
+
+                return response()->json([
+                    'error' => 'Monto inválido'
+                ], 400);
+            }
+
+
+            if ($request->tipo_pago === 'descuento') {
+
+                if (!$request->deuda_id) {
+
+                    return response()->json([
+                        'error' => 'Selecciona una deuda'
+                    ], 400);
+                }
+
+                $deuda = Deuda::find($request->deuda_id);
+
+                if (!$deuda) {
+
+                    return response()->json([
+                        'error' => 'La deuda no existe'
+                    ], 404);
+                }
+
+                if ($montoFinal > $deuda->saldo_pendiente) {
+
+                    return response()->json([
+                        'error' => 'El descuento supera el saldo pendiente'
+                    ], 400);
+                }
+            }
+
+
+
+            Pago::create([
+
+                'user_id' => $request->user_id,
+
+                'usuario_creador_id' => auth()->id(),
+
+                'monto' => $montoFinal,
+
+                'tipo_pago' => $request->tipo_pago,
+
+                'descripcion' => $request->descripcion,
+
+                'fecha' => $request->fecha ?? now(),
+
+                'fecha_inicio' => $request->fecha_inicio ?? null,
+
+                'fecha_fin' => $request->fecha_fin ?? null,
+
+                'pago_diario_usado' =>
+                    $usuario->pago_diario ?? 0,
+
+                'horas_base_usado' =>
+                    $usuario->horas_base ?? 0,
+
+                'total_horas' =>
+                    $request->total_horas ?? 0,
+
+                'total_minutos' =>
+                    $request->total_minutos ?? 0,
+
+                'monto_calculado' =>
+                    $request->monto_calculado ?? 0,
+
+                'total_descuentos' =>
+                    $request->total_descuentos ?? 0,
+
+                'estado' => 'SALIDA'
+            ]);
+
+
+
+            if ($request->tipo_pago === 'descuento') {
+
+                $nuevoPagado =
+                    $deuda->monto_pagado + $montoFinal;
+
+                $saldo =
+                    $deuda->monto_total - $nuevoPagado;
+
+                $deuda->update([
+
+                    'monto_pagado' => $nuevoPagado,
+
+                    'saldo_pendiente' => $saldo,
+
+                    'estado' =>
+                        $saldo <= 0
+                        ? 'PAGADO'
+                        : 'PENDIENTE'
+                ]);
+
+
+
+                DeudaDetalle::create([
+
+                    'deuda_id' => $deuda->id,
+
+                    'tipo_movimiento' => 'SALIDA',
+
+                    'monto' => $montoFinal,
+                    'user_id' => $request->user_id,
+                    'descripcion' =>
+                        $request->descripcion,
+
+                    'fecha' => now()
+                ]);
+            }
+
+            DB::commit();
+
             return response()->json([
-                'error' => 'Este periodo ya fue pagado'
-            ], 400);
-        }
+                'ok' => true
+            ]);
 
-        if ($request->tipo_pago === 'salario' && $yaPagado) {
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
             return response()->json([
-                'error' => 'Ya se pagó este periodo'
-            ], 400);
+                'error' => $e->getMessage()
+            ], 500);
         }
-        $montoFinal = round($request->monto, 2);
-        $montoCalculado = round($request->monto_calculado ?? 0, 2);
-
-        Pago::create([
-            'user_id' => $request->user_id,
-            'usuario_creador_id' => auth()->id(),
-
-            'monto' => $montoFinal,
-            'tipo_pago' => $request->tipo_pago,
-            'descripcion' => $request->descripcion,
-            'fecha' => $request->fecha ?? now(),
-
-            'fecha_inicio' => $request->fecha_inicio ?? null,
-            'fecha_fin' => $request->fecha_fin ?? null,
-
-            'pago_diario_usado' => $usuario->pago_diario ?? 0,
-            'horas_base_usado' => $usuario->horas_base ?? 0,
-
-            'total_horas' => $request->total_horas ?? 0,
-            'total_minutos' => $request->total_minutos ?? 0,
-            'monto_calculado' => $montoCalculado ?? 0,
-            'total_descuentos' => $request->total_descuentos ?? 0,
-
-            'estado' => 'SALIDA'
-        ]);
-
-        return response()->json(['ok' => true]);
     }
 
 
