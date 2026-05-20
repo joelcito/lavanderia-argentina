@@ -739,22 +739,29 @@
         function recepcionar() {
             if ($('#formularioGeneraRecibo')[0].checkValidity() && $('#formulario_recepcion')[0].checkValidity()) {
                 if(arrayProductos.length > 0){
+
+                    var boton = $("#boton_enviar_recibo");
+                    var iconoCarga = boton.find("i");
+                    // Deshabilita el botón y muestra el icono de carga
+                    boton.attr("disabled", true);
+                    iconoCarga.show();
+
                     $.ajax({
                         url: "{{ url('factura/recepcionar') }}",
                         method: "POST",
                         data: {
-                            carro: arrayProductos,
-                            cliente: $('#cliente_seleccionado_id').val(),
-                            prioridad_cliente: $('#prioridad_cliente').val(),
-                            fecha_recepcion: $('#fecha_recepcion_cliente').val(),
-                            entregado_por: $('#entregado_por').val(),
+                            carro             : arrayProductos,
+                            cliente           : $('#cliente_seleccionado_id').val(),
+                            prioridad_cliente : $('#prioridad_cliente').val(),
+                            fecha_recepcion   : $('#fecha_recepcion_cliente').val(),
+                            entregado_por     : $('#entregado_por').val(),
                             usuario_recepciono: $('#usuario_recepciono_id').val(),
 
-                            tipo_pago_pagado_recibo: $('#tipo_pago_pagado_recibo').val(),
-                            realizo_pago_recibo: $('#realizo_pago_recibo').is(':checked'),
+                            tipo_pago_pagado_recibo  : $('#tipo_pago_pagado_recibo').val(),
+                            realizo_pago_recibo      : $('#realizo_pago_recibo').is(':checked'),
                             monto_total_pagado_recibo: $('#monto_total_pagado_recibo').val(),
-                            monto_pagado_recibo: $('#monto_pagado_recibo').val(),
-                            cambio_pagado_recibo: $('#cambio_pagado_recibo').val(),
+                            monto_pagado_recibo      : $('#monto_pagado_recibo').val(),
+                            cambio_pagado_recibo     : $('#cambio_pagado_recibo').val(),
                         },
                         // data: datos,
                         success: function (data) {
