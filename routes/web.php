@@ -453,6 +453,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/store', [DeudaController::class, 'store']);
         Route::post('/descontar', [DeudaController::class, 'descontar']);
         Route::get('/movimientos/{deuda_id}', [DeudaController::class, 'movimientos']);
+        Route::get('/reporte/{id}', [DeudaController::class, 'reporte']);
     });
 
 });

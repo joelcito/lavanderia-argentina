@@ -3,8 +3,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Deuda;
 use App\Models\DeudaDetalle;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PDF;
 
 class DeudaController extends Controller
 {
@@ -133,4 +135,17 @@ class DeudaController extends Controller
 
         return response()->json($movimientos);
     }
+
+    public function reporte($id)
+    {
+        $deuda = Deuda::with(['usuario', 'detalles.usuario'])
+            ->findOrFail($id);
+
+        $pdf = Pdf::loadView('personal.pdf.reporte_deuda', [
+            'deuda' => $deuda
+        ])->setPaper('A4', 'portrait');
+
+        return $pdf->stream('reporte_deuda_' . $deuda->id . '.pdf');
+    }
+
 }
