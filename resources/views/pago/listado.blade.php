@@ -133,8 +133,11 @@
                                     <button onclick="ajaxListado()" type="button"
                                         class="btn btn-sm w-100 btn-success mt-8"><i class="fa fa-search"></i></button>
                                 </div>
-                                <div class="col-md-1">
+                                {{-- <div class="col-md-1">
                                     <button onclick="ajaxDescargarReportePago()" type="button" class="btn btn-sm w-100 btn-danger mt-8" title="Genera Reporte"><i class="fa fa-file-pdf"></i></button>
+                                </div> --}}
+                                <div class="col-md-1">
+                                    <button onclick="generaExcelPago()" type="button" class="btn btn-sm w-100 btn-success mt-8" title="Genera Reporte"><i class="fa fa-file-excel"></i></button>
                                 </div>
                             </div>
                         </form>
@@ -416,6 +419,66 @@
                 $('#caja_id').append(`<option value="${c.id}">${texto}</option>`);
             });
             $('#caja_id').trigger('change');
+        }
+
+        function generaExcelPago(){
+
+             let datos = $('#formulario_busqueda').serializeArray();
+
+            // // Mostrar SweetAlert2 antes de enviar la solicitud
+            // Swal.fire({
+            //     title: 'Generando PDF...',
+            //     text: 'Por favor espera mientras generamos el archivo.',
+            //     allowOutsideClick: false, // Evitar que se cierre al hacer clic fuera
+            //     didOpen: () => {
+            //         Swal.showLoading(); // Mostrar el spinner de carga
+            //     }
+            // });
+
+            // Mostrar SweetAlert2 antes de enviar la solicitud
+            Swal.fire({
+                title: 'Generando Excel...',
+                text: 'Por favor espera mientras generamos el archivo.',
+                allowOutsideClick: false, // Evitar que se cierre al hacer clic fuera
+                didOpen: () => {
+                    Swal.showLoading(); // Mostrar el spinner de carga
+                }
+            });
+
+            $.ajax({
+                url: "{{ url('pago/generaExcelPago') }}",
+                method: "POST",
+                data: datos,
+                xhrFields: {
+                    responseType: 'blob' // Esto le dice a jQuery que espere un archivo binario (PDF)
+                },
+                success: function(data, status, xhr) {
+                    // // Ocultar SweetAlert2 cuando la solicitud sea exitosa
+                    Swal.close();
+
+                    // Assume `data` contains the binary response from the server
+                    var blob = new Blob([data], {
+                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'reporte_pagos.xlsx'; // Nombre del archivo Excel
+                    document.body.appendChild(link); // Required for Firefox
+                    link.click();
+                    document.body.removeChild(link);
+                },
+                error: function(xhr, status, error) {
+                    // Mostrar error si algo falla
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se pudo generar el PDF. Inténtalo de nuevo.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    console.error("Error al generar el PDF: ", error);
+                }
+            });
+
         }
 
     </script>

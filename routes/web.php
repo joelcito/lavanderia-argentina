@@ -219,6 +219,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/formularioDecuentoAdicional', [PagoController::class, 'formularioDecuentoAdicional'])->name('pago.formularioDecuentoAdicional');
         Route::post('/guardarDescuentoAdicional', [PagoController::class, 'guardarDescuentoAdicional'])->name('pago.guardarDescuentoAdicional');
         Route::get('/comprobantePago/{pago_id}', [PagoController::class, 'comprobantePago'])->name('pago.comprobantePago');
+        Route::post('/generaExcelPago', [PagoController::class, 'generaExcelPago'])->name('pago.generaExcelPago');
     });
 
     //PROCESOS
