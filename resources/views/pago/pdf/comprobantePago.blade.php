@@ -78,23 +78,25 @@
                 <th>SUCURSAL</th>
                 <th>CATEGORIA</th>
                 <th>SUB CATEGORIA</th>
-                <th>COD. VENTA</th>
+                <th>FAC/OR REC.</th>
                 <th>FECHA</th>
                 <th>DESCRIPCION</th>
                 <th>TIPO PAGO</th>
                 <th>MONTO</th>
+                <th>SALDO</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>{{ $pago?->puntoVenta?->sucursal?->nombre }}</td>
+                <td>{{ $pago?->sucursal?->nombre }}</td>
                 <td>{{ $pago->subCategoria?->Categoria?->nombre }}</td>
                 <td>{{ $pago->subCategoria?->nombre }}</td>
-                <td>{{ $pago->factura?->codigo_venta }}</td>
+                <td>{{ $pago->factura?->numero_factura }}</td>
                 <td>{{ $pago->fecha }}</td>
                 <td>{{ $pago->descripcion }}</td>
                 <td>{{ $pago->tipo_pago }}</td>
                 <td>{{ number_format($pago->monto, 2) }}</td>
+                <td>{{ number_format(($pago->factura->total - $pago->factura->pagos->sum('monto')), 2) }}</td>
             </tr>
         </tbody>
     </table>

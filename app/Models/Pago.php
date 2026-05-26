@@ -52,4 +52,14 @@ class Pago extends Model
     {
         return $this->belongsTo('App\Models\Sucursal', 'sucursal_id');
     }
+
+    public function factura()
+    {
+        return $this->belongsTo('App\Models\Factura', 'factura_id');
+    }
+
+    public function subCategoria()
+    {
+        return $this->belongsTo('App\Models\SubCategoria', 'sub_categoria_id');
+    }
 }

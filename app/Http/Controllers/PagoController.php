@@ -9,8 +9,12 @@ use App\Models\SubCategoria;
 use App\Models\Sucursal;
 use App\Models\User;
 use App\Utils\Respuesta;
+use Dompdf\Dompdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class PagoController extends Controller
 {
@@ -56,9 +60,7 @@ class PagoController extends Controller
             $query = Pago::select();
 
             if ($sucursal_id != null) {
-                $sucursal      = Sucursal::find($sucursal_id);
-                $puntoVentasId = $sucursal->puntoVentas->pluck('id')->toArray();
-                $query->whereIn('punto_venta_id', $puntoVentasId);
+                $query->where('sucursal_id', $sucursal_id);
             }
 
             if ($fecha_ini != null && $fecha_fin != null) {
@@ -258,6 +260,196 @@ class PagoController extends Controller
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
         return $data;
+
+    }
+
+    public function generaExcelPago(Request $request){
+
+        if($request->ajax()){
+
+            // dd($request->all());
+
+            $sucursal_id = $request->input('sucursal_id');
+            $fecha_ini   = $request->input('fecha_ini');
+            $fecha_fin   = $request->input('fecha_fin');
+            $usuario_id  = $request->input('usuario_busqueda_id');
+
+            $query = Pago::select();
+
+            if ($sucursal_id != null) {
+                $query->where('sucursal_id', $sucursal_id);
+            }
+
+            if ($fecha_ini != null && $fecha_fin != null) {
+                $query->where('fecha', '>=', $fecha_ini . ' 00:00:00')
+                    ->where('fecha', '<=', $fecha_fin . ' 23:59:59');
+            }
+
+            if ($usuario_id != null) {
+                $query->where('usuario_creador_id', $usuario_id);
+            }
+
+            $pagos = $query->orderBy('id', 'desc')->get();
+
+            // generacion del excel
+            $fileName = 'Pagos.xlsx';
+            $libro = new Spreadsheet();
+            $hoja = $libro->getActiveSheet();
+
+            // Ajustar ancho de columnas
+            $hoja->getColumnDimension('A')->setWidth(15); // N°
+            $hoja->getColumnDimension('B')->setWidth(25); // SUCURSAL
+            $hoja->getColumnDimension('C')->setWidth(25); // FECHA
+            $hoja->getColumnDimension('D')->setWidth(15); // DESCRIPCION
+            $hoja->getColumnDimension('E')->setWidth(20); // CATEGORIA PAGO
+            $hoja->getColumnDimension('F')->setWidth(15); // SUB CATEGORIA/REC
+            $hoja->getColumnDimension('G')->setWidth(20); // TIPO PAGO EFECTIVO
+            $hoja->getColumnDimension('H')->setWidth(20); // FAC/REC DEPOSITO
+            $hoja->getColumnDimension('I')->setWidth(20); // MONTO EFECTIVO
+            $hoja->getColumnDimension('J')->setWidth(20); // MONTO DEPOSITO
+            $hoja->getColumnDimension('K')->setWidth(20); // ESTADO
+            $hoja->getColumnDimension('L')->setWidth(20); // USUARIO
+            $hoja->getColumnDimension('M')->setWidth(20); // VIGENCIA
+
+            // Añadir datos a la hoja de cálculo
+            $hoja->setCellValue('A1', "REPORTE CENTRALIZADO DE PAGOS");
+            $hoja->setCellValue('A2', "LISTADO DE PAGOS");
+            $hoja->setCellValue('A3', "FECHA DE REPORTE: ".date('d/m/Y H:i:s'));
+
+            $hoja->setCellValue('A4', "N°");
+            $hoja->setCellValue('B4', "SUCURSAL");
+            $hoja->setCellValue('C4', "FECHA");
+            $hoja->setCellValue('D4', "DESCRIPCION");
+            $hoja->setCellValue('E4', "CATEGORIA");
+            $hoja->setCellValue('F4', "SUB CATEGORIA");
+            $hoja->setCellValue('G4', "TIPO PAGO");
+            $hoja->setCellValue('H4', "FAC/REC");
+            $hoja->setCellValue('I4', "MONTO EFECTIVO");
+            $hoja->setCellValue('J4', "MONTO DEPOSITO");
+            $hoja->setCellValue('K4', "ESTADO");
+            $hoja->setCellValue('L4', "USUARIO");
+            $hoja->setCellValue('M4', "VIGENCIA");
+
+            $encabezadoStyle = [
+                'font' => [
+                    'bold' => true,
+                    'size' => 12,
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+            ];
+
+            $hoja->mergeCells('A1:M1');
+            $hoja->mergeCells('A2:M2');
+            $hoja->mergeCells('A3:M3');
+
+            $hoja->getStyle('A1')->applyFromArray($encabezadoStyle);
+            $hoja->getStyle('A2')->applyFromArray($encabezadoStyle);
+            $hoja->getStyle('A3')->applyFromArray($encabezadoStyle);
+
+            // Aplicar márgenes y formato a los encabezados
+            $encabezadoStyle = [
+                'font' => [
+                    'bold' => true,
+                    'size' => 12,
+                ],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => [
+                        'argb' => 'FFFFE0B2', // Color de fondo
+                    ],
+                ],
+            ];
+            $hoja->getStyle('A4:M4')->applyFromArray($encabezadoStyle);
+
+            $contadorInicio              = 5;
+
+            foreach ($pagos  as $key => $pago) {
+
+                $hoja->setCellValue('A' . $contadorInicio, ($key + 1));
+                $hoja->setCellValue('B' . $contadorInicio, $pago->sucursal?->nombre);
+                $hoja->setCellValue('C' . $contadorInicio, $pago->fecha);
+                $hoja->setCellValue('D' . $contadorInicio, $pago->descripcion);
+
+                $hoja->setCellValue('E' . $contadorInicio, $pago->subCategoria?->Categoria?->nombre);
+                $hoja->setCellValue('F' . $contadorInicio, $pago->subCategoria?->nombre);
+
+                $hoja->setCellValue('G' . $contadorInicio, $pago->tipo_pago);
+                $hoja->setCellValue('H' . $contadorInicio, $pago->factura ? ($pago->factura->numero_factura) : "");
+
+                if($pago->estado === 'INGRESO')
+                    $m = ($pago->tipo_pago === 'EFECTIVO') ?$pago->monto : 0;
+                elseif($pago->estado === 'SALIDA')
+                    $m = ($pago->tipo_pago === 'EFECTIVO') ?$pago->monto : 0;
+
+                $hoja->setCellValue('I' . $contadorInicio, $m);
+
+                if($pago->estado === 'INGRESO')
+                    $m1 = ($pago->tipo_pago === 'TRANSFERENCIA' || $pago->tipo_pago === 'QR') ?$pago->monto : 0;
+                elseif($pago->estado === 'SALIDA')
+                    $m1 = ($pago->tipo_pago === 'TRANSFERENCIA' || $pago->tipo_pago === 'QR') ?$pago->monto : 0;
+
+                $hoja->setCellValue('J' . $contadorInicio, $m1);
+
+                $hoja->setCellValue('K' . $contadorInicio, $pago->estado);
+                $hoja->setCellValue('L' . $contadorInicio, $pago->usuario->name);
+                $hoja->setCellValue('M' . $contadorInicio, is_null($pago->fecha_anulacion) ? 'Vigente' : 'Anulado' );
+
+                $contadorInicio++;
+            }
+
+            // Aplicar bordes a las celdas de datos
+            $hoja->getStyle('A5:K' . ($contadorInicio - 1))->applyFromArray([
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+            ]);
+
+            // Establecer los encabezados para forzar la descarga
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="' . $fileName . '"');
+            header('Cache-Control: max-age=0');
+
+            // Guardar el archivo
+            $writer = new Xlsx($libro);
+            $writer->save('php://output');
+            exit;
+
+        }else{
+            $data = Respuesta::error(null, "Error en registro de datos.");
+        }
+        return $data;
+    }
+
+    public function comprobantePago(Request $request, $pago_id){
+
+        $pago = Pago::find($pago_id);
+
+        $html = View::make('pago.pdf.comprobantePago', compact(['pago']))->render();
+        $dompdf = new Dompdf();
+        $dompdf->setPaper(array(0,0,300.00,504.00), 'landscape');//cambio orientacion de la hoja
+        $dompdf->loadHtml($html);
+        $dompdf->render();
+        //return $dompdf->stream('Reporte_Ingresos.pdf');
+
+        return response($dompdf->output())
+        ->header('Content-Type', 'application/pdf')
+        ->header('Content-Disposition', 'inline; filename=Cotizacion.pdf');
+
+        // dd($request->all(), $pago_id);
 
     }
 }
