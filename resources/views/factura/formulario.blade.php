@@ -287,8 +287,7 @@
                                 </div>
                                 <div class="col-md">
                                     <label class="required fw-semibold fs-6 mb-2">Prenda</label>
-                                    <select name="prenda_id" id="prenda_id" style="width: 100%"
-                                        data-placeholder="SELECIONE" required>
+                                    <select name="prenda_id" id="prenda_id" style="width: 100%" required>
                                         <option></option>
                                         @foreach ($prendas as $prenda)
                                             <option value="{{ $prenda->id }}">{{ $prenda->nombre }}</option>
@@ -384,7 +383,7 @@
 
                                 <div class="col-md">
                                     <label class="required fw-semibold fs-6 mb-2">S. Total</label>
-                                    <input type="number" id="sub_total" name="sub_total" required min="0.01" step="0.01"  style="width: 100%">
+                                    <input type="number" id="sub_total" name="sub_total" required min="0.01" step="0.01"  style="width: 100%" readonly>
                                 </div>
 
                                 <div class="col-md">
@@ -679,28 +678,183 @@
                                             <i class='fa fa-trash'></i>
                                     </button>`;
 
+
+                let inputCantidad = `<input id="ingreso_cantidad_${contadorTable}" onkeyup="cambioDatos('ingreso_cantidad_${contadorTable}', '${contadorTable}', 'CANTIDAD')" step="0.01" type="number" style="width: 100%" required min="1" value="${cantidad_venta}">`;
+
+                // =============== ESTO ES PARA PRENDA ===============
+                let prendasJson = @json($prendas);
+                let selectPrenda = `<select id="ingreso_prenda_${contadorTable}" onchange="cambioDatos('ingreso_prenda_${contadorTable}', '${contadorTable}', 'PRENDA')" style="width:100%" required >
+                                    <option></option>
+                                    `;
+                prendasJson.forEach(prenda => {
+                                    selectPrenda += `
+                                    <option value="${prenda.id}" ${prenda.id==prenda_id ? 'selected' : '' }>
+                                        ${prenda.nombre}
+                                    </option>
+                                    `;
+                                    });
+                selectPrenda += `</select>`;
+
+                // =============== ESTO ES PARA TELA ===============
+                let telasJson = @json($telas);
+                let selectTela = `<select id="ingreso_tela_${contadorTable}" onchange="cambioDatos('ingreso_tela_${contadorTable}', '${contadorTable}', 'TELA')" style="width:100%" required>
+                    <option></option>
+                    `;
+                    telasJson.forEach(tela => {
+                    selectTela += `
+                    <option value="${tela.id}" ${tela.id==tela_id ? 'selected' : '' }>
+                        ${tela.nombre}
+                    </option>
+                    `;
+                    });
+
+                    selectTela += `</select>`;
+
+
+
+                    // =============== ESTO ES PARA PRELAVADO ===============
+                let preLavadoJson = @json($prelavados);
+                let selectPreLavado = `<select id="ingreso_pre_lavado_${contadorTable}" onchange="cambioDatos('ingreso_pre_lavado_${contadorTable}', '${contadorTable}', 'PRELAVADO')" style="width:100%" required>
+                    <option></option>
+                    `;
+                    preLavadoJson.forEach(prelavado => {
+                    selectPreLavado += `
+                    <option value="${prelavado.id}" ${prelavado.id==prelavado_id ? 'selected' : '' }>
+                        ${prelavado.nombre}
+                    </option>
+                    `;
+                    });
+
+                    selectPreLavado += `</select>`;
+
+                // =============== ESTO ES PARA NEVADO ===============
+                let nevadoJson = @json($nevados);
+                let selectNevado = `<select id="ingreso_nevado_${contadorTable}" onchange="cambioDatos('ingreso_nevado_${contadorTable}', '${contadorTable}', 'NEVADO')" style="width:100%" required>
+                    <option></option>
+                    `;
+                    nevadoJson.forEach(nevado => {
+                    selectNevado += `
+                    <option value="${nevado.id}" ${nevado.id==nevado_id ? 'selected' : '' }>
+                        ${nevado.nombre}
+                    </option>
+                    `;
+                    });
+
+                    selectNevado += `</select>`;
+
+                // =============== ESTO ES PARA FOCALIZADO ===============
+                let focalizadoJson = @json($focalizados);
+                let selectFocalizado = `<select id="ingreso_focalizado_${contadorTable}" onchange="cambioDatos('ingreso_focalizado_${contadorTable}', '${contadorTable}', 'FOCALIZADO')" style="width:100%" required>
+                    <option></option>
+                    `;
+                    focalizadoJson.forEach(focalizado => {
+                    selectFocalizado += `
+                    <option value="${focalizado.id}" ${focalizado.id==focalizado_id ? 'selected' : '' }>
+                        ${focalizado.nombre}
+                    </option>
+                    `;
+                    });
+
+                    selectFocalizado += `
+                </select>`;
+
+                // =============== ESTO ES PARA TIPO TELAS ===============
+                let tipoTelaJson = @json($tipoTelas);
+                let selectTipoTela = `<select id="ingreso_tipo_tela_${contadorTable}" onchange="cambioDatos('ingreso_tipo_tela_${contadorTable}', '${contadorTable}', 'TIPOTELA')" style="width:100%" required>
+                    <option></option>
+                    `;
+                    tipoTelaJson.forEach(tipoTela => {
+                    selectTipoTela += `
+                    <option value="${tipoTela.id}" ${tipoTela.id==tipo_tela_id ? 'selected' : '' }>
+                        ${tipoTela.nombre}
+                    </option>
+                    `;
+                    });
+
+                    selectTipoTela += `
+                </select>`;
+
+                // =============== ESTO ES PARA COLORES TELAS ===============
+                let colorTelaJson = @json($colorTelas);
+                let selectColorTela = `<select id="ingreso_color_tela_${contadorTable}" onchange="cambioDatos('ingreso_color_tela_${contadorTable}', '${contadorTable}', 'COLORTELA')" style="width:100%" required>
+                    <option></option>
+                    `;
+                    colorTelaJson.forEach(colorTela => {
+                    selectColorTela += `
+                    <option value="${colorTela.id}" ${colorTela.id==color_tela_id ? 'selected' : '' }>
+                        ${colorTela.nombre}
+                    </option>
+                    `;
+                    });
+
+                    selectColorTela += `
+                </select>`;
+
+                // =============== ESTO ES PARA CARACTERISTICA TELAS ===============
+                let caracteristicaTelaJson = @json($caracteristicaTelas);
+                let selectCaracteristicaTela = `<select id="ingreso_caracteristica_tela_${contadorTable}" onchange="cambioDatos('ingreso_caracteristica_tela_${contadorTable}', '${contadorTable}', 'CARACTERISTICATELA')" style="width:100%" required>
+                    <option></option>
+                    `;
+                    caracteristicaTelaJson.forEach(caracteristicaTela => {
+                    selectCaracteristicaTela += `
+                    <option value="${caracteristicaTela.id}" ${caracteristicaTela.id==caracteristica_tela_id ? 'selected' : '' }>
+                        ${caracteristicaTela.nombre}
+                    </option>
+                    `;
+                    });
+
+                    selectCaracteristicaTela += `
+                </select>`;
+
+                let inputPeso        = `<input id="ingreso_peso_${contadorTable}" onkeyup="cambioDatos('ingreso_peso_${contadorTable}', '${contadorTable}', 'PESO')" step="0.01" type="number" style="width: 100%" required min="0.01" value="${peso}">`;
+                let inputPrecioVenta = `<input id="ingreso_precio_venta_${contadorTable}" onkeyup="cambioDatos('ingreso_precio_venta_${contadorTable}', '${contadorTable}', 'PRECIOVENTA')" step="0.01" type="number" style="width: 100%" required min="0.01" value="${precio_venta}">`;
+                let inputSubTotal    = `<input id="ingreso_sub_total_${contadorTable}" onkeyup="cambioDatos('ingreso_sub_total_${contadorTable}', '${contadorTable}', 'SUBTOTAL')" step="0.01" type="number" style="width: 100%" required min="0.01" value="${sub_total}" readonly>`;
+                let inputObservacion = `<input id="ingreso_observacion_${contadorTable}" onkeyup="cambioDatos('ingreso_observacion_${contadorTable}', '${contadorTable}', 'OBSERVACION')" type="text" style="width: 100%" required min="0.01" value="${observacion}">`;
+                let inputNroOt       = `<input id="ingreso_nro_ot_${contadorTable}" onkeyup="cambioDatos('ingreso_nro_ot_${contadorTable}', '${contadorTable}', 'NROOT')" step="0.01" type="number" style="width: 100%" required min="0.01" value="${nro_ot}">`;
+                let inputConMuestra  = `<input id="ingreso_con_muetra_${contadorTable}" onchange="cambioDatos('ingreso_con_muetra_${contadorTable}', '${contadorTable}', 'CONMUESTRA')" type="checkbox" style="width: 100%" ${con_muestra? 'checked' : ''} >`;
+
+
                 table.row.add([
-                    cantidad_venta,
-                    $('#prenda_id option:selected').text(),
+                    // cantidad_venta,
+                    // $('#prenda_id option:selected').text(),
+                    // numero_ojales,
+                    // $('#tela_id option:selected').text(),
+                    // $('#prelavado_id option:selected').text(),
+                    // $('#nevado_id option:selected').text(),
+                    // $('#focalizado_id option:selected').text(),
+                    // $('#tipo_tela_id option:selected').text(),
+                    // $('#color_tela_id option:selected').text(),
+                    // $('#caracteristica_tela_id option:selected').text(),
+                    // peso,
+                    // precio_venta,
+                    // sub_total,
+                    // observacion,
+                    // nro_ot,
+                    // (con_muestra? 'SI': 'NO'),
+                    inputCantidad,
+                    selectPrenda,
                     numero_ojales,
-                    $('#tela_id option:selected').text(),
-                    $('#prelavado_id option:selected').text(),
-                    $('#nevado_id option:selected').text(),
-                    $('#focalizado_id option:selected').text(),
-                    $('#tipo_tela_id option:selected').text(),
-                    $('#color_tela_id option:selected').text(),
-                    $('#caracteristica_tela_id option:selected').text(),
-                    peso,
-                    precio_venta,
-                    sub_total,
-                    observacion,
-                    nro_ot,
-                    (con_muestra? 'SI': 'NO'),
+                    selectTela,
+                    selectPreLavado,
+                    selectNevado,
+                    selectFocalizado,
+                    selectTipoTela,
+                    selectColorTela,
+                    selectCaracteristicaTela,
+                    inputPeso,
+                    inputPrecioVenta,
+                    inputSubTotal,
+                    inputObservacion,
+                    inputNroOt,
+                    inputConMuestra,
                     btnEliminar
                 ]).node().id = 'producto-' + contadorTable;
                 table.draw(false);
 
                 arrayProductos.push(servicio);
+
+                console.log("##############################");
+                console.log(arrayProductos);
 
                 // SETEAMOS EL VALOR PARA EL PAGO
                 let montoPagado = parseFloat($('#monto_total_pagado_recibo').val());
@@ -883,6 +1037,59 @@
             let descuentoAdicional = $('#descuento_adicional').val();
             $('#monto_total_pagado_recibo').val(parseFloat(sumaTotal));
 
+        }
+
+        function cambioDatos(datos, fila, dato) {
+
+            let d = arrayProductos.find(e => e.contadorTable == fila);
+            let valor = $('#'+datos).val();
+
+            if(dato == 'CANTIDAD'){
+                d.cantidad_venta = valor;
+                d.sub_total = d.cantidad_venta * d.precio_venta;
+                $('#ingreso_sub_total_'+fila).val(d.sub_total);
+            }else if(dato == 'PRENDA'){
+                d.prenda_id = valor;
+            }else if(dato == 'TELA'){
+                d.tela_id = valor;
+            }else if(dato == 'PRELAVADO'){
+                d.prelavado_id = valor;
+            }else if(dato == 'NEVADO'){
+                d.nevado_id = valor;
+            }else if(dato == 'FOCALIZADO'){
+                d.focalizado_id = valor;
+            }else if(dato == 'TIPOTELA'){
+                d.tipo_tela_id = valor;
+            }else if(dato == 'COLORTELA'){
+                d.color_tela_id = valor;
+            }else if(dato == 'CARACTERISTICATELA'){
+                d.caracteristica_tela_id = valor;
+            }else if(dato == 'PESO'){
+                d.peso = valor;
+            }else if(dato == 'PRECIOVENTA'){
+                d.precio_venta = valor;
+                d.sub_total = d.cantidad_venta * d.precio_venta;
+                $('#ingreso_sub_total_'+fila).val(d.sub_total);
+            }else if(dato == 'OBSERVACION'){
+                d.observacion = valor;
+            }else if(dato == 'NROOT'){
+                d.nro_ot = valor;
+            }else if(dato == 'NROOT'){
+                d.nro_ot = valor;
+            }else if(dato == 'CONMUESTRA'){
+                let con_muestra_new = $('#'+datos).is(':checked');
+                d.con_muestra = con_muestra_new;
+            }
+
+            console.log(datos);
+
+            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            console.log(arrayProductos);
+
+            // let cantidad = parseFloat($('#cantidad_venta').val())
+            // let precio = parseFloat($('#precio_venta').val())
+
+            // $('#sub_total').val(cantidad * precio);
         }
     </script>
 @endsection
