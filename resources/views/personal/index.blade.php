@@ -286,7 +286,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td>${data.total_horas}</td>
+                                                        <td>${data.total_horas_texto}</td>
                                                         <td>${data.dias}</td>
                                                         <td>Bs ${data.pago_hora}</td>
                                                         <td>Bs ${data.pago_minuto}</td>
@@ -346,7 +346,7 @@
                                                     Guardar
                                                 </button>
                                             </div>
-                                        </div>    
+                                        </div>
                                         <hr/>
 
                                     ${data.pago_realizado ? `
@@ -361,7 +361,7 @@
                         ? `<button class="btn btn-secondary" disabled>YA PAGADO</button>`
                         : `<button class="btn btn-success" id="btn-pagar">PAGAR TOTAL</button>`
                     }
-                                        </div>                       
+                                        </div>
                                                 <h5 class="mt-4">Asistencia</h5>
                                                 <table class="table table-bordered">
                                                     <thead>
