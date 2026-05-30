@@ -63,7 +63,7 @@ class ControlPersonalController extends Controller
 
     public function formularioPlanchador()
     {
-        $usuarios = User::where('rol_id', 5)->get(); // planchadores   
+        $usuarios = User::where('rol_id', 5)->get(); // planchadores
         $sucursales = Sucursal::all();
 
         return view('personal.personalPlanchador', compact('usuarios', 'sucursales'));
@@ -163,9 +163,15 @@ class ControlPersonalController extends Controller
         //     ->sum('monto');
         //$totalFinal = $pagoTotal - $adelantos - $descuentos - $pagos;
         $totalFinal = $pagoTotal - $adelantos - $descuentos;
+
+        // --- NUEVO CÁLCULO PARA EL FORMATO DE RELOJ ---
+        $horasTotal = floor($totalSegundos / 3600);
+        $minutosTotal = floor(($totalSegundos % 3600) / 60);
+        $totalHorasTexto = sprintf('%02d:%02d', $horasTotal, $minutosTotal);
+
         return response()->json([
-            'total_horas'
-            => round($totalSegundos / 3600, 2),
+            'total_horas' => round($totalSegundos / 3600, 2),
+            'total_horas_texto' => $totalHorasTexto,
             'total_minutos' => round($totalSegundos / 60, 2),
             'dias' => $dias,
             'pago_hora' => round($pagoHora, 2),
@@ -175,12 +181,10 @@ class ControlPersonalController extends Controller
             'descuentos' => round($descuentos, 2),
             'total_final' => round($totalFinal, 2),
             'pago_diario' => $usuario->pago_diario,
-            'horas_base' =>
-                $usuario->horas_base,
+            'horas_base' => $usuario->horas_base,
             'ajustes' => $ajustes,
             'inicio' => $inicio,
-            'fin'
-            => $fin,
+            'fin' => $fin,
             'pago_realizado' => $pagoRealizado ? true : false,
             'pago_info' => $pagoRealizado,
             //'pagos' => round($pagos, 2),
