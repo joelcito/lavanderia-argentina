@@ -163,29 +163,29 @@ class OrdenTrabajoController extends Controller
 
             // dd($request->all());
 
-            $orden_trabajo_id = $request->input('orden_trabajo_id');
-            $numero_orden_trabajo = $request->input('numero_orden_trabajo');
+            $orden_trabajo_id             = $request->input('orden_trabajo_id');
+            $numero_orden_trabajo         = $request->input('numero_orden_trabajo');
             $numero_prendas_orden_trabajo = $request->input('numero_prendas_orden_trabajo');
-            $observacion_orden_trabajo = $request->input('observacion_orden_trabajo');
-            $talla_laser = $request->input('talla_laser');
-            $cantidad_laser = $request->input('cantidad_laser');
-            $intensidad_laser = $request->input('intensidad_laser');
-            $altura_laser = $request->input('altura_laser');
-            $dpi_laser = $request->input('dpi_laser');
-            $pos_1_laser = $request->input('pos_1_laser');
-            $pos_2_laser = $request->input('pos_2_laser');
-            $pos_3_laser = $request->input('pos_3_laser');
-            $pos_4_laser = $request->input('pos_4_laser');
-            $prenda_x_mesa_laser = $request->input('prenda_x_mesa_laser');
-            $tiempo_total_laser = $request->input('tiempo_total_laser');
-            $usuario = Auth::user();
-            $ordenTrabajoPadre = Order_trabajo::find($orden_trabajo_id);
-            $valor_laser = $request->input('valor_laser');
-            $precio_minuto_valor = $request->input('precio_minuto_valor');
-            $precio_pronosticado = $request->input('precio_pronosticado');
-            $precio_cliente = $request->input('precio_cliente');
-            $totalAdicionLaserFactura = 0;
-            $factura = $ordenTrabajoPadre->factura;
+            $observacion_orden_trabajo    = $request->input('observacion_orden_trabajo');
+            $talla_laser                  = $request->input('talla_laser');
+            $cantidad_laser               = $request->input('cantidad_laser');
+            $intensidad_laser             = $request->input('intensidad_laser');
+            $altura_laser                 = $request->input('altura_laser');
+            $dpi_laser                    = $request->input('dpi_laser');
+            $pos_1_laser                  = $request->input('pos_1_laser');
+            $pos_2_laser                  = $request->input('pos_2_laser');
+            $pos_3_laser                  = $request->input('pos_3_laser');
+            $pos_4_laser                  = $request->input('pos_4_laser');
+            $prenda_x_mesa_laser          = $request->input('prenda_x_mesa_laser');
+            $tiempo_total_laser           = $request->input('tiempo_total_laser');
+            $usuario                      = Auth::user();
+            $ordenTrabajoPadre            = Order_trabajo::find($orden_trabajo_id);
+            $valor_laser                  = $request->input('valor_laser');
+            $precio_minuto_valor          = $request->input('precio_minuto_valor');
+            $precio_pronosticado          = $request->input('precio_pronosticado');
+            $precio_cliente               = $request->input('precio_cliente');
+            $totalAdicionLaserFactura     = 0;
+            $factura                      = $ordenTrabajoPadre->factura;
 
             $ordenenesTrabajosIds = Order_trabajo::where('nro_ot', $ordenTrabajoPadre->nro_ot)
                 ->where('factura_id', $factura->id)
@@ -572,4 +572,72 @@ class OrdenTrabajoController extends Controller
 
     }
 
+    public function editarLaser(Request $request){
+
+        if($request->ajax()){
+
+            // dd($request->all());
+
+            $modificar_talla_laser         = $request->input('modificar_talla_laser');
+            $modificar_cantidad_laser      = $request->input('modificar_cantidad_laser');
+            $modificar_intensidad_laser    = $request->input('modificar_intensidad_laser');
+            $modificar_altura_laser        = $request->input('modificar_altura_laser');
+            $modificar_dpi_laser           = $request->input('modificar_dpi_laser');
+            $modificar_pos_1_laser         = $request->input('modificar_pos_1_laser');
+            $modificar_pos_2_laser         = $request->input('modificar_pos_2_laser');
+            $modificar_pos_3_laser         = $request->input('modificar_pos_3_laser');
+            $modificar_pos_4_laser         = $request->input('modificar_pos_4_laser');
+            $modificar_prenda_x_mesa_laser = $request->input('modificar_prenda_x_mesa_laser');
+            $modificar_tiempo_total_laser  = $request->input('modificar_tiempo_total_laser');
+            $modificar_precio_pronosticado = $request->input('modificar_precio_pronosticado');
+            $modificar_precio_minuto_valor = $request->input('modificar_precio_minuto_valor');
+            $modificar_precio_cliente      = $request->input('modificar_precio_cliente');
+            $modificar_valor_laser         = $request->input('modificar_valor_laser');
+            $orden_trabajo_id              = $request->input('orden');
+            $usuario                       = Auth::user();
+
+            $orden                         = Order_trabajo::find($orden_trabajo_id);
+            $orden->usuario_modificador_id = $usuario->id;
+            $orden->cantidad               = $modificar_cantidad_laser;
+            $orden->precio                 = $modificar_precio_cliente;
+            $orden->precio_minuto          = $modificar_precio_minuto_valor;
+            $orden->subtotal               = $modificar_valor_laser;
+            $orden->posicion_1             = $modificar_pos_1_laser;
+            $orden->posicion_2             = $modificar_pos_2_laser;
+            $orden->posicion_3             = $modificar_pos_3_laser;
+            $orden->posicion_4             = $modificar_pos_4_laser;
+            $orden->nro_prenda_mesa        = $modificar_prenda_x_mesa_laser;
+            $orden->intensidad             = $modificar_intensidad_laser;
+            $orden->tiempo                 = $modificar_tiempo_total_laser;
+            $orden->altura                 = $modificar_altura_laser;
+            $orden->dpi                    = $modificar_dpi_laser;
+            $orden->precio_pronosticado    = $modificar_precio_pronosticado;
+            $orden->talla                  = $modificar_talla_laser;
+            $orden->save();
+
+            $data = Respuesta::success(null, "Datos Obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+
+    }
+
+    public function eliminarLaser(Request $request){
+        if($request->ajax()){
+
+            $orden_trabajo_id = $request->input('dato');
+            $usuario          = Auth::user();
+
+            $orden_trabajo                        = Order_trabajo::find($orden_trabajo_id);
+            $orden_trabajo->usuario_eliminador_id = $usuario->id;
+            $orden_trabajo->save();
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+
+    }
 }

@@ -38,14 +38,16 @@
 
 <!--begin::Modal - Add task-->
 <div class="modal fade" id="modalListadoLaser" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 80%">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 90%">
         <div class="modal-content">
             <div class="modal-header" id="kt_modal_add_user_header">
                 <h3 class="fw-bold">LISTADO DE LASER</h3>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body scroll-y">
-                <div id="listado-laser-bloque"></div>
+            <div class="modal-body">
+                 <div style="overflow-x:auto">
+                    <div id="listado-laser-bloque"></div>
+                </div>
             </div>
             {{-- <div class="modal-footer">
                 <div class="row">
@@ -856,8 +858,6 @@
             let pronostico = ((resultado * precio_minuto) / 60).toFixed(3);
             $('#precio_pronosticado_' + fila).val(pronostico);
 
-            // calcularPrecio(fila)
-
         }
 
         // function calcularPrecio(item){
@@ -1087,6 +1087,137 @@
                 total += valor;
             });
             $('#total_prendas').val(total);
+        }
+
+        function filaModificado(tipo, orden){
+            console.log(tipo, orden);
+            let fila = orden;
+
+            if(
+                tipo == "pos_1_laser" ||
+                tipo == "pos_2_laser" ||
+                tipo == "pos_3_laser" ||
+                tipo == "pos_4_laser" ||
+                tipo == "prenda_x_mesa_laser"
+
+            ){
+
+                let timempo1     = $('#modificar_pos_1_laser_'+fila).val();
+                let timempo2     = $('#modificar_pos_2_laser_'+fila).val();
+                let timempo3     = $('#modificar_pos_3_laser_'+fila).val();
+                let timempo4     = $('#modificar_pos_4_laser_'+fila).val();
+                let cantidadMesa = $('#modificar_prenda_x_mesa_laser_'+fila).val();
+
+                let sumTotalTiempo = parseFloat(timempo1) + parseFloat(timempo2) + parseFloat(timempo3) + parseFloat(timempo4);
+
+                let resultado = (sumTotalTiempo / cantidadMesa).toFixed(3);
+                $('#modificar_tiempo_total_laser_' + fila).val(resultado);
+
+                // AHORA CALCULAMOS LOS MINUTOS TOTALES
+                // let minTotal = parseFloat($('#minutos_totales').val());
+                // $('#minutos_totales').val(minTotal + sumTotalTiempo)
+
+                // AHORA VEMOS PARA EL PRECIO PRONOSTICADO
+                let precio_minuto = $('#modificar_precio_minuto_valor_'+fila).val()
+                let pronostico = ((resultado * precio_minuto) / 60).toFixed(3);
+                $('#modificar_precio_pronosticado_' + fila).val(pronostico);
+
+            }else if(
+                tipo == "cantidad_laser"
+            ){
+                //  let total = 0;
+                // $('input[name^="cantidad_laser"]').each(function () {
+                //     let valor = parseInt($(this).val()) || 0;
+                //     total += valor;
+                // });
+                // $('#total_prendas').val(total);
+            }else if(
+                tipo == "precio_cliente"
+            ){
+
+                let precioCliente = $('#modificar_precio_cliente_'+fila).val();
+                let cantidad = $('#modificar_cantidad_laser_'+fila).val();
+
+                $('#modificar_valor_laser_'+fila).val(precioCliente * cantidad);
+
+            }
+
+            $('#text_'+tipo+'_'+fila).show();
+        }
+
+        function editarLaser(fila){
+            $.ajax({
+                url: "{{ route('ordenTrabajo.editarLaser') }}",
+                method: "POST",
+                data: {
+                    modificar_talla_laser        : $('#modificar_talla_laser_'+fila).val(),
+                    modificar_cantidad_laser     : $('#modificar_cantidad_laser_'+fila).val(),
+                    modificar_intensidad_laser   : $('#modificar_intensidad_laser_'+fila).val(),
+                    modificar_altura_laser       : $('#modificar_altura_laser_'+fila).val(),
+                    modificar_dpi_laser          : $('#modificar_dpi_laser_'+fila).val(),
+                    modificar_pos_1_laser        : $('#modificar_pos_1_laser_'+fila).val(),
+                    modificar_pos_2_laser        : $('#modificar_pos_2_laser_'+fila).val(),
+                    modificar_pos_3_laser        : $('#modificar_pos_3_laser_'+fila).val(),
+                    modificar_pos_4_laser        : $('#modificar_pos_4_laser_'+fila).val(),
+                    modificar_prenda_x_mesa_laser: $('#modificar_prenda_x_mesa_laser_'+fila).val(),
+                    modificar_tiempo_total_laser : $('#modificar_tiempo_total_laser_'+fila).val(),
+                    modificar_precio_pronosticado: $('#modificar_precio_pronosticado_'+fila).val(),
+                    modificar_precio_minuto_valor: $('#modificar_precio_minuto_valor_'+fila).val(),
+                    modificar_precio_cliente     : $('#modificar_precio_cliente_'+fila).val(),
+                    modificar_valor_laser        : $('#modificar_valor_laser_'+fila).val(),
+                    orden                        : fila
+                },
+                success: function(resultado) {
+                    if (resultado.estado){
+                        Swal.fire(
+                            'Exito',
+                            'Se modifico con exito',
+                            'success'
+                        );
+                        $('#modalListadoLaser').modal('hide');
+                    }else{
+                        Swal.fire(
+                            'Error',
+                            'Ocurrio un error',
+                            'error'
+                        );
+                    }
+                }
+            })
+        }
+
+        function eliminarLaser(orden){
+            Swal.fire({
+                title: "Esta seguro de eliminar el LASER?",
+                text: "Ya no podras revertir eso!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, eliminar!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let datos ={dato:orden};
+                    $.ajax({
+                        url: "{{ url('ordenTrabajo/eliminarLaser') }}",
+                        method: "POST",
+                        data: datos,
+                        success: function(resultado) {
+                            if (resultado.estado){
+                                ajaxListadoOrdenTrabajos();
+                                Swal.fire(
+                                    'Exito',
+                                    'Se agrego con exito',
+                                    'success'
+                                );
+                                ajaxListadoOjales();
+                                $('#formularioAjaxOrdenTrabajo').html("")
+                                ajaxFormularioEditarOrdenTrabajo();
+                            }
+                        }
+                    })
+                }
+            });
         }
    </script>
 @endsection

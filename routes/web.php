@@ -353,6 +353,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/listadoCantidades', [OrdenTrabajoController::class, 'listadoCantidades'])->name('order-trabajo.listadoCantidades');
         Route::get('/listarCantidades', [OrdenTrabajoController::class, 'listarCantidades'])->name('order-trabajo.listarCantidades');
         Route::post('/cambiaDatoOrdenTrabajo', [OrdenTrabajoController::class, 'cambiaDatoOrdenTrabajo'])->name('ordenTrabajo.cambiaDatoOrdenTrabajo');
+        Route::post('/editarLaser', [OrdenTrabajoController::class, 'editarLaser'])->name('ordenTrabajo.editarLaser');
+        Route::post('/eliminarLaser', [OrdenTrabajoController::class, 'eliminarLaser'])->name('ordenTrabajo.eliminarLaser');
     });
 
 
