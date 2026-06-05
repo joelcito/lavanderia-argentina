@@ -1204,15 +1204,12 @@
                         data: datos,
                         success: function(resultado) {
                             if (resultado.estado){
-                                ajaxListadoOrdenTrabajos();
                                 Swal.fire(
                                     'Exito',
-                                    'Se agrego con exito',
+                                    'Se elimino con exito',
                                     'success'
                                 );
-                                ajaxListadoOjales();
-                                $('#formularioAjaxOrdenTrabajo').html("")
-                                ajaxFormularioEditarOrdenTrabajo();
+                                $('#modalListadoLaser').modal('hide');
                             }
                         }
                     })

@@ -634,6 +634,15 @@ class OrdenTrabajoController extends Controller
             $orden_trabajo->usuario_eliminador_id = $usuario->id;
             $orden_trabajo->save();
 
+            $factura        = $orden_trabajo->factura;
+            $precioFactura  = $factura->total;
+            $factura->total = $precioFactura - $orden_trabajo->subtotal;
+            $factura->save();
+
+            $orden_trabajo->delete();
+
+            $data = Respuesta::success(null, "Datos Obtenidos correctamente");
+
         }else{
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
