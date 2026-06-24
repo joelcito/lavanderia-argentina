@@ -7,6 +7,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ColorTelaController;
 use App\Http\Controllers\ConfiguracionPersonalController;
 use App\Http\Controllers\ControlPersonalController;
+use App\Http\Controllers\CotizacionController;
 use App\Http\Controllers\DeudaController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\FocalizadoController;
@@ -357,8 +358,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/eliminarLaser', [OrdenTrabajoController::class, 'eliminarLaser'])->name('ordenTrabajo.eliminarLaser');
     });
 
-
-
     Route::prefix('/facturaCliente')->group(function () {
         Route::get('/listadoFacturaCliente', [FacturaController::class, 'listadoFacturaCliente'])->name('factura.listadoFacturaCliente');
         Route::post('/ajaxListadoFacturasCliente', [FacturaController::class, 'ajaxListadoFacturasCliente'])->name('factura.ajaxListadoFacturasCliente');
@@ -397,6 +396,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [NevadoController::class, 'ajaxListado'])->name('nevado.ajaxListado');
         Route::post('/guardarNevado', [NevadoController::class, 'guardarNevado'])->name('nevado.guardarNevado');
         Route::post('/eliminarNevado', [NevadoController::class, 'eliminarNevado'])->name('nevado.eliminarNevado');
+    });
+
+    // COTIZACION
+    Route::prefix('/cotizacion')->group(function () {
+        Route::get('/listado', [CotizacionController::class, 'listado'])->name('cotizacion.listado');
+        Route::post('/ajaxListado', [CotizacionController::class, 'ajaxListado'])->name('cotizacion.ajaxListado');
+        Route::post('/buscarCliente', [CotizacionController::class, 'buscarCliente'])->name('cotizacion.buscarCliente');
+        // Route::post('/guardarNevado', [NevadoController::class, 'guardarNevado'])->name('nevado.guardarNevado');
+        // Route::post('/eliminarNevado', [NevadoController::class, 'eliminarNevado'])->name('nevado.eliminarNevado');
     });
 
     //PERSONAL

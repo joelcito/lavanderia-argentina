@@ -36,4 +36,16 @@ class Producto extends Model
     {
         return $this->hasMany(Solicitud::class, 'producto_id', 'id');
     }
+
+    public function movimientos()
+    {
+        return $this->hasMany(Movimiento::class);
+    }
+
+    public function ultimoIngreso()
+    {
+        return $this->hasOne(Movimiento::class)
+            ->where('ingreso', '>', 0)
+            ->latestOfMany('id');
+    }
 }

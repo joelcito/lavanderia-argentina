@@ -240,9 +240,8 @@
                             </div>
 
                             <!-- @php
-
-                                                                $userRol = strtolower(auth()->user()->rol); // minúscula para comparar
-                                                            @endphp -->
+                                $userRol = strtolower(auth()->user()->rol); // minúscula para comparar
+                            @endphp -->
 
                             <!-- @if(in_array($userRol, ['Planchador', 'Focalizador'])) -->
                             <div class="menu-item">
@@ -258,6 +257,14 @@
                             </div>
                             <!-- @endif -->
 
+                            <div class="menu-item">
+                                <a class="menu-link" href="{{ route('cotizacion.listado') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title text-white">Cotizacion</span>
+                                </a>
+                            </div>
 
                         </div>
                     </div>
