@@ -17,7 +17,7 @@ class CotizacionController extends Controller
     public function listado()
     {
         $tipoProcesos = Tipo_proceso::all();
-        $productos = Producto::with('ultimoIngreso')->get();
+        $productos = Producto::with('ultimoIngreso')->orderBy('nombre')->get();
 
         return view('cotizacion.listado')->with(compact('tipoProcesos','productos'));
     }
