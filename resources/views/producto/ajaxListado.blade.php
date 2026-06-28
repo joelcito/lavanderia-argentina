@@ -8,6 +8,7 @@
                 <th>Tipo</th>
                 <th>Codigo</th>
                 <th>Minimo Stock</th>
+                <th>Precio</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -19,6 +20,7 @@
                     <td>{{ $producto->tipo }}</td>
                     <td>{{ $producto->codigo }}</td>
                     <td>{{ $producto->minimo_stock }}</td>
+                    <td>{{ $producto->ultimoIngreso?->precio }}</td>
                     <td>
                         <!-- Nuevo botón Stock -->
                         <button class="btn btn-icon btn-sm btn-info btn-circle" title="Ver Stock" onclick="abrirStock({{ $producto->id }}, '{{ $producto->nombre }}')"><i class="fa fa-boxes"></i></button>
