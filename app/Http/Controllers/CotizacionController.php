@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cotizacion;
+use App\Models\Focalizado;
+use App\Models\Nevado;
+use App\Models\Prelavado;
 use App\Models\Producto;
 use App\Models\Tipo_proceso;
 use App\Models\User;
@@ -18,8 +21,11 @@ class CotizacionController extends Controller
     {
         $tipoProcesos = Tipo_proceso::all();
         $productos = Producto::with('ultimoIngreso')->orderBy('nombre')->get();
+        $prelavados = Prelavado::orderBy('nombre')->get();
+        $nevados = Nevado::orderBy('nombre')->get();
+        $focalizados = Focalizado::orderBy('nombre')->get();
 
-        return view('cotizacion.listado')->with(compact('tipoProcesos','productos'));
+        return view('cotizacion.listado')->with(compact('tipoProcesos','productos', 'prelavados', 'nevados','focalizados'));
     }
 
     /**

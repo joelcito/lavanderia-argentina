@@ -140,22 +140,34 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Ingrese la Cantidad</label>
-                                    <input type="number" class="form-control form-control-sm" min="0.01" id="cantidad_ingreso" name="cantidad_ingreso" required step="0.01">
+                                    <input type="number" class="form-control form-control-sm" min="0.01" id="cantidad_ingreso" name="cantidad_ingreso" required step="0.01" onkeyup="calcularPrecioKgG()">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                                 <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Precio de Compra</label>
-                                    <input type="number" class="form-control form-control-sm" id="precio_compra" name="precio_compra" min="0.01" required step="0.01">
+                                    <label class="required fw-semibold fs-6 mb-2">Precio de Com de Rec</label>
+                                    <input type="number" class="form-control form-control-sm" id="precio_compra" name="precio_compra" min="0.01" required step="0.01" onkeyup="calcularPrecioKgG()">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Codigo Compra</label>
                                     <input type="text" class="form-control form-control-sm" id="codigo_compra" name="codigo_compra">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Precio compra por KG</label>
+                                    <input type="number" class="form-control form-control-sm" id="precio_compra_kg" name="precio_compra_kg" min="0.001" step="0.001">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Precio compra por G</label>
+                                    <input type="number" class="form-control form-control-sm" id="precio_compra_g" name="precio_compra_g" min="0.001" step="0.001">
                                 </div>
                             </div>
                         </div>
@@ -628,6 +640,19 @@
                     );
                 }
             });
+        }
+
+        function calcularPrecioKgG(){
+            console.log("kkkk");
+
+            let cantidad = $('#cantidad_ingreso').val();
+            let precio = $('#precio_compra').val();
+
+            let precio_gramo = precio / cantidad;
+
+            $('#precio_compra_g').val(precio_gramo);
+            $('#precio_compra_kg').val(precio_gramo*1000);
+
         }
     </script>
 @endsection

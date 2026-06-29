@@ -51,22 +51,53 @@
                         </div>
                         <hr>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Cantidad Prendas</label>
                                     <input type="text" class="form-control form-control-sm" id="cantidad_prenda" name="cantidad_prenda">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Peso Kg</label>
                                     <input type="text" class="form-control form-control-sm" id="peso_kg" name="peso_kg" onchange="calcularPesoGramo()">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Peso Gr</label>
                                     <input type="text" class="form-control form-control-sm" id="peso_gr" name="peso_gr" readonly>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Prelavado</label>
+                                    <select class="form-control form-control-sm" name="" id="">
+                                        @foreach ( $prelavados as $prelavado)
+                                        <option value="{{$prelavado->id}}">{{$prelavado->nombre}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Nevado</label>
+                                    <select class="form-control form-control-sm" name="" id="">
+                                        @foreach ( $nevados as $nevado)
+                                        <option value="{{$nevado->id}}">{{$nevado->nombre}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Focalizado</label>
+                                    <select class="form-control form-control-sm" name="" id="">
+                                        @foreach ($focalizados as $focalizado)
+                                        <option value="{{$focalizado->id}}">{{$focalizado->nombre}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -109,7 +140,7 @@
                                                                         <option value="">Seleccione</option>
                                                                         @foreach ($productos as $producto)
                                                                             <option value="{{ $producto->id }}" data-producto='@json($producto)' data-ingreso='@json($producto->ultimoIngreso)'>
-                                                                                {{ $producto->nombre.(($producto->ultimoIngreso) ? ' | '.$producto->ultimoIngreso?->precio : '') }}
+                                                                                {{ $producto->nombre.(($producto->ultimoIngreso) ? ' | '.$producto->ultimoIngreso?->precio_compra_g : '') }}
                                                                             </option>
                                                                         @endforeach
                                                                     </select>
@@ -417,7 +448,6 @@
                 }
             });
 
-
             $(document).on('input', '.porcentaje', function () {
 
                 let fila = $(this).closest('[data-repeater-item]');
@@ -444,6 +474,32 @@
 
             });
 
+            // $(document).on('input', '.cantidad', function () {
+
+            //     let fila = $(this).closest('[data-repeater-item]');
+            //     let peso_gr = $('#peso_gr').val();
+
+            //     let porcentaje = parseFloat($(this).val()) || 0;
+
+            //     let producto = JSON.parse(fila.find('.producto option:selected').attr('data-producto'));
+
+            //     if (!producto) {
+            //         return;
+            //     }
+
+            //     // Ejemplo: peso total del producto
+            //     let pesoBase = parseFloat(producto.peso) || 0;
+
+            //     // let cantidad = (pesoBase * porcentaje) / 100;
+            //     let cantidad = (peso_gr * porcentaje) / 100;
+
+            //     // fila.find('.cantidad').val(cantidad.toFixed(2));
+            //     fila.find('.cantidad').val(cantidad.toFixed(2));
+
+            //     calcularTotal(fila);
+
+            // });
+
             $(document).on('change', '.producto', function () {
 
                 let fila = $(this).closest('[data-repeater-item]');
@@ -455,9 +511,15 @@
         });
 
         function calcularTotal(fila) {
+            // let ingreso = JSON.parse(fila.find('.producto option:selected').attr('data-ingreso'));
+            // let cantidad = parseFloat(fila.find('.cantidad').val()) || 0;
+            // let precioConvertido = ingreso.precio / 1000;
+            // let total = precioConvertido * cantidad;
+            // fila.find('.total').val(total.toFixed(2));
+
             let ingreso = JSON.parse(fila.find('.producto option:selected').attr('data-ingreso'));
             let cantidad = parseFloat(fila.find('.cantidad').val()) || 0;
-            let precioConvertido = ingreso.precio / 1000;
+            let precioConvertido = ingreso.precio_compra_g;
             let total = precioConvertido * cantidad;
             fila.find('.total').val(total.toFixed(2));
         }

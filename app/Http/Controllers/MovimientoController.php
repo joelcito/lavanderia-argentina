@@ -73,20 +73,25 @@ class MovimientoController extends Controller
             $precio_compra   = $request->input('precio_compra');
             $codigo_compra   = $request->input('codigo_compra');
 
+            $precio_compra_kg   = $request->input('precio_compra_kg');
+            $precio_compra_g   = $request->input('precio_compra_g');
+
             $usuario = Auth::user();
 
             //LA CREACION DE UN NUEVa movimiento
             $movimiento = new Movimiento();
             $movimiento->usuario_creador_id = $usuario->id;
 
-            $movimiento->producto_id   = $producto_id;
-            $movimiento->sucursal_id   = $sucursal_id;
-            $movimiento->ingreso       = $ingreso;
-            $movimiento->precio        = $precio_compra;
-            $movimiento->codigo_compra = $codigo_compra;
-            $movimiento->salida        = 0;
-            $movimiento->fecha         = date('Y-m-d H:i:s');
-            $movimiento->descripcion   = $descripcion;
+            $movimiento->producto_id      = $producto_id;
+            $movimiento->sucursal_id      = $sucursal_id;
+            $movimiento->ingreso          = $ingreso;
+            $movimiento->precio           = $precio_compra;
+            $movimiento->codigo_compra    = $codigo_compra;
+            $movimiento->precio_compra_kg = $precio_compra_kg;
+            $movimiento->precio_compra_g  = $precio_compra_g;
+            $movimiento->salida           = 0;
+            $movimiento->fecha            = date('Y-m-d H:i:s');
+            $movimiento->descripcion      = $descripcion;
 
             $movimiento->save();
 
