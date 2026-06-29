@@ -3,17 +3,36 @@
     <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_roles">
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
-                <th>Nombre</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Prelavado</th>
+                <th>Nevado</th>
+                <th>Focalizado</th>
+                <th>Cantidad Prendas</th>
+                <th>Peso</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($cotizaciones as $cotizacion)
                 <tr>
-                    <td>{{ $cotizacion->nombre }}</td>
-                    <td>
-                        {{-- <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar rol" onclick="editarRol({{ json_encode($rol) }})"><i class="fa fa-edit"></i></button> --}}
-                        {{-- <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar rol" onclick="eliminarRol('{{ $rol->id }}',  '{{ $rol->nombre }}')"><i class="fa fa-trash"></i></button> --}}
+                    <td>{{ $cotizacion->cliente->nombres." ".$cotizacion->cliente->ap_paterno." ".$cotizacion->cliente->ap_materno }}</td>
+                    <td>{{ $cotizacion->created_at }}</td>
+                    <td>{{ $cotizacion->prelavado?->nombre }}</td>
+                    <td>{{ $cotizacion->nevado?->nombre }}</td>
+                    <td>{{ $cotizacion->focalizado?->nombre }}</td>
+                    <td>{{ $cotizacion->cantidad_prenda }}</td>
+                    <td>{{ $cotizacion->peso_kg }}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-danger" onclick="reportePdf({{ $cotizacion->id }})"
+                            title="Exportar PDF">
+                            <i class="fas fa-file-pdf"></i>
+                        </button>
+
+                        <button type="button" class="btn btn-sm btn-success" onclick="reporteExcel({{ $cotizacion->id }})"
+                            title="Exportar Excel">
+                            <i class="fas fa-file-excel"></i>
+                        </button>
                     </td>
                 </tr>
             @empty

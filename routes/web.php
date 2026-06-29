@@ -403,8 +403,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/listado', [CotizacionController::class, 'listado'])->name('cotizacion.listado');
         Route::post('/ajaxListado', [CotizacionController::class, 'ajaxListado'])->name('cotizacion.ajaxListado');
         Route::post('/buscarCliente', [CotizacionController::class, 'buscarCliente'])->name('cotizacion.buscarCliente');
-        // Route::post('/guardarNevado', [NevadoController::class, 'guardarNevado'])->name('nevado.guardarNevado');
-        // Route::post('/eliminarNevado', [NevadoController::class, 'eliminarNevado'])->name('nevado.eliminarNevado');
+        Route::post('/guardarCotizacion', [CotizacionController::class, 'guardarCotizacion'])->name('cotizacion.guardarCotizacion');
+
+        Route::get('/reportePdf/{cotizacion_id}', [CotizacionController::class, 'reportePdf'])->name('cotizacion.reportePdf');
+        Route::get('/reporteExcel/{cotizacion_id}', [CotizacionController::class, 'reporteExcel'])->name('cotizacion.reporteExcel');
     });
 
     //PERSONAL

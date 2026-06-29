@@ -19,12 +19,22 @@ class CotizacionDetalle extends Model
 
         'cotizacion_id',
         'tipo_proceso_id',
-        'tipo_proceso_id',
+        'producto_id',
         'porcentaje',
-        'peso',
-        'precio_calculado',
+        'cantidad',
+        'total',
 
         'estado',
         'deleted_at',
     ];
+
+    public function proceso()
+    {
+        return $this->belongsTo(Tipo_proceso::class, 'tipo_proceso_id');
+    }
+
+    public function producto()
+    {
+        return $this->belongsTo(Producto::class, 'producto_id');
+    }
 }

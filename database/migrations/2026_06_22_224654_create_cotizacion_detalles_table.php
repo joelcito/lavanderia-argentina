@@ -28,8 +28,8 @@ return new class extends Migration
             $table->unsignedBigInteger('producto_id')->nullable();
 
             $table->decimal('porcentaje',12,2)->nullable();
-            $table->decimal('peso',12,2)->nullable();
-            $table->decimal('precio_calculado',12,2)->nullable();
+            $table->decimal('cantidad',12,2)->nullable();
+            $table->decimal('total',12,2)->nullable();
 
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();
