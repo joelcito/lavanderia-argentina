@@ -29,6 +29,14 @@ return new class extends Migration
             $table->foreign('focalizado_id')->references('id')->on('focalizados');
             $table->unsignedBigInteger('focalizado_id')->nullable();
 
+            $table->foreign('tipo_tela_id')->references('id')->on('tipo_telas');
+            $table->unsignedBigInteger('tipo_tela_id')->nullable();
+            $table->foreign('color_tela_id')->references('id')->on('color_telas');
+            $table->unsignedBigInteger('color_tela_id')->nullable();
+            $table->foreign('prenda_id')->references('id')->on('prendas');
+            $table->unsignedBigInteger('prenda_id')->nullable();
+            $table->text('descripcion')->nullable();
+
             $table->decimal('cantidad_prenda',12,2)->nullable();
             $table->decimal('peso_kg',12,2)->nullable();
             $table->decimal('peso_g',12,2)->nullable();

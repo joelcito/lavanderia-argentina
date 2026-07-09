@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Color_tela;
 use App\Models\Cotizacion;
 use App\Models\CotizacionDetalle;
 use App\Models\Focalizado;
 use App\Models\Nevado;
 use App\Models\Prelavado;
+use App\Models\Prenda;
 use App\Models\Producto;
 use App\Models\Tipo_proceso;
+use App\Models\Tipo_tela;
 use App\Models\User;
 use App\Utils\Respuesta;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -33,7 +36,11 @@ class CotizacionController extends Controller
         $nevados = Nevado::orderBy('nombre')->get();
         $focalizados = Focalizado::orderBy('nombre')->get();
 
-        return view('cotizacion.listado')->with(compact('tipoProcesos','productos', 'prelavados', 'nevados','focalizados'));
+        $tipoTelas = Tipo_tela::orderBy('nombre')->get();
+        $colorTelas = Color_tela::orderBy('nombre')->get();
+        $tipoPrendas = Prenda::orderBy('nombre')->get();
+
+        return view('cotizacion.listado')->with(compact('tipoProcesos','productos', 'prelavados', 'nevados','focalizados', 'tipoTelas', 'colorTelas','tipoPrendas'));
     }
 
     /**
@@ -42,7 +49,7 @@ class CotizacionController extends Controller
     public function ajaxListado(Request $request)
     {
         if($request->ajax()){
-            $cotizaciones = Cotizacion::all();
+            $cotizaciones = Cotizacion::with('detalles')->get();
             $valores = [
                 'listado' => view('cotizacion.ajaxListado')->with(compact('cotizaciones'))->render()
             ];
@@ -81,6 +88,7 @@ class CotizacionController extends Controller
     {
         if($request->ajax()){
 
+            $cotizacion_id   = $request->input('cotizacion_id');
             $cedula          = $request->input('cedula');
             $cliente_id      = $request->input('cliente_id');
             $nombre          = $request->input('nombre');
@@ -92,6 +100,11 @@ class CotizacionController extends Controller
             $prelavado_id    = $request->input('prelavado_id');
             $nevado_id       = $request->input('nevado_id');
             $focalizado_id   = $request->input('focalizado_id');
+
+            $tipo_tela_id   = $request->input('tipo_tela_id');
+            $color_tela_id   = $request->input('color_tela_id');
+            $tipo_prenda_id   = $request->input('tipo_prenda_id');
+            $descripcion   = $request->input('descripcion');
 
             $proceso_focalizado    = $request->input('proceso_focalizado');
             $proceso_id_focalizado = $request->input('proceso_id_focalizado');
@@ -147,11 +160,25 @@ class CotizacionController extends Controller
                 $cliente_id = $clienteNew->id;
             }
 
-            $cotizacion                               = new Cotizacion();
-            $cotizacion->usuario_creador_id           = $usuario->id;
+            if($cotizacion_id == 0){
+                $cotizacion                     = new Cotizacion();
+                $cotizacion->usuario_creador_id = $usuario->id;
+            }
+            else{
+                $cotizacion                         = Cotizacion::find($cotizacion_id);
+                $cotizacion->usuario_modificador_id = $usuario->id;
+            }
+
+            // $cotizacion                               = new Cotizacion();
             $cotizacion->cliente_id                   = $cliente_id;
             $cotizacion->prelavado_id                 = $prelavado_id;
             $cotizacion->nevado_id                    = $nevado_id;
+
+            $cotizacion->tipo_tela_id  = $tipo_tela_id;
+            $cotizacion->color_tela_id = $color_tela_id;
+            $cotizacion->prenda_id     = $tipo_prenda_id;
+            $cotizacion->descripcion   = $descripcion;
+
             $cotizacion->focalizado_id                = $focalizado_id;
             $cotizacion->cantidad_prenda              = $cantidad_prenda;
             $cotizacion->peso_kg                      = $peso_kg;
@@ -180,10 +207,16 @@ class CotizacionController extends Controller
             $cotizacion->utilidad_pronosticada_s3     = $utilidad_pronosticada_s3;
             $cotizacion->save();
 
+            if ($cotizacion_id != 0) {
+                // PRIMERO ELIMINAMOS LO REGISTRADO
+                $detalles = $cotizacion->detalles;
+                foreach ($detalles as $detalle) {
+                    $detalle->delete();
+                }
+            }
+
             foreach ($procesos as $proceso) {
-
                 $procesoId = $proceso['proceso_id'];
-
                 foreach ($proceso['productos'] as $producto) {
 
                     $cotizacionDetalle                     = new CotizacionDetalle();
@@ -195,12 +228,11 @@ class CotizacionController extends Controller
                     $cotizacionDetalle->cantidad           = $producto['cantidad'];
                     $cotizacionDetalle->total              = $producto['total'];
                     $cotizacionDetalle->save();
-
                 }
             }
 
             //################### PARA FOCALIZADO ###################
-            if($precio_focalizado > 0 && $total_focalizado > 0){
+            if ($precio_focalizado > 0 && $total_focalizado > 0) {
                 $cotizacionDetalle                     = new CotizacionDetalle();
                 $cotizacionDetalle->usuario_creador_id = $usuario->id;
                 $cotizacionDetalle->cotizacion_id      = $cotizacion->id;
@@ -244,6 +276,201 @@ class CotizacionController extends Controller
         return $pdf->stream('Cotizacion_' . $cotizacion->id . '.pdf');
     }
 
+    // public function reporteExcel($id)
+    // {
+    //     $cotizacion = Cotizacion::with([
+    //         'cliente',
+    //         'prelavado',
+    //         'nevado',
+    //         'focalizado',
+    //         'detalles.producto',
+    //         'detalles.proceso'
+    //     ])->findOrFail($id);
+
+    //     $fileName = "Cotizacion_{$id}.xlsx";
+
+    //     $libro = new Spreadsheet();
+    //     $hoja = $libro->getActiveSheet();
+
+    //     // =========================
+    //     // ENCABEZADO
+    //     // =========================
+    //     $hoja->mergeCells('A1:E1');
+    //     $hoja->setCellValue('A1', "COTIZACION # {$cotizacion->id}");
+
+    //     $hoja->mergeCells('A2:E2');
+    //     $hoja->setCellValue(
+    //         'A2',
+    //         "CLIENTE: " .
+    //             $cotizacion->cliente->nombres . " " .
+    //             $cotizacion->cliente->ap_paterno . " " .
+    //             $cotizacion->cliente->ap_materno
+    //     );
+
+    //     $hoja->mergeCells('A3:E3');
+    //     $hoja->setCellValue('A3', "FECHA: " . $cotizacion->created_at);
+
+    //     $hoja->mergeCells('A4:E4');
+    //     $hoja->setCellValue('A4', "CANTIDAD: " . (int)$cotizacion->cantidad_prenda);
+
+    //     $hoja->mergeCells('A5:E5');
+    //     $hoja->setCellValue('A5', "PRELAVADO: " . $cotizacion->prelavado?->nombre);
+
+    //     $hoja->mergeCells('A6:E6');
+    //     $hoja->setCellValue('A6', "NEVADO: " . $cotizacion->nevado?->nombre);
+
+    //     $hoja->mergeCells('A7:E7');
+    //     $hoja->setCellValue('A7', "FOCALIZADO: " . $cotizacion->focalizado?->nombre);
+
+    //     // =========================
+    //     // TITULO TABLA
+    //     // =========================
+    //     $startRow = 9;
+
+    //     $hoja->setCellValue("A{$startRow}", "PROCESO");
+    //     $hoja->setCellValue("B{$startRow}", "PRODUCTO");
+    //     $hoja->setCellValue("C{$startRow}", "PORCENTAJE");
+    //     $hoja->setCellValue("D{$startRow}", "CANTIDAD");
+    //     $hoja->setCellValue("E{$startRow}", "TOTAL");
+
+    //     $hoja->getStyle("A{$startRow}:E{$startRow}")->applyFromArray([
+    //         'font' => ['bold' => true],
+    //         'alignment' => [
+    //             'horizontal' => Alignment::HORIZONTAL_CENTER
+    //         ],
+    //         'borders' => [
+    //             'allBorders' => [
+    //                 'borderStyle' => Border::BORDER_THIN,
+    //             ],
+    //         ],
+    //         'fill' => [
+    //             'fillType' => Fill::FILL_SOLID,
+    //             'startColor' => ['argb' => 'FFEFEFEF'],
+    //         ],
+    //     ]);
+
+    //     // =========================
+    //     // DETALLES
+    //     // =========================
+    //     $row = $startRow + 1;
+
+    //     $tipoProcesos = $cotizacion->detalles->groupBy('tipo_proceso_id');
+
+    //     foreach ($tipoProcesos as $tipoProceso) {
+
+    //         $cat = count($tipoProceso);
+    //         $first = true;
+
+    //         foreach ($tipoProceso as $detalle) {
+
+    //             if ($first) {
+    //                 $hoja->setCellValue("A{$row}", $detalle->proceso->nombre);
+    //                 $hoja->mergeCells("A{$row}:A" . ($row + $cat - 1));
+    //                 $first = false;
+    //             }
+
+    //             $hoja->setCellValue("B{$row}", $detalle->producto?->nombre);
+    //             $hoja->setCellValue("C{$row}", $detalle->porcentaje);
+    //             $hoja->setCellValue("D{$row}", $detalle->cantidad);
+    //             $hoja->setCellValue("E{$row}", $detalle->total);
+
+    //             $row++;
+    //         }
+    //     }
+
+    //     // =========================
+    //     // RESUMEN
+    //     // =========================
+    //     $row += 1;
+
+    //     $hoja->setCellValue("A{$row}", "MANO DE OBRA");
+    //     $hoja->setCellValue("B{$row}", $cotizacion->mano_obra);
+
+    //     $row++;
+    //     $hoja->setCellValue("A{$row}", "SERVICIO BASICO");
+    //     $hoja->setCellValue("B{$row}", $cotizacion->servicio_basico);
+
+    //     $row++;
+    //     $hoja->setCellValue("A{$row}", "MANTENIMIENTO");
+    //     $hoja->setCellValue("B{$row}", $cotizacion->mantenimiento);
+
+    //     $row++;
+    //     $hoja->setCellValue("A{$row}", "INTERES BANCARIO");
+    //     $hoja->setCellValue("B{$row}", $cotizacion->interes_bancario);
+
+    //     $row++;
+
+    //     // =========================
+    //     // COSTO
+    //     // =========================
+    //     $hoja->setCellValue("A{$row}", "COSTO");
+    //     $hoja->setCellValue("B{$row}", $cotizacion->costo_s1);
+    //     $hoja->setCellValue("C{$row}", $cotizacion->costo_s2);
+    //     $hoja->setCellValue("D{$row}", $cotizacion->costo_s3);
+
+    //     $row++;
+
+    //     // =========================
+    //     // PRECIO
+    //     // =========================
+    //     $hoja->setCellValue("A{$row}", "PRECIO");
+    //     $hoja->setCellValue("B{$row}", $cotizacion->precio_s1);
+    //     $hoja->setCellValue("C{$row}", $cotizacion->precio_s2);
+    //     $hoja->setCellValue("D{$row}", $cotizacion->precio_s3);
+
+    //     $row++;
+
+    //     // =========================
+    //     // UTILIDAD
+    //     // =========================
+    //     $hoja->setCellValue("A{$row}", "UTILIDAD");
+    //     $hoja->setCellValue("B{$row}", $cotizacion->utilidad_s1);
+    //     $hoja->setCellValue("C{$row}", $cotizacion->utilidad_s2);
+    //     $hoja->setCellValue("D{$row}", $cotizacion->utilidad_s3);
+
+    //     $row++;
+
+    //     // =========================
+    //     // % GANANCIA
+    //     // =========================
+    //     $hoja->setCellValue("A{$row}", "% GANANCIA");
+    //     $hoja->setCellValue("B{$row}", $cotizacion->porcentaje_ganancia_s1);
+    //     $hoja->setCellValue("C{$row}", $cotizacion->porcentaje_ganancia_s2);
+    //     $hoja->setCellValue("D{$row}", $cotizacion->porcentaje_ganancia_s3);
+
+    //     $row++;
+
+    //     // =========================
+    //     // UTILIDAD PRONOSTICADA
+    //     // =========================
+    //     $hoja->setCellValue("A{$row}", "UTILIDAD PRONOSTICADA");
+    //     $hoja->setCellValue("B{$row}", $cotizacion->utilidad_pronosticada_s1);
+    //     $hoja->setCellValue("C{$row}", $cotizacion->utilidad_pronosticada_s2);
+    //     $hoja->setCellValue("D{$row}", $cotizacion->utilidad_pronosticada_s3);
+
+    //     // =========================
+    //     // AUTO BORDES
+    //     // =========================
+    //     $hoja->getStyle("A{$startRow}:E" . ($row))->applyFromArray([
+    //         'borders' => [
+    //             'allBorders' => [
+    //                 'borderStyle' => Border::BORDER_THIN,
+    //             ],
+    //         ],
+    //     ]);
+
+    //     // =========================
+    //     // DOWNLOAD
+    //     // =========================
+    //     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    //     header("Content-Disposition: attachment;filename=\"{$fileName}\"");
+    //     header('Cache-Control: max-age=0');
+
+    //     $writer = new Xlsx($libro);
+    //     $writer->save('php://output');
+    //     exit;
+    // }
+
     public function reporteExcel($id)
     {
         $cotizacion = Cotizacion::with([
@@ -263,6 +490,7 @@ class CotizacionController extends Controller
         // =========================
         // ENCABEZADO
         // =========================
+
         $hoja->mergeCells('A1:E1');
         $hoja->setCellValue('A1', "COTIZACION # {$cotizacion->id}");
 
@@ -278,22 +506,57 @@ class CotizacionController extends Controller
         $hoja->mergeCells('A3:E3');
         $hoja->setCellValue('A3', "FECHA: " . $cotizacion->created_at);
 
+
         $hoja->mergeCells('A4:E4');
-        $hoja->setCellValue('A4', "CANTIDAD: " . (int)$cotizacion->cantidad_prenda);
+        $hoja->setCellValue('A4', "CANTIDAD PRENDAS: " . (int)$cotizacion->cantidad_prenda);
+
 
         $hoja->mergeCells('A5:E5');
-        $hoja->setCellValue('A5', "PRELAVADO: " . $cotizacion->prelavado?->nombre);
+        $hoja->setCellValue(
+            'A5',
+            "PESO KG: " . $cotizacion->peso_kg .
+                " | PESO GR: " . $cotizacion->peso_g
+        );
+
 
         $hoja->mergeCells('A6:E6');
-        $hoja->setCellValue('A6', "NEVADO: " . $cotizacion->nevado?->nombre);
+        $hoja->setCellValue(
+            'A6',
+            "PRELAVADO: " . $cotizacion->prelavado?->nombre .
+                " | NEVADO: " . $cotizacion->nevado?->nombre
+        );
+
 
         $hoja->mergeCells('A7:E7');
-        $hoja->setCellValue('A7', "FOCALIZADO: " . $cotizacion->focalizado?->nombre);
+        $hoja->setCellValue(
+            'A7',
+            "FOCALIZADO: " . $cotizacion->focalizado?->nombre
+        );
+
+
+        $hoja->mergeCells('A8:E8');
+        $hoja->setCellValue(
+            'A8',
+            "TIPO TELA: " . $cotizacion->tipo_tela .
+                " | COLOR TELA: " . $cotizacion->color_tela .
+                " | TIPO PRENDA: " . $cotizacion->tipo_prenda
+        );
+
+
+        $hoja->mergeCells('A9:E9');
+        $hoja->setCellValue(
+            'A9',
+            "DESCRIPCIÓN: " . $cotizacion->descripcion
+        );
+
+
 
         // =========================
         // TITULO TABLA
         // =========================
-        $startRow = 9;
+
+        $startRow = 11;
+
 
         $hoja->setCellValue("A{$startRow}", "PROCESO");
         $hoja->setCellValue("B{$startRow}", "PRODUCTO");
@@ -301,141 +564,245 @@ class CotizacionController extends Controller
         $hoja->setCellValue("D{$startRow}", "CANTIDAD");
         $hoja->setCellValue("E{$startRow}", "TOTAL");
 
-        $hoja->getStyle("A{$startRow}:E{$startRow}")->applyFromArray([
-            'font' => ['bold' => true],
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER
-            ],
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
+
+        $hoja->getStyle("A{$startRow}:E{$startRow}")
+            ->applyFromArray([
+                'font' => [
+                    'bold' => true
                 ],
-            ],
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['argb' => 'FFEFEFEF'],
-            ],
-        ]);
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN
+                    ]
+                ],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => [
+                        'argb' => 'FFEFEFEF'
+                    ]
+                ]
+            ]);
+
+
 
         // =========================
         // DETALLES
         // =========================
+
         $row = $startRow + 1;
 
-        $tipoProcesos = $cotizacion->detalles->groupBy('tipo_proceso_id');
+
+        $tipoProcesos = $cotizacion->detalles
+            ->groupBy('tipo_proceso_id');
+
 
         foreach ($tipoProcesos as $tipoProceso) {
+
 
             $cat = count($tipoProceso);
             $first = true;
 
+
             foreach ($tipoProceso as $detalle) {
 
+
                 if ($first) {
-                    $hoja->setCellValue("A{$row}", $detalle->proceso->nombre);
-                    $hoja->mergeCells("A{$row}:A" . ($row + $cat - 1));
+                    $hoja->setCellValue(
+                        "A{$row}",
+                        $detalle->proceso->nombre
+                    );
+
+
+                    $hoja->mergeCells(
+                        "A{$row}:A" . ($row + $cat - 1)
+                    );
+
+
                     $first = false;
                 }
 
-                $hoja->setCellValue("B{$row}", $detalle->producto?->nombre);
-                $hoja->setCellValue("C{$row}", $detalle->porcentaje);
-                $hoja->setCellValue("D{$row}", $detalle->cantidad);
-                $hoja->setCellValue("E{$row}", $detalle->total);
+
+                $hoja->setCellValue(
+                    "B{$row}",
+                    $detalle->producto?->nombre
+                );
+
+
+                $hoja->setCellValue(
+                    "C{$row}",
+                    $detalle->porcentaje
+                );
+
+
+                $hoja->setCellValue(
+                    "D{$row}",
+                    $detalle->cantidad
+                );
+
+
+                $hoja->setCellValue(
+                    "E{$row}",
+                    $detalle->total
+                );
+
 
                 $row++;
             }
         }
 
+
+
         // =========================
         // RESUMEN
         // =========================
-        $row += 1;
+
+        $row++;
+
 
         $hoja->setCellValue("A{$row}", "MANO DE OBRA");
         $hoja->setCellValue("B{$row}", $cotizacion->mano_obra);
 
-        $row++;
-        $hoja->setCellValue("A{$row}", "SERVICIO BASICO");
-        $hoja->setCellValue("B{$row}", $cotizacion->servicio_basico);
+
+        $hoja->setCellValue("C{$row}", "SERVICIO BASICO");
+        $hoja->setCellValue("D{$row}", $cotizacion->servicio_basico);
+
+
+        $hoja->setCellValue("E{$row}", "MANTENIMIENTO " . $cotizacion->mantenimiento);
+
 
         $row++;
-        $hoja->setCellValue("A{$row}", "MANTENIMIENTO");
-        $hoja->setCellValue("B{$row}", $cotizacion->mantenimiento);
 
-        $row++;
+
         $hoja->setCellValue("A{$row}", "INTERES BANCARIO");
         $hoja->setCellValue("B{$row}", $cotizacion->interes_bancario);
 
+
+        $hoja->setCellValue("C{$row}", "% GANANCIA");
+        $hoja->setCellValue("D{$row}", $cotizacion->porcentaje_ganacia);
+
+
+        $hoja->setCellValue(
+            "E{$row}",
+            "PRECIO VENTA PRONOSTICADO S3: " . $cotizacion->precio_venta_pronosticado_s3
+        );
+
+
+
         $row++;
+
+
 
         // =========================
         // COSTO
         // =========================
+
         $hoja->setCellValue("A{$row}", "COSTO");
         $hoja->setCellValue("B{$row}", $cotizacion->costo_s1);
         $hoja->setCellValue("C{$row}", $cotizacion->costo_s2);
         $hoja->setCellValue("D{$row}", $cotizacion->costo_s3);
 
+
+
         $row++;
+
+
 
         // =========================
         // PRECIO
         // =========================
+
         $hoja->setCellValue("A{$row}", "PRECIO");
         $hoja->setCellValue("B{$row}", $cotizacion->precio_s1);
         $hoja->setCellValue("C{$row}", $cotizacion->precio_s2);
         $hoja->setCellValue("D{$row}", $cotizacion->precio_s3);
 
+
+
         $row++;
+
+
 
         // =========================
         // UTILIDAD
         // =========================
+
         $hoja->setCellValue("A{$row}", "UTILIDAD");
         $hoja->setCellValue("B{$row}", $cotizacion->utilidad_s1);
         $hoja->setCellValue("C{$row}", $cotizacion->utilidad_s2);
         $hoja->setCellValue("D{$row}", $cotizacion->utilidad_s3);
 
+
+
         $row++;
+
+
 
         // =========================
         // % GANANCIA
         // =========================
+
         $hoja->setCellValue("A{$row}", "% GANANCIA");
         $hoja->setCellValue("B{$row}", $cotizacion->porcentaje_ganancia_s1);
         $hoja->setCellValue("C{$row}", $cotizacion->porcentaje_ganancia_s2);
         $hoja->setCellValue("D{$row}", $cotizacion->porcentaje_ganancia_s3);
 
+
+
         $row++;
+
+
 
         // =========================
         // UTILIDAD PRONOSTICADA
         // =========================
+
         $hoja->setCellValue("A{$row}", "UTILIDAD PRONOSTICADA");
         $hoja->setCellValue("B{$row}", $cotizacion->utilidad_pronosticada_s1);
         $hoja->setCellValue("C{$row}", $cotizacion->utilidad_pronosticada_s2);
         $hoja->setCellValue("D{$row}", $cotizacion->utilidad_pronosticada_s3);
 
+
+
         // =========================
-        // AUTO BORDES
+        // BORDES
         // =========================
-        $hoja->getStyle("A{$startRow}:E" . ($row))->applyFromArray([
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
+
+        $hoja->getStyle("A1:E{$row}")
+            ->applyFromArray([
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN
+                    ]
                 ],
-            ],
-        ]);
+                'alignment' => [
+                    'wrapText' => true
+                ]
+            ]);
+
+
+
+        foreach (range('A', 'E') as $col) {
+            $hoja->getColumnDimension($col)
+                ->setAutoSize(true);
+        }
+
+
 
         // =========================
         // DOWNLOAD
         // =========================
+
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header("Content-Disposition: attachment;filename=\"{$fileName}\"");
         header('Cache-Control: max-age=0');
 
+
         $writer = new Xlsx($libro);
         $writer->save('php://output');
+
         exit;
     }
 }

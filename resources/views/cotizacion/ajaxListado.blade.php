@@ -24,12 +24,15 @@
                     <td>{{ $cotizacion->cantidad_prenda }}</td>
                     <td>{{ $cotizacion->peso_kg }}</td>
                     <td class="text-center">
-                        <button type="button" class="btn btn-sm btn-danger" onclick="reportePdf({{ $cotizacion->id }})"
+
+                        <button class="btn btn-icon btn-warning btn-sm" onclick='editarCotizacion(@json($cotizacion))'><i class="fa fa-edit"></i></button>
+
+                        <button type="button" class="btn btn-sm btn-danger btn-icon" onclick="reportePdf({{ $cotizacion->id }})"
                             title="Exportar PDF">
                             <i class="fas fa-file-pdf"></i>
                         </button>
 
-                        <button type="button" class="btn btn-sm btn-success" onclick="reporteExcel({{ $cotizacion->id }})"
+                        <button type="button" class="btn btn-sm btn-success btn-icon" onclick="reporteExcel({{ $cotizacion->id }})"
                             title="Exportar Excel">
                             <i class="fas fa-file-excel"></i>
                         </button>

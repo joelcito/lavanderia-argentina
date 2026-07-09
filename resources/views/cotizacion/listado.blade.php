@@ -22,6 +22,7 @@
             </div>
             <div class="modal-body scroll-y">
                 <form id="formularioCotizacion">
+                    <input type="hidden" id="cotizacion_id" name="cotizacion_id">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="fv-row mb-7">
@@ -104,6 +105,44 @@
                                     <option value="{{$focalizado->id}}">{{$focalizado->nombre}}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="fv-row mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">Tipo Tela</label>
+                                <select class="form-control form-control-sm" name="tipo_tela_id" id="tipo_tela_id" required>
+                                    @foreach ($tipoTelas as $tipoTela)
+                                    <option value="{{$tipoTela->id}}">{{$tipoTela->nombre}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="fv-row mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">Color Tela</label>
+                                <select class="form-control form-control-sm" name="color_tela_id" id="color_tela_id" required>
+                                    @foreach ($colorTelas as $colorTela)
+                                    <option value="{{$colorTela->id}}">{{$colorTela->nombre}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="fv-row mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">Tipo Prenda</label>
+                                <select class="form-control form-control-sm" name="tipo_prenda_id" id="tipo_prenda_id" required>
+                                    @foreach ($tipoPrendas as $tipoPrenda)
+                                    <option value="{{$tipoPrenda->id}}">{{$tipoPrenda->nombre}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="fv-row mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">Descripcion</label>
+                                <input type="text" class="form-control form-control-sm" id="descripcion" name="descripcion">
                             </div>
                         </div>
                     </div>
@@ -553,26 +592,75 @@
                 }
             });
 
+            // $(document).on('input', '.porcentaje', function () {
+
+            //     let fila = $(this).closest('[data-repeater-item]');
+            //     let peso_gr = $('#peso_gr').val();
+
+            //     let porcentaje = parseFloat($(this).val()) || 0;
+
+            //     console.log("########################");
+            //     console.log(fila.find('.producto option:selected').attr('data-producto'));
+
+            //     let producto = JSON.parse(fila.find('.producto option:selected').attr('data-producto'));
+
+            //     console.log(producto);
+
+            //     if (!producto) {
+            //         return;
+            //     }
+
+            //     // let cantidad = (pesoBase * porcentaje) / 100;
+            //     let cantidad = (peso_gr * porcentaje) / 100;
+
+            //     // fila.find('.cantidad').val(cantidad.toFixed(2));
+            //     fila.find('.cantidad').val(cantidad.toFixed(2));
+
+            //     calcularTotal(fila);
+
+            // });
+
             $(document).on('input', '.porcentaje', function () {
 
-                let fila = $(this).closest('[data-repeater-item]');
-                let peso_gr = $('#peso_gr').val();
+            let fila = $(this).closest('[data-repeater-item]');
+            let peso_gr = parseFloat($('#peso_gr').val()) || 0;
 
-                let porcentaje = parseFloat($(this).val()) || 0;
+            let porcentaje = parseFloat($(this).val()) || 0;
 
-                let producto = JSON.parse(fila.find('.producto option:selected').attr('data-producto'));
+            let dataProducto = fila.find('.producto option:selected').attr('data-producto');
 
-                if (!producto) {
-                    return;
-                }
+            console.log("DATA PRODUCTO:", dataProducto);
 
-                // let cantidad = (pesoBase * porcentaje) / 100;
-                let cantidad = (peso_gr * porcentaje) / 100;
+            if (!dataProducto) {
+            // console.log("No hay producto seleccionado");
+            Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'warning',
+            title: 'No hay producto seleccionado.',
+            text: 'No hay producto seleccionado.',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true
+            });
+            fila.find('.cantidad').val(0);
+            fila.find('.total').val(0);
+            return;
+            }
 
-                // fila.find('.cantidad').val(cantidad.toFixed(2));
-                fila.find('.cantidad').val(cantidad.toFixed(2));
+            let producto = JSON.parse(dataProducto);
 
-                calcularTotal(fila);
+            console.log("PRODUCTO:", producto);
+
+            if (!producto) {
+            return;
+            }
+
+            let cantidad = (peso_gr * porcentaje) / 100;
+
+            fila.find('.cantidad').val(cantidad.toFixed(2));
+
+            calcularTotal(fila);
 
             });
 
@@ -610,13 +698,75 @@
 
         });
 
+        // function calcularTotal(fila) {
+        //     let ingreso = JSON.parse(fila.find('.producto option:selected').attr('data-ingreso'));
+        //     let cantidad = parseFloat(fila.find('.cantidad').val()) || 0;
+        //     let precioConvertido = ingreso.precio_compra_g;
+        //     let total = precioConvertido * cantidad;
+        //     fila.find('.total').val(total.toFixed(2));
+        // }
+
         function calcularTotal(fila) {
-            let ingreso = JSON.parse(fila.find('.producto option:selected').attr('data-ingreso'));
-            let cantidad = parseFloat(fila.find('.cantidad').val()) || 0;
-            let precioConvertido = ingreso.precio_compra_g;
-            let total = precioConvertido * cantidad;
-            fila.find('.total').val(total.toFixed(2));
+
+            let dataIngreso = fila.find('.producto option:selected').attr('data-ingreso');
+
+            if (!dataIngreso) {
+            fila.find('.total').val(0);
+            return;
+            }
+
+            let ingreso = JSON.parse(dataIngreso);
+
+            if(ingreso != null){
+                let cantidad = parseFloat(fila.find('.cantidad').val()) || 0;
+                let precioConvertido = parseFloat(ingreso.precio_compra_g) || 0;
+                let total = precioConvertido * cantidad;
+                fila.find('.total').val(total.toFixed(2));
+            }else{
+                Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'warning',
+                title: 'El producto no tiene precio registrado',
+                text: 'Seleccione otro producto o registre su ingreso.',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+                });
+                fila.find('.total').val(0);
+            }
         }
+
+        // function calcularTotal(fila) {
+
+        // let dataIngreso = fila.find('.producto option:selected').attr('data-ingreso');
+
+        // if (!dataIngreso) {
+        // fila.find('.total').val(0);
+
+        // Swal.fire({
+        // toast: true,
+        // position: 'top-end',
+        // icon: 'warning',
+        // title: 'El producto no tiene precio registrado',
+        // text: 'Seleccione otro producto o registre su ingreso.',
+        // showConfirmButton: false,
+        // timer: 3000,
+        // timerProgressBar: true
+        // });
+
+        // return;
+        // }
+
+        // let ingreso = JSON.parse(dataIngreso);
+
+        // let cantidad = parseFloat(fila.find('.cantidad').val()) || 0;
+        // let precioConvertido = parseFloat(ingreso.precio_compra_g) || 0;
+
+        // let total = precioConvertido * cantidad;
+
+        // fila.find('.total').val(total.toFixed(2));
+        // }
 
         function ajaxListado(){
             let datos = {};
@@ -638,10 +788,61 @@
         }
 
         function modalNuevoCotizacion(){
+            $('#cotizacion_id').val(0);
             $('#cliente_id').val(0);
+            $('#cedula').val(null);
             $('#nombre').val(null);
             $('#ap_paterno').val(null);
             $('#ap_materno').val(null);
+
+            $('#cantidad_prenda').val(null);
+            $('#peso_kg').val(null);
+            $('#peso_gr').val(null);
+            $('#prelavado_id').val(null);
+            $('#nevado_id').val(null);
+            $('#focalizado_id').val(null);
+
+            // Valores por defecto
+            $('#precio_focalizado').val(0);
+            $('#total_focalizado').val(0);
+
+            $('#precio_planchado').val(0);
+            $('#total_planchado').val(0);
+
+            $('#mano_obra').val(0);
+            $('#servicio_basico').val(0);
+            $('#mantenimiento').val(0);
+            $('#interes_bancario').val(0);
+
+            $('#porc_gananci').val(0);
+
+            $('#precio_ven_pronosticado').val(0);
+            $('#precio_venta_prosnosticado_s3').val(0);
+
+            $('#precio_venta_prosnosticado_s3').val(0);
+
+            $('#costo_frost').val(0);
+            $('#costo_frost_foc').val(0);
+            $('#costo_frost_foc_cont').val(0);
+            $('#precio_frost').val(0);
+            $('#precio_frost_foc').val(0);
+            $('#precio_frost_foc_cont').val(0);
+            $('#utilidad_frost').val(0);
+            $('#utilidad_frost_foc').val(0);
+            $('#utilidad_frost_foc_cont').val(0);
+            $('#porcentaje_ganancia_s1').val(0);
+            $('#porcentaje_ganancia_s2').val(0);
+            $('#porcentaje_ganancia_s3').val(0);
+            $('#utilidad_pronosticada_s1').val(0);
+            $('#utilidad_pronosticada_s2').val(0);
+            $('#utilidad_pronosticada_s3').val(0);
+
+            // Limpiar repeater
+            $('[data-repeater-list="procesos"]').empty();
+
+            // Crear una fila inicial del repeater si necesitas una por defecto
+            $('#kt_docs_repeater_nested > .form-group:last [data-repeater-create]').click();
+
             $('#modalCotizacion').modal('show')
         }
 
@@ -710,12 +911,13 @@
 
                         let fila = $(this);
 
-                        let porcentaje = parseFloat(fila.find('.porcentaje').val()) || 0;
-                        let cantidad   = parseFloat(fila.find('.cantidad').val()) || 0;
+                        // let porcentaje = parseFloat(fila.find('.porcentaje').val()) || 0;
+                        // let cantidad   = parseFloat(fila.find('.cantidad').val()) || 0;
+                        let total = parseFloat(fila.find('.total').val()) || 0;
 
-                        let total = porcentaje * cantidad;
+                        // let total = porcentaje * cantidad;
 
-                        fila.find('.total').val(total.toFixed(2));
+                        // fila.find('.total').val(total.toFixed(2));
 
                         totalGeneral += total;
                     });
@@ -747,16 +949,17 @@
             }
 
             // ===================== COSTO FROSTEADO =====================
-            let costoBase = totalGeneral / cantidadPrendas;
+            let totalPlanchadoFocalizado = totalPlanchado + totalFocalizado;
+            let costoBase = (totalGeneral + totalPlanchadoFocalizado)/ cantidadPrendas;
+
+            console.log(costoBase, totalGeneral, cantidadPrendas, totalPlanchadoFocalizado);
 
             let totalMasFrosteado =
                 costoBase +
                 manoObra +
                 servicioBasico +
                 mantenimiento +
-                interesBancario +
-                totalPlanchado +
-                totalFocalizado;
+                interesBancario;
 
             // // ===================== DATOS PARA SIMULACION 1 =====================
             $('#costo_frost').val(totalMasFrosteado.toFixed(2));
@@ -873,6 +1076,252 @@
             let u = "{{ route('cotizacion.reporteExcel', ':id') }}";
             u = u.replace(':id', id);
             window.location.href = u;
+        }
+
+        function editarCotizacion(c){
+
+            console.log(c);
+
+
+            // Cabecera
+            $('#cotizacion_id').val(c.id);
+            $('#cliente_id').val(c.cliente_id);
+            $('#cedula').val(c.cliente.cedula);
+            $('#nombre').val(c.cliente.nombres);
+            $('#ap_paterno').val(c.cliente.ap_paterno);
+            $('#ap_materno').val(c.cliente.ap_materno);
+
+            $('#cantidad_prenda').val(c.cantidad_prenda);
+            $('#peso_kg').val(c.peso_kg);
+            $('#peso_gr').val(c.peso_g);
+
+            $('#prelavado_id').val(c.prelavado_id);
+            $('#nevado_id').val(c.nevado_id);
+            $('#focalizado_id').val(c.focalizado_id);
+
+            $('#mano_obra').val(c.mano_obra);
+            $('#servicio_basico').val(c.servicio_basico);
+            $('#mantenimiento').val(c.mantenimiento);
+            $('#interes_bancario').val(c.interes_bancario);
+
+            $('#porc_gananci').val(c.porcentaje_ganacia);
+
+            $('#precio_ven_pronosticado').val(c.precio_venta_pronosticado);
+            $('#precio_venta_prosnosticado_s3').val(c.precio_venta_pronosticado_s3);
+
+            $('#costo_frost').val(c.costo_s1);
+            $('#costo_frost_foc').val(c.costo_s2);
+            $('#costo_frost_foc_cont').val(c.costo_s3);
+
+            $('#precio_frost').val(c.precio_s1);
+            $('#precio_frost_foc').val(c.precio_s2);
+            $('#precio_frost_foc_cont').val(c.precio_s3);
+
+            $('#utilidad_frost').val(c.utilidad_s1);
+            $('#utilidad_frost_foc').val(c.utilidad_s2);
+            $('#utilidad_frost_foc_cont').val(c.utilidad_s3);
+
+            $('#porcentaje_ganancia_s1').val(c.porcentaje_ganancia_s1);
+            $('#porcentaje_ganancia_s2').val(c.porcentaje_ganancia_s2);
+            $('#porcentaje_ganancia_s3').val(c.porcentaje_ganancia_s3);
+
+            $('#utilidad_pronosticada_s1').val(c.utilidad_pronosticada_s1);
+            $('#utilidad_pronosticada_s2').val(c.utilidad_pronosticada_s2);
+            $('#utilidad_pronosticada_s3').val(c.utilidad_pronosticada_s3);
+
+            // let procesos = {};
+
+            // // Agrupar
+            // c.detalles.forEach(function(d){
+
+            //     if(d.tipo_proceso_id == 4 && d.producto_id == null){
+            //         $('#precio_focalizado').val(d.cantidad);
+            //         $('#total_focalizado').val(d.total);
+            //         return;
+            //     }
+
+            //     if(d.tipo_proceso_id == 20 && d.producto_id == null){
+            //         $('#precio_planchado').val(d.cantidad);
+            //         $('#total_planchado').val(d.total);
+            //         return;
+            //     }
+            //     if(!procesos[d.tipo_proceso_id]){
+            //         procesos[d.tipo_proceso_id] = [];
+            //     }
+
+            //     console.log("---------------------------------");
+            //     console.log(d);
+            //     console.log("---------------------------------");
+
+            //     procesos[d.tipo_proceso_id].push(d);
+
+            // });
+
+            // // Limpiar repeater
+            // $('[data-repeater-list="procesos"]').empty();
+
+
+            // // Crear procesos
+            // Object.keys(procesos).forEach(function(tipoProceso){
+
+            //     $('#kt_docs_repeater_nested > .form-group:last [data-repeater-create]').click();
+
+            //     let proceso = $('[data-repeater-list="procesos"] > [data-repeater-item]').last();
+
+            //     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            //     console.log($('[name="procesos[0]"]'));
+            //     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+
+            //     proceso.find('select[name="proceso_id"]')
+            //             .val(tipoProceso)
+            //             .trigger('change');
+
+            //     // Crear productos
+            //     // procesos[tipoProceso].forEach(function(d){
+
+            //     // proceso.find('.inner-repeater').children('[data-repeater-create]').click();
+
+            //     // let producto = proceso
+            //     // .find('[data-repeater-list="productos"] > [data-repeater-item]')
+            //     // .last();
+
+            //     // producto.find('select[name="producto_id"]')
+            //     // .val(d.producto_id)
+            //     // .trigger('change');
+
+            //     // producto.find('input[name="porcentaje"]').val(d.porcentaje);
+            //     // producto.find('input[name="cantidad"]').val(d.cantidad);
+            //     // producto.find('input[name="total"]').val(d.total);
+
+            //     // });
+
+            //     procesos[tipoProceso].forEach(function(d, index){
+
+            //     let producto;
+
+            //     if(index == 0){
+            //         // usar el producto que ya viene creado
+            //         producto = proceso
+            //         .find('[data-repeater-list="productos"] > [data-repeater-item]')
+            //         .first();
+            //     }else{
+            //         // crear los demás
+            //         proceso.find('.inner-repeater [data-repeater-create]').click();
+
+            //         producto = proceso
+            //         .find('[data-repeater-list="productos"] > [data-repeater-item]')
+            //         .last();
+            //     }
+
+            //     producto.find('select[name="producto_id"]')
+            //             .val(d.producto_id)
+            //             .trigger('change');
+
+            //     producto.find('input[name="porcentaje"]').val(d.porcentaje);
+            //     producto.find('input[name="cantidad"]').val(d.cantidad);
+            //     producto.find('input[name="total"]').val(d.total);
+
+            //     });
+
+            // });
+
+            // $('#modalCotizacion').modal('show');
+
+
+
+
+
+            // ... [Tu código anterior de la cabecera se mantiene exactamente igual] ...
+
+            let procesos = {};
+
+            // 1. Agrupar filtrando los casos especiales
+            c.detalles.forEach(function(d) {
+                // Casos especiales fijos que no van al repeater
+                if (d.tipo_proceso_id == 4 && d.producto_id == null) {
+                $('#precio_focalizado').val(d.cantidad);
+                $('#total_focalizado').val(d.total);
+                return;
+                }
+
+                if (d.tipo_proceso_id == 20 && d.producto_id == null) {
+                $('#precio_planchado').val(d.cantidad);
+                $('#total_planchado').val(d.total);
+                return;
+                }
+
+            // Omitir procesos vacíos del JSON que no tienen producto para evitar duplicados basura (ej: tipo_proceso_id: 7 sin producto)
+            if (d.producto_id == null) {
+            return;
+            }
+
+            if (!procesos[d.tipo_proceso_id]) {
+            procesos[d.tipo_proceso_id] = [];
+            }
+
+            procesos[d.tipo_proceso_id].push(d);
+            });
+
+            // 2. Limpiar el repeater principal por completo
+            $('[data-repeater-list="procesos"]').empty();
+
+            // 3. Crear y poblar los procesos de forma estructurada
+            Object.keys(procesos).forEach(function(tipoProceso) {
+
+            // Forzar el click para crear la fila del proceso padre
+            $('#kt_docs_repeater_nested > .form-group:last [data-repeater-create]').click();
+
+            // Obtener la fila recién creada (la última)
+            let procesoRow = $('[data-repeater-list="procesos"] > [data-repeater-item]').last();
+
+            // Asignar el tipo de proceso y disparar el change
+            procesoRow.find('select[name^="procesos"][name$="[proceso_id]"], select[name="proceso_id"]')
+            .val(tipoProceso)
+            .trigger('change');
+
+            // IMPORTANTE: Limpiar cualquier fila de producto por defecto que el repeater padre cree automáticamente
+            let subRepeaterList = procesoRow.find('[data-repeater-list="productos"]');
+            subRepeaterList.empty();
+
+            // 4. Recorrer y crear los sub-productos correspondientes a este proceso
+            procesos[tipoProceso].forEach(function(d) {
+
+            // Hacer click en el botón de agregar producto ESPECÍFICO de este proceso
+            procesoRow.find('.inner-repeater [data-repeater-create]').click();
+
+            // Obtener el producto recién insertado en este sub-repeater
+            let productoRow = subRepeaterList.find('[data-repeater-item]').last();
+
+            // Llenar los campos asegurando selectores relativos precisos
+            // productoRow.find('select[name*="[producto_id]"], select[name="producto_id"]')
+            // .val(d.producto_id)
+            // .trigger('change');
+
+            // productoRow.find('input[name*="[porcentaje]"], input[name="porcentaje"]').val(d.porcentaje);
+            // productoRow.find('input[name*="[cantidad]"], input[name="cantidad"]').val(d.cantidad);
+            // productoRow.find('input[name*="[total]"], input[name="total"]').val(d.total);
+
+            let productoSelect = productoRow.find('select[name*="[producto_id]"], select[name="producto_id"]');
+
+            productoSelect.val(d.producto_id);
+
+            productoRow.find('input[name*="[porcentaje]"], input[name="porcentaje"]')
+            .val(d.porcentaje);
+
+            productoRow.find('input[name*="[cantidad]"], input[name="cantidad"]')
+            .val(d.cantidad);
+
+            productoRow.find('input[name*="[total]"], input[name="total"]')
+            .val(d.total);
+            });
+            });
+
+            // Mostrar el modal al final de toda la carga
+            $('#modalCotizacion').modal('show');
+
+
+
+
         }
 
 </script>

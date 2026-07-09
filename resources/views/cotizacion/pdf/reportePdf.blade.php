@@ -49,14 +49,75 @@
         COTIZACION # {{ $cotizacion->id }}
     </div>
 
-    <div class="subtitulo">
-        Cliente: <strong>{{ $cotizacion->cliente->nombres." ".$cotizacion->cliente->ap_paterno." ".$cotizacion->cliente->ap_materno }}</strong><br>
-        Fecha: <strong>{{ $cotizacion->created_at }}</strong>
-        Cantidad: <strong>{{ intval($cotizacion->cantidad_prenda) }}</strong>
-        Prelavado: <strong>{{ $cotizacion->prelavado->nombre }}</strong>
-        Nevado: <strong>{{ $cotizacion->nevado->nombre }}</strong>
-        Focalizado: <strong>{{ $cotizacion->focalizado->nombre }}</strong>
-    </div>
+    <table>
+        <tr>
+            <td><strong>Cliente</strong></td>
+            <td colspan="3">
+                {{ $cotizacion->cliente->nombres }}
+                {{ $cotizacion->cliente->ap_paterno }}
+                {{ $cotizacion->cliente->ap_materno }}
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>Fecha</strong></td>
+            <td>{{ $cotizacion->created_at }}</td>
+
+            <td><strong>Cantidad Prendas</strong></td>
+            <td>{{ $cotizacion->cantidad_prenda }}</td>
+        </tr>
+
+        <tr>
+            <td><strong>Peso Kg</strong></td>
+            <td>{{ $cotizacion->peso_kg }}</td>
+
+            <td><strong>Peso Gr</strong></td>
+            <td>{{ $cotizacion->peso_g }}</td>
+        </tr>
+
+        <tr>
+            <td><strong>Prelavado</strong></td>
+            <td>
+                {{ $cotizacion->prelavado?->nombre }}
+            </td>
+
+            <td><strong>Nevado</strong></td>
+            <td>
+                {{ $cotizacion->nevado?->nombre }}
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>Focalizado</strong></td>
+            <td>
+                {{ $cotizacion->focalizado?->nombre }}
+            </td>
+
+            <td><strong>Tipo Tela</strong></td>
+            <td>
+                {{ $cotizacion->tipo_tela }}
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>Color Tela</strong></td>
+            <td>
+                {{ $cotizacion->color_tela }}
+            </td>
+
+            <td><strong>Tipo Prenda</strong></td>
+            <td>
+                {{ $cotizacion->tipo_prenda }}
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>Descripción</strong></td>
+            <td colspan="3">
+                {{ $cotizacion->descripcion }}
+            </td>
+        </tr>
+    </table>
 
     <table>
         <thead>
@@ -95,7 +156,33 @@
                     <td>{{ $detalle->total }}</td>
                 </tr>
                 @endforeach
+
+
             @endforeach
+
+            {{-- <tr>
+                <td colspan="3">
+                    <strong>Focalizado</strong>
+                </td>
+                <td>
+                    {{ $cotizacion->precio_focalizado }}
+                </td>
+                <td>
+                    {{ $cotizacion->total_focalizado }}
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3">
+                    <strong>Planchado</strong>
+                </td>
+                <td>
+                    {{ $cotizacion->precio_planchado }}
+                </td>
+                <td>
+                    {{ $cotizacion->total_planchado }}
+                </td>
+            </tr> --}}
             <tr>
                 <td>
                     <strong>Mano de Obra: </strong>{{ $cotizacion->mano_obra }}
@@ -108,6 +195,28 @@
                 </td>
                 <td colspan="2">
                     <strong>Interes Bancario: </strong>{{ $cotizacion->interes_bancario }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>% Ganancia</strong>
+                </td>
+                <td>
+                    {{ $cotizacion->porcentaje_ganacia }}
+                </td>
+
+                <td>
+                    <strong>Precio Venta Pronosticado</strong>
+                </td>
+                <td>
+                    {{ $cotizacion->precio_venta_pronosticado }}
+                </td>
+
+                <td>
+                    <strong>
+                        Precio Venta Pronosticado S3:
+                        {{ $cotizacion->precio_venta_pronosticado_s3 }}
+                    </strong>
                 </td>
             </tr>
 
