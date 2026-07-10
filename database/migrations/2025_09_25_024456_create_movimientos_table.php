@@ -37,8 +37,8 @@ return new class extends Migration
 
             $table->string('codigo_compra')->nullable();
             $table->decimal('precio',12,2)->nullable();
-            $table->decimal('precio_compra_kg',12,3)->nullable();
-            $table->decimal('precio_compra_g',12,3)->nullable();
+            $table->decimal('precio_compra_kg',12,5)->nullable();
+            $table->decimal('precio_compra_g',12,5)->nullable();
 
             $table->text('descripcion')->nullable();
 

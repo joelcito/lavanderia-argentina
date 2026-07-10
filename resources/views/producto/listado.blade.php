@@ -161,13 +161,13 @@
                             <div class="col-md-2">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Precio compra por KG</label>
-                                    <input type="number" class="form-control form-control-sm" id="precio_compra_kg" name="precio_compra_kg" min="0.001" step="0.001">
+                                    <input type="number" class="form-control form-control-sm" id="precio_compra_kg" name="precio_compra_kg" min="0.001" step="0.00001">
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="fv-row mb-7">
                                     <label class="required fw-semibold fs-6 mb-2">Precio compra por G</label>
-                                    <input type="number" class="form-control form-control-sm" id="precio_compra_g" name="precio_compra_g" min="0.001" step="0.001">
+                                    <input type="number" class="form-control form-control-sm" id="precio_compra_g" name="precio_compra_g" min="0.001" step="0.00001">
                                 </div>
                             </div>
                         </div>
