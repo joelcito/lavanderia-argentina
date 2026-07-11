@@ -36,6 +36,7 @@
                             title="Exportar Excel">
                             <i class="fas fa-file-excel"></i>
                         </button>
+                        <button class="btn btn-danger btn-icon btn-sm" onclick="eliminarCotizacion('{{$cotizacion->id}}')"><i class="fa fa-trash"></i></button>
                     </td>
                 </tr>
             @empty

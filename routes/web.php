@@ -404,6 +404,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [CotizacionController::class, 'ajaxListado'])->name('cotizacion.ajaxListado');
         Route::post('/buscarCliente', [CotizacionController::class, 'buscarCliente'])->name('cotizacion.buscarCliente');
         Route::post('/guardarCotizacion', [CotizacionController::class, 'guardarCotizacion'])->name('cotizacion.guardarCotizacion');
+        Route::post('/eliminarCotizacion', [CotizacionController::class, 'eliminarCotizacion'])->name('cotizacion.eliminarCotizacion');
 
         Route::get('/reportePdf/{cotizacion_id}', [CotizacionController::class, 'reportePdf'])->name('cotizacion.reportePdf');
         Route::get('/reporteExcel/{cotizacion_id}', [CotizacionController::class, 'reporteExcel'])->name('cotizacion.reporteExcel');

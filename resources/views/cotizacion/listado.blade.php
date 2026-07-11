@@ -201,21 +201,21 @@
                                                                 <label class="form-label">Porcentaje</label>
                                                                 <input type="number" name="porcentaje"
                                                                     class="form-control form-control-sm porcentaje"
-                                                                    min="0" step="0.01">
+                                                                    min="0" step="0.0001">
                                                             </div>
 
                                                             <div class="col-md-2">
                                                                 <label class="form-label">Cantidad</label>
                                                                 <input type="number" name="cantidad"
                                                                     class="form-control form-control-sm cantidad"
-                                                                    min="0" step="0.01">
+                                                                    min="0" step="0.0001">
                                                             </div>
 
                                                             <div class="col-md-2">
                                                                 <label class="form-label">Total</label>
                                                                 <input type="number" name="total"
                                                                     class="form-control form-control-sm total" min="0"
-                                                                    step="0.01">
+                                                                    step="0.0001">
                                                             </div>
 
                                                             <div class="col-md-2">
@@ -1318,10 +1318,60 @@
 
             // Mostrar el modal al final de toda la carga
             $('#modalCotizacion').modal('show');
+        }
+
+        function eliminarCotizacion(cotizacion){
+            Swal.fire({
+                title: "¿Quieres eliminar la cotizacion?",
+                text: "¡No podrás recuperarlo!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: "Sí, borrar",
+                cancelButtonText: "No, cancelar",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        url: "{{ route('cotizacion.eliminarCotizacion') }}",
+                        method: "POST",
+                        data: { cotizacion: cotizacion },
+                        success: function(resultado) {
+                            if (resultado.estado) {
+                                ajaxListado(); // recarga el listado
+                                Swal.fire(
+                                    'Eliminado!',
+                                    'La cotizacion ha sido eliminado correctamente.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'Error',
+                                    resultado.message || 'No se pudo eliminar el rol.',
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error inesperado.'
+                            });
+                        }
+                    });
 
 
-
-
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire(
+                        'Cancelado',
+                        'La operación fue cancelada',
+                        'info'
+                    );
+                }
+            });
         }
 
 </script>

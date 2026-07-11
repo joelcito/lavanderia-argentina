@@ -27,9 +27,9 @@ return new class extends Migration
             $table->foreign('producto_id')->references('id')->on('productos');
             $table->unsignedBigInteger('producto_id')->nullable();
 
-            $table->decimal('porcentaje',12,2)->nullable();
-            $table->decimal('cantidad',12,2)->nullable();
-            $table->decimal('total',12,2)->nullable();
+            $table->decimal('porcentaje',12,5)->nullable();
+            $table->decimal('cantidad',12,5)->nullable();
+            $table->decimal('total',12,5)->nullable();
 
             $table->string('estado')->nullable();
             $table->dateTime('deleted_at')->nullable();
