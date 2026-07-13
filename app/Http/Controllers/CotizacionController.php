@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use App\Models\Color_tela;
 use App\Models\Cotizacion;
 use App\Models\CotizacionDetalle;
@@ -40,7 +41,9 @@ class CotizacionController extends Controller
         $colorTelas = Color_tela::orderBy('nombre')->get();
         $tipoPrendas = Prenda::orderBy('nombre')->get();
 
-        return view('cotizacion.listado')->with(compact('tipoProcesos','productos', 'prelavados', 'nevados','focalizados', 'tipoTelas', 'colorTelas','tipoPrendas'));
+        $clientes = User::where('rol_id', 3)->orderBy('id', 'desc')->get();
+
+        return view('cotizacion.listado')->with(compact('tipoProcesos','productos', 'prelavados', 'nevados','focalizados', 'tipoTelas', 'colorTelas','tipoPrendas','clientes'));
     }
 
     /**

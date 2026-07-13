@@ -24,6 +24,18 @@
                 <form id="formularioCotizacion">
                     <input type="hidden" id="cotizacion_id" name="cotizacion_id">
                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="fv-row mb-7">
+                                <label class="required fw-semibold fs-6 mb-2">Cliente</label>
+                                <select class="form-control form-control-select form-control-sm" name="cliente_id" id="cliente_id">
+                                    @foreach ($clientes as $cliente)
+                                    <option value="{{$cliente->id}}">{{$cliente->nombres." ".$cliente->ap_paterno." ".$cliente->ap_materno." | Cedula: ".$cliente->cedula}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- <div class="row">
                         <div class="col-md-3">
                             <div class="fv-row mb-7">
                                 <label class="required fw-semibold fs-6 mb-2">Cedula</label>
@@ -52,7 +64,7 @@
                                     name="ap_materno">
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     <hr>
                     <div class="row">
                         <div class="col-md-2">
@@ -519,7 +531,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <button class="btn btn-success w-100 btn-sm" type="button"
+                            <button class="btn btn-success w-100 btn-sm" type="button" id="boton-guardar-cotizacion"
                                 onclick="guardar()">Guardar</button>
                         </div>
                     </div>
@@ -591,34 +603,6 @@
                     $(this).slideUp(deleteElement);
                 }
             });
-
-            // $(document).on('input', '.porcentaje', function () {
-
-            //     let fila = $(this).closest('[data-repeater-item]');
-            //     let peso_gr = $('#peso_gr').val();
-
-            //     let porcentaje = parseFloat($(this).val()) || 0;
-
-            //     console.log("########################");
-            //     console.log(fila.find('.producto option:selected').attr('data-producto'));
-
-            //     let producto = JSON.parse(fila.find('.producto option:selected').attr('data-producto'));
-
-            //     console.log(producto);
-
-            //     if (!producto) {
-            //         return;
-            //     }
-
-            //     // let cantidad = (pesoBase * porcentaje) / 100;
-            //     let cantidad = (peso_gr * porcentaje) / 100;
-
-            //     // fila.find('.cantidad').val(cantidad.toFixed(2));
-            //     fila.find('.cantidad').val(cantidad.toFixed(2));
-
-            //     calcularTotal(fila);
-
-            // });
 
             $(document).on('input', '.porcentaje', function () {
 
@@ -737,36 +721,6 @@
             }
         }
 
-        // function calcularTotal(fila) {
-
-        // let dataIngreso = fila.find('.producto option:selected').attr('data-ingreso');
-
-        // if (!dataIngreso) {
-        // fila.find('.total').val(0);
-
-        // Swal.fire({
-        // toast: true,
-        // position: 'top-end',
-        // icon: 'warning',
-        // title: 'El producto no tiene precio registrado',
-        // text: 'Seleccione otro producto o registre su ingreso.',
-        // showConfirmButton: false,
-        // timer: 3000,
-        // timerProgressBar: true
-        // });
-
-        // return;
-        // }
-
-        // let ingreso = JSON.parse(dataIngreso);
-
-        // let cantidad = parseFloat(fila.find('.cantidad').val()) || 0;
-        // let precioConvertido = parseFloat(ingreso.precio_compra_g) || 0;
-
-        // let total = precioConvertido * cantidad;
-
-        // fila.find('.total').val(total.toFixed(2));
-        // }
 
         function ajaxListado(){
             let datos = {};
@@ -1017,6 +971,7 @@
         function guardar(){
             if($('#formularioCotizacion')[0].checkValidity()){
                 let datos = $('#formularioCotizacion').serializeArray();
+                $('#boton-guardar-cotizacion').prop('disabled', true);
                 $.ajax({
                     url: "{{ route('cotizacion.guardarCotizacion') }}",
                     method: "POST",
@@ -1029,13 +984,15 @@
                                 timer: 3000, // Se cierra en 3 segundos
                                 showConfirmButton: false
                             });
-                            ajaxListado();
-                            $('#modalCotizacion').modal('hide');
+                            // ajaxListado();
+                            window.location.reload(true);
+                            // $('#modalCotizacion').modal('hide');
                         } else {
 
                         }
                     },
                     error: function(xhr) {
+                        $('#boton-guardar-cotizacion').prop('disabled', false);
                         limpiarErorres();
                         if (xhr.status === 422) {
                             let errores = xhr.responseJSON.errors;
@@ -1128,108 +1085,6 @@
             $('#utilidad_pronosticada_s1').val(c.utilidad_pronosticada_s1);
             $('#utilidad_pronosticada_s2').val(c.utilidad_pronosticada_s2);
             $('#utilidad_pronosticada_s3').val(c.utilidad_pronosticada_s3);
-
-            // let procesos = {};
-
-            // // Agrupar
-            // c.detalles.forEach(function(d){
-
-            //     if(d.tipo_proceso_id == 4 && d.producto_id == null){
-            //         $('#precio_focalizado').val(d.cantidad);
-            //         $('#total_focalizado').val(d.total);
-            //         return;
-            //     }
-
-            //     if(d.tipo_proceso_id == 20 && d.producto_id == null){
-            //         $('#precio_planchado').val(d.cantidad);
-            //         $('#total_planchado').val(d.total);
-            //         return;
-            //     }
-            //     if(!procesos[d.tipo_proceso_id]){
-            //         procesos[d.tipo_proceso_id] = [];
-            //     }
-
-            //     console.log("---------------------------------");
-            //     console.log(d);
-            //     console.log("---------------------------------");
-
-            //     procesos[d.tipo_proceso_id].push(d);
-
-            // });
-
-            // // Limpiar repeater
-            // $('[data-repeater-list="procesos"]').empty();
-
-
-            // // Crear procesos
-            // Object.keys(procesos).forEach(function(tipoProceso){
-
-            //     $('#kt_docs_repeater_nested > .form-group:last [data-repeater-create]').click();
-
-            //     let proceso = $('[data-repeater-list="procesos"] > [data-repeater-item]').last();
-
-            //     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-            //     console.log($('[name="procesos[0]"]'));
-            //     console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-
-            //     proceso.find('select[name="proceso_id"]')
-            //             .val(tipoProceso)
-            //             .trigger('change');
-
-            //     // Crear productos
-            //     // procesos[tipoProceso].forEach(function(d){
-
-            //     // proceso.find('.inner-repeater').children('[data-repeater-create]').click();
-
-            //     // let producto = proceso
-            //     // .find('[data-repeater-list="productos"] > [data-repeater-item]')
-            //     // .last();
-
-            //     // producto.find('select[name="producto_id"]')
-            //     // .val(d.producto_id)
-            //     // .trigger('change');
-
-            //     // producto.find('input[name="porcentaje"]').val(d.porcentaje);
-            //     // producto.find('input[name="cantidad"]').val(d.cantidad);
-            //     // producto.find('input[name="total"]').val(d.total);
-
-            //     // });
-
-            //     procesos[tipoProceso].forEach(function(d, index){
-
-            //     let producto;
-
-            //     if(index == 0){
-            //         // usar el producto que ya viene creado
-            //         producto = proceso
-            //         .find('[data-repeater-list="productos"] > [data-repeater-item]')
-            //         .first();
-            //     }else{
-            //         // crear los demás
-            //         proceso.find('.inner-repeater [data-repeater-create]').click();
-
-            //         producto = proceso
-            //         .find('[data-repeater-list="productos"] > [data-repeater-item]')
-            //         .last();
-            //     }
-
-            //     producto.find('select[name="producto_id"]')
-            //             .val(d.producto_id)
-            //             .trigger('change');
-
-            //     producto.find('input[name="porcentaje"]').val(d.porcentaje);
-            //     producto.find('input[name="cantidad"]').val(d.cantidad);
-            //     producto.find('input[name="total"]').val(d.total);
-
-            //     });
-
-            // });
-
-            // $('#modalCotizacion').modal('show');
-
-
-
-
 
             // ... [Tu código anterior de la cabecera se mantiene exactamente igual] ...
 
