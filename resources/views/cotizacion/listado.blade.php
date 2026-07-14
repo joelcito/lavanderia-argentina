@@ -1086,6 +1086,11 @@
             $('#utilidad_pronosticada_s2').val(c.utilidad_pronosticada_s2);
             $('#utilidad_pronosticada_s3').val(c.utilidad_pronosticada_s3);
 
+            $('#tipo_tela_id').val(c.tipo_tela_id );
+            $('#color_tela_id').val(c.color_tela_id );
+            $('#tipo_prenda_id').val(c.prenda_id );
+            $('#descripcion').val(c.descripcion);
+
             // ... [Tu código anterior de la cabecera se mantiene exactamente igual] ...
 
             let procesos = {};
