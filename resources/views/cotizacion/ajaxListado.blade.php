@@ -3,6 +3,7 @@
     <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_table_roles">
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
+                <th>ID</th>
                 <th>Cliente</th>
                 <th>Fecha</th>
                 <th>Prelavado</th>
@@ -16,6 +17,7 @@
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($cotizaciones as $cotizacion)
                 <tr>
+                    <td>{{$cotizacion->id}}</td>
                     <td>{{ $cotizacion->cliente->nombres." ".$cotizacion->cliente->ap_paterno." ".$cotizacion->cliente->ap_materno }}</td>
                     <td>{{ $cotizacion->created_at }}</td>
                     <td>{{ $cotizacion->prelavado?->nombre }}</td>
