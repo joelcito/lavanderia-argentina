@@ -18,7 +18,7 @@
         <div class="col-md-4">
             <div class="fv-row mb-7">
                 <label class="fw-semibold fs-6 mb-2">N° Fac/Rec</label>
-                <input type="number" class="form-control form-control-sm" id="numero" name="numero" value="{{ $factura->facturado == 'Si' ? $factura->numero_factura : $factura->numero_recibo }}" @readonly(true) disabled>
+                <input type="number" class="form-control form-control-sm" id="numero" name="numero" value="{{ $factura->numero_factura  }}" @readonly(true) disabled>
                 <div class="text-info" id="mensaje-numero"></div>
             </div>
         </div>
