@@ -18,6 +18,7 @@ use App\Utils\Respuesta;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -52,7 +53,69 @@ class CotizacionController extends Controller
     public function ajaxListado(Request $request)
     {
         if($request->ajax()){
-            $cotizaciones = Cotizacion::with('detalles')->orderBy('id', 'desc')->get();
+
+            $cliente_id     = $request->input('buscar_cliente_id');
+            $fecha_ini      = $request->input('buscar_fecha_ini');
+            $fecha_fin      = $request->input('buscar_fecha_fin');
+            $tipo_prenda_id = $request->input('buscar_tipo_prenda_id');
+            $color_tela_id  = $request->input('buscar_color_tela_id');
+            $prelavado_id   = $request->input('buscar_prelavado_id');
+            $tipo_tela_id   = $request->input('buscar_tipo_tela_id');
+            $nevado_id      = $request->input('buscar_nevado_id');
+            $focalizado_id  = $request->input('buscar_focalizado_id');
+
+            $query = Cotizacion::query();
+
+            if(!is_null($cliente_id)){
+                $query->where('cliente_id', $cliente_id);
+            }
+
+            if (!is_null($fecha_ini) && !is_null($fecha_fin)) {
+                $query->whereBetween('created_at', [$fecha_ini." 00:00:00", $fecha_fin . " 23:59:59"]);
+            }
+
+            if (!is_null($tipo_prenda_id)) {
+                $query->where('prenda_id', $tipo_prenda_id);
+            }
+
+            if (!is_null($color_tela_id)) {
+                $query->where('color_tela_id', $color_tela_id);
+            }
+
+            if (!is_null($prelavado_id)) {
+                $query->where('prelavado_id', $prelavado_id);
+            }
+
+            if (!is_null($tipo_tela_id)) {
+                $query->where('tipo_tela_id', $tipo_tela_id);
+            }
+
+            if (!is_null($nevado_id)) {
+                $query->where('nevado_id', $nevado_id);
+            }
+
+            if (!is_null($focalizado_id)) {
+                $query->where('focalizado_id', $focalizado_id);
+            }
+
+            if (
+                !is_null($cliente_id) &&
+                !is_null($fecha_ini) &&
+                !is_null($fecha_fin) &&
+                !is_null($tipo_prenda_id) &&
+                !is_null($color_tela_id) &&
+                !is_null($prelavado_id) &&
+                !is_null($tipo_tela_id) &&
+                !is_null($nevado_id) &&
+                !is_null($focalizado_id)
+            ) {
+                $cotizaciones = $query->limit(500)->get();
+            } else {
+                $cotizaciones = $query->orderBy('id', 'desc')->limit(100)->get();
+            }
+
+
+            // $cotizaciones = Cotizacion::with('detalles')->orderBy('id', 'desc')->get();
             $valores = [
                 'listado' => view('cotizacion.ajaxListado')->with(compact('cotizaciones'))->render()
             ];
@@ -143,121 +206,136 @@ class CotizacionController extends Controller
             $procesos                      = $request->input('procesos');
             $usuario                       = Auth::user();
 
-            if($cliente_id == 0){
-                $clienteNew                     = new User();
-                $clienteNew->usuario_creador_id = $usuario->id;
-                $clienteNew->rol_id             = 3;
-                $clienteNew->nombres            = $nombre;
-                $clienteNew->ap_paterno         = $ap_paterno;
-                $clienteNew->ap_materno         = $ap_materno;
-                $clienteNew->cedula             = $cedula;
-                $clienteNew->name               = $nombre." ". $ap_paterno." ". $ap_materno;
-                $nombre_clean                   = str_replace(' ', '', strtolower(trim($nombre)));
-                $paterno_clean                  = str_replace(' ', '', strtolower(trim($ap_paterno)));
-                $materno_clean                  = str_replace(' ', '', strtolower(trim($ap_materno)));
-                $key_unico                      = substr(uniqid(), -4);
-                $clienteNew->email              = $nombre_clean . "." . $paterno_clean . "." . $materno_clean . "." . $key_unico . "@lavanderia-argentina.com";
-                $clienteNew->password           = "123456789";
-                $clienteNew->save();
+            try {
 
-                $cliente_id = $clienteNew->id;
-            }
+                DB::beginTransaction();
 
-            if($cotizacion_id == 0){
-                $cotizacion                     = new Cotizacion();
-                $cotizacion->usuario_creador_id = $usuario->id;
-            }
-            else{
-                $cotizacion                         = Cotizacion::find($cotizacion_id);
-                $cotizacion->usuario_modificador_id = $usuario->id;
-            }
+                if ($cliente_id == 0) {
+                    $clienteNew                     = new User();
+                    $clienteNew->usuario_creador_id = $usuario->id;
+                    $clienteNew->rol_id             = 3;
+                    $clienteNew->nombres            = $nombre;
+                    $clienteNew->ap_paterno         = $ap_paterno;
+                    $clienteNew->ap_materno         = $ap_materno;
+                    $clienteNew->cedula             = $cedula;
+                    $clienteNew->name               = $nombre . " " . $ap_paterno . " " . $ap_materno;
+                    $nombre_clean                   = str_replace(' ', '', strtolower(trim($nombre)));
+                    $paterno_clean                  = str_replace(' ', '', strtolower(trim($ap_paterno)));
+                    $materno_clean                  = str_replace(' ', '', strtolower(trim($ap_materno)));
+                    $key_unico                      = substr(uniqid(), -4);
+                    $clienteNew->email              = $nombre_clean . "." . $paterno_clean . "." . $materno_clean . "." . $key_unico . "@lavanderia-argentina.com";
+                    $clienteNew->password           = "123456789";
+                    $clienteNew->save();
 
-            // $cotizacion                               = new Cotizacion();
-            $cotizacion->cliente_id                   = $cliente_id;
-            $cotizacion->prelavado_id                 = $prelavado_id;
-            $cotizacion->nevado_id                    = $nevado_id;
-
-            $cotizacion->tipo_tela_id  = $tipo_tela_id;
-            $cotizacion->color_tela_id = $color_tela_id;
-            $cotizacion->prenda_id     = $tipo_prenda_id;
-            $cotizacion->descripcion   = $descripcion;
-
-            $cotizacion->focalizado_id                = $focalizado_id;
-            $cotizacion->cantidad_prenda              = $cantidad_prenda;
-            $cotizacion->peso_kg                      = $peso_kg;
-            $cotizacion->peso_g                       = $peso_gr;
-            $cotizacion->mano_obra                    = $mano_obra;
-            $cotizacion->servicio_basico              = $servicio_basico;
-            $cotizacion->mantenimiento                = $mantenimiento;
-            $cotizacion->interes_bancario             = $interes_bancario;
-            $cotizacion->porcentaje_ganacia           = $porc_gananci;
-            $cotizacion->precio_venta_pronosticado    = $precio_ven_pronosticado;
-            $cotizacion->precio_venta_pronosticado_s3 = $precio_venta_prosnosticado_s3;
-            $cotizacion->costo_s1                     = $costo_frost;
-            $cotizacion->costo_s2                     = $costo_frost_foc;
-            $cotizacion->costo_s3                     = $costo_frost_foc_cont;
-            $cotizacion->precio_s1                    = $precio_frost;
-            $cotizacion->precio_s2                    = $precio_frost_foc;
-            $cotizacion->precio_s3                    = $precio_frost_foc_cont;
-            $cotizacion->utilidad_s1                  = $utilidad_frost;
-            $cotizacion->utilidad_s2                  = $utilidad_frost_foc;
-            $cotizacion->utilidad_s3                  = $utilidad_frost_foc_cont;
-            $cotizacion->porcentaje_ganancia_s1       = $porcentaje_ganancia_s1;
-            $cotizacion->porcentaje_ganancia_s2       = $porcentaje_ganancia_s2;
-            $cotizacion->porcentaje_ganancia_s3       = $porcentaje_ganancia_s3;
-            $cotizacion->utilidad_pronosticada_s1     = $utilidad_pronosticada_s1;
-            $cotizacion->utilidad_pronosticada_s2     = $utilidad_pronosticada_s2;
-            $cotizacion->utilidad_pronosticada_s3     = $utilidad_pronosticada_s3;
-            $cotizacion->save();
-
-            if ($cotizacion_id != 0) {
-                // PRIMERO ELIMINAMOS LO REGISTRADO
-                $detalles = $cotizacion->detalles;
-                foreach ($detalles as $detalle) {
-                    $detalle->delete();
+                    $cliente_id = $clienteNew->id;
                 }
-            }
 
-            foreach ($procesos as $proceso) {
-                $procesoId = $proceso['proceso_id'];
-                foreach ($proceso['productos'] as $producto) {
+                if ($cotizacion_id == 0) {
+                    $cotizacion                     = new Cotizacion();
+                    $cotizacion->usuario_creador_id = $usuario->id;
+                } else {
+                    $cotizacion                         = Cotizacion::find($cotizacion_id);
+                    $cotizacion->usuario_modificador_id = $usuario->id;
+                }
 
+                // $cotizacion                               = new Cotizacion();
+                $cotizacion->cliente_id                   = $cliente_id;
+                $cotizacion->prelavado_id                 = $prelavado_id;
+                $cotizacion->nevado_id                    = $nevado_id;
+
+                $cotizacion->tipo_tela_id  = $tipo_tela_id;
+                $cotizacion->color_tela_id = $color_tela_id;
+                $cotizacion->prenda_id     = $tipo_prenda_id;
+                $cotizacion->descripcion   = $descripcion;
+
+                $cotizacion->focalizado_id                = $focalizado_id;
+                $cotizacion->cantidad_prenda              = $cantidad_prenda;
+                $cotizacion->peso_kg                      = $peso_kg;
+                $cotizacion->peso_g                       = $peso_gr;
+                $cotizacion->mano_obra                    = $mano_obra;
+                $cotizacion->servicio_basico              = $servicio_basico;
+                $cotizacion->mantenimiento                = $mantenimiento;
+                $cotizacion->interes_bancario             = $interes_bancario;
+                $cotizacion->porcentaje_ganacia           = $porc_gananci;
+                $cotizacion->precio_venta_pronosticado    = $precio_ven_pronosticado;
+                $cotizacion->precio_venta_pronosticado_s3 = $precio_venta_prosnosticado_s3;
+                $cotizacion->costo_s1                     = $costo_frost;
+                $cotizacion->costo_s2                     = $costo_frost_foc;
+                $cotizacion->costo_s3                     = $costo_frost_foc_cont;
+                $cotizacion->precio_s1                    = $precio_frost;
+                $cotizacion->precio_s2                    = $precio_frost_foc;
+                $cotizacion->precio_s3                    = $precio_frost_foc_cont;
+                $cotizacion->utilidad_s1                  = $utilidad_frost;
+                $cotizacion->utilidad_s2                  = $utilidad_frost_foc;
+                $cotizacion->utilidad_s3                  = $utilidad_frost_foc_cont;
+                $cotizacion->porcentaje_ganancia_s1       = $porcentaje_ganancia_s1;
+                $cotizacion->porcentaje_ganancia_s2       = $porcentaje_ganancia_s2;
+                $cotizacion->porcentaje_ganancia_s3       = $porcentaje_ganancia_s3;
+                $cotizacion->utilidad_pronosticada_s1     = $utilidad_pronosticada_s1;
+                $cotizacion->utilidad_pronosticada_s2     = $utilidad_pronosticada_s2;
+                $cotizacion->utilidad_pronosticada_s3     = $utilidad_pronosticada_s3;
+                $cotizacion->save();
+
+                if ($cotizacion_id != 0) {
+                    // PRIMERO ELIMINAMOS LO REGISTRADO
+                    $detalles = $cotizacion->detalles;
+                    foreach ($detalles as $detalle) {
+                        $detalle->delete();
+                    }
+                }
+
+                foreach ($procesos as $proceso) {
+                    $procesoId = $proceso['proceso_id'];
+                    $ordenProceso = $proceso['orden_proceso'] ?? null;
+                    foreach ($proceso['productos'] as $producto) {
+
+                        $cotizacionDetalle                     = new CotizacionDetalle();
+                        $cotizacionDetalle->usuario_creador_id = $usuario->id;
+                        $cotizacionDetalle->cotizacion_id      = $cotizacion->id;
+                        $cotizacionDetalle->tipo_proceso_id    = $procesoId;
+                        $cotizacionDetalle->producto_id        = $producto['producto_id'];
+
+                        $cotizacionDetalle->orden_proceso      = $ordenProceso;
+                        $cotizacionDetalle->orden_producto     = $producto['orden_producto'] ?? null;
+
+                        $cotizacionDetalle->porcentaje         = $producto['porcentaje'];
+                        $cotizacionDetalle->cantidad           = $producto['cantidad'];
+                        $cotizacionDetalle->total              = $producto['total'];
+                        $cotizacionDetalle->save();
+                    }
+                }
+
+                //################### PARA FOCALIZADO ###################
+                if ($precio_focalizado > 0 && $total_focalizado > 0) {
                     $cotizacionDetalle                     = new CotizacionDetalle();
                     $cotizacionDetalle->usuario_creador_id = $usuario->id;
                     $cotizacionDetalle->cotizacion_id      = $cotizacion->id;
-                    $cotizacionDetalle->tipo_proceso_id    = $procesoId;
-                    $cotizacionDetalle->producto_id        = $producto['producto_id'];
-                    $cotizacionDetalle->porcentaje         = $producto['porcentaje'];
-                    $cotizacionDetalle->cantidad           = $producto['cantidad'];
-                    $cotizacionDetalle->total              = $producto['total'];
+                    $cotizacionDetalle->tipo_proceso_id    = $proceso_id_focalizado;
+                    $cotizacionDetalle->cantidad           = $precio_focalizado;
+                    $cotizacionDetalle->total              = $total_focalizado;
                     $cotizacionDetalle->save();
                 }
+
+                //################### PARA PLANCHADO ###################
+                if ($precio_planchado > 0 && $total_planchado > 0) {
+                    $cotizacionDetalle                     = new CotizacionDetalle();
+                    $cotizacionDetalle->usuario_creador_id = $usuario->id;
+                    $cotizacionDetalle->cotizacion_id      = $cotizacion->id;
+                    $cotizacionDetalle->tipo_proceso_id    = $proceso_id_planchado;
+                    $cotizacionDetalle->cantidad           = $precio_planchado;
+                    $cotizacionDetalle->total              = $total_planchado;
+                    $cotizacionDetalle->save();
+                }
+
+                DB::commit();
+
+                $data = Respuesta::success(null, "Datos Obtenidos correctamente");
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+
+                $data = Respuesta::error(null, "Error al guardar: ".$e->getMessage());
             }
-
-            //################### PARA FOCALIZADO ###################
-            if ($precio_focalizado > 0 && $total_focalizado > 0) {
-                $cotizacionDetalle                     = new CotizacionDetalle();
-                $cotizacionDetalle->usuario_creador_id = $usuario->id;
-                $cotizacionDetalle->cotizacion_id      = $cotizacion->id;
-                $cotizacionDetalle->tipo_proceso_id    = $proceso_id_focalizado;
-                $cotizacionDetalle->cantidad           = $precio_focalizado;
-                $cotizacionDetalle->total              = $total_focalizado;
-                $cotizacionDetalle->save();
-            }
-
-            //################### PARA PLANCHADO ###################
-            if ($precio_planchado > 0 && $total_planchado > 0) {
-                $cotizacionDetalle                     = new CotizacionDetalle();
-                $cotizacionDetalle->usuario_creador_id = $usuario->id;
-                $cotizacionDetalle->cotizacion_id      = $cotizacion->id;
-                $cotizacionDetalle->tipo_proceso_id    = $proceso_id_planchado;
-                $cotizacionDetalle->cantidad           = $precio_planchado;
-                $cotizacionDetalle->total              = $total_planchado;
-                $cotizacionDetalle->save();
-            }
-
-            $data = Respuesta::success(null, "Datos Obtenidos correctamente");
-
         }else{
             $data = Respuesta::error(null, "Error al obtener los datos");
         }

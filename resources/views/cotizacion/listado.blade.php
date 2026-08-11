@@ -35,36 +35,6 @@
                             </div>
                         </div>
                     </div>
-                    {{-- <div class="row">
-                        <div class="col-md-3">
-                            <div class="fv-row mb-7">
-                                <label class="required fw-semibold fs-6 mb-2">Cedula</label>
-                                <input type="number" class="form-control form-control-sm" id="cedula" name="cedula"
-                                    onchange="buscarCliente()" required>
-                                <input type="hidden" id="cliente_id" name="cliente_id">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="fv-row mb-7">
-                                <label class="required fw-semibold fs-6 mb-2">Nombre</label>
-                                <input type="text" class="form-control form-control-sm" id="nombre" name="nombre" required>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="fv-row mb-7">
-                                <label class="fw-semibold fs-6 mb-2">Ap Paterno</label>
-                                <input type="text" class="form-control form-control-sm" id="ap_paterno"
-                                    name="ap_paterno">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="fv-row mb-7">
-                                <label class="fw-semibold fs-6 mb-2">Ap Materno</label>
-                                <input type="text" class="form-control form-control-sm" id="ap_materno"
-                                    name="ap_materno">
-                            </div>
-                        </div>
-                    </div> --}}
                     <hr>
                     <div class="row">
                         <div class="col-md-2">
@@ -169,6 +139,10 @@
                                 <div data-repeater-item>
 
                                     <div class="row mb-5">
+                                        <div class="col-md-1">
+                                            <label class="form-label">Orden Proceso:</label>
+                                            <input type="number" name="orden_proceso" class="form-control form-control-sm" min="1">
+                                        </div>
 
                                         <div class="col-md-3">
                                             <label class="form-label">Proceso:</label>
@@ -181,7 +155,7 @@
                                             </select>
                                         </div>
 
-                                        <div class="col-md-7">
+                                        <div class="col-md-6">
 
                                             <div class="inner-repeater">
 
@@ -191,7 +165,12 @@
 
                                                         <div class="row align-items-end mb-3">
 
-                                                            <div class="col-md-4">
+                                                            <div class="col-md-2">
+                                                                <label class="form-label">Orden Producto:</label>
+                                                                <input type="number" name="orden_producto" class="form-control form-control-sm" min="1">
+                                                            </div>
+
+                                                            <div class="col-md-3">
                                                                 <label class="form-label">Producto</label>
                                                                 <select name="producto_id"
                                                                     class="form-control form-control-sm producto">
@@ -230,7 +209,7 @@
                                                                     step="0.0001">
                                                             </div>
 
-                                                            <div class="col-md-2">
+                                                            <div class="col-md-1">
                                                                 <button
                                                                     class="border border-secondary btn btn-icon btn-flex btn-light-danger"
                                                                     data-repeater-delete type="button">
@@ -558,8 +537,109 @@
                     </div>
                 </div>
 
-                <div class="card-body py-4" id="table_listado">
-                    <!-- El listado se carga por AJAX -->
+                <div class="card-body py-4" >
+
+                    <form id="formularioBusqueda">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Cliente</label>
+                                    <select class="form-select form-select-sm" name="buscar_cliente_id" id="buscar_cliente_id">
+                                        <option value="">Seleccione</option>
+                                        @foreach ($clientes as $cliente)
+                                            <option value="{{ $cliente->id }}">{{ $cliente->nombres." ".$cliente->ap_paterno." ".$cliente->ap_materno }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Fecha Ini</label>
+                                    <input type="date" class="form-control form-control-sm" id="buscar_fecha_ini" name="buscar_fecha_ini">
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Fecha Fin</label>
+                                    <input type="date" class="form-control form-control-sm" id="buscar_fecha_fin" name="buscar_fecha_fin">
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Tipo Prenda</label>
+                                    <select class="form-select form-select-sm" name="buscar_tipo_prenda_id" id="buscar_tipo_prenda_id">
+                                        <option value="">Seleccione</option>
+                                        @foreach ($tipoPrendas as $tipo)
+                                        <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Color Tela</label>
+                                    <select class="form-select form-select-sm" name="buscar_color_tela_id" id="buscar_color_tela_id">
+                                        <option value="">Seleccione</option>
+                                        @foreach ($colorTelas as $colorTela)
+                                        <option value="{{ $colorTela->id }}">{{ $colorTela->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Prelavado</label>
+                                    <select class="form-select form-select-sm" name="buscar_prelavado_id" id="buscar_prelavado_id">
+                                        <option value="">Seleccione</option>
+                                        @foreach ($prelavados as $prelavado)
+                                        <option value="{{ $prelavado->id }}">{{ $prelavado->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Tipo Tela</label>
+                                    <select class="form-select form-select-sm" name="buscar_tipo_tela_id" id="buscar_tipo_tela_id">
+                                        <option value="">Seleccione</option>
+                                        @foreach ($tipoTelas as $tipoTela)
+                                        <option value="{{ $tipoTela->id }}">{{ $tipoTela->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Nevados</label>
+                                    <select class="form-select form-select-sm" name="buscar_nevado_id" id="buscar_nevado_id">
+                                        <option value="">Seleccione</option>
+                                        @foreach ($nevados as $nevado)
+                                        <option value="{{ $nevado->id }}">{{ $nevado->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="fv-row mb-7">
+                                    <label class="required fw-semibold fs-6 mb-2">Focalizados</label>
+                                    <select class="form-select form-select-sm" name="buscar_focalizado_id" id="buscar_focalizado_id">
+                                        <option value="">Seleccione</option>
+                                        @foreach ($focalizados as $focalizado)
+                                        <option value="{{ $focalizado->id }}">{{ $focalizado->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-success btn-sm w-100 mt-8" onclick="ajaxListado()"><i class="fa fa-search"></i>Buscar</button>
+                            </div>
+                        </div>
+                    </form>
+
+
+                    <div id="table_listado">
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -723,7 +803,8 @@
 
 
         function ajaxListado(){
-            let datos = {};
+            // let datos = {};
+            let datos = $('#formularioBusqueda').serializeArray();
             $.ajax({
                 url: "{{ route('cotizacion.ajaxListado') }}",
                 method: "POST",
@@ -988,7 +1069,11 @@
                             window.location.reload(true);
                             // $('#modalCotizacion').modal('hide');
                         } else {
-
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Error',
+                                text: JSON.stringify(resultado)
+                            });
                         }
                     },
                     error: function(xhr) {
@@ -1036,9 +1121,6 @@
         }
 
         function editarCotizacion(c){
-
-            console.log(c);
-
 
             // Cabecera
             $('#cotizacion_id').val(c.id);
@@ -1091,87 +1173,150 @@
             $('#tipo_prenda_id').val(c.prenda_id );
             $('#descripcion').val(c.descripcion);
 
-            // ... [Tu código anterior de la cabecera se mantiene exactamente igual] ...
+            let procesos = [];
 
-            let procesos = {};
+            // COPIA Y ORDENA LOS DETALLES
+            let detallesOrdenados = [...c.detalles].sort(function(a, b) {
 
-            // 1. Agrupar filtrando los casos especiales
-            c.detalles.forEach(function(d) {
-                // Casos especiales fijos que no van al repeater
-                if (d.tipo_proceso_id == 4 && d.producto_id == null) {
-                $('#precio_focalizado').val(d.cantidad);
-                $('#total_focalizado').val(d.total);
-                return;
-                }
+            let ordenProcesoA = parseInt(a.orden_proceso ?? 999999);
+            let ordenProcesoB = parseInt(b.orden_proceso ?? 999999);
 
-                if (d.tipo_proceso_id == 20 && d.producto_id == null) {
-                $('#precio_planchado').val(d.cantidad);
-                $('#total_planchado').val(d.total);
-                return;
-                }
+            if (ordenProcesoA !== ordenProcesoB) {
+            return ordenProcesoA - ordenProcesoB;
+            }
 
-            // Omitir procesos vacíos del JSON que no tienen producto para evitar duplicados basura (ej: tipo_proceso_id: 7 sin producto)
+            let ordenProductoA = parseInt(a.orden_producto ?? 999999);
+            let ordenProductoB = parseInt(b.orden_producto ?? 999999);
+
+            return ordenProductoA - ordenProductoB;
+            });
+
+
+            // AGRUPAMOS RESPETANDO EL ORDEN
+            detallesOrdenados.forEach(function(d) {
+
+            // FOCALIZADO
+            if (d.tipo_proceso_id == 4 && d.producto_id == null) {
+            $('#precio_focalizado').val(d.cantidad);
+            $('#total_focalizado').val(d.total);
+            return;
+            }
+
+            // PLANCHADO
+            if (d.tipo_proceso_id == 20 && d.producto_id == null) {
+            $('#precio_planchado').val(d.cantidad);
+            $('#total_planchado').val(d.total);
+            return;
+            }
+
+            // OMITIR REGISTROS SIN PRODUCTO
             if (d.producto_id == null) {
             return;
             }
 
-            if (!procesos[d.tipo_proceso_id]) {
-            procesos[d.tipo_proceso_id] = [];
-            }
-
-            procesos[d.tipo_proceso_id].push(d);
+            // BUSCAR PROCESO
+            let proceso = procesos.find(function(p) {
+            return p.tipo_proceso_id == d.tipo_proceso_id;
             });
 
-            // 2. Limpiar el repeater principal por completo
+            // SI NO EXISTE, CREAMOS EL PROCESO
+            if (!proceso) {
+
+            proceso = {
+            tipo_proceso_id: d.tipo_proceso_id,
+            orden_proceso: d.orden_proceso,
+            productos: []
+            };
+
+            procesos.push(proceso);
+            }
+
+            // AGREGAMOS PRODUCTO
+            proceso.productos.push({
+            producto_id: d.producto_id,
+            orden_producto: d.orden_producto,
+            porcentaje: d.porcentaje,
+            cantidad: d.cantidad,
+            total: d.total
+            });
+            });
+
+
+            // LIMPIAR REPEATER
             $('[data-repeater-list="procesos"]').empty();
 
-            // 3. Crear y poblar los procesos de forma estructurada
-            Object.keys(procesos).forEach(function(tipoProceso) {
 
-            // Forzar el click para crear la fila del proceso padre
+            // CREAR LOS PROCESOS
+            procesos.forEach(function(proceso) {
+
+            // CREAR PROCESO
             $('#kt_docs_repeater_nested > .form-group:last [data-repeater-create]').click();
 
-            // Obtener la fila recién creada (la última)
-            let procesoRow = $('[data-repeater-list="procesos"] > [data-repeater-item]').last();
+            let procesoRow =
+            $('[data-repeater-list="procesos"] > [data-repeater-item]').last();
 
-            // Asignar el tipo de proceso y disparar el change
-            procesoRow.find('select[name^="procesos"][name$="[proceso_id]"], select[name="proceso_id"]')
-            .val(tipoProceso)
+
+            // ORDEN DEL PROCESO
+            procesoRow
+            .find('input[name^="procesos"][name$="[orden_proceso]"], input[name="orden_proceso"]')
+            .val(proceso.orden_proceso);
+
+
+            // TIPO PROCESO
+            procesoRow
+            .find('select[name^="procesos"][name$="[proceso_id]"], select[name="proceso_id"]')
+            .val(proceso.tipo_proceso_id)
             .trigger('change');
 
-            // IMPORTANTE: Limpiar cualquier fila de producto por defecto que el repeater padre cree automáticamente
-            let subRepeaterList = procesoRow.find('[data-repeater-list="productos"]');
+
+            // SUBREPEATER DE PRODUCTOS
+            let subRepeaterList =
+            procesoRow.find('[data-repeater-list="productos"]');
+
+            // ELIMINAMOS PRODUCTO QUE VIENE POR DEFECTO
             subRepeaterList.empty();
 
-            // 4. Recorrer y crear los sub-productos correspondientes a este proceso
-            procesos[tipoProceso].forEach(function(d) {
 
-            // Hacer click en el botón de agregar producto ESPECÍFICO de este proceso
-            procesoRow.find('.inner-repeater [data-repeater-create]').click();
+            // ORDENAMOS PRODUCTOS POR SEGURIDAD
+            proceso.productos.sort(function(a, b) {
+            return parseInt(a.orden_producto ?? 999999)
+            - parseInt(b.orden_producto ?? 999999);
+            });
 
-            // Obtener el producto recién insertado en este sub-repeater
-            let productoRow = subRepeaterList.find('[data-repeater-item]').last();
 
-            // Llenar los campos asegurando selectores relativos precisos
-            // productoRow.find('select[name*="[producto_id]"], select[name="producto_id"]')
-            // .val(d.producto_id)
-            // .trigger('change');
+            // CREAR PRODUCTOS
+            proceso.productos.forEach(function(d) {
 
-            // productoRow.find('input[name*="[porcentaje]"], input[name="porcentaje"]').val(d.porcentaje);
-            // productoRow.find('input[name*="[cantidad]"], input[name="cantidad"]').val(d.cantidad);
-            // productoRow.find('input[name*="[total]"], input[name="total"]').val(d.total);
+            procesoRow
+            .find('.inner-repeater [data-repeater-create]')
+            .click();
 
-            let productoSelect = productoRow.find('select[name*="[producto_id]"], select[name="producto_id"]');
+            let productoRow =
+            subRepeaterList.find('[data-repeater-item]').last();
 
-            productoSelect.val(d.producto_id);
+            // ORDEN PRODUCTO
+            productoRow
+            .find('input[name*="[orden_producto]"], input[name="orden_producto"]')
+            .val(d.orden_producto);
 
-            productoRow.find('input[name*="[porcentaje]"], input[name="porcentaje"]')
+            // PRODUCTO
+            productoRow
+            .find('select[name*="[producto_id]"], select[name="producto_id"]')
+            .val(d.producto_id);
+
+            // PORCENTAJE
+            productoRow
+            .find('input[name*="[porcentaje]"], input[name="porcentaje"]')
             .val(d.porcentaje);
 
-            productoRow.find('input[name*="[cantidad]"], input[name="cantidad"]')
+            // CANTIDAD
+            productoRow
+            .find('input[name*="[cantidad]"], input[name="cantidad"]')
             .val(d.cantidad);
 
-            productoRow.find('input[name*="[total]"], input[name="total"]')
+            // TOTAL
+            productoRow
+            .find('input[name*="[total]"], input[name="total"]')
             .val(d.total);
             });
             });
@@ -1233,6 +1378,7 @@
                 }
             });
         }
+
 
 </script>
 @endsection

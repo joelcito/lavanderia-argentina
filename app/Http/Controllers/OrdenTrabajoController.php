@@ -161,8 +161,6 @@ class OrdenTrabajoController extends Controller
 
         if ($request->ajax()) {
 
-            // dd($request->all());
-
             $orden_trabajo_id             = $request->input('orden_trabajo_id');
             $numero_orden_trabajo         = $request->input('numero_orden_trabajo');
             $numero_prendas_orden_trabajo = $request->input('numero_prendas_orden_trabajo');
@@ -642,6 +640,106 @@ class OrdenTrabajoController extends Controller
             $orden_trabajo->delete();
 
             $data = Respuesta::success(null, "Datos Obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+    }
+
+    public function guardarEdicionOjal(Request $request){
+        if($request->ajax()){
+
+            $orden_trabajo_id = $request->input('ojal_id');
+            $cantidad         = $request->input('ojal_cantidad');
+            $precio           = $request->input('ojal_precio');
+            $subtotal         = $request->input('ojal_subtotal');
+            $usuario          = Auth::user();
+
+            $ordenTrabajo                         = Order_trabajo::find($orden_trabajo_id);
+            $ordenTrabajo->usuario_modificador_id = $usuario->id;
+            $ordenTrabajo->cantidad               = $cantidad;
+            $ordenTrabajo->precio                 = $precio;
+            $ordenTrabajo->subtotal               = $subtotal;
+            $ordenTrabajo->save();
+
+            $subTotalFactura = Order_trabajo::where('factura_id', $ordenTrabajo->factura_id)->sum('subtotal');
+
+            $factura = Factura::find($ordenTrabajo->factura_id);
+            $factura->total = $subTotalFactura;
+            $factura->save();
+
+            $valores = [
+                'ot' => $ordenTrabajo
+            ];
+
+            $data = Respuesta::success($valores, "Datos actualizados correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+
+    }
+
+    public function eliminarOjal(Request $request){
+        if($request->ajax()){
+
+            $orden_trabajo_id = $request->input('dato');
+            $usuario          = Auth::user();
+
+            $ordem_trabajo                        = Order_trabajo::find($orden_trabajo_id);
+            $ordem_trabajo->usuario_eliminador_id = $usuario->id;
+            $ordem_trabajo->save();
+
+            $facturaId = $ordem_trabajo->factura_id;
+
+            Order_trabajo::destroy($orden_trabajo_id);
+
+            $subTotalFactura = Order_trabajo::where('factura_id', $facturaId)->sum('subtotal');
+
+            $factura = Factura::find($facturaId);
+            $factura->total = $subTotalFactura;
+            $factura->save();
+
+            $data = Respuesta::success(null, "Datos Obtenidos correctamente");
+
+        }else{
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+        return $data;
+    }
+
+    public function guardarNuevonOjal(Request $request){
+        if($request->ajax()){
+
+            $factura_id             = $request->input('new_ojal_factura_id');
+            $cantidad               = $request->input('new_ojal_cantidad');
+            $precio                 = $request->input('new_ojal_precio');
+            $subtotal               = $request->input('new_ojal_subtotal');
+            $orden_trabajo_padre_id = $request->input('new_ojal_orden_trabajo_id');
+            $usuario                = Auth::user();
+
+            $ordemTrabajoPadre = Order_trabajo::find($orden_trabajo_padre_id);
+
+            $ordenTrabajo                     = new Order_trabajo();
+            $ordenTrabajo->usuario_creador_id = $usuario->id;
+            $ordenTrabajo->order_trabajos_id  = $orden_trabajo_padre_id;
+            $ordenTrabajo->factura_id         = $factura_id;
+            $ordenTrabajo->sucursal_id        = $ordemTrabajoPadre->sucursal_id;
+            $ordenTrabajo->cantidad           = $cantidad;
+            $ordenTrabajo->precio             = $precio;
+            $ordenTrabajo->subtotal           = $subtotal;
+            $ordenTrabajo->observacion        = "SERVICIO DE OJAL";
+            $ordenTrabajo->tipo               = "OJAL";
+            $ordenTrabajo->save();
+
+            $factura = Factura::find($factura_id);
+            $factura->usuario_modificador_id = $usuario->id;
+            $factura->total = $factura->total + $subtotal;
+            $factura->save();
+
+            $data = Respuesta::success(null, "Datos actualizados correctamente");
 
         }else{
             $data = Respuesta::error(null, "Error al obtener los datos");

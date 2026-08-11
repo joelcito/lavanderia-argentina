@@ -29,10 +29,8 @@
                     </div>
                 </div>
             </div>
-            <!--end::Modal body-->
         </div>
     </div>
-    <!--end::Modal dialog-->
 </div>
 <!--end::Modal - Add task-->
 
@@ -49,17 +47,8 @@
                     <div id="listado-laser-bloque"></div>
                 </div>
             </div>
-            {{-- <div class="modal-footer">
-                <div class="row">
-                    <div class="col-md-12">
-                        <button class="btn btn-sm w-100 btn-success" onclick="guardarLaser()">Guardar Laser</button>
-                    </div>
-                </div>
-            </div> --}}
-            <!--end::Modal body-->
         </div>
     </div>
-    <!--end::Modal dialog-->
 </div>
 <!--end::Modal - Add task-->
 
@@ -69,19 +58,16 @@
         <div class="modal-content">
             <div class="modal-header" id="kt_modal_add_user_header">
                 <h3 class="fw-bold">LISTADO DE OJALES</h3>
+                <div class="card-toolbar">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoOjal()">
+                        <i class="fa fa-plus"></i> Nuevo Ojal
+                    </button>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body scroll-y">
                 <div id="listado-ojales-bloque"></div>
             </div>
-            {{-- <div class="modal-footer">
-                <div class="row">
-                    <div class="col-md-12">
-                        <button class="btn btn-sm w-100 btn-success" onclick="guardarLaser()">Guardar Laser</button>
-                    </div>
-                </div>
-            </div> --}}
-            <!--end::Modal body-->
         </div>
     </div>
     <!--end::Modal dialog-->
@@ -101,17 +87,8 @@
                     <div id="formularioAjaxOrdenTrabajo"></div>
                 </form>
             </div>
-            {{-- <div class="modal-footer">
-                <div class="row">
-                    <div class="col-md-12">
-                        <button class="btn btn-sm w-100 btn-success" onclick="">Guardar</button>
-                    </div>
-                </div>
-            </div> --}}
-            <!--end::Modal body-->
         </div>
     </div>
-    <!--end::Modal dialog-->
 </div>
 <!--end::Modal - Add task-->
 
@@ -172,6 +149,96 @@
                 </div>
             </div>
             <!--end::Modal body-->
+        </div>
+    </div>
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modal - Add task-->
+
+<!--begin::Modal - Add task-->
+<div class="modal fade" id="modalEdicionOjal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="kt_modal_add_user_header">
+                <h3 class="fw-bold">FORMULARIO EDICION OJAL</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body scroll-y">
+                <form id="formularioEdicionOjal">
+                    <input type="hidden" id="ojal_id" name="ojal_id">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="nombre_ojal" class="form-label">Cantidad</label>
+                                <input type="text" class="form-control form-control-sm" id="ojal_cantidad" name="ojal_cantidad" onkeyup="calcularSubTotalOjalEdicio()">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="descripcion_ojal" class="form-label">Precio</label>
+                                <input type="text" class="form-control form-control-sm" id="ojal_precio" name="ojal_precio" onkeyup="calcularSubTotalOjalEdicio()">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="descripcion_ojal" class="form-label">Subtotal</label>
+                                <input type="text" class="form-control form-control-sm" id="ojal_subtotal" name="ojal_subtotal" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarEdicionOjal()">Guardar</button>
+            </div>
+        </div>
+    </div>
+    <!--end::Modal dialog-->
+</div>
+<!--end::Modal - Add task-->
+
+<!--begin::Modal - Add task-->
+<div class="modal fade" id="modalNuevoOjal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="kt_modal_add_user_header">
+                <h3 class="fw-bold">FORMULARIO NUEVO OJAL</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body scroll-y">
+                <form id="formularioNuevoOjal">
+                    <input type="text" id="new_ojal_factura_id" name="new_ojal_factura_id" value="{{ $factura->id }}">
+                    <input type="text" id="new_ojal_orden_trabajo_id" name="new_ojal_orden_trabajo_id">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="nombre_ojal" class="form-label">Cantidad</label>
+                                <input type="text" class="form-control form-control-sm" id="new_ojal_cantidad"
+                                    name="new_ojal_cantidad" onkeyup="calcularSubTotalOjalNuevo()">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="descripcion_ojal" class="form-label">Precio</label>
+                                <input type="text" class="form-control form-control-sm" id="new_ojal_precio"
+                                    name="new_ojal_precio" onkeyup="calcularSubTotalOjalNuevo()">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="descripcion_ojal" class="form-label">Subtotal</label>
+                                <input type="text" class="form-control form-control-sm" id="new_ojal_subtotal"
+                                    name="new_ojal_subtotal" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarNuevonOjal()">Guardar</button>
+            </div>
         </div>
     </div>
     <!--end::Modal dialog-->
@@ -651,6 +718,7 @@
         }
 
         function ajaxListadoOjales(ot){
+            $('#new_ojal_orden_trabajo_id').val(ot)
             let datos = {factura:{{ $factura->id }}, ot:ot};
             $.ajax({
                 url: "{{ route('ordenTrabajo.ajaxListadoOjales') }}",
@@ -859,13 +927,6 @@
             $('#precio_pronosticado_' + fila).val(pronostico);
 
         }
-
-        // function calcularPrecio(item){
-        //     let precio = $('#tiempo_total_laser_'+item).val();
-        //     let precioMinuto = $('#precio_minuto_valor_'+item).val();
-        //     let calculo = parseFloat(precio) * parseFloat(precioMinuto);
-        //     $('#valor_laser_'+item).val(calculo);
-        // }
 
         function cambiarPrecioMinuto(){
 
@@ -1216,5 +1277,122 @@
                 }
             });
         }
+
+        function editarOjal(ojal){
+            $('#ojal_id').val(ojal.id)
+            $('#ojal_cantidad').val(ojal.cantidad)
+            $('#ojal_precio').val(ojal.precio)
+            $('#ojal_subtotal').val(ojal.subtotal)
+
+            // $('#modalListadoOjales').modal('hide')
+            $('#modalEdicionOjal').modal('show')
+        }
+
+        function calcularSubTotalOjalEdicio(){
+            let cantidad = parseFloat($('#ojal_cantidad').val())
+            let precio = parseFloat($('#ojal_precio').val())
+
+            $('#ojal_subtotal').val((cantidad * precio).toFixed(2));
+        }
+
+        function calcularSubTotalOjalNuevo(){
+            let cantidad = parseFloat($('#new_ojal_cantidad').val())
+            let precio = parseFloat($('#new_ojal_precio').val())
+
+            $('#new_ojal_subtotal').val((cantidad * precio).toFixed(2));
+        }
+
+        function guardarEdicionOjal(){
+            let datos = $('#formularioEdicionOjal').serializeArray();
+            $.ajax({
+                url: "{{ route('ordenTrabajo.guardarEdicionOjal') }}",
+                method: "POST",
+                data: datos,
+                success: function(resultado) {
+                    if (resultado.estado){
+                        Swal.fire(
+                            'Exito',
+                            'Se modifico con exito',
+                            'success'
+                        );
+                        $('#modalEdicionOjal').modal('hide');
+                        location.reload();
+                    }else{
+                        Swal.fire(
+                            'Error',
+                            'Ocurrio un error',
+                            'error'
+                        );
+                    }
+                }
+            })
+        }
+
+        function eliminarOjal(ojal){
+            Swal.fire({
+                title: "Esta seguro de eliminar el OJAL?",
+                text: "Ya no podras revertir eso!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, eliminar!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let datos ={dato:ojal};
+                    $.ajax({
+                    url: "{{ url('ordenTrabajo/eliminarOjal') }}",
+                    method: "POST",
+                    data: datos,
+                    success: function(resultado) {
+                        if (resultado.estado){
+                            Swal.fire(
+                                'Exito',
+                                'Se elimino con exito',
+                                'success'
+                            );
+                            $('#modalListadoOjales').modal('hide');
+                        }
+                    }
+                    })
+                }
+            });
+        }
+
+        function modalNuevoOjal(){
+            $('#new_ojal_cantidad').val(0);
+            $('#new_ojal_precio').val(0);
+            $('#new_ojal_subtotal').val(0);
+
+            $('#modalListadoOjales').modal('hide');
+            $('#modalNuevoOjal').modal('show');
+        }
+
+        function guardarNuevonOjal(){
+            let datos = $('#formularioNuevoOjal').serializeArray();
+            $.ajax({
+                url: "{{ route('ordenTrabajo.guardarNuevonOjal') }}",
+                method: "POST",
+                data: datos,
+                success: function(resultado) {
+                    if (resultado.estado){
+                        Swal.fire(
+                            'Exito',
+                            'Se modifico con exito',
+                            'success'
+                        );
+                        $('#modalNuevoOjal').modal('hide');
+                        location.reload();
+                    }else{
+                        Swal.fire(
+                            'Error',
+                            'Ocurrio un error',
+                            'error'
+                        );
+                    }
+                }
+            })
+        }
+
    </script>
 @endsection

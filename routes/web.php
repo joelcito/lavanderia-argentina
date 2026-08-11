@@ -356,6 +356,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/cambiaDatoOrdenTrabajo', [OrdenTrabajoController::class, 'cambiaDatoOrdenTrabajo'])->name('ordenTrabajo.cambiaDatoOrdenTrabajo');
         Route::post('/editarLaser', [OrdenTrabajoController::class, 'editarLaser'])->name('ordenTrabajo.editarLaser');
         Route::post('/eliminarLaser', [OrdenTrabajoController::class, 'eliminarLaser'])->name('ordenTrabajo.eliminarLaser');
+        Route::post('/guardarEdicionOjal', [OrdenTrabajoController::class, 'guardarEdicionOjal'])->name('ordenTrabajo.guardarEdicionOjal');
+        Route::post('/eliminarOjal', [OrdenTrabajoController::class, 'eliminarOjal'])->name('ordenTrabajo.eliminarOjal');
+        Route::post('/guardarNuevonOjal', [OrdenTrabajoController::class, 'guardarNuevonOjal'])->name('ordenTrabajo.guardarNuevonOjal');
     });
 
     Route::prefix('/facturaCliente')->group(function () {
