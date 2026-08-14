@@ -1175,6 +1175,8 @@
 
             let procesos = [];
 
+            console.log(c);
+
             // COPIA Y ORDENA LOS DETALLES
             let detallesOrdenados = [...c.detalles].sort(function(a, b) {
 

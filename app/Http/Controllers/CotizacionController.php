@@ -64,7 +64,14 @@ class CotizacionController extends Controller
             $nevado_id      = $request->input('buscar_nevado_id');
             $focalizado_id  = $request->input('buscar_focalizado_id');
 
-            $query = Cotizacion::query();
+            // $query = Cotizacion::query();
+            $query = Cotizacion::with([
+                'cliente',
+                'prelavado',
+                'nevado',
+                'focalizado',
+                'detalles'
+            ]);
 
             if(!is_null($cliente_id)){
                 $query->where('cliente_id', $cliente_id);
