@@ -32,6 +32,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProcesosController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\NevadoController;
+use App\Http\Controllers\RecetaController;
 use App\Http\Controllers\SubCategoriaController;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Auth;
@@ -456,13 +457,10 @@ Route::middleware('auth')->group(function () {
 
 
     Route::prefix('/entregas')->group(function () {
-
         Route::get('/listado', [ProcesosController::class, 'listadoEntregado'])->name('entregas.listado');
         Route::post('/ajaxListadoEntregado', [ProcesosController::class, 'ajaxListadoEntregado'])->name('entregas.ajaxListado');
         Route::post('/confirmar-entrega', [ProcesosController::class, 'confirmarEntrega'])->name('entregas.confirmarEntrega');
-
     });
-
 
     //deudas
     Route::prefix('/deudas')->group(function () {
@@ -471,6 +469,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/descontar', [DeudaController::class, 'descontar']);
         Route::get('/movimientos/{deuda_id}', [DeudaController::class, 'movimientos']);
         Route::get('/reporte/{id}', [DeudaController::class, 'reporte']);
+    });
+
+    // RECETAS
+    Route::prefix('/receta')->group(function () {
+        Route::get('/listado', [RecetaController::class, 'listado'])->name('receta.listado');
+        Route::post('/ajaxListado', [RecetaController::class, 'ajaxListado'])->name('receta.ajaxListado');
+        Route::post('/guardar', [RecetaController::class, 'guardar'])->name('receta.guardar');
+        Route::post('/eliminar', [RecetaController::class, 'eliminar'])->name('receta.eliminar');
     });
 
 });
