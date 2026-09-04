@@ -266,6 +266,15 @@
                                 </a>
                             </div>
 
+                            <div class="menu-item">
+                                <a class="menu-link" href="{{ route('cotizacion.listado') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title text-white">Receta</span>
+                                </a>
+                            </div>
+
                         </div>
                     </div>
 
