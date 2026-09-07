@@ -75,6 +75,7 @@
                             <button title="Agregar Laser" class="btn btn-sm btn-icon btn-primary btn-circle" onclick="modalAgregarLaser({{ $ordenTrabajo->id }}, '{{ $ordenTrabajo->nro_ot }}' , '{{ $ordenTrabajo->observacion }}', '{{ $ordenTrabajo->cantidad }}')"><i class="fa fa-pray"></i></button>
                             <button title="Ver listado de Laser" class="btn btn-sm btn-icon btn-dark btn-circle" onclick="ajaxListadoLaser({{ $ordenTrabajo->id }})"> <i class="fa fa-star" aria-hidden="true"></i> </button>
                             <button title="Ver listado de Ojales" class="btn btn-sm btn-icon btn-success btn-circle" onclick="ajaxListadoOjales({{ $ordenTrabajo->id }})"> <i class="fa fa-certificate" aria-hidden="true"></i> </button>
+                            <button type="button" title="Receta de Lavado" class="btn btn-sm btn-icon btn-info btn-circle" onclick="modalFacturaReceta({{ $ordenTrabajo->id }})"><i class="fa fa-flask"></i></button>
                         </td>
                     @endif
                 </tr>

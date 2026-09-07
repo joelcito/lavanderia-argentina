@@ -245,6 +245,392 @@
 </div>
 <!--end::Modal - Add task-->
 
+
+{{-- ============================================================ --}}
+{{-- MODAL RECETA DEL LAVADO --}}
+{{-- ============================================================ --}}
+
+<div class="modal fade" id="modalFacturaReceta" tabindex="-1" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 98%;">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h3 class="fw-bold mb-1">
+                        RECETA DEL LAVADO
+                    </h3>
+
+                    {{-- <small class="text-muted">
+                        Factura #{{ $factura->id }}
+                    </small> --}}
+
+                    <small class="text-muted">
+                        Factura #{{ $factura->id }} | OT: <strong id="fr_numero_ot_texto"> - </strong> | Peso: <strong id="fr_peso_ot_texto"> - </strong> Kg
+                    </small>
+
+                </div>
+
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <div class="modal-body scroll-y">
+
+                <form id="formularioFacturaReceta">
+
+                    <input type="hidden" name="factura_id" id="fr_factura_id" value="{{ $factura->id }}">
+                    <input type="hidden" name="factura_receta_id" id="fr_factura_receta_id" value="0">
+                    <input type="hidden" name="receta_id" id="fr_receta_id" value="">
+                    <input type="hidden" name="order_trabajo_id" id="fr_order_trabajo_id" value="">
+
+                    {{-- ================================================ --}}
+                    {{-- RECETA MAESTRA --}}
+                    {{-- ================================================ --}}
+
+                    <div class="card bg-light-primary mb-5">
+
+                        <div class="card-body py-4">
+
+                            <div class="row align-items-end">
+
+
+                                <div class="col-md-8">
+
+                                    <label class="form-label fw-bold">
+
+                                        Buscar receta maestra
+
+                                    </label>
+
+
+                                    <select class="form-select form-select-sm" id="fr_buscar_receta">
+
+                                        <option value="">
+                                            Seleccione una receta
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+
+                                <div class="col-md-4">
+
+                                    <button type="button" class="btn btn-primary btn-sm w-100"
+                                        onclick="cargarRecetaMaestra()">
+
+                                        <i class="fa fa-copy"></i>
+
+                                        Cargar copia de la receta
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <div id="fr_receta_asociada_texto" class="alert alert-success mt-4 mb-0 d-none">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    {{-- ================================================ --}}
+                    {{-- CABECERA --}}
+                    {{-- ================================================ --}}
+
+                    <div id="fr_bloque_editor" style="display:none;">
+
+
+                        <div class="card mb-5">
+
+                            <div class="card-header">
+
+                                <h4 class="card-title">
+                                    Datos de la receta
+                                </h4>
+
+                            </div>
+
+
+                            <div class="card-body">
+
+                                <div class="row mb-4">
+
+                                    <div class="col-md-3">
+
+                                        <label class="form-label fw-bold">
+                                            Peso Kg del lavado
+                                        </label>
+
+                                        <input type="number" class="form-control form-control-sm" id="fr_peso_kg" step="0.00001" readonly>
+
+                                    </div>
+
+
+                                    <div class="col-md-3">
+
+                                        <label class="form-label fw-bold">
+                                            Peso Gr del lavado
+                                        </label>
+
+                                        <input type="number" class="form-control form-control-sm" id="fr_peso_gr" step="0.00001" readonly>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row">
+
+
+                                    <div class="col-md-4">
+
+                                        <label class="form-label">
+                                            Nombre
+                                        </label>
+
+                                        <input type="text" class="form-control form-control-sm" id="fr_nombre"
+                                            name="nombre">
+
+                                    </div>
+
+
+                                    <div class="col-md-4">
+
+                                        <label class="form-label">
+                                            Tipo Tela
+                                        </label>
+
+                                        <select class="form-select form-select-sm" id="fr_tipo_tela_id"
+                                            name="tipo_tela_id">
+                                        </select>
+
+                                    </div>
+
+
+                                    <div class="col-md-4">
+
+                                        <label class="form-label">
+                                            Color Tela
+                                        </label>
+
+                                        <select class="form-select form-select-sm" id="fr_color_tela_id"
+                                            name="color_tela_id">
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row mt-4">
+
+
+                                    <div class="col-md-3">
+
+                                        <label class="form-label">
+                                            Nombre Tela
+                                        </label>
+
+                                        <select class="form-select form-select-sm" id="fr_nombre_tela_id"
+                                            name="nombre_tela_id">
+                                        </select>
+
+                                    </div>
+
+
+                                    <div class="col-md-3">
+
+                                        <label class="form-label">
+                                            Prelavado
+                                        </label>
+
+                                        <select class="form-select form-select-sm" id="fr_prelavado_id"
+                                            name="prelavado_id">
+                                        </select>
+
+                                    </div>
+
+
+                                    <div class="col-md-3">
+
+                                        <label class="form-label">
+                                            Focalizado
+                                        </label>
+
+                                        <select class="form-select form-select-sm" id="fr_focalizado_id"
+                                            name="focalizado_id">
+                                        </select>
+
+                                    </div>
+
+
+                                    <div class="col-md-3">
+
+                                        <label class="form-label">
+                                            Nevado
+                                        </label>
+
+                                        <select class="form-select form-select-sm" id="fr_nevado_id" name="nevado_id">
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="row mt-4">
+
+
+                                    <div class="col-md-4">
+
+                                        <label class="form-label">
+                                            Característica
+                                        </label>
+
+                                        <select class="form-select form-select-sm" id="fr_caracteristica_id"
+                                            name="caracteristica_id">
+                                        </select>
+
+                                    </div>
+
+
+                                    <div class="col-md-4">
+
+                                        <label class="form-label">
+                                            Proceso Principal
+                                        </label>
+
+                                        <select class="form-select form-select-sm" id="fr_tipo_proceso_id"
+                                            name="tipo_proceso_id">
+                                        </select>
+
+                                    </div>
+
+
+                                    <div class="col-md-4">
+
+                                        <label class="form-label">
+                                            Descripción
+                                        </label>
+
+                                        <input type="text" class="form-control form-control-sm" id="fr_descripcion"
+                                            name="descripcion">
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        {{-- ============================================ --}}
+                        {{-- PROCESOS --}}
+                        {{-- ============================================ --}}
+
+                        <div class="card">
+
+                            <div class="card-header
+                                       d-flex
+                                       align-items-center
+                                       justify-content-between">
+
+                                <h4 class="card-title">
+                                    Procesos y productos
+                                </h4>
+
+
+                                {{-- <button type="button" class="btn btn-primary btn-sm"
+                                    onclick="agregarProcesoFacturaReceta()">
+
+                                    <i class="fa fa-plus"></i>
+
+                                    Agregar Proceso
+
+                                </button> --}}
+
+                            </div>
+
+
+                            <div class="card-body">
+
+                                <div id="fr_procesos">
+
+                                </div>
+
+                            </div>
+
+                            <button type="button" class="btn btn-primary btn-sm" onclick="agregarProcesoFacturaReceta()">
+
+                                <i class="fa fa-plus"></i>
+
+                                Agregar Proceso
+
+                            </button>
+
+                        </div>
+
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+
+                <button type="button" id="fr_boton_eliminar" class="btn btn-danger" style="display:none;"
+                    onclick="eliminarFacturaReceta()">
+
+                    <i class="fa fa-trash"></i>
+
+                    Eliminar receta asociada
+
+                </button>
+
+
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+
+                    Cerrar
+
+                </button>
+
+
+                <button type="button" id="fr_boton_guardar" class="btn btn-success" style="display:none;"
+                    onclick="guardarFacturaReceta()">
+
+                    <i class="fa fa-save"></i>
+
+                    Guardar receta del lavado
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 <!--begin::Content wrapper-->
 <div class="d-flex flex-column flex-column-fluid">
     <div id="kt_app_content" class="app-content flex-column-fluid">
@@ -546,142 +932,6 @@
     </div>
 </div>
 
-{{-- <div class="row">
-    <div class="col-md-12">
-        <!--begin::Content wrapper-->
-        <div class="d-flex flex-column flex-column-fluid">
-            <div id="kt_app_content" class="app-content flex-column-fluid">
-                <!--begin::Content container-->
-                <div id="kt_app_content_container" class="app-container container-xxlg">
-                    <!--begin::Card-->
-                    <div class="card">
-                        <div class="card-header flex-wrap bg-light py-4">
-                            <div id="kt_app_toolbar_container" class="app-container container-xxlg d-flex flex-stack">
-                                <!--begin::Page title-->
-                                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                                    <!--begin::Title-->
-                                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Registros Biometricos</h1>
-                                    <!--end::Title-->
-                                </div>
-                                <!--end::Page title-->
-                            </div>
-                        </div>
-                        <div class="card-body py-4">
-                            <div id="tabla_biometrias"></div>
-                        </div>
-                    </div>
-                    <!--end::Card-->
-                </div>
-                <!--end::Content container-->
-            </div>
-            <!--end::Content-->
-        </div>
-        <!--end::Content wrapper-->
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        <!--begin::Content wrapper-->
-        <div class="d-flex flex-column flex-column-fluid">
-            <div id="kt_app_content" class="app-content flex-column-fluid">
-                <!--begin::Content container-->
-                <div id="kt_app_content_container" class="app-container container-xxlg">
-                    <!--begin::Card-->
-                    <div class="card">
-                        <div class="card-header flex-wrap bg-light py-4">
-                            <div id="kt_app_toolbar_container" class="app-container container-xxlg d-flex flex-stack">
-                                <!--begin::Page title-->
-                                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                                    <!--begin::Title-->
-                                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Registros Morfologicos</h1>
-                                    <!--end::Title-->
-                                </div>
-                                <!--end::Page title-->
-                            </div>
-                        </div>
-                        <div class="card-body py-4">
-                            <div id="tabla_morfilogicos"></div>
-                        </div>
-                    </div>
-                    <!--end::Card-->
-                </div>
-                <!--end::Content container-->
-            </div>
-            <!--end::Content-->
-        </div>
-        <!--end::Content wrapper-->
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        <!--begin::Content wrapper-->
-        <div class="d-flex flex-column flex-column-fluid">
-            <div id="kt_app_content" class="app-content flex-column-fluid">
-                <!--begin::Content container-->
-                <div id="kt_app_content_container" class="app-container container-xxlg">
-                    <!--begin::Card-->
-                    <div class="card">
-                        <div class="card-header flex-wrap bg-light py-4">
-                            <div id="kt_app_toolbar_container" class="app-container container-xxlg d-flex flex-stack">
-                                <!--begin::Page title-->
-                                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                                    <!--begin::Title-->
-                                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">Registros Fibras</h1>
-                                    <!--end::Title-->
-                                </div>
-                                <!--end::Page title-->
-                            </div>
-                        </div>
-                        <div class="card-body py-4">
-                            <div id="tabla_analisis_fibras"></div>
-                        </div>
-                    </div>
-                    <!--end::Card-->
-                </div>
-                <!--end::Content container-->
-            </div>
-            <!--end::Content-->
-        </div>
-        <!--end::Content wrapper-->
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        <!--begin::Content wrapper-->
-        <div class="d-flex flex-column flex-column-fluid">
-            <div id="kt_app_content" class="app-content flex-column-fluid">
-                <!--begin::Content container-->
-                <div id="kt_app_content_container" class="app-container container-xxlg">
-                    <!--begin::Card-->
-                    <div class="card">
-                        <div class="card-header flex-wrap bg-light py-4">
-                            <div id="kt_app_toolbar_container" class="app-container container-xxlg d-flex flex-stack">
-                                <!--begin::Page title-->
-                                <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
-                                    <!--begin::Title-->
-                                    <h1 class="page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">GENERACIONES DEL EJEMPLAR</h1>
-                                    <!--end::Title-->
-                                </div>
-                                <!--end::Page title-->
-                            </div>
-                        </div>
-                        <div class="card-body py-4">
-                            <div id="chart-container"></div>
-                        </div>
-                    </div>
-                    <!--end::Card-->
-                </div>
-                <!--end::Content container-->
-            </div>
-            <!--end::Content-->
-        </div>
-        <!--end::Content wrapper-->
-    </div>
-</div> --}}
-
 @stop()
 
 @section('js')
@@ -698,11 +948,106 @@
 
         let filaTableLaser = 1;
 
+        let frTipoTelas = [];
+        let frColorTelas = [];
+        let frNombreTelas = [];
+        let frPrelavados = [];
+        let frFocalizados = [];
+        let frNevados = [];
+        let frCaracteristicas = [];
+        let frTipoProcesos = [];
+        let frProductos = [];
+
+        let frProcesoContador = 0;
+
+        let frPesoOt = 0;
+
         $(document).ready(function() {
             ajaxListadoOrdenTrabajos();
-            // ajaxListadoOjales();
-            // ajaxListadoLaser();
-        });
+
+            $(document).on('input','#modalFacturaReceta .fr-porcentaje',function () {
+
+                let fila =$(this).closest('.fr-producto');
+
+                /*
+                * Peso de la OT en Kg
+                * convertido a gramos
+                */
+
+                let pesoGr =
+                frPesoOt * 1000;
+
+
+                let porcentaje =
+                parseFloat(
+                $(this).val()
+                ) || 0;
+
+
+                if (pesoGr <= 0) { fila .find('.fr-cantidad') .val(0); return; } let cantidad=( pesoGr * porcentaje ) / 100; fila
+                    .find('.fr-cantidad') .val( cantidad.toFixed(2) ); calcularTotalFacturaReceta( fila ); } );
+
+            });
+
+            $(document).on('input','#modalFacturaReceta .fr-cantidad',function () {
+                let fila =
+                    $(this)
+                        .closest('.fr-producto');
+
+
+                let pesoGr =
+                    frPesoOt * 1000;
+
+
+                let cantidad =
+                    parseFloat(
+                        $(this).val()
+                    ) || 0;
+
+
+                if (pesoGr <= 0) {
+
+                    fila
+                        .find('.fr-porcentaje')
+                        .val(0);
+
+                    return;
+                }
+
+
+                let porcentaje =
+                    (
+                        cantidad /
+                        pesoGr
+                    )
+                    *
+                    100;
+
+
+                fila
+                    .find('.fr-porcentaje')
+                    .val(
+                        porcentaje.toFixed(2)
+                    );
+
+
+                calcularTotalFacturaReceta(
+                    fila
+                );
+            });
+
+            $(document).on('change','#modalFacturaReceta .fr-producto-id',function () {
+
+                    let fila =
+                        $(this)
+                            .closest('.fr-producto');
+
+
+                    calcularTotalFacturaReceta(
+                        fila
+                    );
+                }
+            );
 
         function ajaxListadoOrdenTrabajos(){
             let datos = {factura:{{ $factura->id }}};
@@ -1393,6 +1738,2407 @@
                 }
             })
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ABRIR MODAL
+        |--------------------------------------------------------------------------
+        */
+
+        function modalFacturaReceta(orderTrabajoId) {
+
+            $('#fr_order_trabajo_id')
+                .val(
+                    orderTrabajoId
+                );
+
+
+            $('#fr_factura_receta_id')
+                .val(0);
+
+            $('#fr_receta_id')
+                .val('');
+
+
+            $('#fr_bloque_editor')
+                .hide();
+
+            $('#fr_boton_guardar')
+                .hide();
+
+            $('#fr_boton_eliminar')
+                .hide();
+
+            $('#fr_receta_asociada_texto')
+                .addClass('d-none')
+                .html('');
+
+
+            $.ajax({
+
+                url:
+                    "{{ route('facturaReceta.datosModal') }}",
+
+                method:
+                    "POST",
+
+                data: {
+
+                    factura_id:
+                        {{ $factura->id }},
+
+                    order_trabajo_id:
+                        orderTrabajoId
+                },
+
+                success: function(resultado) {
+
+                if (!resultado.estado) {
+
+                Swal.fire(
+                'Error',
+                resultado.message,
+                'error'
+                );
+
+                return;
+                }
+
+
+                let data =
+                resultado.data;
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | CATÁLOGOS
+                |--------------------------------------------------------------------------
+                */
+
+                frTipoTelas =
+                data.tipoTelas ?? [];
+
+                frColorTelas =
+                data.colorTelas ?? [];
+
+                frNombreTelas =
+                data.nombreTelas ?? [];
+
+                frPrelavados =
+                data.prelavados ?? [];
+
+                frFocalizados =
+                data.focalizados ?? [];
+
+                frNevados =
+                data.nevados ?? [];
+
+                frCaracteristicas =
+                data.caracteristicas ?? [];
+
+                frTipoProcesos =
+                data.tipoProcesos ?? [];
+
+                frProductos =
+                data.productos ?? [];
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | ORDEN DE TRABAJO
+                |--------------------------------------------------------------------------
+                */
+
+                frPesoOt =
+                parseFloat(
+                data.orderTrabajo?.peso
+                ) || 0;
+
+
+                /*
+                * OT
+                */
+
+                $('#fr_numero_ot_texto')
+                .text(
+                data.orderTrabajo?.nro_ot
+                ?? '-'
+                );
+
+
+                /*
+                * Peso cabecera
+                */
+
+                $('#fr_peso_ot_texto')
+                .text(
+                frPesoOt.toFixed(2)
+                );
+
+
+                /*
+                * Peso Kg
+                */
+
+                $('#fr_peso_kg')
+                .val(
+                frPesoOt.toFixed(2)
+                );
+
+
+                /*
+                * Peso gramos
+                */
+
+                $('#fr_peso_gr')
+                .val(
+                (
+                frPesoOt * 1000
+                ).toFixed(2)
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | CATÁLOGOS
+                |--------------------------------------------------------------------------
+                */
+
+                cargarCatalogosFacturaReceta();
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | LISTADO RECETAS MAESTRAS
+                |--------------------------------------------------------------------------
+                */
+
+                $('#fr_buscar_receta')
+                .empty()
+                .append(
+                '<option value="">Seleccione una receta</option>'
+                );
+
+
+                $.each(
+                data.recetas ?? [],
+                function(index, receta) {
+
+                $('#fr_buscar_receta')
+                .append(
+                $('<option>', {
+
+                    value:
+                    receta.id,
+
+                    text:
+                    receta.nombre
+                    })
+                    );
+                    }
+                    );
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | RECETA EXISTENTE DE ESTA OT
+                    |--------------------------------------------------------------------------
+                    */
+
+                    if (
+                    data.facturaReceta
+                    ) {
+
+                    cargarFacturaRecetaExistente(
+                    data.facturaReceta
+                    );
+                    }
+
+
+                    $('#modalFacturaReceta')
+                    .modal('show');
+                    }
+            });
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | LLENAR CATÁLOGOS
+        |--------------------------------------------------------------------------
+        */
+
+        function cargarCatalogosFacturaReceta() {
+
+            llenarSelectFacturaReceta(
+                '#fr_tipo_tela_id',
+                frTipoTelas
+            );
+
+            llenarSelectFacturaReceta(
+                '#fr_color_tela_id',
+                frColorTelas
+            );
+
+            llenarSelectFacturaReceta(
+                '#fr_nombre_tela_id',
+                frNombreTelas
+            );
+
+            llenarSelectFacturaReceta(
+                '#fr_prelavado_id',
+                frPrelavados
+            );
+
+            llenarSelectFacturaReceta(
+                '#fr_focalizado_id',
+                frFocalizados
+            );
+
+            llenarSelectFacturaReceta(
+                '#fr_nevado_id',
+                frNevados
+            );
+
+            llenarSelectFacturaReceta(
+                '#fr_caracteristica_id',
+                frCaracteristicas
+            );
+
+            llenarSelectFacturaReceta(
+                '#fr_tipo_proceso_id',
+                frTipoProcesos
+            );
+        }
+
+
+
+        function llenarSelectFacturaReceta(
+            selector,
+            listado
+        ) {
+
+            let select =
+                $(selector);
+
+
+            select
+                .empty()
+                .append(
+                    '<option value="">Seleccione</option>'
+                );
+
+
+            $.each(
+                listado,
+                function(index, item) {
+
+                    select.append(
+
+                        $('<option>', {
+
+                            value:
+                                item.id,
+
+                            text:
+                                item.nombre
+
+                        })
+
+                    );
+
+                }
+            );
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CARGAR RECETA MAESTRA
+        |--------------------------------------------------------------------------
+        */
+
+        function cargarRecetaMaestra() {
+
+            let receta_id =
+                $('#fr_buscar_receta')
+                .val();
+
+
+            if (!receta_id) {
+
+                Swal.fire(
+                    'Atención',
+                    'Seleccione una receta.',
+                    'warning'
+                );
+
+                return;
+            }
+
+
+            /*
+            * Importante:
+            * esto todavía NO guarda en la BD.
+            */
+            Swal.fire({
+
+                title:
+                    '¿Cargar esta receta?',
+
+                text:
+                    'Se copiará al formulario y podrá modificarla antes de guardar.',
+
+                icon:
+                    'question',
+
+                showCancelButton:
+                    true,
+
+                confirmButtonText:
+                    'Sí, cargar',
+
+                cancelButtonText:
+                    'Cancelar'
+
+            }).then((result) => {
+
+
+                if (!result.isConfirmed) {
+
+                    return;
+                }
+
+
+                $.ajax({
+
+                    url:
+                        "{{ route('facturaReceta.obtenerReceta') }}",
+
+                    method:
+                        "POST",
+
+                    data: {
+
+                        receta_id:
+                            receta_id
+
+                    },
+
+                    success: function(resultado) {
+
+                        if (!resultado.estado) {
+
+                            Swal.fire(
+                                'Error',
+                                resultado.message,
+                                'error'
+                            );
+
+                            return;
+                        }
+
+
+                        let receta =
+                            resultado.data.receta;
+
+
+                        cargarDatosRecetaEnEditor(
+                            receta,
+                            false
+                        );
+
+
+                        Swal.fire({
+
+                            icon:
+                                'success',
+
+                            title:
+                                'Receta copiada',
+
+                            text:
+                                'Ahora puede modificar los datos antes de guardarlos.',
+
+                            timer:
+                                1800,
+
+                            showConfirmButton:
+                                false
+                        });
+                    }
+
+                });
+
+            });
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CARGAR RECETA MAESTRA EN EDITOR
+        |--------------------------------------------------------------------------
+        */
+
+        function cargarDatosRecetaEnEditor(
+            receta,
+            esFacturaReceta
+        ) {
+
+            $('#fr_bloque_editor')
+                .show();
+
+            $('#fr_boton_guardar')
+                .show();
+
+
+            /*
+            * Si viene de receta maestra
+            */
+            if (!esFacturaReceta) {
+
+                $('#fr_receta_id')
+                    .val(
+                        receta.id
+                    );
+
+                $('#fr_buscar_receta')
+                    .val(
+                        receta.id
+                    );
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | CABECERA
+            |--------------------------------------------------------------------------
+            */
+
+            $('#fr_nombre')
+                .val(
+                    receta.nombre ?? ''
+                );
+
+            $('#fr_tipo_tela_id')
+                .val(
+                    receta.tipo_tela_id ?? ''
+                );
+
+            $('#fr_color_tela_id')
+                .val(
+                    receta.color_tela_id ?? ''
+                );
+
+            $('#fr_nombre_tela_id')
+                .val(
+                    receta.nombre_tela_id ?? ''
+                );
+
+            $('#fr_prelavado_id')
+                .val(
+                    receta.prelavado_id ?? ''
+                );
+
+            $('#fr_focalizado_id')
+                .val(
+                    receta.focalizado_id ?? ''
+                );
+
+            $('#fr_nevado_id')
+                .val(
+                    receta.nevado_id ?? ''
+                );
+
+            $('#fr_caracteristica_id')
+                .val(
+                    receta.caracteristica_id ?? ''
+                );
+
+            $('#fr_tipo_proceso_id')
+                .val(
+                    receta.tipo_proceso_id ?? ''
+                );
+
+            $('#fr_descripcion')
+                .val(
+                    receta.descripcion ?? ''
+                );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PROCESOS
+            |--------------------------------------------------------------------------
+            */
+
+            let procesos =
+                convertirDetallesAProcesos(
+                    receta.detalles ?? []
+                );
+
+
+            renderProcesosFacturaReceta(
+                procesos
+            );
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CARGAR FACTURA RECETA YA GUARDADA
+        |--------------------------------------------------------------------------
+        */
+
+        function cargarFacturaRecetaExistente(
+            facturaReceta
+        ) {
+
+            $('#fr_factura_receta_id')
+                .val(
+                    facturaReceta.id
+                );
+
+
+            $('#fr_receta_id')
+                .val(
+                    facturaReceta.receta_id ?? ''
+                );
+
+
+            if (
+                facturaReceta.receta_id
+            ) {
+
+                $('#fr_buscar_receta')
+                    .val(
+                        facturaReceta.receta_id
+                    );
+
+            }
+
+
+            let nombrePlantilla =
+                facturaReceta.receta
+                ?
+                facturaReceta.receta.nombre
+                :
+                'Sin receta maestra';
+
+
+            $('#fr_receta_asociada_texto')
+                .removeClass('d-none')
+                .html(
+                    '<strong>Receta asociada:</strong> '
+                    +
+                    escaparHtml(nombrePlantilla)
+                    +
+                    ' <br><small>Esta es una copia editable de la receta original.</small>'
+                );
+
+
+            $('#fr_boton_eliminar')
+                .show();
+
+
+            /*
+            * Cargamos la COPIA,
+            * no la receta original.
+            */
+            cargarDatosRecetaEnEditor(
+                facturaReceta,
+                true
+            );
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONVERTIR DETALLES A PROCESOS
+        |--------------------------------------------------------------------------
+        |
+        | NO agrupamos únicamente por tipo_proceso_id.
+        |
+        | Usamos:
+        |
+        | orden_proceso + tipo_proceso_id
+        |
+        | Así puede existir:
+        |
+        | 1 Lavado
+        | 2 Teñido
+        | 3 Lavado
+        |
+        |--------------------------------------------------------------------------
+        */
+
+        function convertirDetallesAProcesos(
+            detalles
+        ) {
+
+            let procesos = {};
+
+
+            detalles
+                .sort(function(a, b) {
+
+                    let procesoA =
+                        parseInt(
+                            a.orden_proceso
+                            ?? 999999
+                        );
+
+                    let procesoB =
+                        parseInt(
+                            b.orden_proceso
+                            ?? 999999
+                        );
+
+
+                    if (
+                        procesoA !==
+                        procesoB
+                    ) {
+
+                        return (
+                            procesoA -
+                            procesoB
+                        );
+                    }
+
+
+                    return (
+
+                        parseInt(
+                            a.orden_producto
+                            ?? 999999
+                        )
+
+                        -
+
+                        parseInt(
+                            b.orden_producto
+                            ?? 999999
+                        )
+
+                    );
+
+                })
+                .forEach(
+                    function(detalle) {
+
+
+                        let clave =
+                            (
+                                detalle.orden_proceso
+                                ?? ''
+                            )
+                            +
+                            '_'
+                            +
+                            (
+                                detalle.tipo_proceso_id
+                                ?? ''
+                            );
+
+
+                        if (
+                            !procesos[clave]
+                        ) {
+
+                            procesos[clave] = {
+
+                                orden_proceso:
+                                    detalle.orden_proceso,
+
+                                tipo_proceso_id:
+                                    detalle.tipo_proceso_id,
+
+                                productos:
+                                    []
+
+                            };
+                        }
+
+
+                        procesos[
+                            clave
+                        ]
+                        .productos
+                        .push({
+
+                            receta_detalle_id:
+                                detalle.receta_detalle_id
+                                ??
+                                detalle.id
+                                ??
+                                null,
+
+                            producto_id:
+                                detalle.producto_id,
+
+                            orden_producto:
+                                detalle.orden_producto,
+
+                            porcentaje:
+                                detalle.porcentaje,
+
+                            cantidad:
+                                detalle.cantidad,
+
+                            total:
+                                detalle.total,
+
+                            tiempo:
+                                detalle.tiempo,
+
+                            temperatura:
+                                detalle.temperatura,
+
+                            ph:
+                                detalle.ph,
+
+                            rb:
+                                detalle.rb,
+
+                            descripcion:
+                                detalle.descripcion
+                        });
+
+                    }
+                );
+
+
+            return Object.values(
+                procesos
+            )
+            .sort(
+                function(a, b) {
+
+                    return (
+
+                        parseInt(
+                            a.orden_proceso
+                            ?? 999999
+                        )
+
+                        -
+
+                        parseInt(
+                            b.orden_proceso
+                            ?? 999999
+                        )
+
+                    );
+
+                }
+            );
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RENDERIZAR TODOS LOS PROCESOS
+        |--------------------------------------------------------------------------
+        */
+
+        function renderProcesosFacturaReceta(
+            procesos
+        ) {
+
+            $('#fr_procesos')
+                .empty();
+
+
+            frProcesoContador =
+                0;
+
+
+            $.each(
+                procesos,
+                function(index, proceso) {
+
+                    agregarProcesoFacturaReceta(
+                        proceso
+                    );
+
+                }
+            );
+
+
+            /*
+            * Si la receta está vacía,
+            * damos un proceso inicial.
+            */
+            if (
+                procesos.length === 0
+            ) {
+
+                agregarProcesoFacturaReceta();
+            }
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | AGREGAR PROCESO
+        |--------------------------------------------------------------------------
+        */
+
+        function agregarProcesoFacturaReceta(
+            proceso = null
+        ) {
+
+            frProcesoContador++;
+
+
+            let procesoId =
+                frProcesoContador;
+
+
+            let ordenProceso =
+                proceso
+                ?
+                (
+                    proceso.orden_proceso
+                    ?? procesoId
+                )
+                :
+                procesoId;
+
+
+            let tipoProcesoId =
+                proceso
+                ?
+                (
+                    proceso.tipo_proceso_id
+                    ?? ''
+                )
+                :
+                '';
+
+
+            let html = `
+
+                <div
+                    class="card border mb-5 fr-proceso"
+                    data-proceso="${procesoId}">
+
+                    <div class="card-header bg-light">
+
+                        <div
+                            class="card-title
+                                w-100">
+
+                            <div
+                                class="row
+                                    w-100
+                                    align-items-end">
+
+
+                                <div class="col-md-2">
+
+                                    <label class="form-label">
+                                        Orden
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        class="form-control
+                                            form-control-sm
+                                            fr-orden-proceso"
+                                        value="${escaparHtml(ordenProceso)}">
+
+                                </div>
+
+
+                                <div class="col-md-7">
+
+                                    <label class="form-label">
+                                        Proceso
+                                    </label>
+
+                                    <select
+                                        class="form-select
+                                            form-select-sm
+                                            fr-tipo-proceso">
+
+                                        ${opcionesTipoProceso(tipoProcesoId)}
+
+                                    </select>
+
+                                </div>
+
+
+                                <div class="col-md-3">
+
+                                    <button
+                                        type="button"
+                                        class="btn
+                                            btn-danger
+                                            btn-sm
+                                            w-100"
+                                        onclick="eliminarProcesoFacturaReceta(this)">
+
+                                        <i class="fa fa-trash"></i>
+
+                                        Quitar Proceso
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-body">
+
+                        <div
+                            class="fr-productos">
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="btn
+                                btn-primary
+                                btn-sm
+                                mt-3"
+                            onclick="agregarProductoFacturaReceta(this)">
+
+                            <i class="fa fa-plus"></i>
+
+                            Agregar Producto
+
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+
+
+            $('#fr_procesos')
+                .append(
+                    html
+                );
+
+
+            let bloque =
+                $('#fr_procesos')
+                .find(
+                    `[data-proceso="${procesoId}"]`
+                );
+
+
+            if (
+                proceso
+                &&
+                proceso.productos
+            ) {
+
+
+                $.each(
+                    proceso.productos,
+                    function(index, producto) {
+
+                        agregarProductoFacturaReceta(
+                            bloque
+                                .find(
+                                    '.fr-productos'
+                                ),
+                            producto
+                        );
+
+                    }
+                );
+
+
+            } else {
+
+
+                agregarProductoFacturaReceta(
+                    bloque
+                        .find(
+                            '.fr-productos'
+                        )
+                );
+
+            }
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ELIMINAR PROCESO
+        |--------------------------------------------------------------------------
+        */
+
+        function eliminarProcesoFacturaReceta(
+            boton
+        ) {
+
+            $(boton)
+                .closest(
+                    '.fr-proceso'
+                )
+                .remove();
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | OPCIONES PROCESOS
+        |--------------------------------------------------------------------------
+        */
+
+        function opcionesTipoProceso(
+            seleccionado = ''
+        ) {
+
+            let html =
+                '<option value="">Seleccione</option>';
+
+
+            $.each(
+                frTipoProcesos,
+                function(index, item) {
+
+
+                    let selected =
+                        String(item.id)
+                        ===
+                        String(seleccionado)
+                        ?
+                        'selected'
+                        :
+                        '';
+
+
+                    html += `
+
+                        <option
+                            value="${item.id}"
+                            ${selected}>
+
+                            ${escaparHtml(item.nombre)}
+
+                        </option>
+                    `;
+
+                }
+            );
+
+
+            return html;
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | OPCIONES PRODUCTOS
+        |--------------------------------------------------------------------------
+        */
+
+        function opcionesProductos(
+            seleccionado = ''
+        ) {
+
+            let html =
+                '<option value="">Seleccione</option>';
+
+
+            $.each(
+                frProductos,
+                function(index, item) {
+
+
+                    let selected =
+                        String(item.id)
+                        ===
+                        String(seleccionado)
+                        ?
+                        'selected'
+                        :
+                        '';
+
+
+                    html += `
+
+                        <option
+                            value="${item.id}"
+                            ${selected}>
+
+                            ${escaparHtml(item.nombre)}
+
+                        </option>
+                    `;
+
+                }
+            );
+
+
+            return html;
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | AGREGAR PRODUCTO
+        |--------------------------------------------------------------------------
+        */
+
+        function agregarProductoFacturaReceta(
+            elemento,
+            producto = null
+        ) {
+
+            /*
+            * Puede llegar:
+            *
+            * 1. el botón
+            * 2. directamente el contenedor
+            */
+
+            let contenedor;
+
+
+            if (
+                $(elemento)
+                .hasClass(
+                    'fr-productos'
+                )
+            ) {
+
+                contenedor =
+                    $(elemento);
+
+            } else {
+
+                contenedor =
+                    $(elemento)
+                    .closest(
+                        '.card-body'
+                    )
+                    .find(
+                        '> .fr-productos'
+                    );
+            }
+
+
+            let cantidadProductos =
+                contenedor
+                .find(
+                    '.fr-producto'
+                )
+                .length;
+
+
+            let ordenProducto =
+                producto
+                ?
+                (
+                    producto.orden_producto
+                    ??
+                    cantidadProductos + 1
+                )
+                :
+                cantidadProductos + 1;
+
+
+            let recetaDetalleId =
+                producto
+                ?
+                (
+                    producto.receta_detalle_id
+                    ?? ''
+                )
+                :
+                '';
+
+
+            let productoId =
+                producto
+                ?
+                (
+                    producto.producto_id
+                    ?? ''
+                )
+                :
+                '';
+
+
+            let porcentaje =
+                producto
+                ?
+                (
+                    producto.porcentaje
+                    ?? ''
+                )
+                :
+                '';
+
+
+            let cantidad =
+                producto
+                ?
+                (
+                    producto.cantidad
+                    ?? ''
+                )
+                :
+                '';
+
+
+            let total =
+                producto
+                ?
+                (
+                    producto.total
+                    ?? ''
+                )
+                :
+                '';
+
+
+            let tiempo =
+                producto
+                ?
+                (
+                    producto.tiempo
+                    ?? ''
+                )
+                :
+                '';
+
+
+            let temperatura =
+                producto
+                ?
+                (
+                    producto.temperatura
+                    ?? ''
+                )
+                :
+                '';
+
+
+            let ph =
+                producto
+                ?
+                (
+                    producto.ph
+                    ?? ''
+                )
+                :
+                '';
+
+
+            let rb =
+                producto
+                ?
+                (
+                    producto.rb
+                    ?? ''
+                )
+                :
+                '';
+
+
+            let descripcion =
+                producto
+                ?
+                (
+                    producto.descripcion
+                    ?? ''
+                )
+                :
+                '';
+
+
+            let html = `
+
+                <div
+                    class="border
+                        rounded
+                        p-4
+                        mb-4
+                        fr-producto">
+
+                    <input
+                        type="hidden"
+                        class="fr-receta-detalle-id"
+                        value="${escaparHtml(recetaDetalleId)}">
+
+
+                    <div class="row align-items-end">
+
+
+                        <div class="col-md-1">
+
+                            <label class="form-label">
+                                Orden
+                            </label>
+
+                            <input
+                                type="number"
+                                min="1"
+                                class="form-control
+                                    form-control-sm
+                                    fr-orden-producto"
+                                value="${escaparHtml(ordenProducto)}">
+
+                        </div>
+
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Producto
+                            </label>
+
+                            <select
+                                class="form-select
+                                    form-select-sm
+                                    fr-producto-id">
+
+                                ${opcionesProductos(productoId)}
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="col-md-2">
+
+                            <label class="form-label">
+                                %
+                            </label>
+
+                            <input
+                                type="number"
+                                step="0.00001"
+                                class="form-control
+                                    form-control-sm
+                                    fr-porcentaje"
+                                value="${escaparHtml(porcentaje)}">
+
+                        </div>
+
+
+                        <div class="col-md-2">
+
+                            <label class="form-label">
+                                Cantidad
+                            </label>
+
+                            <input
+                                type="number"
+                                step="0.00001"
+                                class="form-control
+                                    form-control-sm
+                                    fr-cantidad"
+                                value="${escaparHtml(cantidad)}">
+
+                        </div>
+
+
+                        <div class="col-md-2">
+
+                            <label class="form-label">
+                                Total
+                            </label>
+
+                            <input
+                                type="number"
+                                step="0.00001"
+                                class="form-control
+                                    form-control-sm
+                                    fr-total"
+                                value="${escaparHtml(total)}">
+
+                        </div>
+
+
+                        <div class="col-md-2">
+
+                            <button
+                                type="button"
+                                class="btn
+                                    btn-danger
+                                    btn-sm
+                                    w-100"
+                                onclick="eliminarProductoFacturaReceta(this)">
+
+                                <i class="fa fa-trash"></i>
+
+                                Quitar
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="row mt-4">
+
+
+                        <div class="col-md-2">
+
+                            <label class="form-label">
+                                Tiempo
+                            </label>
+
+                            <div class="input-group input-group-sm">
+
+                                <input
+                                    type="number"
+                                    step="0.00001"
+                                    class="form-control fr-tiempo"
+                                    value="${escaparHtml(tiempo)}">
+
+                                <span class="input-group-text">
+                                    min
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-2">
+
+                            <label class="form-label">
+                                Temperatura
+                            </label>
+
+                            <div class="input-group input-group-sm">
+
+                                <input
+                                    type="number"
+                                    step="0.00001"
+                                    class="form-control fr-temperatura"
+                                    value="${escaparHtml(temperatura)}">
+
+                                <span class="input-group-text">
+                                    °C
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-2">
+
+                            <label class="form-label">
+                                PH
+                            </label>
+
+                            <input
+                                type="number"
+                                step="0.00001"
+                                class="form-control
+                                    form-control-sm
+                                    fr-ph"
+                                value="${escaparHtml(ph)}">
+
+                        </div>
+
+
+                        <div class="col-md-2">
+
+                            <label class="form-label">
+                                RB
+                            </label>
+
+                            <input
+                                type="number"
+                                step="0.00001"
+                                class="form-control
+                                    form-control-sm
+                                    fr-rb"
+                                value="${escaparHtml(rb)}">
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Descripción Técnica
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control
+                                    form-control-sm
+                                    fr-descripcion-detalle"
+                                value="${escaparHtml(descripcion)}">
+
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+
+
+            contenedor.append(
+                html
+            );
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ELIMINAR PRODUCTO
+        |--------------------------------------------------------------------------
+        */
+
+        function eliminarProductoFacturaReceta(
+            boton
+        ) {
+
+            $(boton)
+                .closest(
+                    '.fr-producto'
+                )
+                .remove();
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONSTRUIR PROCESOS PARA GUARDAR
+        |--------------------------------------------------------------------------
+        */
+
+        function obtenerProcesosFacturaReceta() {
+
+            let procesos = [];
+
+
+            $('#fr_procesos')
+                .find(
+                    '> .fr-proceso'
+                )
+                .each(
+                    function() {
+
+
+                        let procesoRow =
+                            $(this);
+
+
+                        let proceso = {
+
+                            orden_proceso:
+                                procesoRow
+                                .find(
+                                    '.fr-orden-proceso'
+                                )
+                                .val(),
+
+                            tipo_proceso_id:
+                                procesoRow
+                                .find(
+                                    '.fr-tipo-proceso'
+                                )
+                                .val(),
+
+                            productos:
+                                []
+                        };
+
+
+                        procesoRow
+                            .find(
+                                '.fr-productos > .fr-producto'
+                            )
+                            .each(
+                                function() {
+
+
+                                    let productoRow =
+                                        $(this);
+
+
+                                    proceso
+                                        .productos
+                                        .push({
+
+                                            receta_detalle_id:
+                                                productoRow
+                                                .find(
+                                                    '.fr-receta-detalle-id'
+                                                )
+                                                .val(),
+
+                                            orden_producto:
+                                                productoRow
+                                                .find(
+                                                    '.fr-orden-producto'
+                                                )
+                                                .val(),
+
+                                            producto_id:
+                                                productoRow
+                                                .find(
+                                                    '.fr-producto-id'
+                                                )
+                                                .val(),
+
+                                            porcentaje:
+                                                productoRow
+                                                .find(
+                                                    '.fr-porcentaje'
+                                                )
+                                                .val(),
+
+                                            cantidad:
+                                                productoRow
+                                                .find(
+                                                    '.fr-cantidad'
+                                                )
+                                                .val(),
+
+                                            total:
+                                                productoRow
+                                                .find(
+                                                    '.fr-total'
+                                                )
+                                                .val(),
+
+                                            tiempo:
+                                                productoRow
+                                                .find(
+                                                    '.fr-tiempo'
+                                                )
+                                                .val(),
+
+                                            temperatura:
+                                                productoRow
+                                                .find(
+                                                    '.fr-temperatura'
+                                                )
+                                                .val(),
+
+                                            ph:
+                                                productoRow
+                                                .find(
+                                                    '.fr-ph'
+                                                )
+                                                .val(),
+
+                                            rb:
+                                                productoRow
+                                                .find(
+                                                    '.fr-rb'
+                                                )
+                                                .val(),
+
+                                            descripcion:
+                                                productoRow
+                                                .find(
+                                                    '.fr-descripcion-detalle'
+                                                )
+                                                .val()
+                                        });
+
+                                }
+                            );
+
+
+                        procesos.push(
+                            proceso
+                        );
+
+                    }
+                );
+
+
+            return procesos;
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | GUARDAR
+        |--------------------------------------------------------------------------
+        */
+
+        function guardarFacturaReceta() {
+
+            let procesos =
+                obtenerProcesosFacturaReceta();
+
+
+            if (
+                procesos.length === 0
+            ) {
+
+                Swal.fire(
+                    'Atención',
+                    'Debe registrar al menos un proceso.',
+                    'warning'
+                );
+
+                return;
+            }
+
+
+            /*
+            * Validación básica
+            */
+            let error =
+                false;
+
+
+            $.each(
+                procesos,
+                function(index, proceso) {
+
+                    if (
+                        !proceso.tipo_proceso_id
+                    ) {
+
+                        error =
+                            true;
+
+                        return false;
+                    }
+
+
+                    $.each(
+                        proceso.productos,
+                        function(indexProducto, producto) {
+
+                            if (
+                                !producto.producto_id
+                            ) {
+
+                                error =
+                                    true;
+
+                                return false;
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+
+            if (error) {
+
+                Swal.fire(
+                    'Atención',
+                    'Todos los procesos y productos deben estar seleccionados.',
+                    'warning'
+                );
+
+                return;
+            }
+
+
+            let datos = {
+
+                factura_id:
+                    $('#fr_factura_id')
+                    .val(),
+
+                factura_receta_id:
+                    $('#fr_factura_receta_id')
+                    .val(),
+
+                receta_id:
+                    $('#fr_receta_id')
+                    .val(),
+
+                nombre:
+                    $('#fr_nombre')
+                    .val(),
+
+                tipo_tela_id:
+                    $('#fr_tipo_tela_id')
+                    .val(),
+
+                color_tela_id:
+                    $('#fr_color_tela_id')
+                    .val(),
+
+                nombre_tela_id:
+                    $('#fr_nombre_tela_id')
+                    .val(),
+
+                prelavado_id:
+                    $('#fr_prelavado_id')
+                    .val(),
+
+                focalizado_id:
+                    $('#fr_focalizado_id')
+                    .val(),
+
+                nevado_id:
+                    $('#fr_nevado_id')
+                    .val(),
+
+                caracteristica_id:
+                    $('#fr_caracteristica_id')
+                    .val(),
+
+                tipo_proceso_id:
+                    $('#fr_tipo_proceso_id')
+                    .val(),
+
+                descripcion:
+                    $('#fr_descripcion')
+                    .val(),
+
+                procesos:
+                    procesos,
+                order_trabajo_id:$('#fr_order_trabajo_id').val(),
+            };
+
+
+            $('#fr_boton_guardar')
+                .prop(
+                    'disabled',
+                    true
+                );
+
+
+            $.ajax({
+
+                url:
+                    "{{ route('facturaReceta.guardar') }}",
+
+                method:
+                    "POST",
+
+                data:
+                    datos,
+
+                success: function(resultado) {
+
+
+                    $('#fr_boton_guardar')
+                        .prop(
+                            'disabled',
+                            false
+                        );
+
+
+                    if (
+                        resultado.estado
+                    ) {
+
+
+                        $('#fr_factura_receta_id')
+                            .val(
+                                resultado
+                                .data
+                                .factura_receta_id
+                            );
+
+
+                        $('#fr_boton_eliminar')
+                            .show();
+
+
+                        Swal.fire({
+
+                            icon:
+                                'success',
+
+                            title:
+                                'Guardado',
+
+                            text:
+                                'La receta del lavado fue guardada correctamente.',
+
+                            timer:
+                                2000,
+
+                            showConfirmButton:
+                                false
+                        });
+
+
+                        /*
+                        * Recargamos los datos
+                        * para que quede exactamente
+                        * como está en BD.
+                        */
+                        recargarFacturaRecetaModal();
+
+
+                    } else {
+
+
+                        Swal.fire(
+                            'Error',
+                            resultado.message
+                            ??
+                            'No se pudo guardar.',
+                            'error'
+                        );
+                    }
+
+                },
+
+
+                error: function(xhr) {
+
+
+                    $('#fr_boton_guardar')
+                        .prop(
+                            'disabled',
+                            false
+                        );
+
+
+                    Swal.fire(
+                        'Error',
+                        'Ocurrió un error al guardar.',
+                        'error'
+                    );
+                }
+
+            });
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RECARGAR MODAL DESPUÉS DE GUARDAR
+        |--------------------------------------------------------------------------
+        */
+
+        function recargarFacturaRecetaModal() {
+
+            $.ajax({
+
+                url:
+                    "{{ route('facturaReceta.datosModal') }}",
+
+                method:
+                    "POST",
+
+                data: {
+
+                    factura_id:
+                        "{{ $factura->id }}"
+
+                },
+
+                success: function(resultado) {
+
+
+                    if (
+                        resultado.estado
+                        &&
+                        resultado.data.facturaReceta
+                    ) {
+
+                        cargarFacturaRecetaExistente(
+                            resultado.data.facturaReceta
+                        );
+                    }
+
+                }
+
+            });
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ELIMINAR RECETA DE LA FACTURA
+        |--------------------------------------------------------------------------
+        */
+
+        function eliminarFacturaReceta() {
+
+            let facturaRecetaId =
+                $('#fr_factura_receta_id')
+                .val();
+
+
+            if (
+                !facturaRecetaId
+                ||
+                facturaRecetaId == 0
+            ) {
+
+                return;
+            }
+
+
+            Swal.fire({
+
+                title:
+                    '¿Eliminar receta del lavado?',
+
+                text:
+                    'Se eliminará la copia asociada a esta factura. La receta maestra no será eliminada.',
+
+                icon:
+                    'warning',
+
+                showCancelButton:
+                    true,
+
+                confirmButtonColor:
+                    '#d33',
+
+                confirmButtonText:
+                    'Sí, eliminar',
+
+                cancelButtonText:
+                    'Cancelar'
+
+            }).then(
+                function(result) {
+
+
+                    if (
+                        !result.isConfirmed
+                    ) {
+
+                        return;
+                    }
+
+
+                    $.ajax({
+
+                        url:
+                            "{{ route('facturaReceta.eliminar') }}",
+
+                        method:
+                            "POST",
+
+                        data: {
+
+                            factura_receta_id:
+                                facturaRecetaId,
+
+                            factura_id:
+                                "{{ $factura->id }}"
+                        },
+
+
+                        success: function(resultado) {
+
+
+                            if (
+                                resultado.estado
+                            ) {
+
+
+                                Swal.fire(
+                                    'Eliminado',
+                                    'La receta asociada fue eliminada correctamente.',
+                                    'success'
+                                );
+
+
+                                $('#fr_factura_receta_id')
+                                    .val(0);
+
+                                $('#fr_receta_id')
+                                    .val('');
+
+                                $('#fr_buscar_receta')
+                                    .val('');
+
+                                $('#fr_procesos')
+                                    .empty();
+
+                                $('#fr_bloque_editor')
+                                    .hide();
+
+                                $('#fr_boton_guardar')
+                                    .hide();
+
+                                $('#fr_boton_eliminar')
+                                    .hide();
+
+                                $('#fr_receta_asociada_texto')
+                                    .addClass(
+                                        'd-none'
+                                    )
+                                    .html('');
+
+
+                            } else {
+
+
+                                Swal.fire(
+                                    'Error',
+                                    resultado.message,
+                                    'error'
+                                );
+                            }
+
+                        }
+
+                    });
+
+                }
+            );
+        }
+
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ESCAPAR HTML
+        |--------------------------------------------------------------------------
+        */
+
+        function escaparHtml(
+            valor
+        ) {
+
+            if (
+                valor === null
+                ||
+                valor === undefined
+            ) {
+
+                return '';
+            }
+
+
+            return String(
+                valor
+            )
+            .replace(
+                /&/g,
+                '&amp;'
+            )
+            .replace(
+                /</g,
+                '&lt;'
+            )
+            .replace(
+                />/g,
+                '&gt;'
+            )
+            .replace(
+                /"/g,
+                '&quot;'
+            )
+            .replace(
+                /'/g,
+                '&#039;'
+            );
+        }
+
+        function obtenerPesoGramosFacturaReceta() {
+            let pesoKg = parseFloat($('#fr_peso_ot_texto').text()) || 0;
+            return pesoKg * 1000;
+        }
+
+        function recalcularCantidadesPorPesoOt() {
+
+            let pesoGr =
+                frPesoOt * 1000;
+
+
+            if (pesoGr <= 0) {
+
+                return;
+            }
+
+
+            $('#fr_procesos').find('.fr-producto').each(function () {
+
+                let fila =$(this);
+
+                let porcentaje =
+                    parseFloat(
+                        fila
+                            .find('.fr-porcentaje')
+                            .val()
+                    ) || 0;
+
+
+                let cantidad =
+                    (
+                        pesoGr *
+                        porcentaje
+                    )
+                    /
+                    100;
+
+
+                fila
+                    .find('.fr-cantidad')
+                    .val(
+                        cantidad.toFixed(2)
+                    );
+
+
+                calcularTotalFacturaReceta(
+                    fila
+                );
+            });
+        }
+
+
+
+        function calcularTotalFacturaReceta(fila) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | PRODUCTO SELECCIONADO
+            |--------------------------------------------------------------------------
+            */
+
+            let productoId =
+                fila
+                    .find('.fr-producto-id')
+                    .val();
+
+
+            if (!productoId) {
+
+                fila
+                    .find('.fr-total')
+                    .val('0.00');
+
+                return;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | BUSCAMOS PRODUCTO EN frProductos
+            |--------------------------------------------------------------------------
+            */
+
+            let producto =
+                frProductos.find(
+                    function(item) {
+
+                        return String(item.id)
+                            ===
+                            String(productoId);
+                    }
+                );
+
+
+            if (!producto) {
+
+                fila
+                    .find('.fr-total')
+                    .val('0.00');
+
+                return;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | OBTENEMOS ÚLTIMO INGRESO
+            |--------------------------------------------------------------------------
+            |
+            | Laravel al convertir a JSON normalmente manda:
+            |
+            | ultimo_ingreso
+            |
+            */
+
+            let ingreso =
+                producto.ultimo_ingreso
+                ??
+                producto.ultimoIngreso
+                ??
+                null;
+
+
+            if (!ingreso) {
+
+                fila
+                    .find('.fr-total')
+                    .val('0.00');
+
+                return;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PRECIO COMPRA POR GRAMO
+            |--------------------------------------------------------------------------
+            */
+
+            let precioCompraGr =
+                parseFloat(
+                    ingreso.precio_compra_g
+                ) || 0;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | CANTIDAD
+            |--------------------------------------------------------------------------
+            */
+
+            let cantidad =
+                parseFloat(
+                    fila
+                        .find('.fr-cantidad')
+                        .val()
+                ) || 0;
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | TOTAL
+            |--------------------------------------------------------------------------
+            */
+
+            let total =
+                cantidad *
+                precioCompraGr;
+
+
+            fila
+                .find('.fr-total')
+                .val(
+                    total.toFixed(2)
+                );
+        }
+
 
    </script>
 @endsection

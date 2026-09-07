@@ -103,6 +103,8 @@ class RecetaController extends Controller
         $caracteristica_id = $request->input('caracteristica_id');
         $tipo_proceso_id   = $request->input('tipo_proceso_id');
         $descripcion       = $request->input('descripcion');
+        $peso_kg           = $request->input('peso_kg');
+        $peso_gr           = $request->input('peso_gr');
 
         DB::beginTransaction();
 
@@ -152,7 +154,8 @@ class RecetaController extends Controller
             $receta->nevado_id          = $nevado_id;
             $receta->nombre             = $nombre;
             $receta->descripcion        = $descripcion;
-
+            $receta->descripcion        = $peso_kg;
+            $receta->descripcion        = $peso_gr;
             $receta->save();
 
             /*

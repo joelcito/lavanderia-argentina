@@ -10,6 +10,7 @@ use App\Http\Controllers\ControlPersonalController;
 use App\Http\Controllers\CotizacionController;
 use App\Http\Controllers\DeudaController;
 use App\Http\Controllers\FacturaController;
+use App\Http\Controllers\FacturaRecetaController;
 use App\Http\Controllers\FocalizadoController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaquinariaController;
@@ -478,6 +479,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/guardar', [RecetaController::class, 'guardar'])->name('receta.guardar');
         Route::post('/eliminar', [RecetaController::class, 'eliminar'])->name('receta.eliminar');
         Route::get('/pdf/{receta_id}',[RecetaController::class, 'pdf'])->name('receta.pdf');
+    });
+
+    Route::prefix('/factura-receta')->group(function () {
+        Route::post('/datos-modal',[FacturaRecetaController::class, 'datosModal'])->name('facturaReceta.datosModal');
+        Route::post('/obtener-receta',[FacturaRecetaController::class, 'obtenerReceta'])->name('facturaReceta.obtenerReceta');
+        Route::post('/guardar',[FacturaRecetaController::class, 'guardar'])->name('facturaReceta.guardar');
+        Route::post('/eliminar',[FacturaRecetaController::class, 'eliminar'])->name('facturaReceta.eliminar');
     });
 
 });

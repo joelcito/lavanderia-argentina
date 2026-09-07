@@ -53,6 +53,41 @@
 
                         <input type="hidden" id="receta_id" name="receta_id" value="0">
 
+                        <div class="row">
+
+                            <div class="col-md-3">
+
+                                <div class="fv-row mb-7">
+
+                                    <label class="required fw-semibold fs-6 mb-2">
+                                        Peso Kg
+                                    </label>
+
+                                    <input type="number" class="form-control form-control-sm" id="peso_kg" name="peso_kg" min="0" step="0.00001"
+                                        oninput="calcularPesoReceta()" required>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <div class="fv-row mb-7">
+
+                                    <label class="fw-semibold fs-6 mb-2">
+                                        Peso Gr
+                                    </label>
+
+                                    <input type="number" class="form-control form-control-sm" id="peso_gr" name="peso_gr" step="0.00001"
+                                        readonly>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
 
                         <!-- ============================================= -->
                         <!-- DATOS GENERALES -->
@@ -473,7 +508,11 @@
                                                                     data-producto='@json($producto)'
                                                                     data-ingreso='@json($producto->ultimoIngreso)'>
 
-                                                                    {{ $producto->nombre }}
+                                                                    {{-- {{ $producto->nombre }} --}}
+                                                                    {{ $producto->nombre.(($producto->ultimoIngreso)
+                                                                    ? ' |
+                                                                    '.$producto->ultimoIngreso?->precio_compra_g :
+                                                                    '') }}
 
                                                                 </option>
 
@@ -785,8 +824,105 @@
 
             });
 
+            $(document).on('input','#formularioReceta .porcentaje',function () {
+
+                let fila =$(this).closest('[data-repeater-item]');
+                let pesoGr = parseFloat($('#peso_gr').val()) || 0;
+                let porcentaje = parseFloat($(this).val()) || 0;
+
+                /*
+                * Verificar producto
+                */
+                let productoId = fila.find('.producto').val();
+                if (!productoId) {
+                    fila.find('.cantidad').val(0);
+                    fila.find('.total').val(0);
+                    return;
+                }
+
+                /*
+                * cantidad =
+                * pesoGr * porcentaje / 100
+                */
+
+                let cantidad = ( pesoGr * porcentaje ) / 100;
+
+                fila.find('.cantidad').val(cantidad.toFixed(2));
+
+                /*
+                * Actualizamos total
+                */
+                calcularTotalReceta(fila);
+
+            });
+
+            $(document).on('input','#formularioReceta .cantidad',function () {
+
+                    let fila =
+                        $(this).closest(
+                            '[data-repeater-item]'
+                        );
 
 
+                    let pesoGr =
+                        parseFloat(
+                            $('#peso_gr').val()
+                        ) || 0;
+
+
+                    let cantidad =
+                        parseFloat(
+                            $(this).val()
+                        ) || 0;
+
+
+                    if (pesoGr <= 0) {
+
+                        fila
+                            .find('.porcentaje')
+                            .val(0);
+
+                        return;
+                    }
+
+
+                    /*
+                    * porcentaje =
+                    * cantidad / pesoGr * 100
+                    */
+
+                    let porcentaje =
+                        (
+                            cantidad /
+                            pesoGr
+                        )
+                        *
+                        100;
+
+
+                    fila
+                        .find('.porcentaje')
+                        .val(
+                            porcentaje.toFixed(2)
+                        );
+
+
+                    calcularTotalReceta(
+                        fila
+                    );
+            });
+
+            $(document).on('change','#formularioReceta .producto',function () {
+
+                    let fila =
+                        $(this).closest(
+                            '[data-repeater-item]'
+                        );
+
+                    fila
+                        .find('.porcentaje')
+                        .trigger('input');
+            });
         });
 
 
@@ -824,6 +960,8 @@
             $('#caracteristica_id').val('');
             $('#nevado_id').val('');
             $('#descripcion').val('');
+            $('#peso_kg').val('');
+            $('#peso_gr').val('');
 
             limpiarErrores();
 
@@ -1070,6 +1208,8 @@
             $('#descripcion')
                 .val(receta.descripcion);
 
+            $('#peso_kg').val(receta.peso_kg ?? 0);
+            $('#peso_gr').val(receta.peso_gr ?? 0);
 
             // =====================================
             // AGRUPAR DETALLES
@@ -1641,6 +1781,113 @@
             let url = "{{ route('receta.pdf', ':id') }}";
             url = url.replace(':id',receta_id);
             window.open(url,'_blank');
+        }
+
+        function calcularPesoReceta() {
+
+            let pesoKg =
+                parseFloat(
+                    $('#peso_kg').val()
+                ) || 0;
+
+            let pesoGr =
+                pesoKg * 1000;
+
+            $('#peso_gr').val(
+                pesoGr.toFixed(2)
+            );
+
+
+            /*
+            * Si cambia el peso,
+            * recalculamos todas las cantidades
+            * usando el porcentaje existente.
+            */
+            $('#formularioReceta')
+                .find('.porcentaje')
+                .each(function () {
+
+                    $(this).trigger('input');
+
+                });
+        }
+
+        function calcularTotalReceta(fila) {
+
+            let dataIngreso =
+                fila
+                    .find(
+                        '.producto option:selected'
+                    )
+                    .attr(
+                        'data-ingreso'
+                    );
+
+
+            if (!dataIngreso) {
+
+                fila
+                    .find('.total')
+                    .val(0);
+
+                return;
+            }
+
+
+            let ingreso = null;
+
+
+            try {
+
+                ingreso =
+                    JSON.parse(
+                        dataIngreso
+                    );
+
+            } catch (error) {
+
+                ingreso =
+                    null;
+            }
+
+
+            if (
+                ingreso != null
+                &&
+                ingreso.precio_compra_g != null
+            ) {
+
+                let cantidad =
+                    parseFloat(
+                        fila
+                            .find('.cantidad')
+                            .val()
+                    ) || 0;
+
+
+                let precioGr =
+                    parseFloat(
+                        ingreso.precio_compra_g
+                    ) || 0;
+
+
+                let total =
+                    cantidad *
+                    precioGr;
+
+
+                fila
+                    .find('.total')
+                    .val(
+                        total.toFixed(2)
+                    );
+
+            } else {
+
+                fila
+                    .find('.total')
+                    .val(0);
+            }
         }
 
     </script>
