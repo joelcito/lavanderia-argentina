@@ -785,6 +785,8 @@
 
             });
 
+
+
         });
 
 
@@ -1633,6 +1635,12 @@
             $('.invalid-feedback')
                 .remove();
 
+        }
+
+        function imprimirReceta(receta_id) {
+            let url = "{{ route('receta.pdf', ':id') }}";
+            url = url.replace(':id',receta_id);
+            window.open(url,'_blank');
         }
 
     </script>

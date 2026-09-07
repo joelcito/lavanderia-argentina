@@ -34,4 +34,28 @@ class RecetaDetalle extends Model
         'estado',
         'deleted_at',
     ];
+
+    public function receta()
+    {
+        return $this->belongsTo(
+            Receta::class,
+            'receta_id'
+        );
+    }
+
+    public function tipoProceso()
+    {
+        return $this->belongsTo(
+            Tipo_proceso::class,
+            'tipo_proceso_id'
+        );
+    }
+
+    public function producto()
+    {
+        return $this->belongsTo(
+            Producto::class,
+            'producto_id'
+        );
+    }
 }

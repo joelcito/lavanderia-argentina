@@ -477,6 +477,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [RecetaController::class, 'ajaxListado'])->name('receta.ajaxListado');
         Route::post('/guardar', [RecetaController::class, 'guardar'])->name('receta.guardar');
         Route::post('/eliminar', [RecetaController::class, 'eliminar'])->name('receta.eliminar');
+        Route::get('/pdf/{receta_id}',[RecetaController::class, 'pdf'])->name('receta.pdf');
     });
 
 });
