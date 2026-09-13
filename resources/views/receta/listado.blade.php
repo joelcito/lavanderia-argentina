@@ -7,7 +7,7 @@
         }
 
         .bloque-proceso {
-            border: 1px solid #e4e6ef;
+            border: 1px solid #9c00f7;
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
@@ -15,9 +15,10 @@
         }
 
         .bloque-producto {
-            border-bottom: 1px dashed #ddd;
+            border-bottom: 1px dashed #ff0000;
             padding-bottom: 10px;
             margin-bottom: 10px;
+            /* background: #ff7878; */
         }
     </style>
 @endsection
