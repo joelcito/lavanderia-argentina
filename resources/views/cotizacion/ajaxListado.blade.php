@@ -11,7 +11,14 @@
                 <th>Focalizado</th>
                 <th>Cantidad Prendas</th>
                 <th>Peso</th>
-                <th>Actions</th>
+                @canany([
+                'cotizaciones.editar',
+                'cotizaciones.eliminar',
+                'cotizaciones.pdf',
+                'cotizaciones.excel'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -25,21 +32,34 @@
                     <td>{{ $cotizacion->focalizado?->nombre }}</td>
                     <td>{{ $cotizacion->cantidad_prenda }}</td>
                     <td>{{ $cotizacion->peso_kg }}</td>
+                    @canany([
+                        'cotizaciones.editar',
+                        'cotizaciones.eliminar',
+                        'cotizaciones.pdf',
+                        'cotizaciones.excel'
+                    ])
                     <td class="text-center">
 
+                        @can('cotizaciones.editar')
                         <button class="btn btn-icon btn-warning btn-sm" onclick='editarCotizacion(@json($cotizacion))'><i class="fa fa-edit"></i></button>
-
+                        @endcan
+                        @can('cotizaciones.pdf')
                         <button type="button" class="btn btn-sm btn-danger btn-icon" onclick="reportePdf({{ $cotizacion->id }})"
                             title="Exportar PDF">
                             <i class="fas fa-file-pdf"></i>
                         </button>
-
+                        @endcan
+                        @can('cotizaciones.excel')
                         <button type="button" class="btn btn-sm btn-success btn-icon" onclick="reporteExcel({{ $cotizacion->id }})"
                             title="Exportar Excel">
                             <i class="fas fa-file-excel"></i>
                         </button>
+                        @endcan
+                        @can('cotizaciones.eliminar')
                         <button class="btn btn-danger btn-icon btn-sm" onclick="eliminarCotizacion('{{$cotizacion->id}}')"><i class="fa fa-trash"></i></button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

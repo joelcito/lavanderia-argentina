@@ -13,7 +13,12 @@
                 <th>Sub Total</th>
                 <th>A Cuenta</th>
                 <th>Saldo</th>
+                @canany([
+                'cuentas_cobrar.descuento',
+                'cuentas_cobrar.pago'
+                ])
                 <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -50,13 +55,22 @@
                             {{ number_format(($factura->total - $factura->descuento_adicional) - $factura->pagos->sum('monto'), 2) }}
                         </span>
                     </td>
+                    @canany([
+                        'cuentas_cobrar.descuento',
+                        'cuentas_cobrar.pago'
+                    ])
                     <td>
+                        @can('cuentas_cobrar.pago')
                         <button class="btn btn-icon btn-sm btn-info btn-circle" title="Registrar Pago"
                             onclick="registrarPago({{ json_encode($factura) }})"><i class="fa fa-dollar"></i></button>
+                        @endcan
+                        @can('cuentas_cobrar.descuento')
                         <button onclick="formularioDecuentoAdicional({{ $factura->id }})" class="btn btn-icon btn-warning btn-circle btn-sm" title="Registrar Descuento">
                             <i class="fa fa-minus-square"></i>
                         </button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

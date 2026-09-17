@@ -83,7 +83,9 @@
 
                         <!--begin::Actions-->
                         <div class="d-flex gap-2 gap-lg-3">
+                            @can('categorias.crear')
                             <a class="btn btn-sm fw-bold btn-primary" onclick="modalNuevoRol()"><i class="fa fa-plus"></i>Nuevo Categoria</a>
+                            @endcan
                         </div>
 
                         <!--end::Actions-->

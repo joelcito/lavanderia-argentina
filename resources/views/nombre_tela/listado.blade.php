@@ -56,9 +56,11 @@
                 <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
                     <h3 class="card-title fw-bold">Listado de Nombres de Telas</h3>
                     <div class="card-toolbar">
+                        @can('nombres_tela.crear')
                         <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoNombreTela()">
                             <i class="fa fa-plus"></i> Nuevo Nombre de Tela
                         </button>
+                        @endcan
                     </div>
                 </div>
 
@@ -75,7 +77,7 @@
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
 
@@ -166,7 +168,7 @@
             $('#nombre').val(nombre_tela.nombre)
             $('#id').val(nombre_tela.id)
             $('#modalNombreTela').modal('show')
-            
+
         }
 
         function eliminarNombreTela(nombre_tela, nombre) {
@@ -211,8 +213,8 @@
                             });
                         }
                     });
-                    
-                    
+
+
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire(
                         'Cancelado',
@@ -222,6 +224,6 @@
                 }
             });
         }
-        
+
     </script>
 @endsection

@@ -56,9 +56,11 @@
                 <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
                     <h3 class="card-title fw-bold">Listado de Caracteristicas</h3>
                     <div class="card-toolbar">
+                        @can('caracteristicas.crear')
                         <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoCaracteristica()">
                             <i class="fa fa-plus"></i> Nueva  Caracteristica
                         </button>
+                        @endcan
                     </div>
                 </div>
 
@@ -75,7 +77,7 @@
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
 
@@ -166,7 +168,7 @@
             $('#nombre').val(caracteristica.nombre)
             $('#id').val(caracteristica.id)
             $('#modalCaracteristica').modal('show')
-            
+
         }
 
         function eliminarCaracteristica(caracteristica, nombre) {
@@ -211,8 +213,8 @@
                             });
                         }
                     });
-                    
-                    
+
+
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire(
                         'Cancelado',
@@ -222,6 +224,6 @@
                 }
             });
         }
-        
+
     </script>
 @endsection

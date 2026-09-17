@@ -9,7 +9,13 @@
                 <th>Codigo</th>
                 <th>Minimo Stock</th>
                 <th>Precio</th>
-                <th>Actions</th>
+                @canany([
+                'productos.editar',
+                'productos.eliminar',
+                'productos.stock'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -21,12 +27,24 @@
                     <td>{{ $producto->codigo }}</td>
                     <td>{{ $producto->minimo_stock }}</td>
                     <td>{{ $producto->ultimoIngreso?->precio }}</td>
+                    @canany([
+                    'productos.editar',
+                    'productos.eliminar',
+                    'productos.stock'
+                    ])
                     <td>
                         <!-- Nuevo botón Stock -->
+                        @can('productos.stock')
                         <button class="btn btn-icon btn-sm btn-info btn-circle" title="Ver Stock" onclick="abrirStock({{ $producto->id }}, '{{ $producto->nombre }}')"><i class="fa fa-boxes"></i></button>
+                        @endcan
+                        @can('productos.editar')
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar producto" onclick="editarProducto({{ json_encode($producto) }})"><i class="fa fa-edit"></i></button>
+                        @endcan
+                        @can('productos.eliminar')
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar producto" onclick="eliminarProducto('{{ $producto->id }}',  '{{ $producto->nombre }}')"><i class="fa fa-trash"></i></button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

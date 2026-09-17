@@ -12,7 +12,12 @@
                 <th>Celular</th>
                 <th>Nombre Usuario</th>
                 <th>Email</th>
-                <th>Actions</th>
+                @canany([
+                    'usuarios.editar',
+                    'usuarios.eliminar'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -29,10 +34,20 @@
                     <td>{{ $user->celular }}</td>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
+                    @canany([
+                        'usuarios.editar',
+                        'usuarios.eliminar'
+                    ])
                     <td>
+                        <button class="btn btn-icon btn-sm btn-info btn-circle" title="Administrar permisos" onclick="modalPermisosUsuario({{ $user->id }},@js($user->nombres . ' ' . $user->ap_paterno))"><i class="fa fa-key"></i></button>
+                        @can('usuarios.editar')
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar user" onclick="editarUser({{ json_encode($user) }})"><i class="fa fa-edit"></i></button>
+                        @endcan
+                        @can('usuarios.eliminar')
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar user" onclick="eliminarUser('{{ $user->id }}',  '{{ $user->name }}')"><i class="fa fa-trash"></i></button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

@@ -84,7 +84,9 @@
 
                         <!--begin::Actions-->
                         <div class="d-flex gap-2 gap-lg-3">
+                            @can('subcategorias.crear')
                             <a class="btn btn-sm fw-bold btn-primary" onclick="modalNuevoRol()"><i class="fa fa-plus"></i>Nuevo SubCategoria</a>
+                            @endcan
                         </div>
 
                         <!--end::Actions-->

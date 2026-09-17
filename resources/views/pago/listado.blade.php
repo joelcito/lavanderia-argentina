@@ -82,8 +82,12 @@
                             class="card-title page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
                             LISTADO DE PAGOS</h3>
                         <div class="card-toolbar">
+                            @can('ventas_dia.ingreso')
                             <button type="button" class="btn btn-sm fw-bold btn-success ml-5" onclick="modalIngresoSalida('INGRESO')"><i class="fas fa-money-bill"></i><i class="fas fa-arrow-down"></i>Nuevo Ingreso</button>
+                            @endcan
+                            @can('ventas_dia.salida')
                             <button type="button" class="btn btn-sm fw-bold btn-danger ml-5 m-3" onclick="modalIngresoSalida('SALIDA')"><i class="fas fa-money-bill"></i><i class="fas fa-arrow-up"></i>Nuevo Salida</button>
+                            @endcan
                         </div>
                     </div>
                     <div class="card-body py-4">

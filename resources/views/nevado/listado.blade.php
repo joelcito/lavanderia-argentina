@@ -56,9 +56,11 @@
                 <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
                     <h3 class="card-title fw-bold">Listado de Nevados</h3>
                     <div class="card-toolbar">
+                        @can('nevados.crear')
                         <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoNombreTela()">
                             <i class="fa fa-plus"></i> Nuevo Nevado
                         </button>
+                        @endcan
                     </div>
                 </div>
 

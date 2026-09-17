@@ -71,7 +71,9 @@
                     </td>
                     <td>{{ $pago->usuario->name }}</td>
                     <td>
+                        @can('ventas_dia.comprobante')
                         <a target="_blank" href="{{url('pago/comprobantePago', [$pago->id])}}" class="btn btn-icon btn-info btn-sm" title="Imprimir Comprobante"><i class="fa fa-file"></i></a>
+                        @endcan
                     </td>
                 </tr>
                 @php

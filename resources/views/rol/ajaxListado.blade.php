@@ -4,17 +4,28 @@
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                 <th>Nombre</th>
+                @canany([
+                'roles.editar',
+                'roles.eliminar'
+                ])
                 <th>Actions</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($roles as $rol)
                 <tr>
                     <td>{{ $rol->nombre }}</td>
-                    <td>
-                        <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar rol" onclick="editarRol({{ json_encode($rol) }})"><i class="fa fa-edit"></i></button>
-                        {{-- <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar rol" onclick="eliminarRol('{{ $rol->id }}',  '{{ $rol->nombre }}')"><i class="fa fa-trash"></i></button> --}}
-                    </td>
+                    @canany([
+                    'roles.editar',
+                    'roles.eliminar'
+                    ])
+                        <td>
+                            @can('roles.editar')
+                            <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar rol" onclick="editarRol({{ json_encode($rol) }})"><i class="fa fa-edit"></i></button>
+                            @endcan
+                        </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

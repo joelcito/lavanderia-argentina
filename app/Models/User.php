@@ -125,4 +125,22 @@ class User extends Authenticatable
     {
         return $this->belongsTo('App\Models\Rol', 'rol_id');
     }
+
+    public function tienePermiso(string $codigo): bool
+    {
+        return $this->permisos()
+            ->where('codigo', $codigo)
+            ->where('estado', 'ACTIVO')
+            ->exists();
+    }
+
+    public function permisos()
+    {
+        return $this->belongsToMany(
+            Permiso::class,
+            'usuario_permisos',
+            'user_id',
+            'permiso_id'
+        )->withTimestamps();
+    }
 }

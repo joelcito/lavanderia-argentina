@@ -8,7 +8,11 @@
                 <th>Cantidad</th>
                 <th>Porcentaje</th>
                 <th>Estado</th>
-                <th>Actions</th>
+                @canany([
+                'focalizado.preparacion'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -27,11 +31,17 @@
                             <span class="badge badge-white text-dark">{{ $solicitud->estado }}</span>
                         @endif
                     </td>
+                    @canany([
+                        'focalizado.preparacion'
+                    ])
                     <td>
-                        @if ($solicitud->estado == "APROBADO")
-                            <button onclick="modalPreparaciones({{ $solicitud->id }})" title="Preparacion" class="btn btn-icon btn-sm btn-success"><i class="fa fa-cogs"></i></button>
-                        @endif
+                        @can('focalizado.preparacion')
+                            @if ($solicitud->estado == "APROBADO")
+                                <button onclick="modalPreparaciones({{ $solicitud->id }})" title="Preparacion" class="btn btn-icon btn-sm btn-success"><i class="fa fa-cogs"></i></button>
+                            @endif
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

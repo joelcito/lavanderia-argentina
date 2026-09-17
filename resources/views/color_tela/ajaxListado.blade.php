@@ -4,17 +4,31 @@
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                 <th>Nombre</th>
-                <th>Actions</th>
+                @canany([
+                'colores_tela.editar',
+                'colores_tela.eliminar'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($color_telas as $color_tela)
                 <tr>
                     <td>{{ $color_tela->nombre }}</td>
+                    @canany([
+                    'colores_tela.editar',
+                    'colores_tela.eliminar'
+                    ])
                     <td>
+                        @can('colores_tela.editar')
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar color_tela" onclick="editarColorTela({{ json_encode($color_tela) }})"><i class="fa fa-edit"></i></button>
+                        @endcan
+                        @can('colores_tela.eliminar')
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar color_tela" onclick="eliminarColorTela('{{ $color_tela->id }}',  '{{ $color_tela->nombre }}')"><i class="fa fa-trash"></i></button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

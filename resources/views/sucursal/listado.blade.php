@@ -66,9 +66,11 @@
                 <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
                     <h3 class="card-title fw-bold">Listado de Sucursales</h3>
                     <div class="card-toolbar">
+                        @can('sucursales.crear')
                         <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoSucursal()">
                             <i class="fa fa-plus"></i> Nueva  Sucursal
                         </button>
+                        @endcan
                     </div>
                 </div>
 
@@ -85,7 +87,7 @@
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
 <script src="{{ asset('assets/plugins/custom/datatables/datatables.bundle.js') }}"></script>
     <script>
 
@@ -180,7 +182,7 @@
             $('#codigo_sucursal').val(sucursal.codigo_sucursal)
             $('#id').val(sucursal.id)
             $('#modalSucursal').modal('show')
-            
+
         }
 
         function eliminarSucursal(sucursal, nombre) {
@@ -225,8 +227,8 @@
                             });
                         }
                     });
-                    
-                    
+
+
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire(
                         'Cancelado',
@@ -236,6 +238,6 @@
                 }
             });
         }
-        
+
     </script>
 @endsection

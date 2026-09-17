@@ -4,17 +4,31 @@
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                 <th>Nombre</th>
-                <th>Actions</th>
+                @canany([
+                'focalizados.editar',
+                'focalizados.eliminar'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($focalizados as $focalizado)
                 <tr>
                     <td>{{ $focalizado->nombre }}</td>
+                    @canany([
+                    'focalizados.editar',
+                    'focalizados.eliminar'
+                    ])
                     <td>
+                        @can('focalizados.editar')
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar focalizado" onclick="editarFocalizado({{ json_encode($focalizado) }})"><i class="fa fa-edit"></i></button>
+                        @endcan
+                        @can('focalizados.eliminar')
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar focalizado" onclick="eliminarFocalizado('{{ $focalizado->id }}',  '{{ $focalizado->nombre }}')"><i class="fa fa-trash"></i></button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

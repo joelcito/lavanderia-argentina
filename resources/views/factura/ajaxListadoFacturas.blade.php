@@ -14,7 +14,13 @@
                 <th>Est. Ven.</th>
                 <th>Estado</th>
                 <th>Prioridad</th>
-                <th>Actions</th>
+                @canany([
+                'ventas.detalle',
+                'ventas.eliminar',
+                'ventas.imprimir'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -74,16 +80,28 @@
                     <td>
                         <span class="badge badge-info">{{ $fac->prioridad }}</span>
                     </td>
+                    @canany([
+                        'ventas.detalle',
+                        'ventas.eliminar',
+                        'ventas.imprimir'
+                    ])
                     <td>
                         @if (is_null($fac->estado))
+                            @can('ventas.detalle')
                             <a href="{{route('factura.detalle', [$fac->id])}}" class="btn btn-sm btn-icon tamanio_boton btn-info" title="Ver Detelles"><i class="fa fa-eye"></i></a>
+                            @endcan
+                            @can('ventas.imprimir')
                             <button class="btn btn-primary btn-sm btn-icon tamanio_boton" title="Imprime Recibo"
                                 onclick="imprimeREcibo('{{ $fac->id }}')"><i
                                     class="fa fa-file-pdf"></i></button>
+                            @endcan
+                            @can('ventas.eliminar')
                             <button class="btn btn-danger btn-sm btn-icon tamanio_boton"
                                 onclick="anularRecibo('{{ $fac->id }}', '{{ $fac->numero_factura }}')"><i class="fa fa-trash"></i></button>
+                            @endcan
                         @endif
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>
@@ -96,7 +114,15 @@
                 <td><b>{{ number_format($montoTotalDescuento , 2) }}</b></td>
                 <td><b>{{ number_format($montoTotalSubTotal , 2) }}</b></td>
                 <td><b>{{ number_format($montoTotalACuneta , 2) }}</b></td>
+                @canany([
+                'ventas.detalle',
+                'ventas.eliminar',
+                'ventas.imprimir'
+                ])
                 <td colspan="6"></td>
+                @else
+                <td colspan="5"></td>
+                @endcanany
             </tr>
         </tfoot>
     </table>

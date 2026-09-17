@@ -129,6 +129,95 @@
     </div>
     <!--end::Modal - Add task-->
 
+    <div class="modal fade" id="modalPermisosUsuario" tabindex="-1" aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+
+            <div class="modal-content">
+
+                <div class="modal-header bg-light-primary">
+
+                    <div>
+                        <h3 class="fw-bold mb-1">
+                            PERMISOS DEL USUARIO
+                        </h3>
+
+                        <span class="text-primary fw-bold" id="nombreUsuarioPermiso">
+                        </span>
+                    </div>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="permiso_user_id">
+
+
+                    <div id="loadingPermisos" class="text-center py-10">
+
+                        <span class="spinner-border text-primary"></span>
+
+                        <div class="mt-3">
+                            Cargando permisos...
+                        </div>
+
+                    </div>
+
+
+                    <div id="contenidoPermisos" style="display:none;">
+
+                        <div class="d-flex justify-content-end mb-5">
+
+                            <button type="button" class="btn btn-sm btn-light-success me-2" onclick="marcarTodosPermisos()">
+
+                                <i class="fa fa-check-double"></i>
+                                Marcar todos
+
+                            </button>
+
+                            <button type="button" class="btn btn-sm btn-light-danger" onclick="desmarcarTodosPermisos()">
+
+                                <i class="fa fa-times"></i>
+                                Desmarcar todos
+
+                            </button>
+
+                        </div>
+
+
+                        <div id="listaPermisos"></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+                    <button type="button" class="btn btn-primary" onclick="guardarPermisosUsuario()">
+
+                        <i class="fa fa-save"></i>
+                        Guardar Permisos
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
     <div class="d-flex flex-column flex-column-fluid">
     <div id="kt_app_content" class="app-content flex-column-fluid">
@@ -137,9 +226,11 @@
                 <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
                     <h3 class="card-title fw-bold">Listado de Usuario</h3>
                     <div class="card-toolbar">
+                        @can('usuarios.crear')
                         <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoUser()">
                             <i class="fa fa-plus"></i> Nuevo Usuario
                         </button>
+                        @endcan
                     </div>
                 </div>
 
@@ -322,6 +413,392 @@
                         'info'
                     );
                 }
+            });
+        }
+
+        // function modalPermisos(rolId, nombreRol) {
+        //     $('#permiso_rol_id').val(rolId);
+        //     $('#nombreRolPermiso').text(nombreRol);
+
+        //     $('#listaPermisos').html('');
+        //     $('#contenidoPermisos').hide();
+        //     $('#loadingPermisos').show();
+
+        //     $('#modalPermisos').modal('show');
+
+        //     $.ajax({
+
+        //         url: "{{ route('rol.obtenerPermisos') }}",
+
+        //         method: "POST",
+
+        //         data: {
+        //             rol_id: rolId
+        //         },
+
+        //         success: function(resultado) {
+
+        //             $('#loadingPermisos').hide();
+
+        //             if (!resultado.estado) {
+
+        //                 Swal.fire({
+        //                     icon: 'error',
+        //                     title: 'Error',
+        //                     text: resultado.message ?? 'No se pudieron obtener los permisos.'
+        //                 });
+
+        //                 return;
+        //             }
+
+        //             construirPermisos(resultado.permisos);
+
+        //             $('#contenidoPermisos').show();
+        //         },
+
+        //         error: function(xhr) {
+
+        //             $('#loadingPermisos').hide();
+
+        //             Swal.fire({
+        //                 icon: 'error',
+        //                 title: 'Error',
+        //                 text: xhr.responseJSON?.message ?? 'No se pudieron cargar los permisos.'
+        //             });
+        //         }
+        //     });
+        // }
+
+        function modalPermisosUsuario(userId, nombreUsuario) {
+
+            $('#permiso_user_id').val(userId);
+
+            $('#nombreUsuarioPermiso').text(nombreUsuario);
+
+            $('#listaPermisos').html('');
+
+            $('#contenidoPermisos').hide();
+
+            $('#loadingPermisos').show();
+
+            $('#modalPermisosUsuario').modal('show');
+
+
+            $.ajax({
+
+                url: "{{ route('user.obtenerPermisos') }}",
+
+                method: "POST",
+
+                data: {
+                    user_id: userId
+                },
+
+                success: function(resultado) {
+
+                    $('#loadingPermisos').hide();
+
+                    if (!resultado.estado) {
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: resultado.message
+                        });
+
+                        return;
+                    }
+
+                    construirPermisos(resultado.permisos);
+
+                    $('#contenidoPermisos').show();
+                },
+
+                error: function(xhr) {
+
+                    $('#loadingPermisos').hide();
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message ??
+                            'No se pudieron cargar los permisos.'
+                    });
+
+                }
+
+            });
+        }
+
+        function construirPermisos(permisos) {
+
+            let html = '';
+
+            permisos.forEach(function(grupo) {
+
+                html += `
+                    <div class="card border mb-5">
+
+                        <div class="card-header min-h-50px bg-light">
+
+                            <div class="card-title">
+
+                                <h4 class="fw-bold mb-0">
+                                    ${grupo.grupo}
+                                </h4>
+
+                            </div>
+
+                            <div class="card-toolbar">
+
+                                <label class="form-check form-check-sm form-check-custom">
+
+                                    <input type="checkbox"
+                                        class="form-check-input check-grupo"
+                                        onchange="marcarGrupo(this, '${grupo.codigo_grupo}')">
+
+                                    <span class="form-check-label fw-semibold">
+                                        Seleccionar grupo
+                                    </span>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                        <div class="card-body py-4">
+                `;
+
+
+                grupo.modulos.forEach(function(modulo) {
+
+                    html += `
+
+                        <div class="row border-bottom py-3 align-items-center">
+
+                            <div class="col-md-4">
+
+                                <strong>
+                                    ${modulo.modulo}
+                                </strong>
+
+                            </div>
+
+                            <div class="col-md-8">
+
+                                <div class="d-flex flex-wrap gap-5">
+                    `;
+
+
+                    modulo.permisos.forEach(function(permiso) {
+
+                        let checked = permiso.asignado
+                            ? 'checked'
+                            : '';
+
+                        html += `
+
+                            <label class="form-check form-check-sm form-check-custom form-check-solid">
+
+                                <input
+                                    class="form-check-input permiso-check grupo-${grupo.codigo_grupo}"
+                                    type="checkbox"
+                                    value="${permiso.id}"
+                                    ${checked}>
+
+                                <span class="form-check-label">
+                                    ${permiso.accion}
+                                </span>
+
+                            </label>
+
+                        `;
+                    });
+
+
+                    html += `
+                                </div>
+
+                            </div>
+
+                        </div>
+                    `;
+                });
+
+
+                html += `
+
+                        </div>
+
+                    </div>
+                `;
+            });
+
+
+            $('#listaPermisos').html(html);
+        }
+
+        function marcarGrupo(check, grupo) {
+            $('.grupo-' + grupo).prop('checked', check.checked);
+        }
+
+        function marcarTodosPermisos() {
+            $('.permiso-check').prop('checked', true);
+            $('.check-grupo').prop('checked', true);
+        }
+
+        function desmarcarTodosPermisos() {
+            $('.permiso-check').prop('checked', false);
+            $('.check-grupo').prop('checked', false);
+        }
+
+        function guardarPermisosRol() {
+            let rolId = $('#permiso_rol_id').val();
+
+            let permisos = [];
+
+            $('.permiso-check:checked').each(function() {
+
+                permisos.push(
+                    $(this).val()
+                );
+
+            });
+
+
+            Swal.fire({
+
+                title: '¿Guardar permisos?',
+
+                text: 'Los permisos se aplicarán a todos los usuarios que tengan este rol.',
+
+                icon: 'question',
+
+                showCancelButton: true,
+
+                confirmButtonText: 'Sí, guardar',
+
+                cancelButtonText: 'Cancelar'
+
+            }).then((result) => {
+
+                if (!result.isConfirmed) {
+                    return;
+                }
+
+
+                $.ajax({
+
+                    url: "{{ route('rol.guardarPermisos') }}",
+
+                    method: "POST",
+
+                    data: {
+                        rol_id: rolId,
+                        permisos: permisos
+                    },
+
+                    success: function(resultado) {
+
+                        if (resultado.estado) {
+
+                            $('#modalPermisos').modal('hide');
+
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Permisos actualizados',
+                                text: 'Los permisos del rol fueron actualizados correctamente.',
+                                timer: 2500,
+                                showConfirmButton: false
+                            });
+
+                        } else {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: resultado.message ?? 'No se pudieron guardar los permisos.'
+                            });
+
+                        }
+
+                    },
+
+                    error: function(xhr) {
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: xhr.responseJSON?.message ?? 'Ocurrió un error al guardar los permisos.'
+                        });
+
+                    }
+
+                });
+
+            });
+        }
+
+        function guardarPermisosUsuario() {
+
+            let userId = $('#permiso_user_id').val();
+
+            let permisos = [];
+
+
+            $('.permiso-check:checked').each(function() {
+
+                permisos.push(
+                    $(this).val()
+                );
+
+            });
+
+
+            $.ajax({
+
+                url: "{{ route('user.guardarPermisos') }}",
+
+                method: "POST",
+
+                data: {
+
+                    user_id: userId,
+
+                    permisos: permisos
+
+                },
+
+                success: function(resultado) {
+
+                    if (resultado.estado) {
+
+                        $('#modalPermisosUsuario').modal('hide');
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Permisos actualizados',
+                            text: resultado.message,
+                            timer: 2500,
+                            showConfirmButton: false
+                        });
+
+                    }
+
+                },
+
+                error: function(xhr) {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message ??
+                            'No se pudieron guardar los permisos.'
+                    });
+
+                }
+
             });
         }
 

@@ -23,7 +23,7 @@
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                 <th>Rol</th>
                 <th>Nombre</th>
-                <th>Acción</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -33,10 +33,7 @@
                     <td>{{ $user->rol->nombre ?? 'Sin rol' }}</td>
                     <td>{{ $user->nombres }} {{ $user->ap_paterno }} {{ $user->ap_materno }}</td>
                     <td>
-
                         @if(in_array($user->rol_id, [2, 8]))
-
-
                             <button class="btn btn-info btn-sm btn-config" data-id="{{ $user->id }}">Monto por hora</button>
                             <button class="btn btn-warning btn-sm btn-asistencia" data-id="{{ $user->id }}"> Asistencia</button>
                             <button class="btn btn-primary btn-sm btn-deudas" data-id="{{ $user->id }}">Descuentos</button>

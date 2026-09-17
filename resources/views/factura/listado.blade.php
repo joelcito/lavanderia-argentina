@@ -79,46 +79,6 @@
     </div>
     <!--end::Modal - Add task-->
 
-    <!--begin::Modal - Add task-->
-    {{-- <div class="modal fade" id="modalAnular" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header" id="kt_modal_add_user_header">
-                    <h2 class="fw-bold">FORMULARIO DE ANULACION</h2>
-                </div>
-                <div class="modal-body scroll-y">
-                    <form id="formularioAnulaciion">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="fv-row mb-7">
-                                    <label class="required fw-semibold fs-6 mb-2">Motivo de anulacion</label>
-                                    <select name="codigoMotivoAnulacion" id="codigoMotivoAnulacion" class="form-control"
-                                        required>
-                                        <option value="">Seleccione</option>
-                                        @foreach ($siat_motivo_anulaciones as $ma)
-                                            <option value="{{ $ma->codigo_clasificador }}">{{ $ma->descripcion }}</option>
-                                        @endforeach
-                                    </select>
-                                    <input type="hidden" id="factura_id" name="factura_id">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button class="btn btn-success w-100" onclick="anularFactura()" id="boton_anular_factura"> <i
-                                    class="fa fa-spinner fa-spin" style="display:none;"></i> Anular Factura</button>
-                        </div>
-                    </div>
-                </div>
-                <!--end::Modal body-->
-            </div>
-            <!--end::Modal content-->
-        </div>
-        <!--end::Modal dialog-->
-    </div> --}}
-    <!--end::Modal - Add task-->
-
     <!--begin::Content wrapper-->
     <div class="d-flex flex-column flex-column-fluid">
         <!--begin::Content-->
@@ -132,8 +92,10 @@
                             class="card-title page-heading d-flex text-gray-900 fw-bold fs-3 flex-column justify-content-center my-0">
                             LISTADO DE VENTAS</h3>
                         <div class="card-toolbar">
+                            @can('ventas.crear')
                             <a class="btn btn-sm fw-bold btn-primary" href="{{ url('factura/formulario') }}"><i
                                     class="fa fa-plus"></i>Nueva Venta Compra Venta</a>
+                            @endcan
                         </div>
                     </div>
                     <div class="card-body py-4">

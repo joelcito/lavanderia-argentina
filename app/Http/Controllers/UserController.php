@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Permiso;
 use App\Models\Rol;
 use App\Models\Sucursal;
 use App\Models\User;
@@ -9,6 +10,7 @@ use App\Utils\Respuesta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -117,6 +119,105 @@ class UserController extends Controller
         return response()->json(
             User::select('id', 'pago_diario', 'horas_base')->find($id)
         );
+    }
+
+    public function obtenerPermisos(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $user = User::with('permisos')
+            ->findOrFail($request->user_id);
+
+        $permisosAsignados = $user->permisos
+            ->pluck('id')
+            ->toArray();
+
+        $permisos = Permiso::where('estado', 'ACTIVO')
+            ->orderBy('grupo')
+            ->orderBy('modulo')
+            ->orderBy('id')
+            ->get();
+
+        $resultado = $permisos
+            ->groupBy('grupo')
+            ->map(function ($permisosGrupo, $grupo) use ($permisosAsignados) {
+
+                $codigoGrupo = Str::slug($grupo, '_');
+
+                $modulos = $permisosGrupo
+                    ->groupBy('modulo')
+                    ->map(function ($permisosModulo, $modulo) use ($permisosAsignados) {
+
+                        return [
+
+                            'modulo' => $modulo,
+
+                            'permisos' => $permisosModulo
+                                ->map(function ($permiso) use ($permisosAsignados) {
+
+                                    return [
+
+                                        'id' => $permiso->id,
+
+                                        'nombre' => $permiso->nombre,
+
+                                        'codigo' => $permiso->codigo,
+
+                                        'accion' => ucfirst(
+                                            $permiso->accion
+                                        ),
+
+                                        'asignado' => in_array(
+                                            $permiso->id,
+                                            $permisosAsignados
+                                        ),
+                                    ];
+                                })
+                                ->values(),
+                        ];
+                    })
+                    ->values();
+
+                return [
+
+                    'grupo' => $grupo,
+
+                    'codigo_grupo' => $codigoGrupo,
+
+                    'modulos' => $modulos,
+                ];
+            })
+            ->values();
+
+
+        return response()->json([
+            'estado' => true,
+            'permisos' => $resultado,
+        ]);
+    }
+
+    public function guardarPermisos(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'permisos' => 'nullable|array',
+            'permisos.*' => 'exists:permisos,id',
+        ]);
+
+        $user = User::findOrFail(
+            $request->user_id
+        );
+
+        $user->permisos()->sync(
+            $request->permisos ?? []
+        );
+
+        return response()->json([
+            'estado' => true,
+            'message' => 'Permisos actualizados correctamente.',
+        ]);
     }
 
 }

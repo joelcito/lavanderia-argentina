@@ -742,9 +742,11 @@
                     <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
                         <h3 class="card-title fw-bold">Listado de Receta</h3>
                         <div class="card-toolbar">
+                            @can('recetas.crear')
                             <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevaReceta()">
                                 <i class="fa fa-plus"></i> Nuevo Receta
                             </button>
+                            @endcan
                         </div>
                     </div>
 

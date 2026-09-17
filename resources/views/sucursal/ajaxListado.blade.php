@@ -6,7 +6,12 @@
                 <th>Codigo Sucursal</th>
                 <th>Nombre</th>
                 <th>Direccion</th>
-                <th>Actions</th>
+                @canany([
+                'sucursales.editar',
+                'sucursales.eliminar'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -15,10 +20,19 @@
                     <td>{{ $sucursal->codigo_sucursal }}</td>
                     <td>{{ $sucursal->nombre }}</td>
                     <td>{{ $sucursal->direccion }}</td>
+                    @canany([
+                    'sucursales.editar',
+                    'sucursales.eliminar'
+                    ])
                     <td>
+                        @can('sucursales.editar')
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar sucursal" onclick="editarSucursal({{ json_encode($sucursal) }})"><i class="fa fa-edit"></i></button>
+                        @endcan
+                        @can('sucursales.eliminar')
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar sucursal" onclick="eliminarSucursal('{{ $sucursal->id }}',  '{{ $sucursal->nombre }}')"><i class="fa fa-trash"></i></button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

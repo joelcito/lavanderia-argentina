@@ -28,7 +28,13 @@
 
                 <th>Descripción</th>
 
+                @canany([
+                'recetas.editar',
+                'recetas.eliminar',
+                'recetas.pdf'
+                ])
                 <th>Acciones</th>
+                @endcanany
 
             </tr>
 
@@ -90,30 +96,40 @@
                     ) }}
                 </td>
 
+                @canany([
+                'recetas.editar',
+                'recetas.eliminar',
+                'recetas.pdf'
+                ])
                 <td>
 
+                    @can('recetas.editar')
                     <button type="button" class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar receta"
                         onclick='editarReceta(@json($receta))'>
 
                         <i class="fa fa-edit"></i>
 
                     </button>
-
+                    @endcan
+                    @can('recetas.pdf')
                     <button type="button" class="btn btn-icon btn-sm btn-danger btn-circle" title="Imprimir receta en PDF"
                         onclick="imprimirReceta('{{ $receta->id }}')">
 
                         <i class="fa fa-file-pdf"></i>
 
                     </button>
-
+                    @endcan
+                    @can('recetas.eliminar')
                     <button type="button" class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar receta"
                         onclick="eliminarReceta('{{ $receta->id }}')">
 
                         <i class="fa fa-trash"></i>
 
                     </button>
+                    @endcan
 
                 </td>
+                @endcanany
 
             </tr>
 

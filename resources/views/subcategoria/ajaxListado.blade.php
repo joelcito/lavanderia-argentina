@@ -5,8 +5,12 @@
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                 <th>Nombre</th>
                 <th>Descripcion</th>
-                {{-- <th>Tipo</th> --}}
-                <th>Actions</th>
+                @canany([
+                'subcategorias.editar',
+                'subcategorias.eliminar'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -14,17 +18,19 @@
                 <tr>
                     <td>{{ $rol->nombre }}</td>
                     <td>{{ $rol->descripcion }}</td>
-                    {{-- <td>
-                        @if ($rol->tipo == "INGRESO")
-                            <span class="badge badge-success">{{ $rol->tipo }}</span>
-                        @else
-                            <span class="badge badge-danger">{{ $rol->tipo }}</span>
-                        @endif
-                    </td> --}}
+                    @canany([
+                    'subcategorias.editar',
+                    'subcategorias.eliminar'
+                    ])
                     <td>
+                        @can('subcategorias.editar')
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar rol" onclick="editarRol({{ json_encode($rol) }})"><i class="fa fa-edit"></i></button>
+                        @endcan
+                        @can('subcategorias.eliminar')
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar rol" onclick="eliminarRol({{ json_encode($rol) }})"><i class="fa fa-trash"></i></button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

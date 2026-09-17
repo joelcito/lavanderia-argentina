@@ -5,7 +5,12 @@
             <tr>
                 <th>Agrupados para proceso</th>
                 <th>Estado</th>
+                @canany([
+                    'focalizado.cantidad',
+                    'focalizado.finalizar'
+                ])
                 <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody>
@@ -24,13 +29,22 @@
                             <td>
                                 <span class="badge badge-warning">{{ $proceso->estado }}</span>
                             </td>
+                            @canany([
+                                'focalizado.cantidad',
+                                'focalizado.finalizar'
+                            ])
                             <td>
+                                @can('focalizado.cantidad')
                                 <button class="btn btn-success btn-sm" onclick="abrirModalFocalizado('{{ $solicitud_id }}')">
                                     <i class="fa fa-plus"></i>
                                 </button>
+                                @endcan
+                                @can('focalizado.finalizar')
                                 <button title="Terminar Proceso Focalizado" class="btn btn-dark btn-icon btn-sm"
                                     onclick="finalizarFocalizado('{{ $solicitud_id }}')"><i class="fa fa-up-down"></i></button>
+                                @endcan
                             </td>
+                            @endcanany
                         </tr>
                     @endif
                 @endif
@@ -40,57 +54,6 @@
         </tbody>
     </table>
 </div>
-
-{{--
-<div class="modal fade" id="modalDetalleOT" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-light-info">
-                <h5 class="modal-title">Detalle de Procesos de la OT</h5>
-                <button type="button" class="btn btn-icon btn-sm" data-bs-dismiss="modal">
-                    <i class="fa fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="detalleOTContent" style="overflow-x: auto;"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="modal fade" id="modalProcesoOT" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-light-primary">
-                <h5 class="modal-title" id="tituloProcesoOT"></h5>
-                <button type="button" class="btn btn-icon btn-sm" data-bs-dismiss="modal">
-                    <i class="fa fa-times"></i>
-                </button>
-            </div>
-
-            <div class="modal-body">
-                <input type="hidden" id="ot_id">
-                <input type="hidden" id="tipo_proceso">
-
-                <div class="mb-3">
-                    <label>Total de prendas</label>
-                    <input type="text" class="form-control" id="total_prendas" readonly>
-                </div>
-
-                <div class="mb-3">
-                    <label id="labelCantidadProceso"></label>
-                    <input type="number" min="1" class="form-control" id="cantidad_proceso">
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button class="btn btn-primary" onclick="guardarProcesoOT()">Guardar</button>
-            </div>
-        </div>
-    </div>
-</div> --}}
 
 <script>
     $(document).ready(function () {
@@ -116,122 +79,5 @@
 
 
     });
-
-    // function verDetalleOT(ot_id) {
-    //     $.get("/procesos/detalle-ot/" + ot_id, function (data) {
-    //         let html = '<table class="table table-bordered">';
-    //         html += '<thead><tr><th>Producto</th><th>Nº</th><th>Maquinaria</th><th>Tipo Proceso</th><th>Fecha Ingreso</th><th>Fecha Salida</th><th>Estado</th></tr></thead><tbody>';
-
-    //         data.forEach(p => {
-    //             html += `<tr>
-    //                     <td>${p.producto?.nombre ?? '-'}</td>
-    //                     <td>${p.maquinaria?.numero ?? '-'}</td>
-    //                     <td>${p.maquinaria?.tipo ?? '-'}</td>
-    //                     <td>${p.tipo_proceso?.nombre ?? '-'}</td>
-    //                     <td>${p.fecha_ingreso ?? '-'}</td>
-    //                     <td>${p.fecha_salida ?? '-'}</td>
-    //                     <td>${p.estado ?? '-'}</td>
-    //                  </tr>`;
-    //         });
-
-    //         html += '</tbody></table>';
-    //         $('#detalleOTContent').html(html);
-    //         $('#modalDetalleOT').modal('show');
-    //     });
-    // }
-
-
-    // function focalizarOT(ot_id) {
-    //     abrirModalProceso(ot_id, 'focalizado');
-    // }
-
-    // function plancharOT(ot_id) {
-    //     abrirModalProceso(ot_id, 'planchado');
-    // }
-
-    // function abrirModalProceso(ot_id, tipo) {
-
-    //     $.get('/procesos/obtener-ot/' + ot_id, function (ot) {
-
-    //         $('#ot_id').val(ot.id);
-    //         $('#tipo_proceso').val(tipo);
-    //         $('#total_prendas').val(ot.cantidad);
-    //         $('#cantidad_proceso').val('');
-
-    //         if (tipo === 'focalizado') {
-    //             $('#tituloProcesoOT').text('Focalizar prendas');
-    //             $('#labelCantidadProceso').text('Cantidad de prendas a focalizar');
-    //         } else {
-    //             $('#tituloProcesoOT').text('Planchar prendas');
-    //             $('#labelCantidadProceso').text('Cantidad de prendas a planchar');
-    //         }
-
-
-    //         $('#modalProcesoOT').modal('show');
-    //     });
-    // }
-
-
-    // function guardarProcesoOT() {
-
-    //     let ot_id = $('#ot_id').val();
-    //     let tipo = $('#tipo_proceso').val(); // 'focalizado' o 'planchado'
-    //     let cantidad = $('#cantidad_proceso').val();
-
-    //     // Validación rápida
-    //     if (!cantidad || cantidad <= 0) {
-    //         Swal.fire('Error', 'Ingrese una cantidad válida', 'error');
-    //         return;
-    //     }
-
-    //     $.post("{{ route('procesos.guardarProcesoOT') }}", {
-    //         _token: "{{ csrf_token() }}",
-    //         ot_id: ot_id,
-    //         tipo: tipo,
-    //         cantidad: cantidad
-    //     }, function (res) {
-    //         if (res.estado) {
-    //             Swal.fire('Correcto', res.mensaje, 'success');
-    //             $('#modalProcesoOT').modal('hide');
-    //             ajaxListado(); // recarga tabla
-    //         } else {
-    //             Swal.fire('Error', res.mensaje, 'error');
-    //         }
-    //     }).fail(function () {
-    //         Swal.fire('Error', 'No se pudo guardar', 'error');
-    //     });
-    // }
-
-
-
-
-    // function finalizarOT(ot_id) {
-    //     Swal.fire({
-    //         title: '¿Finalizar OT?',
-    //         text: 'Esta acción marcará la orden como FINALIZADA',
-    //         icon: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonText: 'Sí, finalizar',
-    //         cancelButtonText: 'Cancelar'
-    //     }).then((result) => {
-    //         if (result.isConfirmed) {
-
-    //             $.post("{{ route('procesos.finalizarOT') }}", {
-    //                 id: ot_id
-    //             }, function (res) {
-
-    //                 if (res.estado) {
-    //                     Swal.fire('Finalizado', res.mensaje, 'success');
-    //                     ajaxListado(); // recargar listado
-    //                 } else {
-    //                     Swal.fire('Error', res.mensaje, 'error');
-    //                 }
-
-    //             });
-
-    //         }
-    //     });
-    // }
-
 
 </script>

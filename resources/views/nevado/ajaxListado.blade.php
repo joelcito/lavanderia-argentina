@@ -4,17 +4,31 @@
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                 <th>Nombre</th>
-                <th>Actions</th>
+                @canany([
+                'nevados.editar',
+                'nevados.eliminar'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($nevados as $nevado)
                 <tr>
                     <td>{{ $nevado->nombre }}</td>
+                    @canany([
+                    'nevados.editar',
+                    'nevados.eliminar'
+                    ])
                     <td>
+                        @can('nevados.editar')
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar nombre_tela" onclick="editarNombreTela({{ json_encode($nevado) }})"><i class="fa fa-edit"></i></button>
+                        @endcan
+                        @can('nevados.eliminar')
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar nombre_tela" onclick="eliminarNombreTela('{{ $nevado->id }}',  '{{ $nevado->nombre }}')"><i class="fa fa-trash"></i></button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

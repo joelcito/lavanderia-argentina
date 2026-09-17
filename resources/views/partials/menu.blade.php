@@ -19,15 +19,32 @@
                     <!--end:Menu content-->
                 </div>
                 <!--end:Menu item-->
-                @if (
-                        Auth::user()->isAdmin() ||
-                        Auth::user()->isLavador() ||
-                        Auth::user()->isEncargadoAlmacen() ||
-                        //Auth::user()->isPlanchador() ||
-                        // Auth::user()->isFocalizador() ||
-                        Auth::user()->isAyudanteLavado() ||
-                        Auth::user()->isAuxuliarOficina()
-                    )
+                    @canany([
+                        'usuarios.ver',
+                        'roles.ver',
+                        'clientes.ver',
+                        'proveedores.ver',
+                        'categorias.ver',
+                        'subcategorias.ver',
+                        'prendas.ver',
+                        'tipos_tela.ver',
+                        'colores_tela.ver',
+                        'nombres_tela.ver',
+                        'tipos_proceso.ver',
+                        'prelavados.ver',
+                        'focalizados.ver',
+                        'caracteristicas.ver',
+                        'sucursales.ver',
+                        'maquinarias.ver',
+                        'productos.ver',
+                        'cuentas_cobrar.ver',
+                        'solicitudes.ver',
+                        'nevados.ver',
+                        'personal_roles.ver',
+                        'personal.ver',
+                        'cotizaciones.ver',
+                        'recetas.ver'
+                    ])
                     <div data-kt-menu-trigger="click"
                         class="menu-item menu-accordion {{ Request::is('usuario/*', 'rol/*', 'proveedor/*', 'unidadMedida/*', 'puntoVenta/*', 'productoServicio/*', 'producto/*', 'cliente/*', 'urlApiServicio/*', 'pago/*', 'cotizacion/*') ? 'show' : '' }}">
                         <!--begin:Menu link-->
@@ -40,15 +57,19 @@
                         </span>
                         <!--end:Menu link-->
                         <div class="menu-sub menu-sub-accordion">
-                            <div class="menu-item">
-                                <a class="menu-link {{ Route::currentRouteName() == 'usuario.listado' ? 'active' : '' }}"
-                                    href="{{ route('user.listado') }}">
-                                    <span class="menu-bullet">
-                                        <span class="bullet bullet-dot"></span>
-                                    </span>
-                                    <span class="menu-title text-white">Usuarios</span>
-                                </a>
-                            </div>
+                            @can('usuarios.ver')
+                                <div class="menu-item">
+                                    <a class="menu-link {{ Route::currentRouteName() == 'usuario.listado' ? 'active' : '' }}"
+                                        href="{{ route('user.listado') }}">
+                                        <span class="menu-bullet">
+                                            <span class="bullet bullet-dot"></span>
+                                        </span>
+                                        <span class="menu-title text-white">Usuarios</span>
+                                    </a>
+                                </div>
+                            @endcan
+
+                            @can('roles.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'rol.listado' ? 'active' : '' }}"
                                     href="{{ route('rol.listado') }}">
@@ -58,6 +79,9 @@
                                     <span class="menu-title text-white">Roles</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('clientes.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'cliente.listado' ? 'active' : '' }}"
                                     href="{{ route('cliente.listado') }}">
@@ -67,6 +91,9 @@
                                     <span class="menu-title text-white">Clientes</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('proveedores.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'proveedor.listado' ? 'active' : '' }}"
                                     href="{{ route('proveedor.listado') }}">
@@ -76,6 +103,9 @@
                                     <span class="menu-title text-white">Proveedores</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('categorias.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'categoria.listado' ? 'active' : '' }}"
                                     href="{{ route('categoria.listado') }}">
@@ -85,7 +115,9 @@
                                     <span class="menu-title text-white">Categorias</span>
                                 </a>
                             </div>
+                            @endcan
 
+                            @can('subcategorias.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'subCategoria.listado' ? 'active' : '' }}"
                                     href="{{ route('subCategoria.listado') }}">
@@ -95,6 +127,9 @@
                                     <span class="menu-title text-white">Sub Categorias</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('prendas.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'prenda.listado' ? 'active' : '' }}"
                                     href="{{ route('prenda.listado') }}">
@@ -104,6 +139,9 @@
                                     <span class="menu-title text-white">Prendas</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('tipos_tela.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'tipo_tela.listado' ? 'active' : '' }}"
                                     href="{{ route('tipo_tela.listado') }}">
@@ -113,6 +151,9 @@
                                     <span class="menu-title text-white">Tipos de Telas</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('colores_tela.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'color_tela.listado' ? 'active' : '' }}"
                                     href="{{ route('color_tela.listado') }}">
@@ -122,6 +163,9 @@
                                     <span class="menu-title text-white">Colores de Telas</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('nombres_tela.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'nombre_tela.listado' ? 'active' : '' }}"
                                     href="{{ route('nombre_tela.listado') }}">
@@ -131,6 +175,9 @@
                                     <span class="menu-title text-white">Nombres de Telas</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('tipos_proceso.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'tipo_proceso.listado' ? 'active' : '' }}"
                                     href="{{ route('tipo_proceso.listado') }}">
@@ -140,6 +187,9 @@
                                     <span class="menu-title text-white">Tipos de Proceso</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('prelavados.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'prelavado.listado' ? 'active' : '' }}"
                                     href="{{ route('prelavado.listado') }}">
@@ -149,6 +199,9 @@
                                     <span class="menu-title text-white">Prelavados</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('focalizados.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'focalizado.listado' ? 'active' : '' }}"
                                     href="{{ route('focalizado.listado') }}">
@@ -158,6 +211,9 @@
                                     <span class="menu-title text-white">Focalizados</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('caracteristicas.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'caracteristica.listado' ? 'active' : '' }}"
                                     href="{{ route('caracteristica.listado') }}">
@@ -167,6 +223,9 @@
                                     <span class="menu-title text-white">Caracteristicas</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('sucursales.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'sucursal.listado' ? 'active' : '' }}"
                                     href="{{ route('sucursal.listado') }}">
@@ -176,6 +235,9 @@
                                     <span class="menu-title text-white">Sucursales</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('maquinarias.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'maquinaria.listado' ? 'active' : '' }}"
                                     href="{{ route('maquinaria.listado') }}">
@@ -185,6 +247,9 @@
                                     <span class="menu-title text-white">Maquinarias</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('productos.ver')
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'producto.listado' ? 'active' : '' }}"
                                     href="{{ route('producto.listado') }}">
@@ -194,6 +259,9 @@
                                     <span class="menu-title text-white">Productos</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('cuentas_cobrar.ver')
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ url('pago/listadoDeuda') }}">
                                     <span class="menu-bullet">
@@ -202,6 +270,9 @@
                                     <span class="menu-title text-white">Cuentas por Cobrar</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('solicitudes.ver')
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ url('solicitudes/listado') }}">
                                     <span class="menu-bullet">
@@ -210,6 +281,9 @@
                                     <span class="menu-title text-white">Aprobaciòn de solicitudes</span>
                                 </a>
                             </div>
+                            @endcan
+
+                            @can('nevados.ver')
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ url('nevado/listado') }}">
                                     <span class="menu-bullet">
@@ -218,18 +292,9 @@
                                     <span class="menu-title text-white">Nevados</span>
                                 </a>
                             </div>
-                            <div class="menu-item">
-                                <a class="menu-link {{ Route::currentRouteName() == 'rol' ? 'active' : '' }}"
-                                    href="{{ route('order-trabajo.rol') }}">
-                                    <span class="menu-bullet">
-                                        <span class="bullet bullet-dot"></span>
-                                    </span>
-                                    <span class="menu-title text-white">
-                                        Planchador/Focalizador
-                                    </span>
-                                </a>
-                            </div>
+                            @endcan
 
+                            @can('personal.ver')
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ route('personal.index') }}">
                                     <span class="menu-bullet">
@@ -238,25 +303,9 @@
                                     <span class="menu-title text-white">Control de personal</span>
                                 </a>
                             </div>
+                            @endcan
 
-                            <!-- @php
-                                $userRol = strtolower(auth()->user()->rol); // minúscula para comparar
-                            @endphp -->
-
-                            <!-- @if(in_array($userRol, ['Planchador', 'Focalizador'])) -->
-                            <div class="menu-item">
-                                <!-- <a class="menu-link {{ Route::currentRouteName() == 'order-trabajo.rol' ? 'active' : '' }}"
-                                                                    href="{{ route('order-trabajo.rol') }}">
-                                                                    <span class="menu-bullet">
-                                                                        <span class="bullet bullet-dot"></span>
-                                                                    </span> -->
-                                <span class="menu-title text-white">
-                                    Planchador/Focalizador
-                                </span>
-                                <!-- </a> -->
-                            </div>
-                            <!-- @endif -->
-
+                            @can('cotizaciones.ver')
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ route('cotizacion.listado') }}">
                                     <span class="menu-bullet">
@@ -265,7 +314,9 @@
                                     <span class="menu-title text-white">Cotizacion</span>
                                 </a>
                             </div>
+                            @endcan
 
+                            @can('recetas.ver')
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ route('receta.listado') }}">
                                     <span class="menu-bullet">
@@ -274,9 +325,20 @@
                                     <span class="menu-title text-white">Receta</span>
                                 </a>
                             </div>
+                            @endcan
 
                         </div>
                     </div>
+                    {{-- @endif --}}
+                    @endcanany
+
+                    @canany([
+                        'recepcion.ver',
+                        'ventas.ver',
+                        'ventas_dia.ver',
+                        'procesos.ver',
+                        'entregas.ver'
+                    ])
 
                     <div data-kt-menu-trigger="click"
                         class="menu-item menu-accordion {{ Request::is('sincronizacion/*', 'eventoSignificativo/*') ? 'show' : '' }}">
@@ -289,6 +351,7 @@
                             <span class="menu-arrow"></span>
                         </span>
                         <!--end:Menu link-->
+                        @can('recepcion.ver')
                         <div class="menu-sub menu-sub-accordion">
                             <div class="menu-item">
                                 <a class="menu-link " href="{{ route('factura.formulario') }}">
@@ -299,6 +362,8 @@
                                 </a>
                             </div>
                         </div>
+                        @endcan
+                        @can('ventas.ver')
                         <!--end:Menu link-->
                         <div class="menu-sub menu-sub-accordion">
                             <div class="menu-item">
@@ -310,7 +375,8 @@
                                 </a>
                             </div>
                         </div>
-
+                        @endcan
+                        @can('ventas_dia.ver')
                         <div class="menu-sub menu-sub-accordion">
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'pago.listado' ? 'active' : '' }}"
@@ -322,6 +388,8 @@
                                 </a>
                             </div>
                         </div>
+                        @endcan
+                        @can('procesos.ver')
                         <div class="menu-sub menu-sub-accordion">
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'procesos.listado' ? 'active' : '' }}"
@@ -333,6 +401,8 @@
                                 </a>
                             </div>
                         </div>
+                        @endcan
+                        @can('entregas.ver')
                         <div class="menu-sub menu-sub-accordion">
                             <div class="menu-item">
                                 <a class="menu-link {{ Route::currentRouteName() == 'entregas.listado' ? 'active' : '' }}"
@@ -344,7 +414,15 @@
                                 </a>
                             </div>
                         </div>
+                        @endcan
                     </div>
+                    @endcanany
+
+                    @canany([
+                        'reportes.cuentas_cliente',
+                        'reportes.stock_historico',
+                        'reportes.estructura_costos'
+                    ])
 
                     <div data-kt-menu-trigger="click"
                         class="menu-item menu-accordion {{ Request::is('sincronizacion/*', 'eventoSignificativo/*') ? 'show' : '' }}">
@@ -358,6 +436,7 @@
                         </span>
                         <!--end:Menu link-->
                         <div class="menu-sub menu-sub-accordion">
+                            @can('reportes.cuentas_cliente')
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ route('reporte.formulario') }}">
                                     <span class="menu-bullet">
@@ -366,17 +445,8 @@
                                     <span class="menu-title text-white">Reporte Cuentas Cliente</span>
                                 </a>
                             </div>
-
-                            <!-- Reporte Procesos -->
-                            {{-- <div class="menu-item">
-                                <a class="menu-link" href="{{ route('reporte.proceso.formulario') }}">
-                                    <span class="menu-bullet">
-                                        <span class="bullet bullet-dot"></span>
-                                    </span>
-                                    <span class="menu-title text-white">Reporte Procesos</span>
-                                </a>
-                            </div> --}}
-
+                            @endcan
+                            @can('reportes.stock_historico')
                             <!-- NUEVO: Stock Histórico -->
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ route('reporte.stock.formulario') }}">
@@ -386,15 +456,8 @@
                                     <span class="menu-title text-white">Stock Histórico</span>
                                 </a>
                             </div>
-                            <!-- <div class="menu-item">
-                                    <a class="menu-link" href="{{ route('reporte.stockCompra.formulario') }}">
-                                        <span class="menu-bullet">
-                                            <span class="bullet bullet-dot"></span>
-                                        </span>
-                                        <span class="menu-title text-white">Stock por compra</span>
-                                    </a>
-                                </div> -->
-
+                            @endcan
+                            @can('reportes.estructura_costos')
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ route('reporte.costos.formulario') }}">
                                     <span class="menu-bullet">
@@ -403,13 +466,15 @@
                                     <span class="menu-title text-white">Estructura de costos</span>
                                 </a>
                             </div>
-
-
+                            @endcan
                         </div>
                     </div>
-                @endif
+                    @endcanany
 
-                @if (Auth::user()->isFocalizador())
+                    @canany([
+                        'focalizado.lista',
+                        'focalizado.solicitudes'
+                    ])
                     <div data-kt-menu-trigger="click"
                         class="menu-item menu-accordion {{ Request::is('procesos/*') ? 'show' : '' }}">
                         <span class="menu-link">
@@ -419,6 +484,7 @@
                             <span class="menu-title text-white">FOCALIZADO</span>
                             <span class="menu-arrow"></span>
                         </span>
+                        @can('focalizado.lista')
                         <div class="menu-sub menu-sub-accordion">
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ route('procesos.focalizadoListado') }}">
@@ -429,6 +495,8 @@
                                 </a>
                             </div>
                         </div>
+                        @endcan
+                        @can('focalizado.solicitudes')
                         <div class="menu-sub menu-sub-accordion">
                             <div class="menu-item">
                                 <a class="menu-link" href="{{ route('procesos.focalizadoListadoSolicitud') }}">
@@ -439,10 +507,11 @@
                                 </a>
                             </div>
                         </div>
+                        @endcan
                     </div>
-                @endif
+                    @endcanany
 
-                @if (Auth::user()->isPlanchador())
+                    @can('planchado.lista')
                     <div data-kt-menu-trigger="click"
                         class="menu-item menu-accordion {{ Request::is('procesos/*') ? 'show' : '' }}">
                         <span class="menu-link">
@@ -462,11 +531,10 @@
                                 </a>
                             </div>
                         </div>
-
                     </div>
-                @endif
+                    @endcan
 
-                @if (Auth::user()->isCliente())
+                    @can('seguimiento.notas_recepcion')
                     <div data-kt-menu-trigger="click"
                         class="menu-item menu-accordion {{ Request::is('sincronizacion/*', 'eventoSignificativo/*') ? 'show' : '' }}">
                         <span class="menu-link">
@@ -487,7 +555,7 @@
                             </div>
                         </div>
                     </div>
-                @endif
+                    @endcan
 
                 <!--end:Menu item-->
             </div>

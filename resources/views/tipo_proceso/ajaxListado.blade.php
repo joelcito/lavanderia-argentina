@@ -4,17 +4,31 @@
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                 <th>Nombre</th>
-                <th>Actions</th>
+                @canany([
+                'tipos_proceso.editar',
+                'tipos_proceso.eliminar'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($tipo_procesos as $tipo_proceso)
                 <tr>
                     <td>{{ $tipo_proceso->nombre }}</td>
+                    @canany([
+                    'tipos_proceso.editar',
+                    'tipos_proceso.eliminar'
+                    ])
                     <td>
+                        @can('tipos_proceso.editar')
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar tipo_proceso" onclick="editarTipoProceso({{ json_encode($tipo_proceso) }})"><i class="fa fa-edit"></i></button>
+                        @endcan
+                        @can('tipos_proceso.eliminar')
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar tipo_proceso" onclick="eliminarTipoProceso('{{ $tipo_proceso->id }}',  '{{ $tipo_proceso->nombre }}')"><i class="fa fa-trash"></i></button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

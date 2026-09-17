@@ -146,9 +146,11 @@
                     <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
                         <h3 class="card-title fw-bold">Listado de Cliente</h3>
                         <div class="card-toolbar">
-                            <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoCliente()">
-                                <i class="fa fa-plus"></i> Nuevo Cliente
-                            </button>
+                            @can('clientes.crear')
+                                <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoCliente()">
+                                    <i class="fa fa-plus"></i> Nuevo Cliente
+                                </button>
+                            @endcan
                         </div>
                     </div>
 

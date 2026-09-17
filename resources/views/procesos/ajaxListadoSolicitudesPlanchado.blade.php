@@ -5,7 +5,12 @@
             <tr>
                 <th>Agrupados para proceso</th>
                 <th>Estado</th>
+                @canany([
+                'planchado.atender',
+                'planchado.finalizar'
+                ])
                 <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody>
@@ -26,15 +31,22 @@
                         <td>
                             <span class="badge badge-warning">{{ $proceso->estado }}</span>
                         </td>
+                        @canany([
+                            'planchado.atender',
+                            'planchado.finalizar'
+                        ])
                         <td>
+                            @can('planchado.atender')
                             <button class="btn btn-success btn-sm" onclick="abrirModalPlanchado('{{ $solicitud_id }}')">
                                 <i class="fa fa-plus"></i>
                             </button>
+                            @endcan
+                            @can('planchado.finalizar')
                             <button title="Terminar Proceso Planchado" class="btn btn-dark btn-icon btn-sm"
                                 onclick="finalizarPlanchado('{{ $solicitud_id }}')"><i class="fa fa-up-down"></i></button>
-
-
+                            @endcan
                         </td>
+                        @endcanany
                     </tr>
                 @endif
             @empty

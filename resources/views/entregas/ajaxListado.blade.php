@@ -4,7 +4,12 @@
             <tr>
                 <th>Agrupados para proceso</th>
                 <th>Estado</th>
+                @canany([
+                    'entregas.entregar',
+                    'entregas.historial'
+                ])
                 <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody>
@@ -16,16 +21,24 @@
                     </td>
                     <td><span class="badge badge-warning">{{ $solcitudAgrupado['procesoFinal']->estado }}</span></td>
 
+                    @canany([
+                        'entregas.entregar',
+                        'entregas.historial'
+                    ])
                     <td>
+                        @can('entregas.entregar')
                         <button class="btn btn-sm btn-icon btn-success" title="Entregar"
                             onclick='abrirModalEntrega(@json($solcitudAgrupado["crudo"]))'>
                             <i class="fa fa-check"></i>
                         </button>
+                        @endcan
+                        @can('entregas.historial')
                         <button class="btn btn-sm btn-icon btn-danger" title="Generar reporte de Proceso"
                             onclick='imprimirHistorialProceso(@json($solcitudAgrupado["crudo"]))'><i
                                 class="fa fa-file-pdf"></i></button>
+                        @endcan
                     </td>
-
+                    @endcanany
 
                 </tr>
             @empty

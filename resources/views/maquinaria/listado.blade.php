@@ -72,9 +72,11 @@
                 <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
                     <h3 class="card-title fw-bold">Listado de Maquinarias</h3>
                     <div class="card-toolbar">
+                        @can('maquinarias.crear')
                         <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoMaquinaria()">
                             <i class="fa fa-plus"></i> Nueva Maquinaria
                         </button>
+                        @endcan
                     </div>
                 </div>
 

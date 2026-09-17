@@ -60,6 +60,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [RolController::class, 'ajaxListado'])->name('rol.ajaxListado');
         Route::post('/guardarRol', [RolController::class, 'guardarRol'])->name('rol.guardarRol');
         Route::post('/eliminarRol', [RolController::class, 'eliminarRol'])->name('rol.eliminarRol');
+
+        Route::post('obtener-permisos',[RolController::class, 'obtenerPermisos'])->name('rol.obtenerPermisos');
+        Route::post('guardar-permisos',[RolController::class, 'guardarPermisos'])->name('rol.guardarPermisos');
     });
 
     // CATEGORIA
@@ -84,6 +87,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [UserController::class, 'ajaxListado'])->name('user.ajaxListado');
         Route::post('/guardarUser', [UserController::class, 'guardarUser'])->name('user.guardarUser');
         Route::post('/eliminarUser', [UserController::class, 'eliminarUser'])->name('user.eliminarUser');
+
+        Route::post('/obtener-permisos',[UserController::class, 'obtenerPermisos'])->name('user.obtenerPermisos');
+        Route::post('/guardar-permisos',[UserController::class, 'guardarPermisos'])->name('user.guardarPermisos');
 
         Route::get('/control-personal/user/{id}', [UserController::class, 'getUser']);
     });

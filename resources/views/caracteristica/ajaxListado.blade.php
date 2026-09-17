@@ -4,17 +4,31 @@
         <thead>
             <tr class="text-start text-muted fw-bold fs-7 text-uppercase gs-0">
                 <th>Nombre</th>
-                <th>Actions</th>
+                @canany([
+                'caracteristicas.editar',
+                'caracteristicas.eliminar'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
             @forelse ($caracteristicas as $caracteristica)
                 <tr>
                     <td>{{ $caracteristica->nombre }}</td>
+                    @canany([
+                    'caracteristicas.editar',
+                    'caracteristicas.eliminar'
+                    ])
                     <td>
+                        @can('caracteristicas.editar')
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar caracteristica" onclick="editarCaracteristica({{ json_encode($caracteristica) }})"><i class="fa fa-edit"></i></button>
+                        @endcan
+                        @can('caracteristicas.eliminar')
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar caracteristica" onclick="eliminarCaracteristica('{{ $caracteristica->id }}',  '{{ $caracteristica->nombre }}')"><i class="fa fa-trash"></i></button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

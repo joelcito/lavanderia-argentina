@@ -8,7 +8,12 @@
                 <th>Razon Social</th>
                 <th>Direccion</th>
                 <th>Celular</th>
-                <th>Actions</th>
+                @canany([
+                'proveedores.editar',
+                'proveedores.eliminar'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -19,10 +24,19 @@
                     <td>{{ $proveedor->razon_social }}</td>
                     <td>{{ $proveedor->direccion }}</td>
                     <td>{{ $proveedor->celular }}</td>
-                    <td>
-                        <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar proveedor" onclick="editarProveedor({{ json_encode($proveedor) }})"><i class="fa fa-edit"></i></button>
-                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar proveedor" onclick="eliminarProveedor('{{ $proveedor->id }}',  '{{ $proveedor->razon_social }}')"><i class="fa fa-trash"></i></button>
-                    </td>
+                    @canany([
+                        'proveedores.editar',
+                        'proveedores.eliminar'
+                    ])
+                        <td>
+                            @can('proveedores.editar')
+                            <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar proveedor" onclick="editarProveedor({{ json_encode($proveedor) }})"><i class="fa fa-edit"></i></button>
+                            @endcan
+                            @can('proveedores.eliminar')
+                            <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar proveedor" onclick="eliminarProveedor('{{ $proveedor->id }}',  '{{ $proveedor->razon_social }}')"><i class="fa fa-trash"></i></button>
+                            @endcan
+                        </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

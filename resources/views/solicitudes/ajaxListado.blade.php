@@ -10,7 +10,11 @@
                 <th>Usuario</th>
                 <th>Fecha</th>
                 <th>Estado</th>
+                @canany([
+                'solicitudes.aprobar'
+                ])
                 <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody>
@@ -30,18 +34,6 @@
                         @endif
                     </td>
 
-                    <!-- <td>
-                                @if(is_array($solicitud->ordenes_trabajo))
-                                    @foreach($solicitud->ordenes_trabajo as $item)
-                                        @foreach($item['ots'] ?? [] as $ot)
-                                            <span class="badge bg-secondary">
-                                                {{ $ot }}
-                                            </span>
-                                        @endforeach
-                                    @endforeach
-                                @endif
-                            </td> -->
-
                     <td>
                         @foreach($solicitud->nros_ot as $nro_ot)
                             <span class="badge bg-primary">
@@ -49,8 +41,6 @@
                             </span>
                         @endforeach
                     </td>
-
-
 
                     <td>{{ $solicitud->usuarioCreador->name ?? '-' }}</td>
 
@@ -71,13 +61,19 @@
                             {{ $estado }}
                         </span>
                     </td>
+                    @canany([
+                        'solicitudes.aprobar'
+                    ])
 
                     <td>
+                        @can('solicitudes.aprobar')
                         <button class="btn btn-icon btn-sm btn-info" title="Ver Detalle"
                             onclick="verDetalleSolicitud({{ $solicitud->id }})">
                             <i class="fa fa-eye"></i>
                         </button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <tr>

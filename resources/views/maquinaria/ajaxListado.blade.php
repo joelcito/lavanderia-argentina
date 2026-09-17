@@ -7,7 +7,12 @@
                 <th>Numero</th>
                 <th>Descripcion</th>
                 <th>Estado</th>
-                <th>Actions</th>
+                @canany([
+                'maquinarias.editar',
+                'maquinarias.eliminar'
+                ])
+                <th>Acciones</th>
+                @endcanany
             </tr>
         </thead>
         <tbody class="text-gray-600 fw-semibold">
@@ -17,7 +22,7 @@
                     <td>{{ $maquinaria->numero }}</td>
                     <td>{{ $maquinaria->descripcion }}</td>
                     <td>
-                        <span class="badge 
+                        <span class="badge
                                 @if($maquinaria->estado_maquina == 'DISPONIBLE') badge-success
                                 @elseif($maquinaria->estado_maquina == 'EN PROCESO') badge-warning
                                 @else badge-danger
@@ -26,13 +31,22 @@
                             {{ $maquinaria->estado_maquina }}
                         </span>
                     </td>
+                    @canany([
+                    'maquinarias.editar',
+                    'maquinarias.eliminar'
+                    ])
                     <td>
+                        @can('maquinarias.editar')
                         <button class="btn btn-icon btn-sm btn-warning btn-circle" title="Editar maquinaria"
                             onclick="editarMaquinaria({{ json_encode($maquinaria) }})"><i class="fa fa-edit"></i></button>
+                        @endcan
+                        @can('maquinarias.eliminar')
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Eliminar maquinaria"
                             onclick="eliminarMaquinaria('{{ $maquinaria->id }}',  '{{ $maquinaria->tipo }}')"><i
                                 class="fa fa-trash"></i></button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
             @empty
                 <h4 class="text-danger">No hay datos</h4>

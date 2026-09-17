@@ -193,9 +193,11 @@
                     <div class="card-header bg-light-info py-4 d-flex align-items-center justify-content-between">
                         <h3 class="card-title fw-bold">Listado de Solicitudes para Focalizados</h3>
                         <div class="card-toolbar">
+                            @can('focalizado.solicitud_focalizado')
                             <button type="button" class="btn btn-primary btn-sm" onclick="modalNuevoRol()">
                                 <i class="fa fa-plus"></i> Nuevo Solicitud
                             </button>
+                            @endcan
                         </div>
                     </div>
 
