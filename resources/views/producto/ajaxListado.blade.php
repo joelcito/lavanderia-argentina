@@ -7,6 +7,7 @@
                 <th>Nombre</th>
                 <th>Tipo</th>
                 <th>Codigo</th>
+                <th>Stock Actual</th>
                 <th>Minimo Stock</th>
                 <th>Precio</th>
                 @canany([
@@ -25,8 +26,9 @@
                     <td>{{ $producto->nombre }}</td>
                     <td>{{ $producto->tipo }}</td>
                     <td>{{ $producto->codigo }}</td>
+                    <td>{{ $usuario->sucursal->movimientos->where('producto_id', $producto->id)->sum('ingreso') - $usuario->sucursal->movimientos->where('producto_id', $producto->id)->sum('salida') }}</td>
                     <td>{{ $producto->minimo_stock }}</td>
-                    <td>{{ $producto->ultimoIngreso?->precio }}</td>
+                    <td>{{ $producto->ultimoIngreso?->precio_compra_kg }}</td>
                     @canany([
                     'productos.editar',
                     'productos.eliminar',

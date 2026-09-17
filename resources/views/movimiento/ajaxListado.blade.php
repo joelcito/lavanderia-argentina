@@ -15,11 +15,7 @@
                     <td>{{ $sucusal->movimientos->where('producto_id', $productoId)->sum('ingreso') - $sucusal->movimientos->where('producto_id', $productoId)->sum('salida') }}
                     </td>
                     <td>
-                        {{-- <button class="btn btn-icon btn-sm btn-success btn-circle" title="Ingreso producto"
-                            onclick="modalIngreso({{ $productoId }}, {{ $movimiento->sucursal_id }},{{ json_encode($movimiento->sucursal_nombre) }})">+</button>
-                        <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Salida producto"
-                            onclick="modalSalida({{ $productoId }}, {{ $movimiento->sucursal_id }},{{ json_encode($movimiento->sucursal_nombre) }})">-</button>
-                        --}}
+                        <button title="Ver historial de ingreso" onclick="verHistorialIngresos({{ $productoId }}, {{ $sucusal->id }})" class="btn btn-circle btn-sm btn-icon btn-dark"><i class="fa fa-eye"></i></button>
                         <button class="btn btn-icon btn-sm btn-success btn-circle" title="Ingreso producto"
                             onclick="modalIngreso({{ $productoId }}, {{ $sucusal->id }},{{ json_encode($sucusal->nombre) }})">+</button>
                         <button class="btn btn-icon btn-sm btn-danger btn-circle" title="Salida producto"

@@ -261,6 +261,24 @@
     </div>
     <!--end::Modal - Add task-->
 
+    <!--begin::Modal - Add task-->
+    <div class="modal fade" id="modalHistorialIngreso" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header" id="kt_modal_add_user_header">
+                    <h3 class="fw-bold">HISTORIAL DE INGRESO</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body scroll-y">
+                    <div id="tabla_historial_ingreso"></div>
+                </div>
+                <!--end::Modal body-->
+            </div>
+        </div>
+        <!--end::Modal dialog-->
+    </div>
+    <!--end::Modal - Add task-->
+
 
     <div class="d-flex flex-column flex-column-fluid">
         <div id="kt_app_content" class="app-content flex-column-fluid">
@@ -655,6 +673,36 @@
             $('#precio_compra_g').val(precio_gramo);
             $('#precio_compra_kg').val(precio_gramo*1000);
 
+        }
+
+        function verHistorialIngresos(producto, sucursal){
+            $.ajax({
+                url: "{{ route('producto.verHistorialIngresos') }}",
+                method: "POST",
+                data: {
+                    producto: producto,
+                    sucursal: sucursal
+                },
+                success: function(resultado) {
+                    if (resultado.estado) {
+                        $('#tabla_historial_ingreso').html(resultado.data.listado);
+                        $('#modalHistorialIngreso').modal('show');
+                    } else {
+                        Swal.fire(
+                            'Error',
+                            resultado.message || 'No se pudo eliminar la producto.',
+                            'error'
+                        );
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error inesperado.'
+                    });
+                }
+            });
         }
     </script>
 @endsection

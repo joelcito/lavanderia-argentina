@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Movimiento;
 use App\Models\Producto;
 use App\Models\Proveedor;
 use App\Utils\Respuesta;
@@ -21,11 +22,13 @@ class ProductoController extends Controller
 
         if($request->ajax()){
 
+            $usuario = Auth::user();
+
             //SACAMOS EL LISTADO
             $productos = Producto::all();
 
             $valores = [
-                'listado' => view('producto.ajaxListado')->with(compact('productos'))->render()
+                'listado' => view('producto.ajaxListado')->with(compact('productos', 'usuario'))->render()
             ];
 
             $data = Respuesta::success($valores, "Datos Obtenidos correctamente");
@@ -101,6 +104,33 @@ class ProductoController extends Controller
 
         }else{
 
+            $data = Respuesta::error(null, "Error al obtener los datos");
+        }
+
+        return $data;
+
+    }
+
+    public function verHistorialIngresos(Request $request){
+
+        if($request->ajax()){
+
+            $producto_id = $request->input('producto');
+            $sucursal_id = $request->input('sucursal');
+
+            $movimientos = Movimiento::where('sucursal_id', $sucursal_id)
+                                    ->where('producto_id', $producto_id)
+                                    ->where('ingreso', '>',0)
+                                    ->orderBy('id', 'DESC')
+                                    ->get();
+
+            $valores = [
+                'listado' => view('producto.verHistorialIngresos')->with(compact('movimientos'))->render()
+            ];
+
+            $data = Respuesta::success($valores, "Datos Obtenidos correctamente");
+
+        }else{
             $data = Respuesta::error(null, "Error al obtener los datos");
         }
 

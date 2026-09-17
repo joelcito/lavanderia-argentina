@@ -142,6 +142,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/ajaxListado', [ProductoController::class, 'ajaxListado'])->name('producto.ajaxListado');
         Route::post('/guardarProducto', [ProductoController::class, 'guardarProducto'])->name('producto.guardarProducto');
         Route::post('/eliminarProducto', [ProductoController::class, 'eliminarProducto'])->name('producto.eliminarProducto');
+        Route::post('/verHistorialIngresos', [ProductoController::class, 'verHistorialIngresos'])->name('producto.verHistorialIngresos');
     });
     // MAQUINARIAS
     Route::prefix('/maquinaria')->group(function () {
