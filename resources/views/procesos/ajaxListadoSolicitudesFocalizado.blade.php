@@ -1,0 +1,83 @@
+{{-- @dd($solicitudArray) --}}
+<div style="overflow-x: auto;">
+    <table class="table table-bordered table-hover" id="kt_table_color_tela">
+        <thead>
+            <tr>
+                <th>Agrupados para proceso</th>
+                <th>Estado</th>
+                @canany([
+                    'focalizado.cantidad',
+                    'focalizado.finalizar'
+                ])
+                <th>Acciones</th>
+                @endcanany
+            </tr>
+        </thead>
+        <tbody>
+            {{-- @dd($solicitudArray) --}}
+            @forelse ($solicitudArray as $key => $solcitudAgrupado)
+                @php
+                    $solicitud_id = $key;
+
+
+                    $proceso = $procesos[$solicitud_id] ?? null;
+                @endphp
+                @if ($proceso)
+                    @if ($proceso->estado == "TRABAJANDO")
+                        <tr>
+                            <td>{{ $solcitudAgrupado }}</td>
+                            <td>
+                                <span class="badge badge-warning">{{ $proceso->estado }}</span>
+                            </td>
+                            @canany([
+                                'focalizado.cantidad',
+                                'focalizado.finalizar'
+                            ])
+                            <td>
+                                @can('focalizado.cantidad')
+                                <button class="btn btn-success btn-sm" onclick="abrirModalFocalizado('{{ $solicitud_id }}')">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                @endcan
+                                @can('focalizado.finalizar')
+                                <button title="Terminar Proceso Focalizado" class="btn btn-dark btn-icon btn-sm"
+                                    onclick="finalizarFocalizado('{{ $solicitud_id }}')"><i class="fa fa-up-down"></i></button>
+                                @endcan
+                            </td>
+                            @endcanany
+                        </tr>
+                    @endif
+                @endif
+            @empty
+                <span class="text-danger">No hay OTs registradas</span>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#kt_table_color_tela').DataTable({
+            lengthMenu: [10, 25, 50, 100], // Opciones de longitud de página
+            dom: '<"dt-head row"<"col-md-6"l><"col-md-6"f>><"clear">t<"dt-footer row"<"col-md-5"i><"col-md-7"p>>', // Use dom for basic layout
+            language: {
+                paginate: {
+                    first: 'Primero',
+                    last: 'Último',
+                    next: 'Siguiente',
+                    previous: 'Anterior'
+                },
+                search: 'Buscar:',
+                lengthMenu: 'Mostrar _MENU_ registros por página',
+                info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+                emptyTable: 'No hay datos disponibles'
+            },
+            order: [],
+            //  searching: true,
+            responsive: true
+        });
+
+
+    });
+
+</script>
